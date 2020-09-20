@@ -1,6 +1,7 @@
 .cache/
 coverage/
 *.log
+*.swp
 
 # binaries
 shoe-project
