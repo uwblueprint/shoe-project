@@ -5,6 +5,7 @@ coverage/
 
 # binaries
 shoe-project
+main
 
 # UI
 ui/dist/*
