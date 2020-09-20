@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"net/http"
+
 	"github.com/spf13/cobra"
 	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/server"
@@ -20,11 +22,11 @@ var (
 				logger.Fatalw("Create Server", "Err", err)
 			}
 
-			// create frontend Router
+			// create and mount ui handler
+			server.Router.Mount("/", uiHandler("ui/dist"))
 
-			// create api Router
+			// create and mount api Router
 
-			//server.Router.Mount("/", frontEndRouter);
 			//server.Router.Mount("/api", apiRouter);
 
 			// Start the server
@@ -57,6 +59,10 @@ var (
 		},
 	}
 )
+
+func uiHandler(dir string) http.Handler {
+	return http.FileServer(http.Dir(dir))
+}
 
 // init creates api command
 func init() {
