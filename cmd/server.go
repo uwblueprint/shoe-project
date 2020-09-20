@@ -5,6 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/uwblueprint/shoe-project/config"
+	"github.com/uwblueprint/shoe-project/restapi"
 	"github.com/uwblueprint/shoe-project/server"
 	"go.uber.org/zap"
 )
@@ -26,8 +27,12 @@ var (
 			server.Router.Mount("/", uiHandler("ui/dist"))
 
 			// create and mount api Router
+			apiRouter, err := restapi.Router()
+			if err != nil {
+				logger.Fatalw("API Router Mount", "Err", err)
+			}
 
-			//server.Router.Mount("/api", apiRouter);
+			server.Router.Mount("/api", apiRouter)
 
 			// Start the server
 			errChan := make(chan error)
