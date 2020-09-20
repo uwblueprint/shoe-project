@@ -9,7 +9,8 @@
   "license": "MIT",
   "scripts": {
     "clean": "rm dist/bundle.js",
-    "start": "parcel watch src/index.html",
+    "start": "parcel src/index.html",
+    "watch": "parcel watch src/index.html",
     "build-prod": "parcel build src/index.html",
     "test": "jest"
   },
