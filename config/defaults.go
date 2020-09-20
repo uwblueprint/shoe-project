@@ -8,7 +8,7 @@ import (
 
 func init() {
 	// Logger Defaults
-	viper.SetDefault("logger.mode", "dev")
+	viper.SetDefault("mode", "dev")
 	viper.SetDefault("logger.disable_stacktrace", false)
 	viper.SetDefault("logger.log_server_requests", true)
 	viper.SetDefault("logger.log_server_requests_body", false)
