@@ -5,8 +5,8 @@
 Requirements:
 - [Docker](https://docs.docker.com/get-docker/)
 - [Docker Compose](https://docs.docker.com/compose/install/)
-- Yarn
-- Node
+- Yarn >= 1.20
+- Node >= 12 (We recommend managing node versions with https://volta.sh/)
 
 Then run the Makefile to get started.
 

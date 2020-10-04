@@ -1,6 +1,0 @@
-FROM node:12
-
-COPY . /app
-WORKDIR /app/ui
-
-CMD yarn watch

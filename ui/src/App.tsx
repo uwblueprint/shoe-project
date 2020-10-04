@@ -2,8 +2,7 @@ import * as React from 'react';
 import styled from "styled-components";
 
 interface Props {
-   name:
-    string
+   name: string
 }
 
 const Title = styled.h1`

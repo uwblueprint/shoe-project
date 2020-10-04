@@ -16,10 +16,11 @@ RUN volta install node
 WORKDIR /app
 COPY . /app
 
-RUN cd ui && yarn && yarn build-prod
-
 RUN go mod download
+# Make sure we don't pollute the main docker-file
+# CompileDaemon allows for hot reloading
+RUN cd /tmp && go get github.com/githubnemo/CompileDaemon
 RUN go build
 
 EXPOSE 8900
-CMD ["./shoe-project", "server"]
+CMD (cd ui && yarn watch &) && CompileDaemon --command="./shoe-project server"
