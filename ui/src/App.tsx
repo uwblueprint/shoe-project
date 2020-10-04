@@ -11,27 +11,25 @@ import { Home, ShoeMap } from './pages';
 function App() {
   return (
     <Router>
-      <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/map">ShoeMap</Link>
-            </li>
-          </ul>
-        </nav>
+      <nav>
+        <ul>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/map">ShoeMap</Link>
+          </li>
+        </ul>
+      </nav>
 
-        <Switch>
-          <Route exact path="/">
-            <Home />
-          </Route>
-          <Route path="/map">
-            <ShoeMap />
-          </Route>
-        </Switch>
-      </div>
+      <Switch>
+        <Route exact path="/">
+          <Home />
+        </Route>
+        <Route path="/map">
+          <ShoeMap />
+        </Route>
+      </Switch>
     </Router>
   );
 }
