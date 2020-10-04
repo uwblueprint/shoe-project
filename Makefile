@@ -18,4 +18,4 @@ clean-docker:
 	docker image rm shoe-project_client || true
 	docker image rm shoe-project_server || true
 
-clean: clean-frontend clean-backend
+clean: clean-docker clean-frontend clean-backend
