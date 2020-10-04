@@ -5,6 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/uwblueprint/shoe-project/config"
+	"github.com/uwblueprint/shoe-project/internal/database"
 	"github.com/uwblueprint/shoe-project/restapi"
 	"github.com/uwblueprint/shoe-project/server"
 	"go.uber.org/zap"
@@ -26,8 +27,13 @@ var (
 			// create and mount ui handler
 			server.Router.Mount("/", uiHandler("ui/dist"))
 
-			// create and mount api Router
-			apiRouter, err := restapi.Router()
+			db, err := database.Connect()
+
+			if err != nil {
+				logger.Fatalw("failed to connect to databse", "Err", err)
+			}
+
+			apiRouter, err := restapi.Router(db)
 			if err != nil {
 				logger.Fatalw("API Router Mount", "Err", err)
 			}

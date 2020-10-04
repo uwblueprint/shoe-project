@@ -120,3 +120,24 @@ func IsServerCorsCredentialsAllowed() bool {
 func GetServerCorsMaxAge() int {
 	return viper.GetInt("server.cors.max_age")
 }
+
+// -- database --
+func GetDatabaseUser() string {
+	return viper.GetString("database.user")
+}
+
+func GetDatabasePassword() string {
+	return viper.GetString("database.password")
+}
+
+func GetDatabaseName() string {
+	return viper.GetString("database.name")
+}
+
+func GetDatabasePort() string {
+	return viper.GetString("database.port")
+}
+
+func GetDatabaseHost() string {
+	return viper.GetString("database.host")
+}

@@ -6,14 +6,17 @@ import (
 	"github.com/go-chi/render"
 	"github.com/uwblueprint/shoe-project/restapi/rest"
 	"github.com/uwblueprint/shoe-project/server"
+	"gorm.io/gorm"
 )
 
 // namespace api
-type api struct{}
+type api struct {
+	database *gorm.DB
+}
 
-func Router() (http.Handler, error) {
+func Router(db *gorm.DB) (http.Handler, error) {
 	r := server.CreateRouter()
-	api := api{}
+	api := api{database: db}
 
 	rest.GetHandler(r, "/health", api.health)
 
@@ -21,5 +24,5 @@ func Router() (http.Handler, error) {
 }
 
 func (api api) health(w http.ResponseWriter, r *http.Request) render.Renderer {
-	return rest.MsgStatusOK("Hi")
+	return rest.MsgStatusOK("Hello World")
 }
