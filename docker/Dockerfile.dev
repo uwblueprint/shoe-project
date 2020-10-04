@@ -10,6 +10,7 @@ ENV VOLTA_HOME /root/.volta
 # make sure packages managed by volta will be in PATH
 ENV PATH $VOLTA_HOME/bin:$PATH
 
+# Using volta to manage node + yarn versions
 RUN curl https://get.volta.sh | bash
 RUN volta install node
 
@@ -23,4 +24,5 @@ RUN cd /tmp && go get github.com/githubnemo/CompileDaemon
 RUN go build
 
 EXPOSE 8900
+# Want to run yarn watch in the background for hot reloading
 CMD (cd ui && yarn watch &) && CompileDaemon --command="./shoe-project server"

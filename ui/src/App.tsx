@@ -27,7 +27,7 @@ class App extends React.Component<Props> {
     const { name } = this.props;
     return (
       <>
-          <Title>Hello {name}</Title>
+          <Title>Testing {name}</Title>
           <Button>Click Me!</Button>
       </>
     );

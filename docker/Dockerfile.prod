@@ -10,6 +10,7 @@ ENV VOLTA_HOME /root/.volta
 # make sure packages managed by volta will be in PATH
 ENV PATH $VOLTA_HOME/bin:$PATH
 
+# Using volta to manage node + yarn versions
 RUN curl https://get.volta.sh | bash
 RUN volta install node
 
