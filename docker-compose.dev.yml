@@ -1,0 +1,21 @@
+version: "3.7"
+services:
+  client:
+    build:
+      context: ui
+      dockerfile: $PWD/docker/Dockerfile.client.dev
+    volumes:
+      - "./:/app/ui"
+
+  server:
+    build:
+      context: .
+      dockerfile: $PWD/docker/Dockerfile.server.dev
+    depends_on:
+      - client
+    networks:
+      - default
+    ports:
+      - 8900:8900
+    volumes:
+      - "./:/app"

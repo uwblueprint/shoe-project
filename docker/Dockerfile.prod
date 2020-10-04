@@ -10,13 +10,12 @@ RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources
 RUN apt update && apt install -y yarn
 
 WORKDIR /app
-ADD . /app
+COPY . /app
 
-RUN cd ui && yarn && yarn build-prod && cd ..
+RUN cd ui && yarn && yarn build-prod
 
 RUN go mod download
-
 RUN go build
 
-EXPOSE 8900 8900
+EXPOSE 8900
 CMD ["./shoe-project", "server"]
