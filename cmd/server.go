@@ -30,7 +30,7 @@ var (
 			db, err := database.Connect()
 
 			if err != nil {
-				logger.Fatalw("failed to connect to databse", "Err", err)
+				logger.Fatalw("Failed to connect to databse", "Err", err)
 			}
 
 			apiRouter, err := restapi.Router(db)

@@ -16,7 +16,9 @@ type api struct {
 
 func Router(db *gorm.DB) (http.Handler, error) {
 	r := server.CreateRouter()
-	api := api{database: db}
+	api := api{
+		database: db,
+	}
 
 	rest.GetHandler(r, "/health", api.health)
 
