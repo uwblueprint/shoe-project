@@ -30,4 +30,11 @@ func init() {
 	viper.SetDefault("server.cors.allowed_headers", []string{"Host", "Authorization", "Content-Type", "Content-Length", "Connection"})
 	viper.SetDefault("server.cors.allowed_credentials", true)
 	viper.SetDefault("server.cors.max_age", 300)
+
+	// Database Defaults
+	viper.SetDefault("database.user", "user")
+	viper.SetDefault("database.password", "password")
+	viper.SetDefault("database.name", "test")
+	viper.SetDefault("database.port", "5432")
+	viper.SetDefault("database.host", "localhost")
 }
