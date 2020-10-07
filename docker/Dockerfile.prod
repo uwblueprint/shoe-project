@@ -1,26 +1,58 @@
-FROM golang:1.15
+############################
+# STEP 1 build executable binary
+############################
+FROM golang:alpine AS builder
+# Install git.
+# Git is required for fetching the dependencies.
+RUN apk update && apk add --no-cache git
 
-SHELL ["/bin/bash", "-c"]
+ENV PORT=8080
+ENV USER=appuser
+ENV UID=10001 
 
-# since we're starting non-interactive shell, 
-# we wil need to tell bash to load .bashrc manually
-ENV BASH_ENV ~/.bashrc
-# needed by volta() function
-ENV VOLTA_HOME /root/.volta
-# make sure packages managed by volta will be in PATH
-ENV PATH $VOLTA_HOME/bin:$PATH
+# See https://stackoverflow.com/a/55757473/12429735RUN 
+RUN adduser \    
+    --disabled-password \    
+    --gecos "" \    
+    --home "/nonexistent" \    
+    --shell "/sbin/nologin" \    
+    --no-create-home \    
+    --uid "${UID}" \    
+    "${USER}"
 
-# Using volta to manage node + yarn versions
-RUN curl https://get.volta.sh | bash
-RUN volta install node
+WORKDIR $GOPATH/src/shoe-project/app/
+COPY . .
+
+# fetch dependencies
+RUN go mod download
+RUN go mod verify
+
+# build
+RUN GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /go/bin/shoe-project
+
+############################
+# STEP 2 build a small image
+############################
+FROM scratch
+# Import the user and group files from the builder.
+COPY --from=builder /etc/passwd /etc/passwd
+COPY --from=builder /etc/group /etc/group
+# Copy our static executable.
+COPY --from=builder /go/bin/shoe-project /go/bin/shoe-project
+# Use an unprivileged user.
+USER appuser:appuser
+# Run the binary.
+ENTRYPOINT ["/go/bin/shoe-project"]
+
+
+FROM node:13.12.0-alpine
 
 WORKDIR /app
-COPY . /app
 
-RUN cd ui && yarn && yarn build-prod
+ENV PATH /app/node_modules/.bin:$PATH
 
-RUN go mod download
-RUN go build
+COPY package.json yarn.lock ./
+RUN yarn && yarn build-prod
 
-EXPOSE 8900
+EXPOSE ${PORT}
 CMD ["./shoe-project", "server"]
