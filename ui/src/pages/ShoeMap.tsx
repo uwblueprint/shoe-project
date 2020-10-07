@@ -1,10 +1,11 @@
 import * as React from 'react';
+import {TitleText} from "../styles/typography";
 
 export const ShoeMap = ()=> {
     return (
         <div>
-          <h1>ShoeMap</h1> 
-          <span> test text fkjbkjbjdbvdjfv</span> 
+          <TitleText>ShoeMap</TitleText> 
+          <span> test text</span> 
         </div>
     );
   }

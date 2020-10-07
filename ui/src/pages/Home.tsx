@@ -1,26 +1,22 @@
 import * as React from 'react';
 import styled from "styled-components";
-
-const Title = styled.h1`
-  font-size: 3em;
-  text-align: center;
-  color: palevioletred;
-`;
+import {color} from "../styles";
+import {TitleText} from "../styles/typography";
 
 const Button = styled.button`
   display: flex;    
-  color: palevioletred;
+  color: ${color.accentColor};
   font-size: 1em;
   margin: 1em;
   padding: 0.25em 1em;
-  border: 2px solid palevioletred;
+  border: 2px solid ${color.accentColor};
   border-radius: 3px;
 `;
 
 export const Home = ()=> {
     return (
         <div>
-          <Title>Home</Title> 
+          <TitleText>Home</TitleText> 
           <span> test text hehe</span> 
           <Button>Test Button</Button>
         </div>
