@@ -1,38 +1,37 @@
 import * as React from 'react';
-import styled from "styled-components";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
 
-interface Props {
-   name:
-    string
-}
+import { Home, ShoeMap } from './pages';
 
-const Title = styled.h1`
-  font-size: 3em;
-  text-align: center;
-  color: palevioletred;
-`;
+function App() {
+  return (
+    <Router>
+      <nav>
+        <ul>
+          <li>
+            <Link to="/">Home</Link>
+          </li>
+          <li>
+            <Link to="/map">ShoeMap</Link>
+          </li>
+        </ul>
+      </nav>
 
-const Button = styled.button`
-  display: flex;    
-  color: palevioletred;
-  font-size: 1em;
-  margin: 1em;
-  padding: 0.25em 1em;
-  border: 2px solid palevioletred;
-  border-radius: 3px;
-  
-`;
-
-class App extends React.Component<Props> {
-  render() {
-    const { name } = this.props;
-    return (
-      <>
-          <Title>Hello {name}</Title>
-          <Button>Click Me!</Button>
-      </>
-    );
-  }
+      <Switch>
+        <Route exact path="/">
+          <Home />
+        </Route>
+        <Route path="/map">
+          <ShoeMap />
+        </Route>
+      </Switch>
+    </Router>
+  );
 }
 
 export default App;
