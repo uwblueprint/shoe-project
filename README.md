@@ -1,6 +1,30 @@
 # shoe-project
 
-## Setup frontend
+## Setup (Development environment)
+
+Requirements:
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+- Yarn >= 1.20
+- Node >= 12 (We recommend managing node versions with https://volta.sh/)
+
+Then run the Makefile to get started.
+
+```
+make
+```
+
+If you install new dependencies, we recommend you clean the docker images with `make clean-docker`, then run `make` again.
+
+Trouble? Feel free to blow everything up with `make clean`. Also, you can run `docker image ls` to list all images, and `docker ps` to see all running images.
+
+## Building for Production
+
+See the `docker/Dockerfile.prod` for more details. 
+
+TL;DR, run `yarn build-prod`, and then just run the server.
+
+## Manual setup (frontend)
 
 The frontend uses [React](https://reactjs.org/) and [TypeScript](https://www.typescriptlang.org/), and bundles assets using [Parcel](https://parceljs.org/).
 

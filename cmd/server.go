@@ -1,7 +1,10 @@
 package cmd
 
 import (
+	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"github.com/uwblueprint/shoe-project/config"
@@ -24,11 +27,15 @@ var (
 				logger.Fatalw("Create Server", "Err", err)
 			}
 
+			executablePath, err := os.Executable()
+			if err != nil {
+				logger.Fatalw("Get Executable Path", "Err", err)
+			}
+
 			// create and mount ui handler
-			server.Router.Mount("/", uiHandler("ui/dist"))
+			server.Router.Mount("/", uiHandler(fmt.Sprintf("%s/ui/dist", filepath.Dir(executablePath))))
 
 			db, err := database.Connect()
-
 			if err != nil {
 				logger.Fatalw("Failed to connect to databse", "Err", err)
 			}
