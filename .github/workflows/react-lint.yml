@@ -6,6 +6,8 @@ jobs:
   run-linters:
     name: Run linters
     runs-on: ubuntu-latest
+    env: 
+      working-directory: ./ui
 
     steps:
       - name: Check out Git repository
@@ -18,7 +20,6 @@ jobs:
 
       # TSLint and Prettier must be in `package.json`
       - name: Install Node.js dependencies
-        working-directory: ./ui
         run: yarn install
 
       - name: Run linters
