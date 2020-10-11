@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ main ]
 
-default: 
+defaults: 
     run:
     working-directory: ./ui
 
