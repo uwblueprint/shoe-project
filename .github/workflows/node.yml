@@ -3,35 +3,34 @@ name: Node.js CI
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-# defaults: 
-#     run:
-#      working-directory: ui
 
 jobs:
-  build:
-
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         node-version: [10.x, 12.x, 14.x]
-  env: 
-    working-directory: ./ui
+
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-        # Run linting
-    - run: yarn run build --if-present
-    - run: yarn lint:prettier
-    - run: yarn lint:eslint
-    - run: yarn run build --if-present
-    - run: prettier --check src/
-    - run: eslint src/ --cache --format stylish
-        # Run tests
-    - run: yarn test
+    
+    - name: Install dependencies
+      working-directory: ./ui
+      run: yarn install
+    - name: Build 
+      working-directory: ./ui
+      run: yarn run build --if-present
+    - name: Linting
+      working-directory: ./ui
+      run: |
+        yarn lint:prettier
+        yarn lint:prettier
+        prettier --check src/
+        eslint src/ --cache --format stylish
+    - name: Testing
+      working-directory: ./ui
+      run: yarn test
