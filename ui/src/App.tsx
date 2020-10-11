@@ -1,14 +1,9 @@
-import * as React from 'react';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
+import * as React from "react";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
-import { Home, ShoeMap } from './pages';
+import { Home, ShoeMap } from "./pages";
 
-function App() {
+function App(): JSX.Element {
   return (
     <Router>
       <nav>
