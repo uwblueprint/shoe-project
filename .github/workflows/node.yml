@@ -29,9 +29,7 @@ jobs:
       working-directory: ./ui
       run: |
         yarn lint:prettier
-        yarn lint:prettier
-        prettier --check src/
-        eslint src/ --cache --format stylish
+        yarn lint:eslint
     - name: Testing
       working-directory: ./ui
       run: yarn test
