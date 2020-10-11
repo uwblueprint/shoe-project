@@ -1,2 +1,2 @@
-export { default as color } from "./colors.js";
-export { device } from "./device";
+export { default as color } from './colors.js'
+export { device } from './device'
