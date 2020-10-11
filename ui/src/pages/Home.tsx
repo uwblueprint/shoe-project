@@ -1,7 +1,7 @@
-import * as React from 'react'
-import styled from 'styled-components'
-import { color } from '../styles'
-import { TitleText } from '../styles/typography'
+import * as React from "react";
+import styled from "styled-components";
+import { color } from "../styles";
+import { TitleText } from "../styles/typography";
 
 const Button = styled.button`
   display: flex;
@@ -11,7 +11,7 @@ const Button = styled.button`
   padding: 0.25em 1em;
   border: 2px solid ${color.accentColor};
   border-radius: 3px;
-`
+`;
 
 export const Home: React.FC = () => {
   return (
@@ -20,5 +20,5 @@ export const Home: React.FC = () => {
       <span> test text hehe</span>
       <Button>Test Button</Button>
     </div>
-  )
-}
+  );
+};
