@@ -27,6 +27,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         # Run linting
+    - run: yarn run build --if-present
     - run: yarn lint:prettier
     - run: yarn lint:eslint
     - run: yarn run build --if-present
