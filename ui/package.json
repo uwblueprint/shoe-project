@@ -22,11 +22,15 @@
     "test": "jest"
   },
   "dependencies": {
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@types/jest": "^26.0.14",
     "react": ">= 16.8.0",
     "react-dom": ">= 16.8.0",
     "react-is": "^16.13.1",
     "react-router-dom": "^5.2.0",
-    "styled-components": "^5.2.0"
+    "styled-components": "^5.2.0",
+    "ts-jest": "^26.4.1"
   },
   "devDependencies": {
     "@babel/core": "^7.11.6",
@@ -37,10 +41,11 @@
     "@types/react-router-dom": "^5.1.6",
     "@typescript-eslint/eslint-plugin": "^4.4.0",
     "@typescript-eslint/parser": "^4.4.0",
-    "babel-jest": "^26.3.0",
+    "babel-jest": "^26.5.2",
+    "babel-polyfill": "^6.26.0",
     "eslint": "^7.11.0",
     "eslint-plugin-react": "^7.21.4",
-    "jest": "^26.4.2",
+    "jest": "^26.5.3",
     "parcel-bundler": "^1.12.4",
     "prettier": "^2.1.2",
     "typescript": "^4.0.3"
@@ -48,5 +53,12 @@
   "volta": {
     "node": "12.18.3",
     "yarn": "1.22.5"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
+    },
+    "setupFiles": ["<rootDir>/src/__tests__/test.init.js"],
+    "testMatch": [ "**/__tests__/**/*.+(spec|test).[jt]s?(x)"]
   }
 }
