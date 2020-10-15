@@ -43,7 +43,6 @@ services:
       - /bin/sh
       - -c
       - |
-          yarn
           yarn watch &
           yarn start
     volumes:
