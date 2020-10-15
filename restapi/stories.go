@@ -1,6 +1,7 @@
 package restapi
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi"
@@ -12,8 +13,8 @@ import (
 
 func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var stories []models.Story
-	err := api.database.Find(&stories).Error
 
+	err := api.database.Find(&stories).Error
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
@@ -24,11 +25,11 @@ func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.R
 func (api api) ReturnStoryByID(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var story models.Story
 	id := chi.URLParam(r, "storyID")
-	err := api.database.Where("id=?", id).First(&story).Error
 
+	err := api.database.Where("id=?", id).First(&story).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return rest.ErrNotFound("Could not find story with ID: " + id)
+			return rest.ErrNotFound(fmt.Sprintf("Could not find story with ID %s", id))
 		}
 		return rest.ErrInternal(api.logger, err)
 	}
