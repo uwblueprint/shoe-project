@@ -1,10 +1,12 @@
 version: '3.7'
+
 services:
   server:
-    container_name: shoe_project_server
     build:
       context: .
       dockerfile: $PWD/docker/Dockerfile.dev
+    container_name: shoe_project_server
+    image: shoe_project_image
     ports:
       - '8900:8900'
       - '42967:42967' # Hot Module Reloading for frontend
@@ -12,6 +14,15 @@ services:
       DATABASE_HOST: postgres
     volumes:
       - './:/app'
+
+  migrations:
+    image: shoe_project_image
+    environment:
+      DATABASE_HOST: postgres
+    command: "./shoe-project seed"
+    depends_on:
+      - postgres
+      - server
 
   postgres:
     container_name: shoe_project_postgres
@@ -35,6 +46,8 @@ services:
        - 'pgadmin:/root/.pgadmin'
     ports:
       - '5050:80'
+    depends_on:
+      - postgres
 
 volumes:
   postgres:

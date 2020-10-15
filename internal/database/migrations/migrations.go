@@ -1,10 +1,7 @@
 package migrations
 
 import (
-	"math/rand"
-	"strconv"
-	"time"
-
+	"github.com/tjarratt/babble"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
 	"gorm.io/gorm"
 )
@@ -14,23 +11,19 @@ func CreateTables(db *gorm.DB) error {
 }
 
 func Seed(db *gorm.DB) error {
-	rand.Seed(time.Now().Unix())
-	randNum := rand.Int()
+	babbler := babble.NewBabbler()
+	babbler.Count = 1
 
 	seed := models.Author{
-		FirstName:     "Grace " + strconv.Itoa(randNum),
-		LastName:      "Hopper",
-		Bio:           "pioneer",
+		FirstName:     babbler.Babble(),
+		LastName:      babbler.Babble(),
+		Bio:           babbler.Babble(),
 		OriginCountry: "United States",
-		CurrentCity:   "Memory",
+		CurrentCity:   "Toronto",
 		Stories: []models.Story{
 			{
-				Title:   "Test title",
-				Content: "sample text",
-			},
-			{
-				Title:   "Test title 2",
-				Content: "sample text 2",
+				Title:   babble.NewBabbler().Babble(),
+				Content: babble.NewBabbler().Babble(),
 			},
 		},
 	}

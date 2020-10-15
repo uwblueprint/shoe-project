@@ -1,11 +1,20 @@
+FROM fedora as words
+
+# needed to install words file
+RUN yum -y install words
+
 FROM golang:alpine
 
+# words file needed for generating random words
+COPY --from=words /usr/share/dict/words /usr/share/dict/words
 RUN apk add --update nodejs yarn git util-linux
 
 WORKDIR /app
 COPY . .
 
 RUN go mod download
+RUN cd ui && yarn
+
 # Make sure we don't pollute the main docker-file
 # CompileDaemon allows for hot reloading
 RUN cd /tmp && go get github.com/githubnemo/CompileDaemon
