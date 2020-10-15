@@ -1,31 +1,53 @@
 version: '3.7'
 
 services:
-  server:
+  build-setup:
+    image: shoe_project_image
     build:
       context: .
-      dockerfile: $PWD/docker/Dockerfile.dev
-    container_name: shoe_project_server
-    image: shoe_project_image
-    ports:
-      - '8900:8900'
-      - '42967:42967' # Hot Module Reloading for frontend
+      dockerfile: './docker/Dockerfile.dev'
     environment:
       DATABASE_HOST: postgres
-    volumes:
-      - './:/app'
+    command: './shoe-project seed'
     depends_on:
       - postgres
 
-  migrations:
-    container_name: shoe_project_migrations
+  server:
     image: shoe_project_image
+    container_name: shoe_project_server
     environment:
       DATABASE_HOST: postgres
-    command: "./shoe-project seed"
+    ports:
+      - '42967:42967' # Hot Module Reloading for frontend
+      - '8900:8900'
+    command:
+      - /bin/sh
+      - -c
+      - |
+          cd ui && yarn watch &
+          CompileDaemon --command="./shoe-project server"
+    volumes:
+      - './:/app'
     depends_on:
+      - build-setup
       - postgres
-      - server
+
+  frontend:
+    image: shoe_project_image
+    container_name: shoe_project_frontend
+    ports:
+      - '42967:42967' # Hot Module Reloading for frontend
+      - '1234:1234'
+    working_dir: '/app/ui'
+    command:
+      - /bin/sh
+      - -c
+      - |
+          yarn
+          yarn watch &
+          yarn start
+    volumes:
+      - './:/app'
 
   postgres:
     container_name: shoe_project_postgres
@@ -43,14 +65,16 @@ services:
     container_name: shoe_project_pgadmin
     image: dpage/pgadmin4
     environment:
-      PGADMIN_DEFAULT_EMAIL: user@blueprint.com
-      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_DEFAULT_EMAIL: 'user@blueprint.com'
+      PGADMIN_DEFAULT_PASSWORD: 'admin'
     volumes:
        - 'pgadmin:/root/.pgadmin'
     ports:
       - '5050:80'
     depends_on:
       - postgres
+    logging:
+      driver: none
 
 volumes:
   postgres:
