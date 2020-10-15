@@ -1,9 +1,12 @@
 package restapi
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/render"
+	"github.com/uwblueprint/shoe-project/internal/database/models"
 	"github.com/uwblueprint/shoe-project/restapi/rest"
 	"github.com/uwblueprint/shoe-project/server"
 	"go.uber.org/zap"
@@ -28,7 +31,29 @@ func Router(db *gorm.DB) (http.Handler, error) {
 	rest.GetHandler(r, "/story/{storyID}", api.ReturnStoryByID)
 
 	rest.PostHandler(r, "/authors", api.CreateAuthor)
+	rest.PostHandler(r, "/stories", api.storyCreate)
 	return r, nil
+}
+
+func (api api) storyCreate(w http.ResponseWriter, r *http.Request) render.Renderer {
+	// Declare a new Story struct.
+	var s []models.Story
+
+	// Try to decode the request body into the struct. If there is an error,
+	// respond to the client with the error message and a 400 status code.
+	err := json.NewDecoder(r.Body).Decode(&s)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return rest.MsgStatusOK("Error")
+	}
+
+	if err := api.database.Create(&s).Error; err != nil {
+		return rest.ErrInternal(zap.S(), err)
+	}
+
+	// Do something with the Story struct...
+	fmt.Fprintf(w, "Story: %+v", s)
+	return rest.MsgStatusOK("Hello World")
 }
 
 func (api api) health(w http.ResponseWriter, r *http.Request) render.Renderer {
