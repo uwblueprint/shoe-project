@@ -27,15 +27,6 @@ services:
       - postgres
       - server
 
-  migrations:
-    image: shoe_project_image
-    environment:
-      DATABASE_HOST: postgres
-    command: "./shoe-project seed"
-    depends_on:
-      - postgres
-      - server
-
   postgres:
     container_name: shoe_project_postgres
     image: postgres
