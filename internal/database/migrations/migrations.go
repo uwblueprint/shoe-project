@@ -7,7 +7,17 @@ import (
 )
 
 func CreateTables(db *gorm.DB) error {
-	return db.AutoMigrate(&models.Story{}, &models.Author{})
+	return db.AutoMigrate(&models.Author{}, &models.Story{}, &models.User{})
+}
+
+func CreateSuperUser(db *gorm.DB) error {
+	// TODO: probably save as env vars in default.go
+	superUser := models.User {
+		Username: "admin",
+		Password: "root",
+	}
+
+	return db.Create(&superUser).Error
 }
 
 func Seed(db *gorm.DB) error {
