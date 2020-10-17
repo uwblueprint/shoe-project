@@ -14,11 +14,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type claims struct {
-	Username	string	`json:"username"`
-	jwt.StandardClaims
-}
-
 func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var user models.User
 	username := chi.URLParam(r, "username")
@@ -40,7 +35,7 @@ func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
 
 	// Create JWT token with 5 minutes expiry for user
 	expirationTime := time.Now().Add(5 * time.Minute)
-	claim := &claims {
+	claim := &models.Claims {
 		Username: username,
 		StandardClaims: jwt.StandardClaims {
 			ExpiresAt: expirationTime.Unix(),
@@ -53,18 +48,6 @@ func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
 		return rest.ErrInternal(api.logger, err)
 	}
 
-	// Persist user's JWT token as a cookie
-	http.SetCookie(w, &http.Cookie{
-		Name:    "token",
-		Value:   signedToken,
-		Expires: expirationTime,
-	})
-
-	// TODO:
-	// Refresh function for token
-	// jwtMiddleware() : handlers to extract & validate token from header in request
-	// Wrap POST routes with jwtMiddleware() 
 	return rest.JSONStatusOK(signedToken)
 }
-
 

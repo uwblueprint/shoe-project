@@ -3,8 +3,10 @@ package restapi
 import (
 	"net/http"
 
+	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	"github.com/uwblueprint/shoe-project/restapi/rest"
+	"github.com/uwblueprint/shoe-project/restapi/middleware"
 	"github.com/uwblueprint/shoe-project/server"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -23,10 +25,18 @@ func Router(db *gorm.DB) (http.Handler, error) {
 		logger:   zap.S(),
 	}
 
-	rest.GetHandler(r, "/health", api.health)
-	rest.GetHandler(r, "/login/{username}/{password}", api.Login)
-	rest.GetHandler(r, "/stories", api.ReturnAllStories)
-	rest.GetHandler(r, "/story/{storyID}", api.ReturnStoryByID)
+	// Public API
+	r.Group(func(r chi.Router) {
+		rest.GetHandler(r, "/health", api.health)
+		rest.GetHandler(r, "/login/{username}/{password}", api.Login)
+		rest.GetHandler(r, "/story/{storyID}", api.ReturnStoryByID)
+	})
+	
+	// Private API
+	r.Group(func(r chi.Router) {
+		r.Use(middleware.VerifyToken)
+		rest.GetHandler(r, "/stories", api.ReturnAllStories)
+	})
 
 	rest.PostHandler(r, "/authors", api.CreateAuthors)
 	rest.PostHandler(r, "/stories", api.CreateStories)

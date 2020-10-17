@@ -148,10 +148,10 @@ func GetJWTKey() []byte {
 	return []byte(viper.GetString("jwtKey"))
 }
 
-func GetSuperUserUsername() []byte {
+func GetSuperUserUsername() string {
 	return viper.GetString("superuser.username")
 }
 
-func GetSuperUserPassword() []byte {
+func GetSuperUserPassword() string {
 	return viper.GetString("superuser.password")
 }
