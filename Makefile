@@ -1,10 +1,22 @@
-default: docker-build
+default: docker-run
 
 setup:
 	(cd ui; yarn)
 
-docker-build: setup
+docker-run: setup
 	docker-compose up
+
+docker-setup:
+	docker-compose up build-setup
+
+docker-server:
+	docker-compose up server
+
+docker-frontend:
+	docker-compose up frontend
+
+docker-database:
+	docker-compose up postgres
 
 clean-frontend:
 	(cd ui; rm -rf node_modules)

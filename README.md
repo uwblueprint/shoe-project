@@ -1,6 +1,6 @@
 # shoe-project
 
-## Setup (Development environment)
+## Setup
 
 Requirements:
 - [Docker](https://docs.docker.com/get-docker/)
@@ -8,19 +8,55 @@ Requirements:
 - Yarn >= 1.20
 - Node >= 12 (We recommend managing node versions with https://volta.sh/)
 
-Then run the Makefile to get started.
 
+## Development Workflow
+The project is dockerized and hence it is recommended to use `docker-compose` to develop and run services!
+
+- Backend server supports hot-reload so you don't need to re run it every change
+- Frontend also supports hot-reload so no need to re run it ever change
+
+Install dependencies and setup:
+```
+make setup
+```
+
+To run all the services:
 ```
 make
 ```
 
-If you install new dependencies, we recommend you clean the docker images with `make clean-docker`, then run `make` again.
+To run DB migrations:
+```
+make docker-setup
+```
+
+To run server:
+```
+make docker-server
+```
+- **Frontend**: Go to [localhost:8900](http://localhost:8900)
+- **Backend**: Go to [localhost:8900/api](http://localhost:8900/api)
+
+To run frontend:
+```
+make docker-frontend
+```
+- Go to [localhost:1234](http://localhost:1234)
+
+To run database:
+```
+make docker-postgres
+```
+- **PgAdmin**: Go to [localhost:5050](http://localhost:5050)
+
+
+If you install new dependencies, clean the docker images with `make clean-docker`, then run `make` again.
 
 Trouble? Feel free to blow everything up with `make clean`. Also, you can run `docker image ls` to list all images, and `docker ps` to see all running images.
 
 ## Building for Production
 
-See the `docker/Dockerfile.prod` for more details. 
+See the `docker/Dockerfile.prod` for more details.
 
 TL;DR, run `yarn build-prod`, and then just run the server.
 
