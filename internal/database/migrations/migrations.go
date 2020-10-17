@@ -1,9 +1,9 @@
 package migrations
 
 import (
-	"github.com/tjarratt/babble"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
 	"gorm.io/gorm"
+	"syreclabs.com/go/faker"
 )
 
 func CreateTables(db *gorm.DB) error {
@@ -11,19 +11,16 @@ func CreateTables(db *gorm.DB) error {
 }
 
 func Seed(db *gorm.DB) error {
-	babbler := babble.NewBabbler()
-	babbler.Count = 1
-
 	seed := models.Author{
-		FirstName:     babbler.Babble(),
-		LastName:      babbler.Babble(),
-		Bio:           babbler.Babble(),
-		OriginCountry: "United States",
+		FirstName:     faker.Name().FirstName(),
+		LastName:      faker.Name().LastName(),
+		Bio:           faker.Name().Title(),
+		OriginCountry: faker.Address().Country(),
 		CurrentCity:   "Toronto",
 		Stories: []models.Story{
 			{
-				Title:   babble.NewBabbler().Babble(),
-				Content: babble.NewBabbler().Babble(),
+				Title:   faker.Hacker().Noun(),
+				Content: faker.Hacker().SaySomethingSmart(),
 			},
 		},
 	}

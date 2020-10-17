@@ -18,6 +18,7 @@ services:
       - postgres
 
   migrations:
+    container_name: shoe_project_migrations
     image: shoe_project_image
     environment:
       DATABASE_HOST: postgres
