@@ -1,12 +1,9 @@
 package migrations
 
 import (
-	"math/rand"
-	"strconv"
-	"time"
-
 	"github.com/uwblueprint/shoe-project/internal/database/models"
 	"gorm.io/gorm"
+	"syreclabs.com/go/faker"
 )
 
 func CreateTables(db *gorm.DB) error {
@@ -14,23 +11,16 @@ func CreateTables(db *gorm.DB) error {
 }
 
 func Seed(db *gorm.DB) error {
-	rand.Seed(time.Now().Unix())
-	randNum := rand.Int()
-
 	seed := models.Author{
-		FirstName:     "Grace " + strconv.Itoa(randNum),
-		LastName:      "Hopper",
-		Bio:           "pioneer",
-		OriginCountry: "United States",
-		CurrentCity:   "Memory",
+		FirstName:     faker.Name().FirstName(),
+		LastName:      faker.Name().LastName(),
+		Bio:           faker.Name().Title(),
+		OriginCountry: faker.Address().Country(),
+		CurrentCity:   "Toronto",
 		Stories: []models.Story{
 			{
-				Title:   "Test title",
-				Content: "sample text",
-			},
-			{
-				Title:   "Test title 2",
-				Content: "sample text 2",
+				Title:   faker.Hacker().Noun(),
+				Content: faker.Hacker().SaySomethingSmart(),
 			},
 		},
 	}

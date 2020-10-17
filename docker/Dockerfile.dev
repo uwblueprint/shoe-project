@@ -6,6 +6,8 @@ WORKDIR /app
 COPY . .
 
 RUN go mod download
+RUN cd ui && yarn
+
 # Make sure we don't pollute the main docker-file
 # CompileDaemon allows for hot reloading
 RUN cd /tmp && go get github.com/githubnemo/CompileDaemon
