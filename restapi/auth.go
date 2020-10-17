@@ -34,8 +34,8 @@ func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
 		return rest.ErrUnauthorized(fmt.Sprintf("Wrong password for username %s", username))
 	}
 
-	// Create JWT token with 5 minutes expiry for user
-	expirationTime := time.Now().Add(5 * time.Minute)
+	// Create JWT token with 15 minutes expiry for user
+	expirationTime := time.Now().Add(15 * time.Minute)
 	claim := &models.Claims {
 		Username: username,
 		StandardClaims: jwt.StandardClaims {

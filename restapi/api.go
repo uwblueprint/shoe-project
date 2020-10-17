@@ -29,13 +29,15 @@ func Router(db *gorm.DB) (http.Handler, error) {
 	r.Group(func(r chi.Router) {
 		rest.GetHandler(r, "/health", api.health)
 		rest.GetHandler(r, "/login/{username}/{password}", api.Login)
+		rest.GetHandler(r, "/stories", api.ReturnAllStories)
 		rest.GetHandler(r, "/story/{storyID}", api.ReturnStoryByID)
 	})
 	
 	// Private API
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.VerifyToken)
-		rest.GetHandler(r, "/stories", api.ReturnAllStories)
+		// Add protected endpoints here, e.g.:
+		// rest.PostHandler(r, "/story", api.CreateStory)
 	})
 
 	rest.PostHandler(r, "/authors", api.CreateAuthors)
