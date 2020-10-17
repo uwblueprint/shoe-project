@@ -1,6 +1,7 @@
 package migrations
 
 import (
+	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
 	"gorm.io/gorm"
 	"syreclabs.com/go/faker"
@@ -11,10 +12,9 @@ func CreateTables(db *gorm.DB) error {
 }
 
 func CreateSuperUser(db *gorm.DB) error {
-	// TODO: probably save as env vars in default.go
 	superUser := models.User {
-		Username: "admin",
-		Password: "root",
+		Username: config.GetSuperUserUsername(),
+		Password: config.GetSuperUserPassword(),
 	}
 
 	return db.Create(&superUser).Error

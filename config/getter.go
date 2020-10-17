@@ -141,3 +141,17 @@ func GetDatabasePort() string {
 func GetDatabaseHost() string {
 	return viper.GetString("database.host")
 }
+
+// -- auth --
+
+func GetJWTKey() []byte {
+	return []byte(viper.GetString("jwtKey"))
+}
+
+func GetSuperUserUsername() []byte {
+	return viper.GetString("superuser.username")
+}
+
+func GetSuperUserPassword() []byte {
+	return viper.GetString("superuser.password")
+}
