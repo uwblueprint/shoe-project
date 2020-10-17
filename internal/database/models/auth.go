@@ -5,7 +5,6 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-// TODO: hash passwords
 type User struct {
 	gorm.Model
 	Username	string	`json:"username"`

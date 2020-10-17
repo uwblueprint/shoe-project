@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	"github.com/dgrijalva/jwt-go"
+	"golang.org/x/crypto/bcrypt"
 	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
 	"github.com/uwblueprint/shoe-project/restapi/rest"
@@ -29,7 +30,7 @@ func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
 	}
 
 	// Validate password
-	if user.Password != password {
+	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 		return rest.ErrUnauthorized(fmt.Sprintf("Wrong password for username %s", username))
 	}
 

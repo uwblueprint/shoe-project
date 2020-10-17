@@ -5,6 +5,7 @@ import (
 	"github.com/uwblueprint/shoe-project/internal/database/models"
 	"gorm.io/gorm"
 	"syreclabs.com/go/faker"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func CreateTables(db *gorm.DB) error {
@@ -12,11 +13,14 @@ func CreateTables(db *gorm.DB) error {
 }
 
 func CreateSuperUser(db *gorm.DB) error {
+	// Clear current superuser if any
+	db.Where("username = ?", "admin").Delete(models.User{})
+	
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(config.GetSuperUserPassword()), 8);
 	superUser := models.User {
 		Username: config.GetSuperUserUsername(),
-		Password: config.GetSuperUserPassword(),
+		Password: string(hashedPassword),
 	}
-
 	return db.Create(&superUser).Error
 }
 
