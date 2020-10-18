@@ -40,10 +40,9 @@ func Router(db *gorm.DB) (http.Handler, error) {
 		r.Use(jwtauth.Authenticator)
 		// Add protected endpoints here, e.g.:
 		// rest.PostHandler(r, "/story", api.CreateStory)
+		rest.PostHandler(r, "/authors", api.CreateAuthors)
+		rest.PostHandler(r, "/stories", api.CreateStories)
 	})
-
-	rest.PostHandler(r, "/authors", api.CreateAuthors)
-	rest.PostHandler(r, "/stories", api.CreateStories)
 	return r, nil
 }
 
