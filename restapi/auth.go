@@ -35,11 +35,12 @@ func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
 	}
 
 	// Create JWT token with 15 minutes expiry for user
-	expirationTime := time.Now().Add(15 * time.Minute)
+	expirationTime := time.Now().Add(config.GetTokenExpirationTime() * time.Minute)
 	claim := &models.Claims {
 		Username: username,
 		StandardClaims: jwt.StandardClaims {
 			ExpiresAt: expirationTime.Unix(),
+			Issuer: config.GetTokenIssuer(),
 		},
 	}
 	

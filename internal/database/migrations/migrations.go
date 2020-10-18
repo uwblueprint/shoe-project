@@ -16,7 +16,7 @@ func CreateSuperUser(db *gorm.DB) error {
 	// Clear current superuser if any
 	db.Where("username = ?", "admin").Delete(models.User{})
 	
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(config.GetSuperUserPassword()), 8);
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(config.GetSuperUserPassword()), 10);
 	superUser := models.User {
 		Username: config.GetSuperUserUsername(),
 		Password: string(hashedPassword),

@@ -155,3 +155,16 @@ func GetSuperUserUsername() string {
 func GetSuperUserPassword() string {
 	return viper.GetString("superuser.password")
 }
+
+func GetTokenExpirationTime() int {
+	switch GetMode() {
+	case MODE_DEV:
+		return 60
+	default:
+		return 15
+	}
+}
+
+func GetTokenIssuer() string {
+	return "https://shoe-project"
+}
