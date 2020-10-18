@@ -33,6 +33,6 @@ jobs:
       working-directory: ./ui
       run: |
         yarn lint:eslint
-    # - name: Testing
-    #   working-directory: ./ui
-    #   run: yarn test
+    - name: Testing
+      working-directory: ./ui
+      run: yarn test
