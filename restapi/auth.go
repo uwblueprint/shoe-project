@@ -1,11 +1,12 @@
 package restapi
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
 
-	"github.com/go-chi/chi"
+	"go.uber.org/zap"
 	"github.com/go-chi/render"
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
@@ -17,27 +18,30 @@ import (
 
 func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var user models.User
-	username := chi.URLParam(r, "username")
-	password := chi.URLParam(r, "password")
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		rest.ErrInvalidRequest(zap.S(), "Invalid login payload", err)
+	}
 
 	// Find user with username
-	err := api.database.Where("username=?", username).First(&user).Error
+	var dbUser models.User
+	err = api.database.Where("username=?", user.Username).First(&dbUser).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return rest.ErrNotFound(fmt.Sprintf("Could not find user with username %s", username))
+			return rest.ErrNotFound(fmt.Sprintf("Could not find user with username %s", user.Username))
 		}
 		return rest.ErrInternal(api.logger, err)
 	}
 
 	// Validate password
-	if err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
-		return rest.ErrUnauthorized(fmt.Sprintf("Wrong password for username %s", username))
+	if err = bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(user.Password)); err != nil {
+		return rest.ErrUnauthorized(fmt.Sprintf("Wrong password for username %s", user.Username))
 	}
 
 	// Create JWT token with 15 minutes expiry for user
-	expirationTime := time.Now().Add(config.GetTokenExpirationTime() * time.Minute)
+	expirationTime := time.Now().Add(15 * time.Minute)
 	claim := &models.Claims {
-		Username: username,
+		Username: user.Username,
 		StandardClaims: jwt.StandardClaims {
 			ExpiresAt: expirationTime.Unix(),
 			Issuer: config.GetTokenIssuer(),

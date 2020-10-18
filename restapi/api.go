@@ -28,9 +28,9 @@ func Router(db *gorm.DB) (http.Handler, error) {
 	// Public API
 	r.Group(func(r chi.Router) {
 		rest.GetHandler(r, "/health", api.health)
-		rest.GetHandler(r, "/login/{username}/{password}", api.Login)
 		rest.GetHandler(r, "/stories", api.ReturnAllStories)
 		rest.GetHandler(r, "/story/{storyID}", api.ReturnStoryByID)
+		rest.PostHandler(r, "/login", api.Login)
 	})
 	
 	// Private API
