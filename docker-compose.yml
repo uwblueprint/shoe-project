@@ -1,4 +1,4 @@
-version: '3.7'
+version: "3.7"
 
 services:
   build-setup:
@@ -6,8 +6,8 @@ services:
     container_name: shoe_project_build_setup
     build:
       context: .
-      dockerfile: './docker/Dockerfile.dev'
-    command: './shoe-project seed'
+      dockerfile: "./docker/Dockerfile.dev"
+    command: "./shoe-project seed"
     env_file:
       - .env
     depends_on:
@@ -17,14 +17,13 @@ services:
     image: shoe_project_image
     container_name: shoe_project_server
     ports:
-      - '8900:8900'
+      - "8900:8900"
     command:
       - /bin/sh
       - -c
-      - |
-          CompileDaemon --command="./shoe-project server"
+      - CompileDaemon --command="./shoe-project server"
     volumes:
-      - './:/app'
+      - "./:/app"
     env_file:
       - .env
     depends_on:
@@ -35,40 +34,40 @@ services:
     image: shoe_project_image
     container_name: shoe_project_frontend
     ports:
-      - '42967:42967' # Hot Module Reloading for frontend
-      - '1234:1234'
-    working_dir: '/app/ui'
+      - "42967:42967" # Hot Module Reloading for frontend
+      - "1234:1234"
+    working_dir: "/app/ui"
     command:
       - /bin/sh
       - -c
       - |
-          yarn watch &
-          yarn start
+        yarn watch &
+        yarn start
     volumes:
-      - './:/app'
+      - "./:/app"
 
   postgres:
     container_name: shoe_project_postgres
     image: postgres
     volumes:
-      - 'postgres:/var/lib/postgresql/data'
+      - "postgres:/var/lib/postgresql/data"
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
       POSTGRES_DB: test
     ports:
-      - '5432:5432'
+      - "5432:5432"
 
   pgadmin:
     container_name: shoe_project_pgadmin
     image: dpage/pgadmin4
     environment:
-      PGADMIN_DEFAULT_EMAIL: 'user@blueprint.org'
-      PGADMIN_DEFAULT_PASSWORD: 'admin'
+      PGADMIN_DEFAULT_EMAIL: "user@blueprint.org"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
     volumes:
-       - 'pgadmin:/root/.pgadmin'
+      - "pgadmin:/root/.pgadmin"
     ports:
-      - '5050:80'
+      - "5050:80"
     depends_on:
       - postgres
     logging:
