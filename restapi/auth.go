@@ -48,8 +48,8 @@ func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
 		},
 	}
 	
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
-	signedToken, err := token.SignedString(config.GetJWTKey())
+	token := config.GetJWTKey()
+	_, signedToken, err := token.Encode(claim)
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}

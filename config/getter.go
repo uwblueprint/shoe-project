@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/spf13/viper"
+	"github.com/go-chi/jwtauth"
 )
 
 // app wide
@@ -144,8 +145,8 @@ func GetDatabaseHost() string {
 
 // -- auth --
 
-func GetJWTKey() []byte {
-	return []byte(viper.GetString("jwtKey"))
+func GetJWTKey() *jwtauth.JWTAuth {
+	return jwtauth.New("HS256", []byte(viper.GetString("jwtKey")), nil)
 }
 
 func GetSuperUserUsername() string {
