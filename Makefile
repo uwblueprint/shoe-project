@@ -4,7 +4,7 @@ setup:
 	(cd ui; yarn)
 	docker-compose build
 
-docker-run: setup
+docker-run:
 	docker-compose up
 
 docker-setup:
