@@ -62,6 +62,9 @@
     "setupFiles": [
       "<rootDir>/src/__tests__/test.init.js"
     ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/__tests__/jest.setup.ts"
+    ],
     "testMatch": [
       "**/__tests__/**/*.+(spec|test).[jt]s?(x)"
     ]
