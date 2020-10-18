@@ -45,9 +45,10 @@ make docker-frontend
 
 To run database:
 ```
-make docker-postgres
+make docker-database
 ```
 - **PgAdmin**: Go to [localhost:5050](http://localhost:5050)
+- Login: **Username: user@blueprint.org** and **Password: admin**
 
 
 If you install new dependencies, clean the docker images with `make clean-docker`, then run `make` again.
