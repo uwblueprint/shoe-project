@@ -3,6 +3,7 @@ version: '3.7'
 services:
   build-setup:
     image: shoe_project_image
+    container_name: shoe_project_build_setup
     build:
       context: .
       dockerfile: './docker/Dockerfile.dev'
@@ -23,7 +24,6 @@ services:
       - /bin/sh
       - -c
       - |
-          cd ui && yarn watch &
           CompileDaemon --command="./shoe-project server"
     volumes:
       - './:/app'

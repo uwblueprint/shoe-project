@@ -2,6 +2,7 @@ default: docker-run
 
 setup:
 	(cd ui; yarn)
+	docker-compose build
 
 docker-run: setup
 	docker-compose up

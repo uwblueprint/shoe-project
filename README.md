@@ -15,7 +15,7 @@ The project is dockerized and hence it is recommended to use `docker-compose` to
 - Backend server supports hot-reload so you don't need to re run it every change
 - Frontend also supports hot-reload so no need to re run it ever change
 
-Install dependencies and setup:
+Install dependencies and docker setup:
 ```
 make setup
 ```
@@ -45,14 +45,22 @@ make docker-frontend
 
 To run database:
 ```
-make docker-postgres
+make docker-database
 ```
 - **PgAdmin**: Go to [localhost:5050](http://localhost:5050)
+- Login: **Username: user@blueprint.org** and **Password: admin**
 
 
 If you install new dependencies, clean the docker images with `make clean-docker`, then run `make` again.
 
 Trouble? Feel free to blow everything up with `make clean`. Also, you can run `docker image ls` to list all images, and `docker ps` to see all running images.
+
+If you see message:
+```
+Pulling frontend (shoe_project_image:)...
+ERROR: The image for the service you're trying to recreate has been removed. If you continue, volume data could be lost. Consider backing up your data before continuing.
+```
+- Resolve this by doing `make setup`
 
 ## Building for Production
 
