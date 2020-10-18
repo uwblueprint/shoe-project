@@ -24,7 +24,6 @@ services:
       - /bin/sh
       - -c
       - |
-          cd ui && yarn watch &
           CompileDaemon --command="./shoe-project server"
     volumes:
       - './:/app'
