@@ -2,6 +2,7 @@
 coverage/
 *.log
 *.swp
+.env
 
 # binaries
 shoe-project

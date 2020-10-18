@@ -16,6 +16,8 @@ services:
   server:
     image: shoe_project_image
     container_name: shoe_project_server
+    env_file:
+      - .env
     environment:
       DATABASE_HOST: postgres
     ports:

@@ -39,7 +39,7 @@ func init() {
 	viper.SetDefault("database.host", "localhost")
 
 	// Auth Defaults
-	viper.SetDefault("jwtKey", "GotFKl1PGgMpLg7D36NiI0hy/gsl6woTCXYdhKATbzc=")
-	viper.SetDefault("superuser.username", "admin")
-	viper.SetDefault("superuser.password", "root")
+	viper.BindEnv("jwtKey", "JWTKEY")
+	viper.BindEnv("superuser.username", "SUPERUSERNAME")
+	viper.BindEnv("superuser.password", "SUPERUSERPASSWORD")
 }
