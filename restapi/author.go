@@ -9,8 +9,8 @@ import (
 	"github.com/uwblueprint/shoe-project/restapi/rest"
 )
 
-func (api api) CreateAuthor(w http.ResponseWriter, r *http.Request) render.Renderer {
-	// Declare a new Story struct.
+func (api api) CreateAuthors(w http.ResponseWriter, r *http.Request) render.Renderer {
+	// Declare a new Author struct.
 	var author []models.Author
 
 	// respond to the client with the error message and a 400 status code.

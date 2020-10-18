@@ -38,7 +38,7 @@ func (api api) ReturnStoryByID(w http.ResponseWriter, r *http.Request) render.Re
 	return rest.JSONStatusOK(story)
 }
 
-func (api api) CreateStory(w http.ResponseWriter, r *http.Request) render.Renderer {
+func (api api) CreateStories(w http.ResponseWriter, r *http.Request) render.Renderer {
 	// Declare a new Story struct.
 	var stories []models.Story
 
