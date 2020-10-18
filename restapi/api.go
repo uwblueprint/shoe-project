@@ -27,6 +27,7 @@ func Router(db *gorm.DB) (http.Handler, error) {
 	rest.GetHandler(r, "/stories", api.ReturnAllStories)
 	rest.GetHandler(r, "/story/{storyID}", api.ReturnStoryByID)
 
+	rest.PostHandler(r, "/authors", api.CreateAuthor)
 	return r, nil
 }
 
