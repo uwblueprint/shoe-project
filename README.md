@@ -15,43 +15,44 @@ The project is dockerized and hence it is recommended to use `docker-compose` to
 - Backend server supports hot-reload so you don't need to re run it every change
 - Frontend also supports hot-reload so no need to re run it ever change
 
-Install dependencies and docker setup:
+Install dependencies and build docker image:
 ```
 make setup
 ```
 
-To run all the services:
+To run all the services for the app:
 ```
 make
 ```
 
-To run DB migrations:
+To seed DB:
 ```
-make docker-setup
+make seed
 ```
 
-To run server:
+To run backend:
 ```
-make docker-server
+make backend
 ```
 - **Frontend**: Go to [localhost:8900](http://localhost:8900)
 - **Backend**: Go to [localhost:8900/api](http://localhost:8900/api)
 
 To run frontend:
 ```
-make docker-frontend
+make frontend
 ```
 - Go to [localhost:1234](http://localhost:1234)
 
-To run database:
+To run postgres:
 ```
-make docker-database
+make postgres
 ```
-- **PgAdmin**: Go to [localhost:5050](http://localhost:5050)
-- Login: **Username: user@blueprint.org** and **Password: admin**
+Now database can be accessed by `Pgadmin`:
+- Go to [localhost:5050](http://localhost:5050)
+- **Username**: user@blueprint.org and **Password**: admin
 
 
-If you install new dependencies, clean the docker images with `make clean-docker`, then run `make` again.
+If you install new dependencies, clean the docker images with `make clean-docker`, then run `make setup` and `make` again.
 
 Trouble? Feel free to blow everything up with `make clean`. Also, you can run `docker image ls` to list all images, and `docker ps` to see all running images.
 

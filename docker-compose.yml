@@ -1,21 +1,23 @@
 version: "3.7"
 
 services:
-  build-setup:
+  seed:
     image: shoe_project_image
-    container_name: shoe_project_build_setup
-    build:
-      context: .
-      dockerfile: './docker/Dockerfile.dev'
-    command: './shoe-project seed'
+    container_name: shoe_project_seed
+    command:
+      - /bin/sh
+      - -c
+      - go run main.go seed
+    volumes:
+      - './:/app'
     env_file:
       - .env
     depends_on:
       - postgres
 
-  server:
+  backend:
     image: shoe_project_image
-    container_name: shoe_project_server
+    container_name: shoe_project_backend
     ports:
       - "8900:8900"
     command:
@@ -27,8 +29,8 @@ services:
     env_file:
       - .env
     depends_on:
-      - build-setup
       - postgres
+      - pgadmin
 
   frontend:
     image: shoe_project_image

@@ -1,23 +1,23 @@
-default: docker-run
+default: app
 
 setup:
 	(cd ui; yarn)
-	docker-compose build
+	docker build -t shoe_project_image -f ./docker/Dockerfile.dev .
 
-docker-run:
-	docker-compose up
+app:
+	docker-compose up postgres backend frontend
 
-docker-setup:
-	docker-compose up build-setup
+seed:
+	docker-compose up seed
 
-docker-server:
-	docker-compose up server
+backend:
+	docker-compose up backend
 
-docker-frontend:
+frontend:
 	docker-compose up frontend
 
-docker-database:
-	docker-compose up postgres
+postgres:
+	docker-compose up postgres pgadmin
 
 clean-frontend:
 	(cd ui; rm -rf node_modules)
@@ -28,5 +28,6 @@ clean-backend:
 
 clean-docker:
 	docker-compose down
+	docker image rm shoe_project_image || true
 
 clean: clean-docker clean-frontend clean-backend
