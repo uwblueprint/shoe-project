@@ -6,8 +6,8 @@ services:
     container_name: shoe_project_build_setup
     build:
       context: .
-      dockerfile: "./docker/Dockerfile.dev"
-    command: "./shoe-project seed"
+      dockerfile: './docker/Dockerfile.dev'
+    command: './shoe-project seed'
     env_file:
       - .env
     depends_on:
@@ -23,7 +23,7 @@ services:
       - -c
       - CompileDaemon --command="./shoe-project server"
     volumes:
-      - "./:/app"
+      - './:/app'
     env_file:
       - .env
     depends_on:
