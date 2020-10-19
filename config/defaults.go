@@ -37,9 +37,4 @@ func init() {
 	viper.SetDefault("database.name", "test")
 	viper.SetDefault("database.port", "5432")
 	viper.SetDefault("database.host", "localhost")
-
-	// Auth Defaults
-	viper.BindEnv("jwtKey", "JWTKEY")
-	viper.BindEnv("superuser.username", "SUPERUSERNAME")
-	viper.BindEnv("superuser.password", "SUPERUSERPASSWORD")
 }

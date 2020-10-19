@@ -6,9 +6,9 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/jwtauth"
 	"github.com/go-chi/render"
+	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/restapi/rest"
 	"github.com/uwblueprint/shoe-project/server"
-	"github.com/uwblueprint/shoe-project/config"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
@@ -33,13 +33,12 @@ func Router(db *gorm.DB) (http.Handler, error) {
 		rest.GetHandler(r, "/story/{storyID}", api.ReturnStoryByID)
 		rest.PostHandler(r, "/login", api.Login)
 	})
-	
+
 	// Private API
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(config.GetJWTKey()))
 		r.Use(jwtauth.Authenticator)
-		// Add protected endpoints here, e.g.:
-		// rest.PostHandler(r, "/story", api.CreateStory)
+
 		rest.PostHandler(r, "/authors", api.CreateAuthors)
 		rest.PostHandler(r, "/stories", api.CreateStories)
 	})

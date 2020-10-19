@@ -3,9 +3,9 @@ package migrations
 import (
 	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"syreclabs.com/go/faker"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func CreateTables(db *gorm.DB) error {
@@ -14,10 +14,10 @@ func CreateTables(db *gorm.DB) error {
 
 func CreateSuperUser(db *gorm.DB) error {
 	// Clear current superuser if any
-	db.Where("username = ?", "admin").Delete(models.User{})
-	
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(config.GetSuperUserPassword()), 10);
-	superUser := models.User {
+	db.Where("username = ?", config.GetSuperUserUsername()).Delete(models.User{})
+
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(config.GetSuperUserPassword()), 10)
+	superUser := models.User{
 		Username: config.GetSuperUserUsername(),
 		Password: string(hashedPassword),
 	}

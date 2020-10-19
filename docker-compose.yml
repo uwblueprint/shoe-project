@@ -7,19 +7,15 @@ services:
     build:
       context: .
       dockerfile: './docker/Dockerfile.dev'
-    environment:
-      DATABASE_HOST: postgres
     command: './shoe-project seed'
+    env_file:
+      - .env
     depends_on:
       - postgres
 
   server:
     image: shoe_project_image
     container_name: shoe_project_server
-    env_file:
-      - .env
-    environment:
-      DATABASE_HOST: postgres
     ports:
       - '8900:8900'
     command:
@@ -29,6 +25,8 @@ services:
           CompileDaemon --command="./shoe-project server"
     volumes:
       - './:/app'
+    env_file:
+      - .env
     depends_on:
       - build-setup
       - postgres

@@ -6,13 +6,12 @@ import (
 	"net/http"
 	"time"
 
-	"go.uber.org/zap"
-	"github.com/go-chi/render"
 	"github.com/dgrijalva/jwt-go"
-	"golang.org/x/crypto/bcrypt"
+	"github.com/go-chi/render"
 	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
 	"github.com/uwblueprint/shoe-project/restapi/rest"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -20,13 +19,12 @@ func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var user models.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		rest.ErrInvalidRequest(zap.S(), "Invalid login payload", err)
+		rest.ErrInvalidRequest(api.logger, "Invalid login payload", err)
 	}
 
 	// Find user with username
 	var dbUser models.User
-	err = api.database.Where("username=?", user.Username).First(&dbUser).Error
-	if err != nil {
+	if err = api.database.Where("username=?", user.Username).First(&dbUser).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return rest.ErrNotFound(fmt.Sprintf("Could not find user with username %s", user.Username))
 		}
@@ -38,16 +36,19 @@ func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
 		return rest.ErrUnauthorized(fmt.Sprintf("Wrong password for username %s", user.Username))
 	}
 
-	// Create JWT token with 15 minutes expiry for user
-	expirationTime := time.Now().Add(15 * time.Minute)
-	claim := &models.Claims {
+	jwtExpiry, err := config.GetTokenExpiryDuration()
+	if err != nil {
+		return rest.ErrInternal(api.logger, err)
+	}
+
+	claim := &models.Claims{
 		Username: user.Username,
-		StandardClaims: jwt.StandardClaims {
-			ExpiresAt: expirationTime.Unix(),
-			Issuer: config.GetTokenIssuer(),
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(jwtExpiry).Unix(),
+			Issuer:    config.GetTokenIssuer(),
 		},
 	}
-	
+
 	token := config.GetJWTKey()
 	_, signedToken, err := token.Encode(claim)
 	if err != nil {
@@ -56,4 +57,3 @@ func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
 
 	return rest.JSONStatusOK(signedToken)
 }
-
