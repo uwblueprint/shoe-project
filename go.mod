@@ -18,14 +18,12 @@ require (
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/spf13/viper v1.7.1
-	github.com/stretchr/testify v1.6.1 // indirect
 	github.com/xhit/go-str2duration/v2 v2.0.0
 	go.uber.org/zap v1.10.0
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
 	golang.org/x/tools v0.0.0-20201028215501-2b84a066b2fb // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
-	golang.org/x/net v0.0.0-20201006153459-a7d1128ccaa0 // indirect
 	gopkg.in/ryankurte/go-mapbox.v0 v0.4.2
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 	gorm.io/driver/postgres v1.0.2
