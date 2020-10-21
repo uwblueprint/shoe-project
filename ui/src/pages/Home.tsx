@@ -13,9 +13,9 @@ export const Home: React.FC = () => {
     <div>
       <TitleText>Stories</TitleText>
       {data.map((story) => (
-        <div key={story.ID}>
-          <div>{story.Title}</div>
-          <div>{story.Content}</div>
+        <div key={story.id}>
+          <div>{story.title}</div>
+          <div>{story.content}</div>
         </div>
       ))}
     </div>

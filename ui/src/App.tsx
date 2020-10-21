@@ -17,7 +17,6 @@ function App(): JSX.Element {
     <SWRConfig
       value={{
         fetcher: defaultFetcher,
-        dedupingInterval: 0,
       }}
     >
       <Router>
