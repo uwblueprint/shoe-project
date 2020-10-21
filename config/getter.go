@@ -1,7 +1,11 @@
 package config
 
 import (
+	"time"
+
+	"github.com/go-chi/jwtauth"
 	"github.com/spf13/viper"
+	str2duration "github.com/xhit/go-str2duration/v2"
 )
 
 // app wide
@@ -140,4 +144,28 @@ func GetDatabasePort() string {
 
 func GetDatabaseHost() string {
 	return viper.GetString("database.host")
+}
+
+// -- auth --
+
+func GetJWTKey() *jwtauth.JWTAuth {
+	return jwtauth.New("HS256", []byte(viper.GetString("auth.jwt_key")), nil)
+}
+
+func GetSuperUserUsername() string {
+	return viper.GetString("auth.superuser_username")
+}
+
+func GetSuperUserPassword() string {
+	return viper.GetString("auth.superuser_password")
+}
+
+func GetTokenExpiryDuration() (time.Duration, error) {
+	timeProvider := viper.GetString("auth.jwt_expiry")
+
+	return str2duration.ParseDuration(timeProvider)
+}
+
+func GetTokenIssuer() string {
+	return viper.GetString("auth.jwt_issuer")
 }

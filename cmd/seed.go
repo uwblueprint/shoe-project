@@ -29,6 +29,10 @@ var (
 				logger.Fatalw("Database table creation failed", "Err", err)
 			}
 
+			if err := migrations.CreateSuperUser(db); err != nil {
+				logger.Fatalw("Super user creation failed", "Err", err)
+			}
+
 			if err := migrations.Seed(db); err != nil {
 				logger.Fatalw("Database seed failed", "Err", err)
 			}

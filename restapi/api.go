@@ -3,7 +3,10 @@ package restapi
 import (
 	"net/http"
 
+	"github.com/go-chi/chi"
+	"github.com/go-chi/jwtauth"
 	"github.com/go-chi/render"
+	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/restapi/rest"
 	"github.com/uwblueprint/shoe-project/server"
 	"go.uber.org/zap"
@@ -23,12 +26,22 @@ func Router(db *gorm.DB) (http.Handler, error) {
 		logger:   zap.S(),
 	}
 
-	rest.GetHandler(r, "/health", api.health)
-	rest.GetHandler(r, "/stories", api.ReturnAllStories)
-	rest.GetHandler(r, "/story/{storyID}", api.ReturnStoryByID)
+	// Public API
+	r.Group(func(r chi.Router) {
+		rest.GetHandler(r, "/health", api.health)
+		rest.GetHandler(r, "/stories", api.ReturnAllStories)
+		rest.GetHandler(r, "/story/{storyID}", api.ReturnStoryByID)
+		rest.PostHandler(r, "/login", api.Login)
+	})
 
-	rest.PostHandler(r, "/authors", api.CreateAuthors)
-	rest.PostHandler(r, "/stories", api.CreateStories)
+	// Private API
+	r.Group(func(r chi.Router) {
+		r.Use(jwtauth.Verifier(config.GetJWTKey()))
+		r.Use(jwtauth.Authenticator)
+
+		rest.PostHandler(r, "/authors", api.CreateAuthors)
+		rest.PostHandler(r, "/stories", api.CreateStories)
+	})
 	return r, nil
 }
 
