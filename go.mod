@@ -5,6 +5,7 @@ go 1.14
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
+	github.com/gavv/httpexpect/v2 v2.1.0
 	github.com/go-chi/chi v4.1.2+incompatible
 	github.com/go-chi/cors v1.1.1
 	github.com/go-chi/jwtauth v4.0.4+incompatible
@@ -25,6 +26,7 @@ require (
 	golang.org/x/tools v0.0.0-20201022035929-9cf592e881e9 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
+	gorm.io/driver/mysql v1.0.3
 	gorm.io/driver/postgres v1.0.2
 	gorm.io/gorm v1.20.2
 	honnef.co/go/tools v0.0.1-2020.1.5 // indirect
