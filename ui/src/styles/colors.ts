@@ -1,24 +1,3 @@
-interface ColorInterface {
-  neutral: string;
-  grey: string;
-  black: string;
-  white: string;
-  primary: string;
-  primaryDark1: string;
-  primaryDark2: string;
-  primaryLight1: string;
-  primaryLight2: string;
-  primaryLight3: string;
-  primaryLight4: string;
-  secondary: string;
-  secondaryDark1: string;
-  secondaryDark2: string;
-  secondaryLight1: string;
-  secondaryLight2: string;
-  secondaryLight3: string;
-  secondaryLight4: string;
-}
-
 /* Primary Colours */
 const teal = "#6FBAC6";
 const tealDark1 = "#2D8694";
@@ -43,7 +22,7 @@ const grey = "#F2F6F8";
 const black = "#000000";
 const white = "#FFFFFF";
 
-const colors: ColorInterface = {
+export const colors = Object.freeze({
   neutral,
   grey,
   black,
@@ -62,6 +41,4 @@ const colors: ColorInterface = {
   secondaryLight2: redLight2,
   secondaryLight3: redLight3,
   secondaryLight4: redLight4,
-};
-
-export default colors;
+});
