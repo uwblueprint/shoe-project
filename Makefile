@@ -4,6 +4,7 @@ setup:
 	(cd ui; yarn)
 	docker build -t shoe_project_image -f ./docker/Dockerfile.dev .
 	go get golang.org/x/tools/cmd/goimports
+	go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.31.0
 
 app:
 	docker-compose up postgres backend frontend
@@ -32,6 +33,10 @@ clean-docker:
 
 clean: clean-docker clean-frontend clean-backend
 
-fmt:
+backend-fmt:
 	goimports -w .
 	go mod tidy
+
+backend-check:
+	go vet .
+	golangci-lint run
