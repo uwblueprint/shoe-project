@@ -149,6 +149,19 @@ func (suite *endpointTestSuite) TestCreateStory() {
 			AuthorID: 2,
 		},
 	}
+	defer db.Close()
+	gdb, err := gorm.Open(postgres.New(postgres.Config{
+		Conn: db,
+	  }), &gorm.Config{})
+
+	if err != nil {
+		t.Errorf("Error opening db")
+	}	
+	var arr []string
+	mock.ExpectBegin()
+    mock.ExpectQuery("SELECT * FROM stories WHERE stories.deleted_at IS NULL").WillReturnRows(sqlmock.NewRows(arr))
+	mock.ExpectCommit()
+
 
 	suite.endpoint.POST("/stories").WithHeader("Authorization", "Bearer "+suite.token).
 		WithJSON(json).
