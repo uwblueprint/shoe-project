@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Map, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
+import { Pin } from "../components/Pin";
 import { TitleText } from "../styles/typography";
 
 const StyledMap = styled(Map)`
