@@ -1,6 +1,3 @@
-// Todo: Remove Record<string, any> typing when JSON is fixed
-// See: https://github.com/uwblueprint/shoe-project/issues/62
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface Model {
   id: number;
   createdAt: string;
