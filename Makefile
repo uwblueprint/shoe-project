@@ -28,6 +28,5 @@ clean-backend:
 
 clean-docker:
 	docker-compose down
-	docker image rm shoe_project_image || true
 
 clean: clean-docker clean-frontend clean-backend
