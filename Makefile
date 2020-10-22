@@ -34,3 +34,4 @@ clean: clean-docker clean-frontend clean-backend
 
 fmt:
 	goimports -w .
+	go mod tidy
