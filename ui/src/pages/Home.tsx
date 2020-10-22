@@ -1,24 +1,23 @@
 import * as React from "react";
-import styled from "styled-components";
-import { color } from "../styles";
+import useSWR from "swr";
 import { TitleText } from "../styles/typography";
-
-const Button = styled.button`
-  display: flex;
-  color: ${color.accentColor};
-  font-size: 1em;
-  margin: 1em;
-  padding: 0.25em 1em;
-  border: 2px solid ${color.accentColor};
-  border-radius: 3px;
-`;
+import { Story } from "../types";
 
 export const Home: React.FC = () => {
+  const { data, error } = useSWR<Story[]>("/api/stories");
+
+  if (error) return <div>Error!</div>;
+  if (!data) return <div>Loading</div>;
+
   return (
     <div>
-      <TitleText>Home</TitleText>
-      <span> test text hehe</span>
-      <Button>Test Button</Button>
+      <TitleText>Stories</TitleText>
+      {data.map((story) => (
+        <div key={story.id}>
+          <div>{story.title}</div>
+          <div>{story.content}</div>
+        </div>
+      ))}
     </div>
   );
 };

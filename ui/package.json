@@ -30,6 +30,7 @@
     "react-is": "^16.13.1",
     "react-router-dom": "^5.2.0",
     "styled-components": "^5.2.0",
+    "swr": "^0.3.5",
     "ts-jest": "^26.4.1"
   },
   "devDependencies": {
@@ -58,7 +59,14 @@
     "transform": {
       "^.+\\.[t|j]sx?$": "babel-jest"
     },
-    "setupFiles": ["<rootDir>/src/__tests__/test.init.js"],
-    "testMatch": [ "**/__tests__/**/*.+(spec|test).[jt]s?(x)"]
+    "setupFiles": [
+      "<rootDir>/src/__tests__/test.init.js"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/__tests__/jest.setup.ts"
+    ],
+    "testMatch": [
+      "**/__tests__/**/*.+(spec|test).[jt]s?(x)"
+    ]
   }
 }
