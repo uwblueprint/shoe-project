@@ -92,3 +92,35 @@ To run the UI assets on it's own server, run:
 ```bash
 yarn start
 ```
+
+## Authentication
+All the `create` endpoints are protected, which means you have to login before you can make POST requests to these endpoints.
+
+1. Make sure that you have the latest `.env` file (pinned on Slack channel) in the *root* of your `shoe-project` directory.
+2. It's best to do `docker-compose down && make setup` before starting your backend server: `make docker-setup`
+3. In a separate tab, make a POST request to the `/login` endpoint using `curl`:
+
+```bash
+$ curl --header "Content-Type: application/json" \
+  --request POST \
+  --data '{"username":"<username>","password":"<password>"}' \
+  http://localhost:8900/api/login
+```
+
+The `<username>` and `<password>` should be changed to the superuser's username and password in your `.env` file.
+
+4. Once you have successfully authenticated, the response will contain a JWT token. Export this token as an environment variable:
+
+```bash
+> {"status":"OK","payload":<JWT-Token>}
+
+$ TOKEN=<JWT-Token>
+```
+
+5. Now, you can use this token to authenticate yourself with every POST request you make to protected endpoints. Pass the token in your header like this:
+
+```bash
+$ curl -H 'Accept: application/json' -H "Authorization: Bearer ${TOKEN}" http://localhost:8900/api/<protected-endpoint>
+```
+
+Note that the key `Authorization: Bearer` is fixed, so don't change this.
