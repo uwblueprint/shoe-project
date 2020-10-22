@@ -93,6 +93,18 @@ To run the UI assets on it's own server, run:
 yarn start
 ```
 
+## Backend Code quality and checks
+Before pushing code, make sure to format the code. This can be done by:
+```bash
+make backend-fmt
+```
+
+Before code is merged, series of checks are run on the code to make sure it is formatted correctly.
+You can check locally to make sure none of these issues show up by:
+```bash
+make backend-check
+```
+
 ## Authentication
 All the `create` endpoints are protected, which means you have to login before you can make POST requests to these endpoints.
 
