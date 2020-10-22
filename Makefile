@@ -3,6 +3,7 @@ default: app
 setup:
 	(cd ui; yarn)
 	docker build -t shoe_project_image -f ./docker/Dockerfile.dev .
+	go get golang.org/x/tools/cmd/goimports
 
 app:
 	docker-compose up postgres backend frontend
@@ -30,3 +31,7 @@ clean-docker:
 	docker-compose down
 
 clean: clean-docker clean-frontend clean-backend
+
+fmt:
+	goimports -w .
+	go mod tidy
