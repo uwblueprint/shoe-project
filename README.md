@@ -97,7 +97,7 @@ yarn start
 All the `create` endpoints are protected, which means you have to login before you can make POST requests to these endpoints.
 
 1. Make sure that you have the latest `.env` file (pinned on Slack channel) in the *root* of your `shoe-project` directory.
-2. It's best to do `docker-compose down && make setup` before starting your backend server: `make docker-setup`
+2. It's best to do `make clean-docker && make setup` before starting your backend server: `make`
 3. In a separate tab, make a POST request to the `/login` endpoint using `curl`:
 
 ```bash
