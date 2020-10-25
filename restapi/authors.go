@@ -37,7 +37,7 @@ func (api api) CreateAuthors(w http.ResponseWriter, r *http.Request) render.Rend
 		place := authors[i].CurrentCity
 		forward, err := mapBox.Geocode.Forward(place, &forwardOpts)
 		if err != nil {
-			return rest.ErrInvalidRequest(api.logger, fmt.Sprintf("Story %s is has an invalid current city", i), err)
+			return rest.ErrInvalidRequest(api.logger, fmt.Sprintf("Story %d is has an invalid current city", i), err)
 		}
 		authors[i].Latitude = float32(forward.Features[0].Center[0])
 		authors[i].Longitude = float32(forward.Features[0].Center[1])
