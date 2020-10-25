@@ -65,6 +65,7 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 
 
 func (suite *endpointTestSuite) TestLogin() {
+	
 
 }
 
