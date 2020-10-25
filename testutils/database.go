@@ -30,9 +30,12 @@ func DropTables(db *gorm.DB) error {
 	if err := db.Migrator().DropTable("stories"); err != nil {
 		return err
 	}
+<<<<<<< HEAD
 	if err := db.Migrator().DropTable("users"); err != nil {
 		return err
 	}
+=======
+>>>>>>> Create test suite and add helpers for database and router
 
 	return nil
 }
