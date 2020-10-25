@@ -15,6 +15,8 @@ import (
 	"gorm.io/gorm"
 )
 
+var TOKEN string
+
 type endpointTestSuite struct {
 	suite.Suite
 	endpoint *httpexpect.Expect
@@ -124,10 +126,10 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 func (suite *endpointTestSuite) TestCreateAuthor() {
 	json := []models.Author{
 		{
-			FirstName:     "d",
-			LastName:      "d",
-			OriginCountry: "India",
-			CurrentCity:   "Toronto",
+			FirstName:     "Edmund",
+			LastName:      "Pevensie",
+			OriginCountry: "Narnia",
+			CurrentCity:   "London",
 		},
 	}
 
