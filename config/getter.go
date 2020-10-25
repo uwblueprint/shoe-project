@@ -169,3 +169,7 @@ func GetTokenExpiryDuration() (time.Duration, error) {
 func GetTokenIssuer() string {
 	return viper.GetString("auth.jwt_issuer")
 }
+
+func GetMapBoxToken() string {
+	return viper.GetString("mapbox.token")
+}
