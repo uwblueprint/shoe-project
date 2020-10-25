@@ -3,6 +3,7 @@ import { SWRConfig } from "swr";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 import { Home, ShoeMap } from "./pages";
+import {Filter} from './components/Filter';
 
 const defaultFetcher = (
   input: RequestInfo,
@@ -30,6 +31,8 @@ function App(): JSX.Element {
             </li>
           </ul>
         </nav>
+
+        <Filter />
 
         <Switch>
           <Route exact path="/">
