@@ -4,6 +4,7 @@ import { Map, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 import { TitleText } from "../styles/typography";
+import {Filter} from '../components/Filter';
 
 const StyledMap = styled(Map)`
   height: 70vh;
@@ -26,6 +27,7 @@ export const ShoeMap: React.FC = () => {
     <MapContainer>
       <TitleText>Shoe Map</TitleText>
       <StyledMap center={currentLocation} zoom={zoom}>
+      <Filter />
         <TileLayer
           url={`https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`}
         />

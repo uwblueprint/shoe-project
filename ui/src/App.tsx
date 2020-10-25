@@ -32,7 +32,7 @@ function App(): JSX.Element {
           </ul>
         </nav>
 
-        <Filter />
+        {/* <Filter /> */}
 
         <Switch>
           <Route exact path="/">
