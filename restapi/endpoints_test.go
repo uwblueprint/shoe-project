@@ -1,78 +1,105 @@
 package restapi
 
 import (
-	"testing"
 	"net/http"
 	"net/http/httptest"
-	"gorm.io/driver/postgres"
+	"testing"
+
 	"github.com/gavv/httpexpect/v2"
+	"github.com/stretchr/testify/suite"
+	"github.com/uwblueprint/shoe-project/internal/database/migrations"
+	"github.com/uwblueprint/shoe-project/internal/database/models"
+	"github.com/uwblueprint/shoe-project/testutils"
 	"gorm.io/gorm"
-	"github.com/DATA-DOG/go-sqlmock"
-
 )
-func TestHealthCheck (t *testing.T){
-	//Declare new sql mock db
-	db, _, err := sqlmock.New()
-   
+
+type endpointTestSuite struct {
+	suite.Suite
+	endpoint *httpexpect.Expect
+	db       *gorm.DB
+}
+
+func (suite *endpointTestSuite) SetupSuite() {
+	db, err := testutils.MockDatabase()
 	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+		suite.Fail("error while creating database", err)
 	}
-	defer db.Close()
+	suite.db = db
 
-	//Open postgres connection with gorm db
-	gdb, err := gorm.Open(postgres.New(postgres.Config{
-		Conn: db,
-	  }), &gorm.Config{})
-
+	router, err := Router(db)
 	if err != nil {
-		t.Errorf("Error opening db")
-	}	
-
-	//Define handler, pass in mock gorm db
-	handler,_ := Router(gdb)
-	server := httptest.NewServer(handler)
-	e := httpexpect.New(t, server.URL)
-
-	//Send request for health endpoint
-	e.GET("/health").
-			Expect().
-			Status(http.StatusOK).Body().Equal("{\"message\":\"Hello World\"}\n")
-
-}
-
-func TestGetAllStories(t *testing.T) {
-	db, mock, err := sqlmock.New()
-   
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+		suite.FailNow("error while creating router", err)
 	}
-	defer db.Close()
-	gdb, err := gorm.Open(postgres.New(postgres.Config{
-		Conn: db,
-	  }), &gorm.Config{})
 
-	if err != nil {
-		t.Errorf("Error opening db")
-	}	
-	var arr []string
-	mock.ExpectBegin()
-    mock.ExpectQuery("SELECT * FROM stories WHERE stories.deleted_at IS NULL").WillReturnRows(sqlmock.NewRows(arr))
-	mock.ExpectCommit()
-
-
-	handler,_ := Router(gdb)
-	server := httptest.NewServer(handler)
-	e := httpexpect.New(t, server.URL)
-	e.GET("/stories").
-			Expect().
-			Status(http.StatusOK).JSON().Array().Empty()
-
+	server := httptest.NewServer(router)
+	suite.endpoint = httpexpect.New(suite.T(), server.URL)
 }
 
-func TestGetStoryByID(t *testing.T) {
-
+func (suite *endpointTestSuite) SetupTest() {
+	if err := migrations.CreateTables(suite.db); err != nil {
+		suite.Fail("error while creating tables", err)
+	}
 }
-func TestCreateAuthor(t *testing.T) {
 
+func (suite *endpointTestSuite) TearDownTest() {
+	if err := testutils.DropTables(suite.db); err != nil {
+		suite.Fail("error while dropping tables", err)
+	}
 }
 
+func (suite *endpointTestSuite) TestCreateAuthor() {
+	json := []models.Author{
+		{
+			FirstName:     "d",
+			LastName:      "d",
+			OriginCountry: "India",
+			CurrentCity:   "Toronto",
+		},
+	}
+
+	suite.endpoint.POST("/authors").
+		WithJSON(json).
+		Expect().
+		Status(http.StatusOK)
+
+	var authorCount int64
+	suite.db.Table("authors").Count(&authorCount)
+	suite.Equal(1, int(authorCount))
+}
+
+func (suite *endpointTestSuite) TestHealthCheck() {
+	suite.endpoint.GET("/health").
+		Expect().
+		Status(http.StatusOK).
+		Body().Equal("{\"message\":\"Hello World\"}\n")
+}
+
+func (suite *endpointTestSuite) TestGetAllStories() {
+	// TODO implement
+
+	//var arr []string
+	//mock.ExpectBegin()
+	//mock.ExpectQuery("SELECT * FROM stories WHERE stories.deleted_at IS NULL").WillReturnRows(sqlmock.NewRows(arr))
+	//mock.ExpectCommit()
+
+	//handler,_ := Router(gdb)
+	//server := httptest.NewServer(handler)
+	//e := httpexpect.New(t, server.URL)
+	//e.GET("/stories").
+	//Expect().
+	//Status(http.StatusOK).JSON().Array().Empty()
+}
+
+func (suite *endpointTestSuite) TestGetStoryByID() {
+	// TODO implement
+}
+
+func (suite *endpointTestSuite) TearDownSuite() {
+	if err := testutils.CloseDatabase(suite.db); err != nil {
+		suite.Fail("error while closing database", err)
+	}
+}
+
+func TestEndpointTestSuite(t *testing.T) {
+	suite.Run(t, new(endpointTestSuite))
+}

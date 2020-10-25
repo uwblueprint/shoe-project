@@ -25,6 +25,7 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/viper v1.7.1
 	github.com/thoas/go-funk v0.7.0
+	github.com/stretchr/testify v1.6.1
 	github.com/xhit/go-str2duration/v2 v2.0.0
 	go.uber.org/zap v1.10.0
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
@@ -33,9 +34,8 @@ require (
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gopkg.in/ini.v1 v1.62.0 // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
-	gorm.io/driver/mysql v1.0.3
 	gorm.io/driver/postgres v1.0.2
+	gorm.io/driver/sqlite v1.1.3
 	gorm.io/gorm v1.20.2
 	honnef.co/go/tools v0.0.1-2020.1.6 // indirect
 	syreclabs.com/go/faker v1.2.2
