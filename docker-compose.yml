@@ -9,7 +9,7 @@ services:
       - -c
       - go run main.go seed
     volumes:
-      - './:/app'
+      - "./:/app"
     env_file:
       - .env
     depends_on:
@@ -25,7 +25,7 @@ services:
       - -c
       - CompileDaemon --command="./shoe-project server"
     volumes:
-      - './:/app'
+      - "./:/app"
     env_file:
       - .env
     depends_on:
@@ -39,6 +39,8 @@ services:
       - "42967:42967" # Hot Module Reloading for frontend
       - "1234:1234"
     working_dir: "/app/ui"
+    env_file:
+      - .env
     command:
       - /bin/sh
       - -c
