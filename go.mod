@@ -13,6 +13,7 @@ require (
 	github.com/lib/pq v1.8.0 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/ryankurte/go-mapbox v0.4.4
 	github.com/snowzach/certtools v1.0.2
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5 // indirect
@@ -24,6 +25,8 @@ require (
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
 	golang.org/x/tools v0.0.0-20201028215501-2b84a066b2fb // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
+	golang.org/x/net v0.0.0-20201006153459-a7d1128ccaa0 // indirect
+	gopkg.in/ryankurte/go-mapbox.v0 v0.4.2
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 	gorm.io/driver/postgres v1.0.2
 	gorm.io/gorm v1.20.2
