@@ -13,6 +13,8 @@ import (
 	"gorm.io/gorm"
 )
 
+var TOKEN string
+
 type endpointTestSuite struct {
 	suite.Suite
 	endpoint *httpexpect.Expect
@@ -47,13 +49,32 @@ func (suite *endpointTestSuite) TearDownTest() {
 	}
 }
 
+func (suite *endpointTestSuite) TestHealthCheck() {
+	suite.endpoint.GET("/health").
+		Expect().
+		Status(http.StatusOK).
+		Body().Equal("{\"message\":\"Hello World\"}\n")
+}
+
+func (suite *endpointTestSuite) TestGetAllStories() {
+	suite.endpoint.GET("/stories").
+		Expect().
+		Status(http.StatusOK).
+		Body().Equal( "{\"status\":\"OK\",\"payload\":[]}\n"	)
+}
+
+
+func (suite *endpointTestSuite) TestLogin() {
+
+}
+
 func (suite *endpointTestSuite) TestCreateAuthor() {
 	json := []models.Author{
 		{
-			FirstName:     "d",
-			LastName:      "d",
-			OriginCountry: "India",
-			CurrentCity:   "Toronto",
+			FirstName:     "Edmund",
+			LastName:      "Pevensie",
+			OriginCountry: "Narnia",
+			CurrentCity:   "London",
 		},
 	}
 
@@ -67,31 +88,15 @@ func (suite *endpointTestSuite) TestCreateAuthor() {
 	suite.Equal(1, int(authorCount))
 }
 
-func (suite *endpointTestSuite) TestHealthCheck() {
-	suite.endpoint.GET("/health").
-		Expect().
-		Status(http.StatusOK).
-		Body().Equal("{\"message\":\"Hello World\"}\n")
-}
+func (suite *endpointTestSuite) TestCreateStory(){
 
-func (suite *endpointTestSuite) TestGetAllStories() {
-	// TODO implement
-
-	//var arr []string
-	//mock.ExpectBegin()
-	//mock.ExpectQuery("SELECT * FROM stories WHERE stories.deleted_at IS NULL").WillReturnRows(sqlmock.NewRows(arr))
-	//mock.ExpectCommit()
-
-	//handler,_ := Router(gdb)
-	//server := httptest.NewServer(handler)
-	//e := httpexpect.New(t, server.URL)
-	//e.GET("/stories").
-	//Expect().
-	//Status(http.StatusOK).JSON().Array().Empty()
 }
 
 func (suite *endpointTestSuite) TestGetStoryByID() {
-	// TODO implement
+	suite.endpoint.GET("/story/1").
+		Expect().
+		Status(http.StatusOK).
+		Body().Equal( "{\"status\":\"OK\",\"payload\":[]}\n"	)
 }
 
 func (suite *endpointTestSuite) TearDownSuite() {
