@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/render"
 	mapbox "github.com/ryankurte/go-mapbox/lib"
