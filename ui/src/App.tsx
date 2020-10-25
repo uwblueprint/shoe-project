@@ -22,10 +22,10 @@ function App(): JSX.Element {
       <Router>
         <nav>
           <ul>
-            <li>
+            <li key="home">
               <Link to="/">Home</Link>
             </li>
-            <li>
+            <li key="map">
               <Link to="/map">ShoeMap</Link>
             </li>
           </ul>
