@@ -13,6 +13,7 @@ export interface FilterProps {
 const countries = ["China", "India", "Greece"];
 
 const FilterContainer = styled.div`
+  position : absolute;
   width: 505px;
   height: 61px;
   left: 46px;
@@ -30,12 +31,13 @@ const FilterContainer = styled.div`
 export function Filter(): JSX.Element {
   return (
     <FilterContainer>
-      <span>Show stories from:</span>
+      <span style={{fontSize: 16}}>Show stories from:</span>
+      &nbsp; &nbsp;
       <Autocomplete
         multiple
         id="filter-autocomplete"
         options={countries}
-        defaultValue={[countries[0]]}
+        style={{ width: 312}}
         renderInput={(params) => (
           <TextField
             {...params}

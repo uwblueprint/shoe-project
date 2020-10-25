@@ -7,7 +7,11 @@ import { PinCluster } from "../components/PinCluster";
 import { StoryDrawer, StoryDrawerState } from "../components/StoryDrawer";
 import { useState } from "react";
 import { colors } from "../styles";
+<<<<<<< HEAD
 import ShoeLogo from "../assets/images/shoeproject-logo.svg";
+=======
+import {Filter} from '../components/Filter';
+>>>>>>> feat: Moved filter component to overlay map
 
 const StyledMap = styled(Map)`
   height: 100vh;
@@ -94,6 +98,7 @@ export const ShoeMap: React.FC = () => {
   return (
     <React.Fragment>
       <MapContainer>
+        <Filter />
         <StyledMap
           center={currentLocation}
           zoom={zoom}
