@@ -149,19 +149,22 @@ func (suite *endpointTestSuite) TestCreateStory() {
 			AuthorID: 2,
 		},
 	}
-	defer db.Close()
-	gdb, err := gorm.Open(postgres.New(postgres.Config{
-		Conn: db,
-	  }), &gorm.Config{})
+}
 
-	if err != nil {
-		t.Errorf("Error opening db")
-	}	
-	var arr []string
-	mock.ExpectBegin()
-    mock.ExpectQuery("SELECT * FROM stories WHERE stories.deleted_at IS NULL").WillReturnRows(sqlmock.NewRows(arr))
-	mock.ExpectCommit()
+func (suite *endpointTestSuite) TestCreateAuthor() {
+	json := []models.Author{
+		{
+			FirstName:     "d",
+			LastName:      "d",
+			OriginCountry: "India",
+			CurrentCity:   "Toronto",
+		},
+	}
 
+	suite.endpoint.POST("/authors").
+		WithJSON(json).
+		Expect().
+		Status(http.StatusOK)
 
 	suite.endpoint.POST("/stories").WithHeader("Authorization", "Bearer "+suite.token).
 		WithJSON(json).
@@ -200,6 +203,17 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 	response.Schema(mock)
 	response.Object().Value("payload").Object().Value("ID").Equal(1)
 
+	//var arr []string
+	//mock.ExpectBegin()
+	//mock.ExpectQuery("SELECT * FROM stories WHERE stories.deleted_at IS NULL").WillReturnRows(sqlmock.NewRows(arr))
+	//mock.ExpectCommit()
+
+	//handler,_ := Router(gdb)
+	//server := httptest.NewServer(handler)
+	//e := httpexpect.New(t, server.URL)
+	//e.GET("/stories").
+	//Expect().
+	//Status(http.StatusOK).JSON().Array().Empty()
 }
 
 func (suite *endpointTestSuite) TearDownSuite() {
