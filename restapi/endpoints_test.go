@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"strings"
 
 	"github.com/gavv/httpexpect/v2"
 	"github.com/stretchr/testify/suite"
@@ -60,13 +61,21 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 	suite.endpoint.GET("/stories").
 		Expect().
 		Status(http.StatusOK).
-		Body().Equal( "{\"status\":\"OK\",\"payload\":[]}\n"	)
+		Body().Equal( "{\"status\":\"OK\",\"payload\":[]}\n")
 }
 
 
 func (suite *endpointTestSuite) TestLogin() {
-	
+	// payload := strings.NewReader("{\"username\":\"admin\",\"password\":\"root\"}")
 
+	// suite.endpoint.POST("/login", payload)
+	// 	Expect().
+	// 	Status(http.StatusOK).
+	// 	Body().Equal()
+
+	// if err != nil {
+	// 	suite.Fail("error while logging in", err)
+	// }
 }
 
 func (suite *endpointTestSuite) TestCreateAuthor() {
