@@ -30,7 +30,10 @@ export const ShoeMap: React.FC = () => {
         <TileLayer
           url={`https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`}
         />
+      
       </StyledMap>
+      <Pin focused={true} disabled={false}></Pin>
     </MapContainer>
+    
   );
 };
