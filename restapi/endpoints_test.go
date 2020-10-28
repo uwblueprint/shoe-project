@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"strings"
 
 	"github.com/gavv/httpexpect/v2"
 	"github.com/stretchr/testify/suite"
