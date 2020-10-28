@@ -5,7 +5,11 @@ import (
 	"gorm.io/gorm"
 )
 
+<<<<<<< HEAD
 func CreateMemDatabase() (*gorm.DB, error) {
+=======
+func MockDatabase() (*gorm.DB, error) {
+>>>>>>> get story by id
 	gormDB, err := gorm.Open(sqlite.Open(""), &gorm.Config{})
 	if err != nil {
 		return nil, err

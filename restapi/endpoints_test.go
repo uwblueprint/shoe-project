@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"strings"
 
 	"github.com/gavv/httpexpect/v2"
 	"github.com/spf13/viper"
@@ -121,6 +122,9 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 	response.Object().Value("payload").Array().Element(0).Object().Value("ID").Equal(1)
 	response.Object().Value("payload").Array().Element(1).Object().Value("ID").Equal(2)
 
+	// if err != nil {
+	// 	suite.Fail("error while logging in", err)
+	// }
 }
 
 func (suite *endpointTestSuite) TestCreateAuthor() {
