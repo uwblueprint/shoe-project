@@ -11,8 +11,8 @@ type Author struct {
 	Bio           string  `gorm:"type:text" json:"bio"`
 	OriginCountry string  `gorm:"not null" json:"origin_country"`
 	CurrentCity   string  `gorm:"not null" json:"current_city"`
-	Latitude      float32 `json:"latitude"`
-	Longitude     float32 `json:"longitude"`
+	Latitude      float64 `json:"latitude"`
+	Longitude     float64 `json:"longitude"`
 	Stories       []Story `gorm:"foreignKey:AuthorID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"stories,omitempty"`
 }
 

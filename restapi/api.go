@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/jwtauth"
 	"github.com/go-chi/render"
+	mapbox "github.com/ryankurte/go-mapbox/lib"
 	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/restapi/rest"
 	"github.com/uwblueprint/shoe-project/server"
@@ -17,13 +18,20 @@ import (
 type api struct {
 	database *gorm.DB
 	logger   *zap.SugaredLogger
+	mapBox   *mapbox.Mapbox
 }
 
 func Router(db *gorm.DB) (http.Handler, error) {
 	r := server.CreateRouter()
+	token := config.GetMapBoxToken()
+	mapBox, err := mapbox.NewMapbox(token)
+	if err != nil {
+		return nil, err
+	}
 	api := api{
 		database: db,
 		logger:   zap.S(),
+		mapBox:   mapBox,
 	}
 
 	// Public API
@@ -39,8 +47,8 @@ func Router(db *gorm.DB) (http.Handler, error) {
 		r.Use(jwtauth.Verifier(config.GetJWTKey()))
 		r.Use(jwtauth.Authenticator)
 
-		rest.PostHandler(r, "/authors", api.CreateAuthors)
 		rest.PostHandler(r, "/stories", api.CreateStories)
+		rest.PostHandler(r, "/authors", api.CreateAuthors)
 	})
 	return r, nil
 }
