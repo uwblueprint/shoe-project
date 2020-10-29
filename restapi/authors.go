@@ -24,3 +24,26 @@ func (api api) CreateAuthors(w http.ResponseWriter, r *http.Request) render.Rend
 
 	return rest.MsgStatusOK("Authors added successfully")
 }
+
+func (api api) ReturnAllCountries(w http.ResponseWriter, r *http.Request) render.Renderer {
+	var author []models.Author
+	keys := make(map[string]bool)
+	countries := []string{}
+
+	err := api.database.Find(&author).Error
+	if err != nil {
+		return rest.ErrInternal(api.logger, err)
+	}
+
+	for _, entry := range author {
+		if _, value := keys[entry.OriginCountry]; !value {
+			keys[entry.OriginCountry] = true
+			if entry.OriginCountry != "" {
+				countries = append(countries, entry.OriginCountry)
+			}
+
+		}
+	}
+
+	return rest.JSONStatusOK(countries)
+}
