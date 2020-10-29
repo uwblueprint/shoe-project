@@ -47,6 +47,8 @@ services:
         yarn start
     volumes:
       - "./:/app"
+    env_file:
+      - .env
 
   postgres:
     container_name: shoe_project_postgres

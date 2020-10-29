@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Map, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-import { Pin } from "../components/Pin";
+import { Pin, PinState } from "../components/Pin";
 import { TitleText } from "../styles/typography";
 
 const StyledMap = styled(Map)`
@@ -30,9 +30,9 @@ export const ShoeMap: React.FC = () => {
         <TileLayer
           url={`https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`}
         />
-      
+      <Pin state={PinState.Unfocused} position={[currentLocation.lat,currentLocation.lng]}/>
       </StyledMap>
-      <Pin focused={true} disabled={false} position={[currentLocation.lat,currentLocation.lng]}/>
+      
     </MapContainer>
     
   );
