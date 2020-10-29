@@ -6,8 +6,8 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/jwtauth"
 	"github.com/go-chi/render"
-	mapbox "github.com/ryankurte/go-mapbox/lib"
 	"github.com/uwblueprint/shoe-project/config"
+	"github.com/uwblueprint/shoe-project/internal/location"
 	"github.com/uwblueprint/shoe-project/restapi/rest"
 	"github.com/uwblueprint/shoe-project/server"
 	"go.uber.org/zap"
@@ -16,22 +16,17 @@ import (
 
 // namespace api
 type api struct {
-	database *gorm.DB
-	logger   *zap.SugaredLogger
-	mapBox   *mapbox.Mapbox
+	database       *gorm.DB
+	logger         *zap.SugaredLogger
+	locationFinder location.LocationFinder
 }
 
-func Router(db *gorm.DB) (http.Handler, error) {
+func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, error) {
 	r := server.CreateRouter()
-	token := config.GetMapBoxToken()
-	mapBox, err := mapbox.NewMapbox(token)
-	if err != nil {
-		return nil, err
-	}
 	api := api{
-		database: db,
-		logger:   zap.S(),
-		mapBox:   mapBox,
+		database:       db,
+		logger:         zap.S(),
+		locationFinder: locationFinder,
 	}
 
 	// Public API
