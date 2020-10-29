@@ -32,7 +32,7 @@ export const ShoeMap: React.FC = () => {
         />
       
       </StyledMap>
-      <Pin focused={true} disabled={false}></Pin>
+      <Pin focused={true} disabled={false} position={[currentLocation.lat,currentLocation.lng]}/>
     </MapContainer>
     
   );
