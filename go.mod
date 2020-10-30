@@ -23,6 +23,8 @@ require (
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/viper v1.7.1
+	github.com/stretchr/testify v1.6.1 // indirect
+	github.com/thoas/go-funk v0.7.0
 	github.com/xhit/go-str2duration/v2 v2.0.0
 	go.uber.org/zap v1.10.0
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9

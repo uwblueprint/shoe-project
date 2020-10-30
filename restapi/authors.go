@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/render"
+	"github.com/thoas/go-funk"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
 	"github.com/uwblueprint/shoe-project/restapi/rest"
 )
@@ -37,24 +38,19 @@ func (api api) CreateAuthors(w http.ResponseWriter, r *http.Request) render.Rend
 }
 
 func (api api) ReturnAllCountries(w http.ResponseWriter, r *http.Request) render.Renderer {
-	var author []models.Author
-	keys := make(map[string]bool)
+	var authors []models.Author
 	countries := []string{}
 
-	err := api.database.Find(&author).Error
+	err := api.database.Find(&authors).Error
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
 
-	for _, entry := range author {
-		if _, value := keys[entry.OriginCountry]; !value {
-			keys[entry.OriginCountry] = true
-			if entry.OriginCountry != "" {
-				countries = append(countries, entry.OriginCountry)
-			}
-
+	for _, entry := range authors {
+		if !funk.Contains(countries, entry.OriginCountry) && entry.OriginCountry != "" {
+			countries = append(countries, entry.OriginCountry)
 		}
 	}
-
+	
 	return rest.JSONStatusOK(countries)
 }
