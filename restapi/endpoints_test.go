@@ -1,8 +1,9 @@
 package restapi
 
 import (
+	"fmt"
 	"net/http"
-	// "encoding/json"
+	"github.com/spf13/viper"
 	"net/http/httptest"
 	"testing"
 	"github.com/gavv/httpexpect/v2"
@@ -19,12 +20,6 @@ type endpointTestSuite struct {
 	db       *gorm.DB
 	token     string
 }
-type Login struct {
-
-	Username string `json:"username"`
-	Password string `json:"password"`
-	
-}
 
 func (suite *endpointTestSuite) SetupSuite() {
 	db, err := testutils.CreateMemDatabase()
@@ -40,12 +35,47 @@ func (suite *endpointTestSuite) SetupSuite() {
 
 	server := httptest.NewServer(router)
 	suite.endpoint = httpexpect.New(suite.T(), server.URL)
+
+	// setup required for jwt authentication
+	viper.SetDefault("auth.jwt_key", "GotFKl1PGgMpLg7D36NiI0hy/gsl6woTCXYdhKATbzc=")
+	viper.SetDefault("auth.jwt_expiry", "2h")
+	viper.SetDefault("auth.jwt_issuer", "endpoint_tests")
 }
 
 func (suite *endpointTestSuite) SetupTest() {
 	if err := migrations.CreateTables(suite.db); err != nil {
 		suite.Fail("error while creating tables", err)		
 	}
+	if err := migrations.CreateSuperUser(suite.db); err != nil {
+		suite.Fail("error creating super user", err)
+	}
+
+	suite.token = suite.endpoint.POST("/login").
+				WithJSON([]models.User{{
+					Username: "admin",
+					Password: "root",
+				}}).
+	            Expect().
+				Status(http.StatusOK).JSON().Object().Value("payload").String().Raw()
+}
+
+func (suite *endpointTestSuite) TearDownTest() {
+	if err := testutils.DropTables(suite.db); err != nil {
+		suite.Fail("error while dropping tables", err)
+	}
+}
+
+func (suite *endpointTestSuite) TestHealthCheck() {
+	suite.endpoint.GET("/health").
+		Expect().
+		Status(http.StatusOK).JSON().Object().Value("message").String().Equal("Hello World")
+}
+
+func (suite *endpointTestSuite) TestGetAllStories() {
+	suite.endpoint.GET("/stories").
+		Expect().
+		Status(http.StatusOK).
+		Body().Equal( "{\"status\":\"OK\",\"payload\":[]}\n")
 }
 
 func (suite *endpointTestSuite) TestCreateAuthor() {
@@ -58,7 +88,7 @@ func (suite *endpointTestSuite) TestCreateAuthor() {
 		},
 	}
 
-	suite.endpoint.POST("/authors").WithHeader("Authorization", "Bearer "+suite.token).
+	suite.endpoint.POST("/authors").WithHeader("Authorization", fmt.Sprintf("Bearer %s", suite.token)).
 		WithJSON(json).
 		Expect().
 		Status(http.StatusOK)
@@ -68,41 +98,30 @@ func (suite *endpointTestSuite) TestCreateAuthor() {
 	suite.Equal(1, int(authorCount))
 }
 
-func (suite *endpointTestSuite) TestHealthCheck() {
-	suite.endpoint.GET("/health").
-		Expect().
-		Status(http.StatusOK).
-		Body().Equal("{\"message\":\"Hello World\"}\n")
-}
-
-func (suite *endpointTestSuite) TestGetAllStories() {
-	// TODO implement
-
-	//var arr []string
-	//mock.ExpectBegin()
-	//mock.ExpectQuery("SELECT * FROM stories WHERE stories.deleted_at IS NULL").WillReturnRows(sqlmock.NewRows(arr))
-	//mock.ExpectCommit()
-
-	//handler,_ := Router(gdb)
-	//server := httptest.NewServer(handler)
-	//e := httpexpect.New(t, server.URL)
-	//e.GET("/stories").
-	//Expect().
-	//Status(http.StatusOK).JSON().Array().Empty()
-}
-
-func (suite *endpointTestSuite) TestGetStoryByID() {
-	// suite.endpoint.GET("/story/1").
-	// 	Expect().
-	// 	Status(http.StatusOK).
-	// 	Body().Equal( "{\"status\":\"OK\",\"payload\":[]}\n"	)
-}
-
-func (suite *endpointTestSuite) TearDownTest() {
-	if err := testutils.DropTables(suite.db); err != nil {
-		suite.Fail("error while dropping tables", err)
+func (suite *endpointTestSuite) TestCreateStory(){
+	json := []models.Story{
+		{
+			Title:      "Jane Eyre",
+			Content:    "Classic",
+			AuthorID:    1,
+		},
 	}
+
+	suite.endpoint.POST("/stories").WithHeader("Authorization", "Bearer "+suite.token).
+	WithJSON(json).
+	Expect().
+	Status(http.StatusOK)
+
+	var storyCount int64
+	suite.db.Table("stories").Count(&storyCount)
+	suite.Equal(1, int(storyCount))
 }
+
+// func (suite *endpointTestSuite) TestGetStoryByID() {
+// 	suite.endpoint.GET("/story/1").
+// 		Expect().
+// 		Status(http.StatusOK)
+// }
 
 func (suite *endpointTestSuite) TearDownSuite() {
 	if err := testutils.CloseDatabase(suite.db); err != nil {
