@@ -3,10 +3,9 @@ package restapi
 import (
 	"fmt"
 	"net/http"
+	// "encoding/json"
 	"net/http/httptest"
 	"testing"
-	"strings"
-
 	"github.com/gavv/httpexpect/v2"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/suite"
@@ -16,7 +15,7 @@ import (
 	"gorm.io/gorm"
 )
 
-var TOKEN string
+ var TOKEN string
 
 type endpointTestSuite struct {
 	suite.Suite
