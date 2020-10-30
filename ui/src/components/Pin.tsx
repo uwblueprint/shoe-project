@@ -15,7 +15,10 @@ export interface PinProps {
   position: [number, number];
 }
 
-export function Pin({ state = PinState.Resting, position }: PinProps) {
+export function Pin({
+  state = PinState.Resting,
+  position,
+}: PinProps): JSX.Element {
   const icon = new L.Icon({
     iconUrl: state === PinState.Unfocused ? unfocused : resting,
     iconRetinaUrl: state === PinState.Unfocused ? unfocused : resting,
