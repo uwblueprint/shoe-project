@@ -3,7 +3,7 @@ package restapi
 import (
 	"fmt"
 	"net/http"
-	// "encoding/json"
+	"github.com/spf13/viper"
 	"net/http/httptest"
 	"testing"
 	"github.com/gavv/httpexpect/v2"
@@ -14,8 +14,6 @@ import (
 	"github.com/uwblueprint/shoe-project/testutils"
 	"gorm.io/gorm"
 )
-
- var TOKEN string
 
 type endpointTestSuite struct {
 	suite.Suite
@@ -43,6 +41,11 @@ func (suite *endpointTestSuite) SetupSuite() {
 
 	server := httptest.NewServer(router)
 	suite.endpoint = httpexpect.New(suite.T(), server.URL)
+
+	// setup required for jwt authentication
+	viper.SetDefault("auth.jwt_key", "GotFKl1PGgMpLg7D36NiI0hy/gsl6woTCXYdhKATbzc=")
+	viper.SetDefault("auth.jwt_expiry", "2h")
+	viper.SetDefault("auth.jwt_issuer", "endpoint_tests")
 }
 
 func (suite *endpointTestSuite) SetupTest() {
@@ -60,6 +63,23 @@ func (suite *endpointTestSuite) SetupTest() {
 		}}).
 		Expect().
 		Status(http.StatusOK).JSON().Object().Value("payload").String().Raw()
+}
+
+func (suite *endpointTestSuite) TearDownTest() {
+	if err := testutils.DropTables(suite.db); err != nil {
+		suite.Fail("error while dropping tables", err)
+	}
+	if err := migrations.CreateSuperUser(suite.db); err != nil {
+		suite.Fail("error creating super user", err)
+	}
+
+	suite.token = suite.endpoint.POST("/login").
+				WithJSON([]models.User{{
+					Username: "admin",
+					Password: "root",
+				}}).
+	            Expect().
+				Status(http.StatusOK).JSON().Object().Value("payload").String().Raw()
 }
 
 func (suite *endpointTestSuite) TearDownTest() {
