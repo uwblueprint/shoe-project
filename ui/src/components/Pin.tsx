@@ -22,7 +22,7 @@ export function Pin({
   const icon = new L.Icon({
     iconUrl: state === PinState.Unfocused ? unfocused : resting,
     iconRetinaUrl: state === PinState.Unfocused ? unfocused : resting,
-    iconAnchor: null,
+    iconAnchor: state === PinState.Selected ? [29, 70] : [25, 61],
     popupAnchor: null,
     shadowUrl: null,
     shadowSize: null,
