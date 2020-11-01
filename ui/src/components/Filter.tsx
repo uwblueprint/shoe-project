@@ -12,7 +12,7 @@ export interface FilterProps {
   onChange: (options: string[]) => void;
 }
 
-// const countries = ["China", "India", "Greece"];
+const countries = ["China", "India", "Greece"];
 
 const FilterContainer = styled.div`
   position : absolute;
@@ -31,9 +31,10 @@ const FilterContainer = styled.div`
 `;
 
 export function Filter(): JSX.Element {
-  const { data:countries, error } = useSWR<string[]>("/api/authors/countries");
+  //const { data:countries, error } = useSWR<string[]>("/api/authors/countries");
+  //const countries = ["China", "India", "Greece"];
 
-  if (error) return <div>Error!</div>;
+  //if (error) return <div>Error!</div>;
   const loading = open; //&& options.length === 0;
 
   return (
