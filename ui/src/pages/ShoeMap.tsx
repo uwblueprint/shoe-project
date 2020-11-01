@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Map, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
+import { Pin, PinState } from "../components/Pin";
 import { TitleText } from "../styles/typography";
 
 const StyledMap = styled(Map)`
@@ -28,6 +29,18 @@ export const ShoeMap: React.FC = () => {
       <StyledMap center={currentLocation} zoom={zoom}>
         <TileLayer
           url={`https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`}
+        />
+        <Pin
+          state={PinState.Resting}
+          position={[currentLocation.lat, currentLocation.lng]}
+        />
+        <Pin
+          state={PinState.Unfocused}
+          position={[currentLocation.lat + 0.02, currentLocation.lng + 0.02]}
+        />
+        <Pin
+          state={PinState.Selected}
+          position={[currentLocation.lat - 0.02, currentLocation.lng - 0.02]}
         />
       </StyledMap>
     </MapContainer>
