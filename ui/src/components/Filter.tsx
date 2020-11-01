@@ -31,15 +31,15 @@ const FilterContainer = styled.div`
 `;
 
 export function Filter(): JSX.Element {
-  //const { data:countries, error } = useSWR<string[]>("/api/authors/countries");
+  const { data:countries, error } = useSWR<string[]>("/api/authors/origin_countries");
   //const countries = ["China", "India", "Greece"];
 
-  //if (error) return <div>Error!</div>;
+  if (error) return <div>Error!</div>;
   const loading = open; //&& options.length === 0;
 
   return (
     <FilterContainer>
-      <span style={{fontSize: 16}}>Show stories from:</span>
+      <span style={{fontSize: 16}}>Show stories from:</span> 
       &nbsp; &nbsp;
       <Autocomplete
         multiple
