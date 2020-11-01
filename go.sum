@@ -283,8 +283,20 @@ github.com/rs/xid v1.2.1/go.mod h1:+uKXf+4Djp6Md1KODXJxgGQPKngRmWyn10oCKFzNHOQ=
 github.com/rs/zerolog v1.13.0/go.mod h1:YbFCdg8HfsridGWAh22vktObvhZbQsZXe4/zB0OKkWU=
 github.com/rs/zerolog v1.15.0/go.mod h1:xYTKnLHcpfU2225ny5qZjxnj9NvkumZYjJHlAThCjNc=
 github.com/russross/blackfriday/v2 v2.0.1/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
+<<<<<<< HEAD
 github.com/ryankurte/go-mapbox v0.4.4 h1:wZV6MJ+wzROfK2JgahYuA89N0Fw7wTio/F7G3Ta0gZc=
 github.com/ryankurte/go-mapbox v0.4.4/go.mod h1:DD9ifJ/Yf8Ov1o33bHT/8Nsumxq6RavU85EShdi9AkY=
+=======
+<<<<<<< HEAD
+github.com/ryancurrah/gomodguard v1.1.0 h1:DWbye9KyMgytn8uYpuHkwf0RHqAYO6Ay/D0TbCpPtVU=
+github.com/ryancurrah/gomodguard v1.1.0/go.mod h1:4O8tr7hBODaGE6VIhfJDHcwzh5GUccKSJBU0UMXJFVM=
+github.com/ryanrolds/sqlclosecheck v0.3.0 h1:AZx+Bixh8zdUBxUA1NxbxVAS78vTPq4rCb8OUZI9xFw=
+github.com/ryanrolds/sqlclosecheck v0.3.0/go.mod h1:1gREqxyTGR3lVtpngyFo3hZAgk0KCtEdgEkHwDbigdA=
+=======
+github.com/ryankurte/go-mapbox v0.4.4 h1:wZV6MJ+wzROfK2JgahYuA89N0Fw7wTio/F7G3Ta0gZc=
+github.com/ryankurte/go-mapbox v0.4.4/go.mod h1:DD9ifJ/Yf8Ov1o33bHT/8Nsumxq6RavU85EShdi9AkY=
+>>>>>>> City to coords (#78)
+>>>>>>> City to coords (#78)
 github.com/ryanuber/columnize v0.0.0-20160712163229-9b3edd62028f/go.mod h1:sm1tb6uqfes/u+d4ooFouqFdy9/2g9QGwK3SQygK0Ts=
 github.com/satori/go.uuid v1.2.0/go.mod h1:dA0hQrYB0VpLJoorglMZABFdXlWrHn1NEOzdhQKdks0=
 github.com/savsgio/gotils v0.0.0-20200117113501-90175b0fbe3f/go.mod h1:lHhJedqxCoHN+zMtwGNTXWmF0u9Jt363FYRhV6g0CdY=
