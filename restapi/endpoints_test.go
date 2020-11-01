@@ -28,6 +28,11 @@ func (suite *endpointTestSuite) SetupSuite() {
 	}
 	suite.db = db
 
+	// setup required for jwt authentication
+	viper.SetDefault("auth.jwt_key", "GotFKl1PGgMpLg7D36NiI0hy/gsl6woTCXYdhKATbzc=")
+	viper.SetDefault("auth.jwt_expiry", "2h")
+	viper.SetDefault("auth.jwt_issuer", "endpoint_tests")
+
 	router, err := Router(db)
 	if err != nil {
 		suite.FailNow("error while creating router", err)
@@ -35,11 +40,6 @@ func (suite *endpointTestSuite) SetupSuite() {
 
 	server := httptest.NewServer(router)
 	suite.endpoint = httpexpect.New(suite.T(), server.URL)
-
-	// setup required for jwt authentication
-	viper.SetDefault("auth.jwt_key", "GotFKl1PGgMpLg7D36NiI0hy/gsl6woTCXYdhKATbzc=")
-	viper.SetDefault("auth.jwt_expiry", "2h")
-	viper.SetDefault("auth.jwt_issuer", "endpoint_tests")
 }
 
 func (suite *endpointTestSuite) SetupTest() {
