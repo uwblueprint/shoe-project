@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/internal/database"
+	"github.com/uwblueprint/shoe-project/internal/location"
 	"github.com/uwblueprint/shoe-project/restapi"
 	"github.com/uwblueprint/shoe-project/server"
 	"go.uber.org/zap"
@@ -40,7 +41,12 @@ var (
 				logger.Fatalw("Failed to connect to database", "Err", err)
 			}
 
-			apiRouter, err := restapi.Router(db)
+			locationFinder, err := location.NewMapboxFinder(config.GetMapBoxToken(), "CA")
+			if err != nil {
+				logger.Fatalw("Failed to initialize Mapbox location finder service")
+			}
+
+			apiRouter, err := restapi.Router(db, locationFinder)
 			if err != nil {
 				logger.Fatalw("API Router Mount", "Err", err)
 			}

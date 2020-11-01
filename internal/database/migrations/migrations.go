@@ -31,6 +31,8 @@ func Seed(db *gorm.DB) error {
 		Bio:           faker.Name().Title(),
 		OriginCountry: faker.Address().Country(),
 		CurrentCity:   "Toronto",
+		Latitude:      float64(faker.Address().Latitude()),
+		Longitude:     float64(faker.Address().Longitude()),
 		Stories: []models.Story{
 			{
 				Title:   faker.Hacker().Noun(),

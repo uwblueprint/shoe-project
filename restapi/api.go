@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/jwtauth"
 	"github.com/go-chi/render"
 	"github.com/uwblueprint/shoe-project/config"
+	"github.com/uwblueprint/shoe-project/internal/location"
 	"github.com/uwblueprint/shoe-project/restapi/rest"
 	"github.com/uwblueprint/shoe-project/server"
 	"go.uber.org/zap"
@@ -15,15 +16,17 @@ import (
 
 // namespace api
 type api struct {
-	database *gorm.DB
-	logger   *zap.SugaredLogger
+	database       *gorm.DB
+	logger         *zap.SugaredLogger
+	locationFinder location.LocationFinder
 }
 
-func Router(db *gorm.DB) (http.Handler, error) {
+func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, error) {
 	r := server.CreateRouter()
 	api := api{
-		database: db,
-		logger:   zap.S(),
+		database:       db,
+		logger:         zap.S(),
+		locationFinder: locationFinder,
 	}
 
 	// Public API
@@ -39,8 +42,8 @@ func Router(db *gorm.DB) (http.Handler, error) {
 		r.Use(jwtauth.Verifier(config.GetJWTKey()))
 		r.Use(jwtauth.Authenticator)
 
-		rest.PostHandler(r, "/authors", api.CreateAuthors)
 		rest.PostHandler(r, "/stories", api.CreateStories)
+		rest.PostHandler(r, "/authors", api.CreateAuthors)
 	})
 	return r, nil
 }
