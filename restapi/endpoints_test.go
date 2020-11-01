@@ -117,15 +117,27 @@ func (suite *endpointTestSuite) TestCreateStory(){
 	suite.Equal(1, int(storyCount))
 }
 
-// func (suite *endpointTestSuite) TestGetStoryByID() {
-// 	suite.endpoint.GET("/story/1").
-// 		Expect().
-// 		Status(http.StatusOK)
-// }
+func (suite *endpointTestSuite) TestGetStoryByID() {
+	json := []models.Story{
+		{
+			Title:      "Jane Eyre",
+			Content:    "Classic",
+			AuthorID:    1,
+		},
+	}
+
+	suite.endpoint.POST("/stories").WithHeader("Authorization", "Bearer "+suite.token).
+	WithJSON(json).
+	Expect().
+	Status(http.StatusOK)
+	suite.endpoint.GET("/story/1").
+		Expect().
+		Status(http.StatusOK)
+}
 
 func (suite *endpointTestSuite) TearDownSuite() {
 	if err := testutils.CloseDatabase(suite.db); err != nil {
-		suite.Fail("error while closing database", err)
+		suite.Fail("error while closing database", err)  
 	}
 }
 
