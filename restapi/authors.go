@@ -39,7 +39,7 @@ func (api api) CreateAuthors(w http.ResponseWriter, r *http.Request) render.Rend
 
 func (api api) ReturnAllCountries(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var authors []models.Author
-	countries := []string{}
+	countries := make(map[string]bool)
 
 	err := api.database.Find(&authors).Error
 	if err != nil {
@@ -47,10 +47,12 @@ func (api api) ReturnAllCountries(w http.ResponseWriter, r *http.Request) render
 	}
 
 	for _, entry := range authors {
-		if !funk.Contains(countries, entry.OriginCountry) && entry.OriginCountry != "" {
-			countries = append(countries, entry.OriginCountry)
+		if entry.OriginCountry != "" {
+			countries[entry.OriginCountry] = true
+		} else {
+			api.logger.Debug("Empty origin country")
 		}
 	}
-	
-	return rest.JSONStatusOK(countries)
+
+	return rest.JSONStatusOK(funk.Keys(countries))
 }
