@@ -29,7 +29,7 @@ func (suite *endpointTestSuite) SetupSuite() {
 	suite.db = db
 
 	// setup required for jwt authentication
-	viper.SetDefault("auth.jwt_key", "GotFKl1PGgMpLg7D36NiI0hy/gsl6woTCXYdhKATbzc=")
+	viper.SetDefault("auth.jwt_key", "random")
 	viper.SetDefault("auth.jwt_expiry", "2h")
 	viper.SetDefault("auth.jwt_issuer", "endpoint_tests")
 
@@ -72,10 +72,55 @@ func (suite *endpointTestSuite) TestHealthCheck() {
 }
 
 func (suite *endpointTestSuite) TestGetAllStories() {
-	suite.endpoint.GET("/stories").
-		Expect().
-		Status(http.StatusOK).
-		Body().Equal( "{\"status\":\"OK\",\"payload\":[]}\n")
+	json_story1 := []models.Story{
+		{
+			Title:      "The Little Prince",
+			Content:    "Children",
+			AuthorID:    1,
+		},
+	}
+
+	suite.endpoint.POST("/stories").WithHeader("Authorization", "Bearer "+suite.token).
+	WithJSON(json_story1).
+	Expect().
+	Status(http.StatusOK)
+
+	json_story2 := []models.Story{
+		{
+			Title:      "Hitchhiker's Guide to the Galaxy",
+			Content:    "Fiction",
+			AuthorID:    2,
+		},
+	}
+
+	suite.endpoint.POST("/stories").WithHeader("Authorization", "Bearer "+suite.token).
+	WithJSON(json_story2).
+	Expect().
+	Status(http.StatusOK)
+
+    var response = suite.endpoint.GET("/stories").
+							Expect().
+							Status(http.StatusOK).
+							Status(http.StatusOK).JSON()
+	mock :=   `{
+		"payload": [
+		{
+			"author_id": 1,
+			"content": "Children",
+			"title": "The Little Prince"
+		},
+		{
+			"author_id": 2,
+			"content": "Fiction",
+			"title": "Hitchhiker's Guide to the Galaxy"
+		}
+		],
+		"status": "OK"
+	}`
+
+ 	 //Verify mock matches response
+	response.Schema(mock)
+
 }
 
 func (suite *endpointTestSuite) TestCreateAuthor() {
@@ -103,7 +148,7 @@ func (suite *endpointTestSuite) TestCreateStory(){
 		{
 			Title:      "Jane Eyre",
 			Content:    "Classic",
-			AuthorID:    1,
+			AuthorID:    2,
 		},
 	}
 
@@ -120,8 +165,8 @@ func (suite *endpointTestSuite) TestCreateStory(){
 func (suite *endpointTestSuite) TestGetStoryByID() {
 	json := []models.Story{
 		{
-			Title:      "Jane Eyre",
-			Content:    "Classic",
+			Title:      "Swan Lake for Beginners",
+			Content:    "Short Story",
 			AuthorID:    1,
 		},
 	}
@@ -130,10 +175,24 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 	WithJSON(json).
 	Expect().
 	Status(http.StatusOK)
-	suite.endpoint.GET("/story/1").
-		Expect().
-		Status(http.StatusOK)
+	
+	var response = suite.endpoint.GET("/story/1").
+		  			Expect().
+					Status(http.StatusOK).JSON()
+	mock := `{
+				"payload": [
+				{
+					"author_id": 1,
+					"content": "Short Story",
+					"title": "Swan Lake for Beginners"
+				}],
+				"status": "OK"
+			}`
+	//Verify they are the same
+	response.Schema(mock)
+	
 }
+
 
 func (suite *endpointTestSuite) TearDownSuite() {
 	if err := testutils.CloseDatabase(suite.db); err != nil {
