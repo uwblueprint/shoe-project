@@ -236,6 +236,7 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 	//Status(http.StatusOK).JSON().Array().Empty()
 }
 
+
 func (suite *endpointTestSuite) TearDownSuite() {
 	if err := testutils.CloseDatabase(suite.db); err != nil {
 		suite.Fail("error while closing database", err)  
