@@ -68,7 +68,7 @@ var (
 						logger.Fatalw("Server listen and serve", "Err", err)
 					}
 					break readChannel
-				case _ = <-config.Stop.Chan():
+				case <-config.Stop.Chan():
 					logger.Info("Recieved interrupt signal...")
 
 					if err := server.Server.Close(); err != nil {
@@ -78,7 +78,9 @@ var (
 				}
 			}
 
-			zap.L().Sync() // flush the logger
+			if err := zap.L().Sync(); err != nil { // flush the logger
+				logger.Fatalw("Could not flush logger", "Err", err)
+			}
 
 		},
 	}

@@ -14,7 +14,6 @@ import (
 
 var (
 	configFile string
-	logger     *zap.Logger
 
 	// root CLI command
 	rootCmd = &cobra.Command{}

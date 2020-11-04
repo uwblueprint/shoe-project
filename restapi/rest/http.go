@@ -13,7 +13,9 @@ type routeHandler func(w http.ResponseWriter, r *http.Request) render.Renderer
 // Custom ServeHTTP that handlers custom render errors
 func (fn routeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if renderer := fn(w, r); renderer != nil {
-		render.Render(w, r, renderer)
+		if err := render.Render(w, r, renderer); err != nil {
+			http.Error(w, err.Error(), 500)
+		}
 	}
 }
 
