@@ -57,6 +57,9 @@
     "ts-jest": "^26.4.3",
     "typescript": "^4.0.3"
   },
+  "resolutions": {
+    "node-forge": "0.10.0"
+  },
   "volta": {
     "node": "12.18.3",
     "yarn": "1.22.5"
