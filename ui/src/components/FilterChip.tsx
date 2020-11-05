@@ -11,4 +11,3 @@ const StyledChip = styled(Chip)`
 export function FilterChip(props: any): JSX.Element {
     return <StyledChip {...props}/>
 }
-

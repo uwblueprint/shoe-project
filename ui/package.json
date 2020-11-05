@@ -24,10 +24,11 @@
   "dependencies": {
     "@material-ui/core": "^4.0.0",
     "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.56",
     "leaflet": "^1.0.2",
     "leaflet.markercluster": "^1.4.1",
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0",
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0",
     "react-is": "^16.13.1",
     "react-leaflet": "^2.0.0",
     "react-leaflet-control": "^2.1.2",

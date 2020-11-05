@@ -1,12 +1,19 @@
 import * as React from "react";
 import useSWR from "swr";
 import styled from "styled-components";
-import { colors } from "../styles/colors";
+import { colors, fontSize } from "../styles";
 
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Checkbox from '@material-ui/core/Checkbox';
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
+
 import { FilterChip } from "./FilterChip";
+
+const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 export interface FilterProps {
   options: string[];
@@ -30,6 +37,10 @@ const FilterContainer = styled.div`
   padding-left: 18px;
 `;
 
+const Tagline = styled.span`
+  fontSize: ${fontSize.subtitle};
+`;
+
 export function Filter(): JSX.Element {
   const { data:countries, error } = useSWR<string[]>("/api/authors/origin_countries");
 
@@ -37,15 +48,35 @@ export function Filter(): JSX.Element {
 
   return (
     <FilterContainer>
-      <span style={{fontSize: 16}}>Show stories from:</span>
-      <FilterChip label="Disabled"  />
-      &nbsp; &nbsp;
+      <Tagline>Show stories from:</Tagline>
       <Autocomplete
         multiple
         loading={!countries}
         id="filter-autocomplete"
         options={countries || []}
         style={{ width: 312}}
+        disableCloseOnSelect
+        renderTags={(value, getTagProps) =>
+          value.map((option, index) => (
+            <FilterChip
+              key={option}
+              label={option}
+              {...getTagProps({ index })}
+            />
+          ))
+        }
+        renderOption={(option, { selected }) => (
+          <React.Fragment key={option}>
+            <Checkbox
+              icon={icon}
+              checkedIcon={checkedIcon}
+              style={{ marginRight: 8 }}
+              checked={selected}
+            />
+            {option}
+          </React.Fragment>
+        )}
+  
         renderInput={(params) => (
           <TextField
             {...params}

@@ -11,6 +11,7 @@ export const fontSize = Object.freeze({
   body2: "14px",
   caption: "14px",
   mobile: "10px",
+  interactive: "16px",
 });
 
 export const TitleText = styled.p`
