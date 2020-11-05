@@ -23,20 +23,20 @@ function App(): JSX.Element {
         <nav>
           <ul>
             <li>
-              <Link to="/">Home</Link>
+              <Link to="/">Map</Link>
             </li>
             <li>
-              <Link to="/map">ShoeMap</Link>
+              <Link to="/home">Home</Link>
             </li>
           </ul>
         </nav>
 
         <Switch>
           <Route exact path="/">
-            <Home />
-          </Route>
-          <Route path="/map">
             <ShoeMap />
+          </Route>
+          <Route path="/home">
+            <Home />
           </Route>
         </Switch>
       </Router>
