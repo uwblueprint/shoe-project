@@ -14,7 +14,7 @@ type routeHandler func(w http.ResponseWriter, r *http.Request) render.Renderer
 func (fn routeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if renderer := fn(w, r); renderer != nil {
 		if err := render.Render(w, r, renderer); err != nil {
-			http.Error(w, err.Error(), 500)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 	}
 }

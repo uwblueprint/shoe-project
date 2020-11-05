@@ -79,7 +79,7 @@ var (
 			}
 
 			if err := zap.L().Sync(); err != nil { // flush the logger
-				logger.Fatalw("Could not flush logger", "Err", err)
+				fmt.Fprint(os.Stderr, "Could not flush logger", err.Error())
 			}
 
 		},
