@@ -3,6 +3,7 @@ package restapi
 import (
 	"encoding/json"
 	"net/http"
+	"sort"
 
 	"github.com/biter777/countries"
 	"github.com/go-chi/render"
@@ -52,5 +53,8 @@ func (api api) ReturnAllCountries(w http.ResponseWriter, r *http.Request) render
 		}
 	}
 
-	return rest.JSONStatusOK(funk.Keys(countries))
+	listOfCountries := funk.Keys(countries)
+	sort.Strings(listOfCountries.([]string))
+
+	return rest.JSONStatusOK(listOfCountries)
 }
