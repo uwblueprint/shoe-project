@@ -12,10 +12,9 @@ export interface FilterProps {
   onChange: (options: string[]) => void;
 }
 
-const countries = ["China", "India", "Greece"];
-
 const FilterContainer = styled.div`
-  position : absolute;
+  z-index: 1000;
+  position: absolute;
   width: 505px;
   height: 61px;
   left: 46px;
@@ -32,10 +31,8 @@ const FilterContainer = styled.div`
 
 export function Filter(): JSX.Element {
   const { data:countries, error } = useSWR<string[]>("/api/authors/origin_countries");
-  //const countries = ["China", "India", "Greece"];
 
   if (error) return <div>Error!</div>;
-  const loading = open; //&& options.length === 0;
 
   return (
     <FilterContainer>
@@ -57,7 +54,7 @@ export function Filter(): JSX.Element {
               ...params.InputProps,
               endAdornment: (
                 <React.Fragment>
-                  {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                  {!countries ? <CircularProgress color="inherit" size={20} /> : null}
                   {params.InputProps.endAdornment}
                 </React.Fragment>
               ),
