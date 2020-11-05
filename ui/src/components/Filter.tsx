@@ -6,6 +6,7 @@ import { colors } from "../styles/colors";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { FilterChip } from "./FilterChip";
 
 export interface FilterProps {
   options: string[];
@@ -36,7 +37,8 @@ export function Filter(): JSX.Element {
 
   return (
     <FilterContainer>
-      <span style={{fontSize: 16}}>Show stories from:</span> 
+      <span style={{fontSize: 16}}>Show stories from:</span>
+      <FilterChip label="Disabled"  />
       &nbsp; &nbsp;
       <Autocomplete
         multiple
