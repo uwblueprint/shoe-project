@@ -3,9 +3,9 @@ package restapi
 import (
 	"fmt"
 	"net/http"
-	"github.com/spf13/viper"
 	"net/http/httptest"
 	"testing"
+
 	"github.com/gavv/httpexpect/v2"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/suite"
@@ -69,12 +69,12 @@ func (suite *endpointTestSuite) TearDownTest() {
 	}
 
 	suite.token = suite.endpoint.POST("/login").
-				WithJSON([]models.User{{
-					Username: "admin",
-					Password: "root",
-				}}).
-	            Expect().
-				Status(http.StatusOK).JSON().Object().Value("payload").String().Raw()
+		WithJSON([]models.User{{
+			Username: "admin",
+			Password: "root",
+		}}).
+		Expect().
+		Status(http.StatusOK).JSON().Object().Value("payload").String().Raw()
 }
 
 func (suite *endpointTestSuite) TearDownTest() {
@@ -236,10 +236,11 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 	//Status(http.StatusOK).JSON().Array().Empty()
 }
 
+}
 
 func (suite *endpointTestSuite) TearDownSuite() {
 	if err := testutils.CloseDatabase(suite.db); err != nil {
-		suite.Fail("error while closing database", err)  
+		suite.Fail("error while closing database", err)
 	}
 }
 
