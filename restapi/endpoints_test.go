@@ -3,10 +3,11 @@ package restapi
 import (
 	"fmt"
 	"net/http"
-	"github.com/spf13/viper"
 	"net/http/httptest"
 	"testing"
+
 	"github.com/gavv/httpexpect/v2"
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/suite"
 	"github.com/uwblueprint/shoe-project/internal/database/migrations"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
@@ -18,7 +19,7 @@ type endpointTestSuite struct {
 	suite.Suite
 	endpoint *httpexpect.Expect
 	db       *gorm.DB
-	token     string
+	token    string
 }
 
 func (suite *endpointTestSuite) SetupSuite() {
@@ -30,7 +31,7 @@ func (suite *endpointTestSuite) SetupSuite() {
 
 	// setup required for jwt authentication
 	viper.SetDefault("auth.jwt_key", "random")
-	viper.SetDefault("auth.jwt_expiry", "2h")
+	viper.SetDefault("auth.jwt_expiry", "5m")
 	viper.SetDefault("auth.jwt_issuer", "endpoint_tests")
 
 	router, err := Router(db)
@@ -44,19 +45,19 @@ func (suite *endpointTestSuite) SetupSuite() {
 
 func (suite *endpointTestSuite) SetupTest() {
 	if err := migrations.CreateTables(suite.db); err != nil {
-		suite.Fail("error while creating tables", err)		
+		suite.Fail("error while creating tables", err)
 	}
 	if err := migrations.CreateSuperUser(suite.db); err != nil {
 		suite.Fail("error creating super user", err)
 	}
 
 	suite.token = suite.endpoint.POST("/login").
-				WithJSON([]models.User{{
-					Username: "admin",
-					Password: "root",
-				}}).
-	            Expect().
-				Status(http.StatusOK).JSON().Object().Value("payload").String().Raw()
+		WithJSON([]models.User{{
+			Username: "admin",
+			Password: "root",
+		}}).
+		Expect().
+		Status(http.StatusOK).JSON().Object().Value("payload").String().Raw()
 }
 
 func (suite *endpointTestSuite) TearDownTest() {
@@ -74,35 +75,30 @@ func (suite *endpointTestSuite) TestHealthCheck() {
 func (suite *endpointTestSuite) TestGetAllStories() {
 	json_story1 := []models.Story{
 		{
-			Title:      "The Little Prince",
-			Content:    "Children",
-			AuthorID:    1,
+			Title:    "The Little Prince",
+			Content:  "Children",
+			AuthorID: 1,
 		},
 	}
-
-	suite.endpoint.POST("/stories").WithHeader("Authorization", "Bearer "+suite.token).
-	WithJSON(json_story1).
-	Expect().
-	Status(http.StatusOK)
 
 	json_story2 := []models.Story{
 		{
-			Title:      "Hitchhiker's Guide to the Galaxy",
-			Content:    "Fiction",
-			AuthorID:    2,
+			Title:    "Hitchhiker's Guide to the Galaxy",
+			Content:  "Fiction",
+			AuthorID: 2,
 		},
 	}
 
-	suite.endpoint.POST("/stories").WithHeader("Authorization", "Bearer "+suite.token).
-	WithJSON(json_story2).
-	Expect().
-	Status(http.StatusOK)
+	//Directly add to mock DB
+	suite.db.Create(&json_story1)
+	suite.db.Create(&json_story2)
 
-    var response = suite.endpoint.GET("/stories").
-							Expect().
-							Status(http.StatusOK).
-							Status(http.StatusOK).JSON()
-	mock :=   `{
+	var response = suite.endpoint.GET("/stories").
+		Expect().
+		Status(http.StatusOK).
+		Status(http.StatusOK).JSON()
+
+	mock := `{
 		"payload": [
 		{
 			"author_id": 1,
@@ -118,7 +114,7 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 		"status": "OK"
 	}`
 
- 	 //Verify mock matches response
+	//Verify mock matches response
 	response.Schema(mock)
 
 }
@@ -143,19 +139,19 @@ func (suite *endpointTestSuite) TestCreateAuthor() {
 	suite.Equal(1, int(authorCount))
 }
 
-func (suite *endpointTestSuite) TestCreateStory(){
+func (suite *endpointTestSuite) TestCreateStory() {
 	json := []models.Story{
 		{
-			Title:      "Jane Eyre",
-			Content:    "Classic",
-			AuthorID:    2,
+			Title:    "Jane Eyre",
+			Content:  "Classic",
+			AuthorID: 2,
 		},
 	}
 
 	suite.endpoint.POST("/stories").WithHeader("Authorization", "Bearer "+suite.token).
-	WithJSON(json).
-	Expect().
-	Status(http.StatusOK)
+		WithJSON(json).
+		Expect().
+		Status(http.StatusOK)
 
 	var storyCount int64
 	suite.db.Table("stories").Count(&storyCount)
@@ -165,20 +161,17 @@ func (suite *endpointTestSuite) TestCreateStory(){
 func (suite *endpointTestSuite) TestGetStoryByID() {
 	json := []models.Story{
 		{
-			Title:      "Swan Lake for Beginners",
-			Content:    "Short Story",
-			AuthorID:    1,
+			Title:    "Swan Lake for Beginners",
+			Content:  "Short Story",
+			AuthorID: 1,
 		},
 	}
 
-	suite.endpoint.POST("/stories").WithHeader("Authorization", "Bearer "+suite.token).
-	WithJSON(json).
-	Expect().
-	Status(http.StatusOK)
-	
+	suite.db.Create(&json)
+
 	var response = suite.endpoint.GET("/story/1").
-		  			Expect().
-					Status(http.StatusOK).JSON()
+		Expect().
+		Status(http.StatusOK).JSON()
 	mock := `{
 				"payload": [
 				{
@@ -190,13 +183,12 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 			}`
 	//Verify they are the same
 	response.Schema(mock)
-	
-}
 
+}
 
 func (suite *endpointTestSuite) TearDownSuite() {
 	if err := testutils.CloseDatabase(suite.db); err != nil {
-		suite.Fail("error while closing database", err)  
+		suite.Fail("error while closing database", err)
 	}
 }
 
