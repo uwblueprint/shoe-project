@@ -7,7 +7,6 @@ import (
 )
 
 type Author struct {
-	ID            uint `gorm:"autoIncrement:true"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 	DeletedAt     gorm.DeletedAt `gorm:"index"`
