@@ -34,7 +34,7 @@ func (suite *endpointTestSuite) SetupSuite() {
 	viper.SetDefault("auth.jwt_expiry", "5m")
 	viper.SetDefault("auth.jwt_issuer", "endpoint_tests")
 
-	router, err := Router(db)
+	router, err := Router(db, testutils.MockLocationFinder{})
 	if err != nil {
 		suite.FailNow("error while creating router", err)
 	}
@@ -46,23 +46,6 @@ func (suite *endpointTestSuite) SetupSuite() {
 func (suite *endpointTestSuite) SetupTest() {
 	if err := migrations.CreateTables(suite.db); err != nil {
 		suite.Fail("error while creating tables", err)
-	}
-	if err := migrations.CreateSuperUser(suite.db); err != nil {
-		suite.Fail("error creating super user", err)
-	}
-
-	suite.token = suite.endpoint.POST("/login").
-		WithJSON([]models.User{{
-			Username: "admin",
-			Password: "root",
-		}}).
-		Expect().
-		Status(http.StatusOK).JSON().Object().Value("payload").String().Raw()
-}
-
-func (suite *endpointTestSuite) TearDownTest() {
-	if err := testutils.DropTables(suite.db); err != nil {
-		suite.Fail("error while dropping tables", err)
 	}
 	if err := migrations.CreateSuperUser(suite.db); err != nil {
 		suite.Fail("error creating super user", err)
@@ -170,22 +153,6 @@ func (suite *endpointTestSuite) TestCreateStory() {
 			AuthorID: 2,
 		},
 	}
-}
-
-func (suite *endpointTestSuite) TestCreateAuthor() {
-	json := []models.Author{
-		{
-			FirstName:     "d",
-			LastName:      "d",
-			OriginCountry: "India",
-			CurrentCity:   "Toronto",
-		},
-	}
-
-	suite.endpoint.POST("/authors").
-		WithJSON(json).
-		Expect().
-		Status(http.StatusOK)
 
 	suite.endpoint.POST("/stories").WithHeader("Authorization", "Bearer "+suite.token).
 		WithJSON(json).
