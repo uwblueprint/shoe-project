@@ -136,9 +136,6 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 	response.Object().Value("payload").Array().Element(0).Object().Value("ID").Equal(1)
 	response.Object().Value("payload").Array().Element(1).Object().Value("ID").Equal(2)
 
-	// if err != nil {
-	// 	suite.Fail("error while logging in", err)
-	// }
 }
 
 func (suite *endpointTestSuite) TestCreateAuthor() {
@@ -222,19 +219,6 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 	//Verify they are the same
 	response.Schema(mock)
 	response.Object().Value("payload").Object().Value("ID").Equal(1)
-
-	//var arr []string
-	//mock.ExpectBegin()
-	//mock.ExpectQuery("SELECT * FROM stories WHERE stories.deleted_at IS NULL").WillReturnRows(sqlmock.NewRows(arr))
-	//mock.ExpectCommit()
-
-	//handler,_ := Router(gdb)
-	//server := httptest.NewServer(handler)
-	//e := httpexpect.New(t, server.URL)
-	//e.GET("/stories").
-	//Expect().
-	//Status(http.StatusOK).JSON().Array().Empty()
-}
 
 }
 
