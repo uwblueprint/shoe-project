@@ -116,6 +116,9 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 	//Verify response matches
 	response.Schema(mock)
 
+	response.Object().Value("payload").Array().Element(0).Object().Value("ID").Equal(1)
+	response.Object().Value("payload").Array().Element(1).Object().Value("ID").Equal(2)
+
 }
 
 func (suite *endpointTestSuite) TestCreateAuthor() {
@@ -182,6 +185,7 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 			}`
 	//Verify they are the same
 	response.Schema(mock)
+	response.Object().Value("payload").Object().Value("ID").Equal(1)
 
 }
 
