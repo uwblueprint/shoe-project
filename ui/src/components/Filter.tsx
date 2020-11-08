@@ -23,8 +23,8 @@ export interface FilterProps {
 const FilterContainer = styled.div`
   z-index: 1000;
   position: absolute;
-  width: 505px;
-  height: 61px;
+  width: 324px;
+  min-height: 61px;
   left: 46px;
   top: 70px;
 
@@ -33,12 +33,13 @@ const FilterContainer = styled.div`
   border-radius: 10px;
 
   display: flex;
-  align-items: center;
-  padding-left: 18px;
+  padding: 16px;
+  flex-direction: column;
 `;
 
 const Tagline = styled.span`
   fontSize: ${fontSize.subtitle};
+  padding-bottom: 16px;
 `;
 
 export function Filter(): JSX.Element {
