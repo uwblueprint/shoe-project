@@ -89,13 +89,12 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 		},
 	}
 
-	//Directly add to mock DB
+	//Add to sqlite db
 	suite.db.Create(&json_story1)
 	suite.db.Create(&json_story2)
 
 	var response = suite.endpoint.GET("/stories").
 		Expect().
-		Status(http.StatusOK).
 		Status(http.StatusOK).JSON()
 
 	mock := `{
@@ -114,7 +113,7 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 		"status": "OK"
 	}`
 
-	//Verify mock matches response
+	//Verify response matches
 	response.Schema(mock)
 
 }
