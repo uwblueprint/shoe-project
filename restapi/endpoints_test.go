@@ -134,7 +134,11 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 	response.Schema(mock)
 
 	response.Object().Value("payload").Array().Element(0).Object().Value("ID").Equal(1)
+	response.Object().Value("payload").Array().Element(0).Object().Value("content").Equal("Children")
+	response.Object().Value("payload").Array().Element(0).Object().Value("title").Equal("The Little Prince")
 	response.Object().Value("payload").Array().Element(1).Object().Value("ID").Equal(2)
+	response.Object().Value("payload").Array().Element(1).Object().Value("content").Equal("Fiction")
+	response.Object().Value("payload").Array().Element(1).Object().Value("title").Equal("Hitchhiker's Guide to the Galaxy")
 
 }
 
@@ -219,6 +223,8 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 	//Verify they are the same
 	response.Schema(mock)
 	response.Object().Value("payload").Object().Value("ID").Equal(1)
+	response.Object().Value("payload").Object().Value("content").Equal("Short Story")
+	response.Object().Value("payload").Object().Value("title").Equal("Swan Lake for Beginners")
 
 }
 
