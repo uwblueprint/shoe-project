@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
@@ -62,4 +63,18 @@ func (api api) CreateStories(w http.ResponseWriter, r *http.Request) render.Rend
 	}
 
 	return rest.MsgStatusOK("Stories added successfully")
+}
+
+func (api api) ReturnStoriesByCountries(w http.ResponseWriter, r *http.Request) render.Renderer {
+	countriesString := chi.URLParam(r, "countries")
+	countries := strings.Split(countriesString, ",")
+
+	var stories []models.Story
+
+	err := api.database.Where("author_country IN ?", countries).Find(&stories).Error
+	if err != nil {
+		return rest.ErrInternal(api.logger, err)
+	}
+
+	return rest.JSONStatusOK(stories)
 }
