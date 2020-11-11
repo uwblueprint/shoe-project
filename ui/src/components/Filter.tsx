@@ -9,6 +9,8 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Checkbox from '@material-ui/core/Checkbox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import { createMuiTheme } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
 
 import { FilterChip } from "./FilterChip";
 
@@ -19,6 +21,17 @@ export interface FilterProps {
   options: string[];
   onChange: (options: string[]) => void;
 }
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: colors.primary
+    },
+    secondary: {
+      main: colors.primaryDark1,
+    },
+  },
+});
 
 const FilterContainer = styled.div`
   z-index: 1000;
@@ -48,54 +61,59 @@ export function Filter(): JSX.Element {
   if (error) return <div>Error!</div>;
 
   return (
-    <FilterContainer>
-      <Tagline>Show stories from:</Tagline>
-      <Autocomplete
-        multiple
-        loading={!countries}
-        id="filter-autocomplete"
-        options={countries || []}
-        style={{ width: 312}}
-        disableCloseOnSelect
-        renderTags={(value, getTagProps) =>
-          value.map((option, index) => (
-            <FilterChip
-              key={option}
-              label={option}
-              {...getTagProps({ index })}
+    <ThemeProvider theme={theme}>
+      <FilterContainer>
+        <Tagline>Show stories from:</Tagline>
+        <Autocomplete
+          color={'primary'}
+          multiple
+          limitTags={6}
+          loading={!countries}
+          id="filter-autocomplete"
+          options={countries || []}
+          style={{ width: 312}}
+          disableCloseOnSelect
+          renderTags={(value, getTagProps) =>
+            value.map((option, index) => (
+              <FilterChip
+                key={option}
+                label={option}
+                {...getTagProps({ index })}
+              />
+            ))
+          }
+          renderOption={(option, { selected }) => (
+            <React.Fragment key={option}>
+              <Checkbox
+                icon={icon}
+                checkedIcon={checkedIcon}
+                style={{ marginRight: 8 }}
+                checked={selected}
+                color={'secondary'}
+              />
+              {option}
+            </React.Fragment>
+          )}
+    
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              variant="standard"
+              label=""
+              placeholder="Countries"
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <React.Fragment>
+                    {!countries ? <CircularProgress color="inherit" size={20} /> : null}
+                    {params.InputProps.endAdornment}
+                  </React.Fragment>
+                ),
+              }}
             />
-          ))
-        }
-        renderOption={(option, { selected }) => (
-          <React.Fragment key={option}>
-            <Checkbox
-              icon={icon}
-              checkedIcon={checkedIcon}
-              style={{ marginRight: 8 }}
-              checked={selected}
-            />
-            {option}
-          </React.Fragment>
-        )}
-  
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            variant="standard"
-            label=""
-            placeholder="Countries"
-            InputProps={{
-              ...params.InputProps,
-              endAdornment: (
-                <React.Fragment>
-                  {!countries ? <CircularProgress color="inherit" size={20} /> : null}
-                  {params.InputProps.endAdornment}
-                </React.Fragment>
-              ),
-            }}
-          />
-        )}
-      />
-    </FilterContainer>
+          )}
+        />
+      </FilterContainer>
+    </ThemeProvider>
   );
 }
