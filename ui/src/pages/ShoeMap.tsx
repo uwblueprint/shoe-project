@@ -1,7 +1,6 @@
 import * as React from "react";
 import styled from "styled-components";
 import { Map, TileLayer, ZoomControl } from "react-leaflet";
-import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 import { Pin, PinState } from "../components/Pin";
@@ -33,7 +32,7 @@ export const ShoeMap: React.FC = () => {
           position={[currentLocation.lat, currentLocation.lng]}
           state={PinState.Resting}
         />
-        <ZoomControl position='topright'/>
+        <ZoomControl position="topright" />
       </StyledMap>
     </MapContainer>
   );

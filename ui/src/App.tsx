@@ -1,6 +1,6 @@
 import * as React from "react";
 import { SWRConfig } from "swr";
-import { BrowserRouter as Router, Switch, Route} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import { Home, ShoeMap } from "./pages";
 
