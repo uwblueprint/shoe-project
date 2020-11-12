@@ -1,0 +1,219 @@
+[
+    {
+      "first_name": "Tanaz",
+      "last_name" : "Bhathena",
+      "bio": "My mother always wanted me to be a lady. To defy her, after moving to Canada from Saudi Arabia, I bought shoes that were flat, round-toed and black – not the least bit ladylike. I wore these shoes to my high school award ceremony, my job interview, to driving lessons, to convocation. As the years passed, I bought new shoes, including strappy, dainty, high-heels. But my unladylike black boots are the ones I return to when my feet are sore. They are the shoes that accompanied me on my journey to becoming Canadian – a woman free to fly as she wished.",
+      "current_city": "Toronto",
+      "origin_country": "India"
+    },
+    {
+      "first_name": "Teenaz",
+      "last_name" : "Javat",
+      "bio": "When Teenaz Javat came to Canada 15 years ago with her husband and infant daughter, she was made to put her career on hold. For nine years she stayed at home so that her kids could stay out of day care, which her husband abhorred. During those times her best friend and cultural informant, was the daily newspaper which she read while wearing the sappats she had brought from Pakistan.",
+      "current_city": "Toronto",
+      "origin_country": "India"
+    },
+    {
+      "first_name": "Yoko",
+      "last_name" : "Morgenstern",
+      "bio": "We tell our immigration stories. Yeah we worked hard. Got a car and a house and OHIP for the family. We threw our children in daycare, children who knew no English and we said to ourselves, kids will be fine. But is that true? During recess at school my son had no friend to play with. “So I walk,” he said. On the schoolyard among basketball players and beyblade fighters I saw my son walk. Walk walk walk, staring down at his toes. Who’s going to tell his immigration story?",
+      "current_city": "Toronto",
+      "origin_country": "Japan"
+    },
+    {
+      "first_name": "Maryam Nabavi",
+      "last_name" : "Nejad",
+      "bio": "For some newcomers in Canada, adopting a new life includes adopting a new look and attire. But there are many social and cultural codes of appearance, and they need to be translated. Sometimes shoes play a strong role in this journey of transformation, even a funny role. As I went down that road, the shape of my shoes changed, reflecting my experience.",
+      "current_city": "Toronto",
+      "origin_country": "Iran"
+    },
+    {
+      "first_name": "Jie",
+      "last_name" : "Lin",
+      "bio": "I am the only child of my family under China’s One Child Policy.  I crocheted this pair of baby booties in white and blue for my future son.  I used the same technique that I learnt from my grandmother.  My grandparents raised me for my first twelve years, surrounding me with many special animal friends to keep me company.  In Canada, I began my journey towards motherhood—with no rules imposed.",
+      "current_city": "Toronto",
+      "origin_country": "China"
+    },
+    {
+      "first_name": "Irena",
+      "last_name" : "Rodziewicz",
+      "bio": "I was born and grew up in communist Poland. In 1980, my country faced a deep economic crisis. The stores became virtually empty and we had to stay in long lineups for everything. I was a sixth grade student who had an unusual hobby: waiting hours in long lineups at the butcher’s shop. I loved it because I had a chance to show off my Relaks winter boots that I was very proud to own. Besides, while standing in line, I heard stories that exceeded the expectations of any teenage girl at that time.",
+      "current_city": "Toronto",
+      "origin_country": "Poland"
+    },
+    {
+      "first_name": "Khujesta",
+      "last_name" : "Sadri",
+      "bio": "Rarely do most girls in Afghanistan achieve their dreams. Most of them are not allowed to choose and fall in love with a Prince Charming. However, as an Afghan woman in Toronto, I managed to become Cinderella and find the man of my dreams. I even received a lovely pair of shoes from him. I wore them on my wedding day to remind me of the many women at home in Afghanistan for whom home is a jail. At least, my shoes with their embroidered symbols tell one woman’s story.",
+      "current_city": "Toronto",
+      "origin_country": "Afghanistan"
+    },
+    {
+      "first_name": "Sujata",
+      "last_name" : "Thapa-Bhattarai",
+      "bio": "These bright red, velvet shoes with gold embroidery are traditional, Nepali wedding shoes. In Nepal, most girls are married before eighteen, and without their consent. But I chose my own husband, against the wishes of his family and my own. Even so, I wanted traditional, handmade shoes with woven soles.  When I look at my wedding shoes, I feel a mixture of sadness and happiness—sadness that I lost my family’s support, and happiness that I made the decision to marry and to come to Canada to further my education and assert myself.",
+      "current_city": "Toronto",
+      "origin_country": "Nepal"
+    },
+    {
+      "first_name": "Noriko",
+      "last_name" : "Ohsada",
+      "bio": "",
+      "current_city": "Canmore",
+      "origin_country": "Japan"
+    },
+    {
+      "first_name": "Natalia",
+      "last_name" : "Bussi-Rodriguez",
+      "bio": "When I left Uruguay in 2005, I was not sure if I could settle in Canada. Even though I was a traveller with intentions to stay, I wanted to look like one who goes and comes back. A sturdy grey suitcase was my only companion.",
+      "current_city": " Toronto",
+      "origin_country": "Uruguay"
+    },
+    {
+      "first_name": "Rasha",
+      "last_name" : "Elendari",
+      "bio": "Today I am telling a story told to me by my older sister Manya who is now inside Syria running an organization to help internally displaced people escape the violence in their cities. Here it begins:",
+      "current_city": "Toronto",
+      "origin_country": "Syria"
+    },
+    {
+      "first_name": "Kiden",
+      "last_name" : "Jonathan",
+      "bio": "I come from Southern Sudan, which is now called South Sudan. It became an independent country in July of 2011. In 1983, John Garang started fighting for equality in terms of wealth, power, religion, race, and resources. The civil war lasted for 23 years.",
+      "current_city": "Toronto",
+      "origin_country": "South Sudan"
+    },
+    {
+      "first_name": "Winnie",
+      "last_name" : "Muchuba",
+      "bio": "",
+      "current_city": "Toronto",
+      "origin_country": "Democratic Republic of Congo"
+    },
+    {
+      "first_name": "Valerie",
+      "last_name" : "Nadege",
+      "bio": "",
+      "current_city": "Calgary",
+      "origin_country": "Cameroon"
+    },
+    {
+      "first_name": "Inae",
+      "last_name" : "Kim",
+      "bio": "Despite my best efforts to learn English and obtain a job based on my education and experience, my first job in Canada was at a fish farm. I wore ugly black rubber boots for a whole year, before re-discovering myself.",
+      "current_city": "Halifax",
+      "origin_country": "South Korea"
+    },
+    {
+      "first_name": "Atinuke",
+      "last_name" : "Adeoye",
+      "bio": "Shoes give clues to our personalities. Waiting for a workshop at my new Canadian job to start, I examined my coworkers’ footwear and thought about what my own shoes say about me.",
+      "current_city": "Halifax",
+      "origin_country": "Nigeria"
+    },
+    {
+      "first_name": "Tenzin",
+      "last_name" : "Choden",
+      "bio": "Tenzin Choden was born as a Tibetan refugee in a small town in India. When her family wins an immigration lottery, Choden buys a pair of black calf-high boots and begins her unexpected journey from India to Canada.",
+      "current_city": "Calgary",
+      "origin_country": "India"
+    },
+    {
+      "first_name": "Catherine",
+      "last_name" : "Enstas",
+      "bio": "Before immigrating to Canada, Catherine Enstas never thought that shoes could hold secret power. Yet, after arriving in Calgary she discovers that a precious pair of knitted indoor shoes that were part of the few belongings she brought from Syria contain a private kingdom of imagination, memories and support.",
+      "current_city": "Calgary",
+      "origin_country": "Syria"
+    },
+    {
+      "first_name": "Dusanka",
+      "last_name" : "Reljic",
+      "bio": "If you have to leave your home at a moment's notice, what would you take? This story shows why Dusanka Reljic, a Serbian teacher escaping Croatia in 1995, took her Wallabees that were a gift from a Jordanian peacekeeper.",
+      "current_city": "Calgary",
+      "origin_country": "Yugoslavia"
+    },
+    {
+      "first_name": "Nasima",
+      "last_name" : "Behzad",
+      "bio": "When Shia Hazaras were targeted in Afghanistan, Nasima Behzad`s family moved to Pakistan. When the ethnic group was targeted there, Nasima, 20 weeks pregnant and wearing her black and pink running shoes, begins a  surprising journey to find a peaceful country.",
+      "current_city": "Calgary",
+      "origin_country": "Afghanistan"
+    },
+    {
+      "first_name": "Rawan",
+      "last_name" : "Nassar",
+      "bio": "I used to go out seeking adventures, but the one I didn't plan for was the one that made me find out who I am.  It took a war for me to know myself.",
+      "current_city": "Vancouver",
+      "origin_country": "Syria"
+    },
+    {
+      "first_name": "Shanga",
+      "last_name" : "K.",
+      "bio": "A female journalist reporting on violence against women in an area where just being a woman is not easy receives multiple threats.  Eventually she finds herself running for her life.",
+      "current_city": "Vancouver",
+      "origin_country": "Iraq"
+    },
+    {
+      "first_name": "Umut Duygu",
+      "last_name" : "Uzunel",
+      "bio": "",
+      "current_city": "Toronto",
+      "origin_country": "Turkey"
+    },
+    {
+      "first_name": "Vathsala",
+      "last_name" : "Aswathaman",
+      "bio": "",
+      "current_city": "Toronto",
+      "origin_country": "Sri Lanka"
+    },
+    {
+      "first_name": "Claudia",
+      "last_name" : "Cousineau",
+      "bio": "In Chile, it was common practice for women to wear high heeled shoes. They were part of the expected professional attire for women. For me, they were a way to appear powerful and independent in the business world even though I did not feel this way inside. Tired of trying to meet social expectations wearing shoes that did not fit me, I ventured into the search for a new life, a place where I could create my own rules and choose my own type of shoes.",
+      "current_city": "Canmore",
+      "origin_country": "Chile"
+    },
+    {
+      "first_name": "Maya",
+      "last_name" : "Kabbani",
+      "bio": "",
+      "current_city": "Toronto",
+      "origin_country": "Syria"
+    },
+    {
+      "first_name": "Natalia",
+      "last_name" : "Mokhovinkova",
+      "bio": "A mother and her two daughters go on a cruise as a break from the unending harassment at home. When they arrive at the port, they get some terrifying news that changes their travel plans and their lives.",
+      "current_city": "Vancouver",
+      "origin_country": "Russia"
+    },
+    {
+      "first_name": "Venera",
+      "last_name" : "Loshaj-Balaj",
+      "bio": "An Albanian refugee family from Kosovo tries to escape the war by bus. The bus is stopped. Their safety is jeopardized.",
+      "current_city": "Vancouver",
+      "origin_country": "Albania"
+    },
+    {
+      "first_name": "Ayah",
+      "last_name" : "Aldeeb",
+      "bio": "Ayah Aldeeb is a Syrian refugee who came from Jordan in 2016. Ayah graduated from James Fowler High School last year and earned a scholarship that is worth $5500. She currently studies at Mount Royal University and plans to study medicine after finishing her degree in Science.",
+      "current_city": "Calgary",
+      "origin_country": "Syria"
+    },
+    {
+      "first_name": "Gulhan",
+      "last_name" : "Mesrefoglu",
+      "bio": "The last time Gulhan, a judge in Turkey, wears her high heeled shoes the police are coming. She knows she cannot run in them, but as she is handcuffed and accused of being a terrorist, she keeps them on as an act of defiance all through her detention and interrogation. In Toronto since 2017, she hopes to be a lawyer and to continue fighting for justice as she did in Turkey. ",
+      "current_city": "Toronto",
+      "origin_country": "Turkey"
+    },
+    {
+      "first_name": "Ambika",
+      "last_name" : "Thambu",
+      "bio": "Civil war forces Ambika Thambu from beautiful Jaffna, Sri Lanka in 1997. She sets out wearing Bata slippers that make a happy “sadag sadag” sound as she walks. Even when all that holds the slippers together is a safety-pin, and even though at times she carries them, she doesn’t throw them away. Now she is a radio host, grateful to the black Bata slippers that brought her to her new life.",
+      "current_city": "Toronto",
+      "origin_country": "Sri Lanka"
+    }
+   ]
