@@ -1,7 +1,13 @@
 import styled from "styled-components";
 import { Map, TileLayer, ZoomControl } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+<<<<<<< HEAD
 import { PinCluster } from "../components/PinCluster";
+=======
+import { Pin, PinState } from "../components/Pin";
+import { TitleText } from "../styles/typography";
+import {PinCluster} from "../components/PinCluster";
+>>>>>>> Finished marker cluster component
 import 'react-leaflet-markercluster/dist/styles.min.css';
 import 'leaflet.markercluster';
 
