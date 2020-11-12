@@ -1,10 +1,13 @@
-import React from 'react';
+import * as React from "react";
 import Drawer from '@material-ui/core/Drawer';
 import {
   DrawerTitleText
 } from "../styles/typography";
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import IconButton from '@material-ui/core/IconButton';
+import Grid from '@material-ui/core/Grid';
+import { Typography } from '@material-ui/core';
+import styled from "styled-components";
 
 const StyledDrawer = styled(Drawer)`
   display: flex;
@@ -39,6 +42,7 @@ interface StoryDrawerProps {
   date: string;
   country: string;
   content: string;
+  currentCity: string;
   state: StoryDrawerState;
   setState: (newState: StoryDrawerState) => void;
 }
@@ -49,6 +53,17 @@ export function StoryDrawer({ title, description, author, date, country, content
           <StyledIconButton onClick={() =>  setState(StoryDrawerState.Closed)}>
             <ArrowForwardIcon/>
           </StyledIconButton>
+          <Grid container>
+            <Grid item xs={12}>
+              <Typography>{title}</Typography>
+            </Grid>
+            <Grid item xs={6}>
+              {"Origin: " + country}
+              {}
+            </Grid>
+
+          </Grid>
+
 
            
         </StyledDrawer>

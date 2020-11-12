@@ -2,7 +2,14 @@ import * as React from "react";
 import styled from "styled-components";
 import { Map, TileLayer, ZoomControl } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+<<<<<<< HEAD
 import { PinCluster } from "../components/PinCluster";
+=======
+
+import { Pin, PinState } from "../components/Pin";
+import { StoryDrawer, StoryDrawerState } from "../components/StoryDrawer";
+import { useState } from "react";
+>>>>>>> fix component
 
 const StyledMap = styled(Map)`
   height: 100vh;
@@ -35,6 +42,7 @@ const markerList = [
 export const ShoeMap: React.FC = () => {
   const zoom = 12;
   const currentLocation = { lat: 43.4723, lng: -80.5449 };
+  const [isDrawerOpen, setIsDrawerOpen] = useState(StoryDrawerState.Closed);
 
   return (
     <React.Fragment>
@@ -47,7 +55,18 @@ export const ShoeMap: React.FC = () => {
         <ZoomControl position="topright" />
       </StyledMap>
     </MapContainer>
-
+    <StoryDrawer 
+          title={"Story Title"}
+          description={
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis turpis facilisis risus dolor. Euismod morbi vel vitae massa risus, commodo sed in arcu. Cras ..."
+          }
+          author={"Jie Li"}
+          date={"Dec 20, 2020"}
+          country={"China"}
+          state={isDrawerOpen}
+          content={""}
+          setState={setIsDrawerOpen}
+          />
     </React.Fragment>
   );
 };
