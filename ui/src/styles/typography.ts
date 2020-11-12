@@ -76,3 +76,14 @@ export const CardTagText = styled.span`
     font-size: 10px;
   }
 `;
+
+export const DrawerTitleText = styled.span`
+  font-family: Canela;
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 37px;
+  letter-spacing: 0em;
+  text-align: left;
+`;
+

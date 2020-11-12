@@ -37,6 +37,7 @@ export const ShoeMap: React.FC = () => {
   const currentLocation = { lat: 43.4723, lng: -80.5449 };
 
   return (
+    <React.Fragment>
     <MapContainer>
       <StyledMap center={currentLocation} zoom={zoom} zoomControl={false}>
         <TileLayer
@@ -46,5 +47,7 @@ export const ShoeMap: React.FC = () => {
         <ZoomControl position="topright" />
       </StyledMap>
     </MapContainer>
+
+    </React.Fragment>
   );
 };
