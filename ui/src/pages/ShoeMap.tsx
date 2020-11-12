@@ -1,14 +1,13 @@
 import * as React from "react";
 import styled from "styled-components";
-import { Map, TileLayer } from "react-leaflet";
+import { Map, TileLayer, ZoomControl } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 import { Pin, PinState } from "../components/Pin";
-import { TitleText } from "../styles/typography";
 
 const StyledMap = styled(Map)`
-  height: 70vh;
-  width: 90vw;
+  height: 100vh;
+  width: 100vw;
 `;
 
 const MapContainer = styled.div`
@@ -25,8 +24,7 @@ export const ShoeMap: React.FC = () => {
 
   return (
     <MapContainer>
-      <TitleText>Shoe Map</TitleText>
-      <StyledMap center={currentLocation} zoom={zoom}>
+      <StyledMap center={currentLocation} zoom={zoom} zoomControl={false}>
         <TileLayer
           url={`https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`}
         />
@@ -34,6 +32,7 @@ export const ShoeMap: React.FC = () => {
           position={[currentLocation.lat, currentLocation.lng]}
           state={PinState.Resting}
         />
+        <ZoomControl position="topright" />
       </StyledMap>
     </MapContainer>
   );
