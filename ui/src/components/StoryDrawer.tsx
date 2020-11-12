@@ -6,16 +6,18 @@ import {
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import IconButton from '@material-ui/core/IconButton';
 import Grid from '@material-ui/core/Grid';
-import { Typography } from '@material-ui/core';
+import { Container, Typography } from '@material-ui/core';
 import styled from "styled-components";
+import ChinaFlag from "../assets/flags/China.png";
+import TempShoe from "../assets/images/temp.png";
+import CardMedia from "@material-ui/core/CardMedia";
 
 const StyledDrawer = styled(Drawer)`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 64px 186px;
-  width: 1083px;
+  .MuiDrawer-root{
+  min-width: 50vh;
+  max-width: 50vh;
   background: #FFFFFF;
+  }
 `;
 
 const StyledIconButton = styled(IconButton)`
@@ -27,7 +29,10 @@ const StyledIconButton = styled(IconButton)`
 
   /* Red / Primary */
 
-  background: #C42626;
+  color: #C42626;
+`;
+
+const StyledContentTypography = styled(Typography)`
 `;
 
 export enum StoryDrawerState {
@@ -37,7 +42,6 @@ export enum StoryDrawerState {
 
 interface StoryDrawerProps {
   title: string;
-  description: string;
   author: string;
   date: string;
   country: string;
@@ -47,25 +51,38 @@ interface StoryDrawerProps {
   setState: (newState: StoryDrawerState) => void;
 }
 
-export function StoryDrawer({ title, description, author, date, country, content, state, setState }:StoryDrawerProps) : JSX.Element {
-    return(
-        <StyledDrawer anchor="right" open={state == StoryDrawerState.Open} onClose={() => setState(StoryDrawerState.Closed)}>
-          <StyledIconButton onClick={() =>  setState(StoryDrawerState.Closed)}>
-            <ArrowForwardIcon/>
-          </StyledIconButton>
-          <Grid container>
-            <Grid item xs={12}>
-              <Typography>{title}</Typography>
-            </Grid>
-            <Grid item xs={6}>
-              {"Origin: " + country}
-              {}
-            </Grid>
+export function StoryDrawer({ title, author, date, country, currentCity, content, state, setState }: StoryDrawerProps): JSX.Element {
+  return (
+    <StyledDrawer anchor="right" open={state == StoryDrawerState.Open} onClose={() => setState(StoryDrawerState.Closed)}>
+      <StyledIconButton onClick={() => setState(StoryDrawerState.Closed)}>
+        <ArrowForwardIcon />
+      </StyledIconButton>
+      <Grid container>
+        <Grid item xs={12}>
+          <DrawerTitleText>{title}</DrawerTitleText>
+        </Grid>
+        <Grid item xs={2}>
+          <img alt="flag" src={ChinaFlag} width="100%" />
+        </Grid>
+        <Grid item xs={4}>
+          <Typography>{"Origin: " + country}</Typography>
+          <Typography>{author}</Typography>
+        </Grid>
+        <Grid item xs={6} alignItems="flex-end" alignContent="flex-end" justify="flex-end">
+          <Typography>{currentCity}</Typography>
+          <Typography>{date}</Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <img src={TempShoe} alt="Temporary Image" width="100%" />
+        </Grid>
+        <Grid item xs={12}>
+          <StyledContentTypography>{content}</StyledContentTypography>
 
-          </Grid>
+        </Grid>
 
 
-           
-        </StyledDrawer>
-    )
+      </Grid>
+
+    </StyledDrawer>
+  )
 }

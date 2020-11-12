@@ -57,14 +57,12 @@ export const ShoeMap: React.FC = () => {
     </MapContainer>
     <StoryDrawer 
           title={"Story Title"}
-          description={
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis turpis facilisis risus dolor. Euismod morbi vel vitae massa risus, commodo sed in arcu. Cras ..."
-          }
           author={"Jie Li"}
           date={"Dec 20, 2020"}
           country={"China"}
           state={isDrawerOpen}
-          content={""}
+          content={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Diam non, nam dolor eget vitae. Velit massa turpis vitae ut tempus euismod. Pharetra tellus vitae mattis neque. Ipsum porttitor et enim bibendum ultricies. Egestas tortor, consequat odio urna amet. Dictumst est eu netus in iaculis cursus tincidunt dolor. Sed et enim volutpat, placerat molestie vestibulum, ac. Semper metus sit sit diam. Nam aenean nec iaculis ipsum suspendisse molestie. Commodo vitae ac ullamcorper justo. Aliquam, vestibulum sed in aenean consequat aliquam donec. Accumsan, ullamcorper tempus nisl, sit sollicitudin aliquet. Id gravida vel pretium sit diam. Ultricies neque libero scelerisque nunc, dignissim velit eget. Vitae sit magna magnis integer nulla nec arcu in senectus. Tincidunt eu commodo malesuada ultrices nulla eget urna. Nullam mi suspendisse vitae sagittis, vestibulum placerat eget eros, dictum. In adipiscing curabitur tellus etiam adipiscing sed fermentum. Aliquet molestie ornare lectus blandit aliquam malesuada arcu. Tellus vitae tristique facilisis dignissim volutpat, dictum in scelerisque. Iaculis viverra suspendisse lorem convallis habitasse malesuada erat sed et. Enim nibh mauris adipiscing velit non."}
+          currentCity={"Toronto"}
           setState={setIsDrawerOpen}
           />
     </React.Fragment>

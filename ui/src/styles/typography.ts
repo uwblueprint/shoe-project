@@ -1,3 +1,4 @@
+import { Typography } from "@material-ui/core";
 import styled from "styled-components";
 import { colors } from "./colors";
 import { device } from "./device";
@@ -79,7 +80,7 @@ export const CardTagText = styled.span`
 
 export const DrawerTitleText = styled.span`
   font-family: Canela;
-  font-size: 32px;
+  font-size: ${fontSize.h1Text};
   font-style: normal;
   font-weight: 400;
   line-height: 37px;
