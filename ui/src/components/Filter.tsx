@@ -38,6 +38,7 @@ const FilterContainer = styled.div`
   position: absolute;
   width: 324px;
   min-height: 61px;
+  max-height: 130px; 
   left: 46px;
   top: 70px;
 
@@ -67,11 +68,11 @@ export function Filter(): JSX.Element {
         <Autocomplete
           color={'primary'}
           multiple
-          limitTags={6}
+          disableClearable
           loading={!countries}
           id="filter-autocomplete"
           options={countries || []}
-          style={{ width: 312}}
+          style={{width: 312, overflowY: 'scroll', overflowX: "visible", zIndex: 1000}}
           disableCloseOnSelect
           renderTags={(value, getTagProps) =>
             value.map((option, index) => (
