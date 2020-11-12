@@ -35,7 +35,7 @@ func Seed(db *gorm.DB) error {
 				Title:       faker.Hacker().Noun(),
 				Content:     faker.Hacker().SaySomethingSmart(),
 				CurrentCity: "Toronto",
-				Summary:     "Summary",
+				Summary:     faker.Hacker().SaySomethingSmart(),
 				Latitude:    float64(faker.Address().Latitude()),
 				Longitude:   float64(faker.Address().Longitude()),
 			},
