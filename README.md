@@ -7,13 +7,15 @@ Requirements:
 - [Docker Compose](https://docs.docker.com/compose/install/)
 - Yarn >= 1.20
 - Node >= 12 (We recommend managing node versions with https://volta.sh/)
+- `.env` file pinned on Slack channel
 
 
 ## Development Workflow
 The project is dockerized and hence it is recommended to use `docker-compose` to develop and run services!
 
 - Backend server supports hot-reload so you don't need to re run it every change
-- Frontend also supports hot-reload so no need to re run it ever change
+- Frontend also supports hot-reload so no need to re run it every change
+- You may be missing one or more env variables in your `.env` file: check the Slack channel
 
 Install dependencies and build docker image:
 ```
@@ -94,9 +96,16 @@ yarn start
 ```
 
 ## Backend Code quality and checks
-Before pushing code, make sure to format the code. This can be done by:
+Before pushing code, make sure to format the code and run all tests. This can be done by:
 ```bash
 make backend-fmt
+make backend-test
+```
+
+You can run a single test file by specifying the package it's in:
+```bash
+make backend-test pkg=<package_name>
+# eg. make backend-test pkg=restapi
 ```
 
 Before code is merged, series of checks are run on the code to make sure it is formatted correctly.
