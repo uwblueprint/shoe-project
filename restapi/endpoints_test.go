@@ -80,6 +80,7 @@ func (suite *endpointTestSuite) TestReturnStoriesByCountries() {
 			AuthorFirstName: "Chimamanda",
 			AuthorLastName:  "Ngozi Adieche",
 			AuthorCountry:   "Nigeria",
+			CurrentCity:     "Toronto",
 		},
 		{
 			Title:           "Jane Eyre",
@@ -87,6 +88,7 @@ func (suite *endpointTestSuite) TestReturnStoriesByCountries() {
 			AuthorFirstName: "Charlotte",
 			AuthorLastName:  "Bronte",
 			AuthorCountry:   "UK",
+			CurrentCity:     "Montreal",
 		},
 	}
 
@@ -103,12 +105,14 @@ func (suite *endpointTestSuite) TestReturnStoriesByCountries() {
 	response.Object().Value("payload").Array().Element(0).Object().Value("author_country").Equal("Nigeria")
 	response.Object().Value("payload").Array().Element(0).Object().Value("content").Equal("Fiction")
 	response.Object().Value("payload").Array().Element(0).Object().Value("title").Equal("Half of a Yellow Sun")
+	response.Object().Value("payload").Array().Element(0).Object().Value("current_city").Equal("Toronto")
 
 	response.Object().Value("payload").Array().Element(1).Object().Value("author_first_name").Equal("Charlotte")
 	response.Object().Value("payload").Array().Element(1).Object().Value("author_last_name").Equal("Bronte")
 	response.Object().Value("payload").Array().Element(1).Object().Value("author_country").Equal("UK")
 	response.Object().Value("payload").Array().Element(1).Object().Value("content").Equal("Classic")
 	response.Object().Value("payload").Array().Element(1).Object().Value("title").Equal("Jane Eyre")
+	response.Object().Value("payload").Array().Element(1).Object().Value("current_city").Equal("Montreal")
 }
 
 func (suite *endpointTestSuite) TestGetAllStories() {
