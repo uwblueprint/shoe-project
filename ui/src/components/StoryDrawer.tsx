@@ -4,13 +4,12 @@ import {
   DrawerTitleText
 } from "../styles/typography";
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
-import { Container, Typography } from '@material-ui/core';
 import styled from "styled-components";
 import ChinaFlag from "../assets/flags/China.png";
 import TempShoe from "../assets/images/temp.png";
-import CardMedia from "@material-ui/core/CardMedia";
+import { colors } from "../styles/colors";
 
 const StyledDrawer = styled(Drawer)`
   .MuiDrawer-container{
@@ -20,16 +19,22 @@ const StyledDrawer = styled(Drawer)`
   }
 `;
 
-const StyledIconButton = styled(IconButton)`
+const StyledIconButton = styled(Button)`
   position: absolute;
-  width: 66.77px;
-  height: 60px;
   left: 0px;
   top: 0px;
-
-  /* Red / Primary */
-
-  background: #C42626;
+  && {
+    background-color: ${colors.secondary};
+    color: ${colors.white};
+    min-width: 66.77px;
+    min-height: 60px;
+    max-width: 66.77px;
+    max-height: 60px;
+    border-radius: 0px;
+      &:hover {
+    background-color: ${colors.secondaryDark1};
+  }
+  }
 `;
 
 const StyledSubheaderCountry = styled.div`
@@ -83,6 +88,17 @@ border-radius: 0px;
 width: 100%;
 `;
 
+const StyledRoot = styled.div`
+width: 100vh;
+padding-left: 30vh;
+padding-right: 30vh;
+`;
+
+const StyledFlagImage = styled.img`
+  border-radius: 10px;
+  width: 100%;
+`;
+
 export enum StoryDrawerState {
   Open,
   Closed
@@ -105,12 +121,13 @@ export function StoryDrawer({ title, author, date, country, currentCity, content
       <StyledIconButton onClick={() => setState(StoryDrawerState.Closed)}>
         <ArrowForwardIcon />
       </StyledIconButton>
-      <Grid container>
+      <StyledRoot>
+      <Grid container spacing={2} alignItems="center">
         <Grid item xs={12}>
           <DrawerTitleText>{title}</DrawerTitleText>
         </Grid>
         <Grid item xs={2}>
-          <img alt="flag" src={ChinaFlag} width="100%" />
+          <StyledFlagImage alt="flag" src={ChinaFlag}/>
         </Grid>
         <Grid item xs={4}>
           <StyledSubheaderCountry>{"Origin: " + country}</StyledSubheaderCountry>
@@ -125,11 +142,9 @@ export function StoryDrawer({ title, author, date, country, currentCity, content
         </Grid>
         <Grid item xs={12}>
           <StyledContentTypography>{content}</StyledContentTypography>
-
         </Grid>
-
-
       </Grid>
+      </StyledRoot>
 
     </StyledDrawer>
   )
