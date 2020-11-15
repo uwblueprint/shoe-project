@@ -2,8 +2,7 @@ import * as React from "react";
 import styled from "styled-components";
 import { Map, TileLayer, ZoomControl } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-
-import { Pin, PinState } from "../components/Pin";
+import { PinCluster } from "../components/PinCluster";
 
 const StyledMap = styled(Map)`
   height: 100vh;
@@ -18,6 +17,21 @@ const MapContainer = styled.div`
   align-items: center;
 `;
 
+const markerList = [
+  {
+    lat: 43.4723,
+    lng: -80.321796,
+  },
+  {
+    lat: 43.4923,
+    lng: -80.366873,
+  },
+  {
+    lat: 43.4323,
+    lng: -80.391796,
+  },
+];
+
 export const ShoeMap: React.FC = () => {
   const zoom = 12;
   const currentLocation = { lat: 43.4723, lng: -80.5449 };
@@ -28,10 +42,7 @@ export const ShoeMap: React.FC = () => {
         <TileLayer
           url={`https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`}
         />
-        <Pin
-          position={[currentLocation.lat, currentLocation.lng]}
-          state={PinState.Resting}
-        />
+        <PinCluster clusterPositions={markerList} />ß
         <ZoomControl position="topright" />
       </StyledMap>
     </MapContainer>
