@@ -1,7 +1,9 @@
 import * as React from "react";
 import styled from "styled-components";
+import Button from "@material-ui/core/Button";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
+import { colors } from "../styles/colors";
 import ChinaFlag from "../assets/flags/China.png";
 import TempShoe from "../assets/images/temp.png";
 import {
@@ -10,6 +12,19 @@ import {
   CardDetailText,
   CardTagText,
 } from "../styles/typography";
+
+const StyledButton = styled(Button)`
+  && {
+    color: ${colors.primaryDark2};
+    background-color: ${colors.primaryLight4};
+    height: 48px;
+    width: 100%;
+
+    &:hover {
+      background-color: ${colors.primaryLight3};
+    }
+  }
+`;
 
 const StyledMedia = styled(CardMedia)`
   border-radius: 10px 10px 0px 0px;
@@ -44,6 +59,9 @@ export function PinPreview({
         <CardTagText>{country}</CardTagText>
         <CardTitleText>{title}</CardTitleText>
         <CardDescriptionText>{description}</CardDescriptionText>
+        <StyledButton variant="contained" color="primary" disableElevation>
+          Read Full Story
+        </StyledButton>
         <CardDetailText>
           {author} • {date}
         </CardDetailText>
