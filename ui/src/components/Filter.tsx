@@ -9,6 +9,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Checkbox from '@material-ui/core/Checkbox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import { makeStyles } from "@material-ui/core/styles";
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 
@@ -33,12 +34,24 @@ const theme = createMuiTheme({
   },
 });
 
+const useStyles = makeStyles(theme => ({
+  clearIndicator: {
+    "& span": {
+      "& svg": {
+        "& path": {
+          d: "path('M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z')"
+        }
+      }
+    }
+  }
+}));
+
 const FilterContainer = styled.div`
   z-index: 1000;
   position: absolute;
   width: 324px;
   min-height: 61px;
-  max-height: 130px; 
+  max-height: 165px; 
   left: 46px;
   top: 70px;
 
@@ -57,6 +70,7 @@ const Tagline = styled.span`
 `;
 
 export function Filter(): JSX.Element {
+  const classes = useStyles();
   const { data:countries, error } = useSWR<string[]>("/api/authors/origin_countries");
 
   if (error) return <div>Error!</div>;
@@ -68,11 +82,10 @@ export function Filter(): JSX.Element {
         <Autocomplete
           color={'primary'}
           multiple
-          disableClearable
           loading={!countries}
           id="filter-autocomplete"
           options={countries || []}
-          style={{width: 312, overflowY: 'scroll', overflowX: "visible", zIndex: 1000}}
+          style={{width: 312, overflowY: 'scroll', overflowX: "visible"}}
           disableCloseOnSelect
           renderTags={(value, getTagProps) =>
             value.map((option, index) => (
@@ -83,6 +96,9 @@ export function Filter(): JSX.Element {
               />
             ))
           }
+          classes={{
+            clearIndicatorDirty: classes.clearIndicator
+          }}
           renderOption={(option, { selected }) => (
             <React.Fragment key={option}>
               <Checkbox
