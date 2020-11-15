@@ -112,7 +112,8 @@ export const DrawerAuthorText = styled.div`
   line-height: 19px;
   letter-spacing: 0em;
   text-align: left;
-  opacity: 50% @media ${device.mobileS} {
+  opacity: 0.5;
+  @media ${device.mobileS} {
     font-size: ${fontSize.mobile};
   }
 `;
@@ -125,7 +126,8 @@ export const DrawerRightText = styled.div`
   line-height: 19px;
   letter-spacing: 0em;
   text-align: right;
-  opacity: 50% @media ${device.mobileS} {
+  opacity: 0.5;
+  @media ${device.mobileS} {
     font-size: ${fontSize.mobile};
   }
 `;

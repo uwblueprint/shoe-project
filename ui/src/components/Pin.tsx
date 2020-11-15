@@ -5,7 +5,6 @@ import { Marker, Popup } from "react-leaflet";
 import resting from "../assets/resting.svg";
 import unfocused from "../assets/unfocused.svg";
 import { PinPreview } from "./PinPreview";
-import { StoryDrawerState } from "./StoryDrawer";
 
 const StyledPopup = styled(Popup)`
   width: 392px;
