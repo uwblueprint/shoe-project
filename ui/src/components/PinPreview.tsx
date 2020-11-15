@@ -24,7 +24,7 @@ const StyledButton = styled(Button)`
       background-color: ${colors.primaryLight3};
     }
   }
-`
+`;
 
 const StyledMedia = styled(CardMedia)`
   border-radius: 10px 10px 0px 0px;
@@ -59,7 +59,9 @@ export function PinPreview({
         <CardTagText>{country}</CardTagText>
         <CardTitleText>{title}</CardTitleText>
         <CardDescriptionText>{description}</CardDescriptionText>
-        <StyledButton variant="contained" color="primary" disableElevation>Read Full Story</StyledButton>
+        <StyledButton variant="contained" color="primary" disableElevation>
+          Read Full Story
+        </StyledButton>
         <CardDetailText>
           {author} • {date}
         </CardDetailText>
