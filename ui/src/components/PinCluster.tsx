@@ -39,4 +39,8 @@ export function PinCluster({
             }
         </MarkerClusterGroup>
     );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> cleanup

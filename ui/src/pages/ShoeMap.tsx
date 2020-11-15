@@ -1,15 +1,8 @@
+import * as React from "react";
 import styled from "styled-components";
 import { Map, TileLayer, ZoomControl } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-<<<<<<< HEAD
 import { PinCluster } from "../components/PinCluster";
-=======
-import { Pin, PinState } from "../components/Pin";
-import { TitleText } from "../styles/typography";
-import {PinCluster} from "../components/PinCluster";
->>>>>>> Finished marker cluster component
-import 'react-leaflet-markercluster/dist/styles.min.css';
-import 'leaflet.markercluster';
 
 const StyledMap = styled(Map)`
   height: 100vh;
@@ -49,7 +42,7 @@ export const ShoeMap: React.FC = () => {
         <TileLayer
           url={`https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`}
         />
-        <PinCluster clusterPositions={markerList} />
+        <PinCluster clusterPositions={markerList} />ß
         <ZoomControl position="topright" />
       </StyledMap>
     </MapContainer>
