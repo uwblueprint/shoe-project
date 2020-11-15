@@ -6,7 +6,6 @@ import "react-leaflet-markercluster/dist/styles.min.css";
 import "leaflet.markercluster";
 import MarkerClusterGroup from "react-leaflet-markercluster";
 import "leaflet/dist/leaflet.css";
-import "react-leaflet-markercluster/dist/styles.min.css";
 
 const createClusterCustomIcon = function () {
   return new L.Icon({
