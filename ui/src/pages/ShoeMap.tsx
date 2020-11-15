@@ -1,15 +1,61 @@
 import * as React from "react";
 import styled from "styled-components";
-import { Map, TileLayer, ZoomControl } from "react-leaflet";
+import { AttributionControl, Map, TileLayer, ZoomControl } from "react-leaflet";
+import Control from "react-leaflet-control";
 import "leaflet/dist/leaflet.css";
 import { PinCluster } from "../components/PinCluster";
 import { StoryDrawer, StoryDrawerState } from "../components/StoryDrawer";
 import { useState } from "react";
-import ShoeMapLogo from "../assets/shoe-project-logo.svg";
+import { colors } from "../styles";
 
 const StyledMap = styled(Map)`
   height: 100vh;
   width: 100vw;
+
+  .leaflet-control {
+    border: none;
+    box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.1);
+    margin: 0px 24px 24px 0px;
+  }
+
+  .leaflet-bar a {
+    width: 48px;
+    height: 48px;
+    background-color: ${colors.white};
+    font-size: 26px;
+    line-height: 45px;
+    box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.1);
+
+    :first-child {
+      border-radius: 10px 10px 0px 0px;
+    }
+    :last-child {
+      border-radius: 0px 0px 10px 10px;
+    }
+  }
+`;
+
+const StyledHelpIcon = styled.button`
+  height: 48px;
+  width: 48px;
+  font-size: 26px;
+  font-weight: 500;
+  border: none;
+  background-color: ${colors.white};
+  border-radius: 10px;
+  box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    cursor: pointer;
+    color: ${colors.primaryDark1};
+  }
+
+  &:focus {
+    outline: 0;
+    font-weight: 600;
+    color: ${colors.primaryDark1};
+    border: 2px solid ${colors.primaryDark1};
+  }
 `;
 
 const MapContainer = styled.div`
@@ -52,6 +98,7 @@ export const ShoeMap: React.FC = () => {
           minZoom={minZoom}
           maxZoom={maxZoom}
           zoomControl={false}
+          attributionControl={false}
         >
           <TileLayer
             url={`https://api.mapbox.com/styles/v1/hanlinc27/ckhjy5wat2dvz1aplv4tkaghb/tiles/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`}
@@ -60,7 +107,11 @@ export const ShoeMap: React.FC = () => {
             clusterPositions={markerList}
             openDrawer={() => setIsDrawerOpen(StoryDrawerState.Open)}
           />
-          <ZoomControl position="topright" />
+          <ZoomControl position="bottomright" />
+          <AttributionControl position="bottomleft" />
+          <Control position="bottomright">
+            <StyledHelpIcon>?</StyledHelpIcon>
+          </Control>
         </StyledMap>
       </MapContainer>
       <StoryDrawer
