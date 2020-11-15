@@ -40,3 +40,10 @@ backend-fmt:
 backend-check:
 	go vet .
 	golangci-lint run
+
+backend-test:
+ifndef pkg
+	go test ./...
+else
+	go test github.com/uwblueprint/shoe-project/$(PACKAGE) -run Test
+endif
