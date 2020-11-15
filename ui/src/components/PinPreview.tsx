@@ -42,6 +42,7 @@ interface PinPreviewProps {
   author: string;
   date: string;
   country: string;
+  openDrawer: () => void;
 }
 
 export function PinPreview({
@@ -50,6 +51,7 @@ export function PinPreview({
   author,
   date,
   country,
+  openDrawer
 }: PinPreviewProps): JSX.Element {
   return (
     <>
@@ -59,7 +61,7 @@ export function PinPreview({
         <CardTagText>{country}</CardTagText>
         <CardTitleText>{title}</CardTitleText>
         <CardDescriptionText>{description}</CardDescriptionText>
-        <StyledButton variant="contained" color="primary" disableElevation>
+        <StyledButton variant="contained" color="primary" disableElevation onClick={openDrawer}>
           Read Full Story
         </StyledButton>
         <CardDetailText>

@@ -36,13 +36,13 @@ export enum PinState {
 export interface PinProps {
   state?: PinState;
   position: [number, number];
-  setDrawerState: (newState: StoryDrawerState) => void;
+  openDrawer: () => void;
 }
 
 export function Pin({
   state = PinState.Resting,
   position,
-  setDrawerState
+  openDrawer
 }: PinProps): JSX.Element {
   const icon = new L.Icon({
     iconUrl: state === PinState.Unfocused ? unfocused : resting,
@@ -59,14 +59,7 @@ export function Pin({
 
     <Marker 
       position={position} 
-      icon={icon}    
-      onMouseOver={(e) => {
-        e.target.openPopup();
-      }}
-      onMouseOut={(e) => {
-        e.target.closePopup();
-      }}
-      onClick={() => setDrawerState(StoryDrawerState.Open)}>
+      icon={icon}>
       <StyledPopup>
         <PinPreview
           title={"Story Title"}
@@ -76,6 +69,7 @@ export function Pin({
           author={"Jie Li"}
           date={"Dec 20, 2020"}
           country={"China"}
+          openDrawer={openDrawer}
         />
       </StyledPopup>
     </Marker>

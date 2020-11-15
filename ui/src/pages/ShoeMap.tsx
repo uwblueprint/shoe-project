@@ -2,14 +2,9 @@ import * as React from "react";
 import styled from "styled-components";
 import { Map, TileLayer, ZoomControl } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-<<<<<<< HEAD
 import { PinCluster } from "../components/PinCluster";
-=======
-
-import { Pin, PinState } from "../components/Pin";
 import { StoryDrawer, StoryDrawerState } from "../components/StoryDrawer";
 import { useState } from "react";
->>>>>>> fix component
 
 const StyledMap = styled(Map)`
   height: 100vh;
