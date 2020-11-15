@@ -200,7 +200,7 @@ func (suite *endpointTestSuite) TestCreateAuthor() {
 		{
 			FirstName:     "Edmund",
 			LastName:      "Pevensie",
-			OriginCountry: "Narnia",
+			OriginCountry: "Nigeria",
 			Bio:           "bio",
 		},
 	}
@@ -213,6 +213,24 @@ func (suite *endpointTestSuite) TestCreateAuthor() {
 	var authorCount int64
 	suite.db.Table("authors").Count(&authorCount)
 	suite.Equal(1, int(authorCount))
+}
+
+func (suite *endpointTestSuite) TestCreateAuthorFailsWithUnknownCountry() {
+	json := []models.Author{
+		{
+			FirstName:     "Edmund",
+			LastName:      "Pevensie",
+			OriginCountry: "Narnia",
+			Bio:           "bio",
+		},
+	}
+
+	response := suite.endpoint.POST("/authors").WithHeader("Authorization", fmt.Sprintf("Bearer %s", suite.token)).
+		WithJSON(json).
+		Expect().
+		Status(http.StatusBadRequest).JSON()
+
+	response.Object().Value("error").Equal("Unknown origin country")
 }
 
 func (suite *endpointTestSuite) TestCreateStory() {
