@@ -17,32 +17,16 @@ const StyledMap = styled(Map)`
     box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.1);
     margin: 0px 24px 24px 0px;
   }
-
-  .leaflet-bar a {
-    width: 48px;
-    height: 48px;
-    background-color: ${colors.white};
-    font-size: 26px;
-    line-height: 45px;
-    box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.1);
-
-    :first-child {
-      border-radius: 10px 10px 0px 0px;
-    }
-    :last-child {
-      border-radius: 0px 0px 10px 10px;
-    }
-  }
 `;
 
 const StyledHelpIcon = styled.button`
-  height: 48px;
-  width: 48px;
-  font-size: 26px;
+  height: 30px;
+  width: 30px;
+  font-size: 20px;
   font-weight: 500;
   border: none;
   background-color: ${colors.white};
-  border-radius: 10px;
+  border-radius: 5px;
   box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.1);
 
   &:hover {
@@ -54,7 +38,7 @@ const StyledHelpIcon = styled.button`
     outline: 0;
     font-weight: 600;
     color: ${colors.primaryDark1};
-    border: 2px solid ${colors.primaryDark1};
+    border: 1.5px solid ${colors.primaryDark1};
   }
 `;
 
