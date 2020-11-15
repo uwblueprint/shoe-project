@@ -13,7 +13,7 @@ import TempShoe from "../assets/images/temp.png";
 import CardMedia from "@material-ui/core/CardMedia";
 
 const StyledDrawer = styled(Drawer)`
-  .MuiDrawer-root{
+  .MuiDrawer-container{
   min-width: 50vh;
   max-width: 50vh;
   background: #FFFFFF;
@@ -29,10 +29,58 @@ const StyledIconButton = styled(IconButton)`
 
   /* Red / Primary */
 
-  color: #C42626;
+  background: #C42626;
 `;
 
-const StyledContentTypography = styled(Typography)`
+const StyledSubheaderCountry = styled.div`
+//styleName: Subtitle - Poppins Medium 16;
+font-family: Poppins;
+font-size: 16px;
+font-style: normal;
+font-weight: 500;
+line-height: 19px;
+letter-spacing: 0em;
+text-align: left;
+`;
+
+const StyledSubheaderAuthor = styled.div`
+//styleName: Subtitle - Poppins Medium 16;
+font-family: Poppins;
+font-size: 16px;
+font-style: normal;
+font-weight: 500;
+line-height: 19px;
+letter-spacing: 0em;
+text-align: left;
+opacity: 50%
+`;
+
+const StyledSubheaderRight = styled.div`
+//styleName: Subtitle - Poppins Medium 16;
+font-family: Poppins;
+font-size: 16px;
+font-style: normal;
+font-weight: 500;
+line-height: 19px;
+letter-spacing: 0em;
+text-align: right;
+opacity: 50%
+`;
+
+
+const StyledContentTypography = styled.span`
+font-family: Poppins;
+font-size: 16px;
+font-style: normal;
+font-weight: 400;
+line-height: 32px;
+letter-spacing: 0em;
+text-align: left;
+`;
+
+const StyledImage = styled.img`
+border-radius: 0px;
+width: 100%;
 `;
 
 export enum StoryDrawerState {
@@ -65,15 +113,15 @@ export function StoryDrawer({ title, author, date, country, currentCity, content
           <img alt="flag" src={ChinaFlag} width="100%" />
         </Grid>
         <Grid item xs={4}>
-          <Typography>{"Origin: " + country}</Typography>
-          <Typography>{author}</Typography>
+          <StyledSubheaderCountry>{"Origin: " + country}</StyledSubheaderCountry>
+          <StyledSubheaderAuthor>{author}</StyledSubheaderAuthor>
         </Grid>
         <Grid item xs={6} alignItems="flex-end" alignContent="flex-end" justify="flex-end">
-          <Typography>{currentCity}</Typography>
-          <Typography>{date}</Typography>
+          <StyledSubheaderRight>{currentCity}</StyledSubheaderRight>
+          <StyledSubheaderRight>{date}</StyledSubheaderRight>
         </Grid>
         <Grid item xs={12}>
-          <img src={TempShoe} alt="Temporary Image" width="100%" />
+          <StyledImage src={TempShoe} alt="Temporary Image" />
         </Grid>
         <Grid item xs={12}>
           <StyledContentTypography>{content}</StyledContentTypography>
