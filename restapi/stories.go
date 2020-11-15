@@ -47,6 +47,16 @@ func (api api) CreateStories(w http.ResponseWriter, r *http.Request) render.Rend
 		return rest.ErrInvalidRequest(api.logger, "Invalid payload", err)
 	}
 
+	for i := 0; i < len(stories); i++ {
+		city := stories[i].CurrentCity
+		coordinates, err := api.locationFinder.GetCityCenter(city)
+		if err != nil {
+			return rest.ErrInvalidRequest(api.logger, fmt.Sprintf("Story %d is has an invalid current city", i), err)
+		}
+		stories[i].Latitude = coordinates.Latitude
+		stories[i].Longitude = coordinates.Longitude
+	}
+
 	if err := api.database.Create(&stories).Error; err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}

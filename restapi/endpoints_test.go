@@ -75,17 +75,21 @@ func (suite *endpointTestSuite) TestHealthCheck() {
 func (suite *endpointTestSuite) TestGetAllStories() {
 	json_story1 := []models.Story{
 		{
-			Title:    "The Little Prince",
-			Content:  "Children",
-			AuthorID: 1,
+			Title:       "The Little Prince",
+			Content:     "Children",
+			Summary:     "Summary1",
+			CurrentCity: "Toronto",
+			AuthorID:    1,
 		},
 	}
 
 	json_story2 := []models.Story{
 		{
-			Title:    "Hitchhiker's Guide to the Galaxy",
-			Content:  "Fiction",
-			AuthorID: 2,
+			Title:       "Hitchhiker's Guide to the Galaxy",
+			Content:     "Fiction",
+			Summary:     "Summary2",
+			CurrentCity: "Toronto",
+			AuthorID:    2,
 		},
 	}
 
@@ -102,12 +106,16 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 		{
 			"author_id": 1,
 			"content": "Children",
-			"title": "The Little Prince"
+			"title": "The Little Prince",
+			"summary": "Summary1",
+			"current_city": "Toronto"
 		},
 		{
 			"author_id": 2,
 			"content": "Fiction",
-			"title": "Hitchhiker's Guide to the Galaxy"
+			"title": "Hitchhiker's Guide to the Galaxy",
+			"summary": "Summary2",
+			"current_city": "Toronto"
 		}
 		],
 		"status": "OK"
@@ -119,9 +127,13 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 	response.Object().Value("payload").Array().Element(0).Object().Value("ID").Equal(1)
 	response.Object().Value("payload").Array().Element(0).Object().Value("content").Equal("Children")
 	response.Object().Value("payload").Array().Element(0).Object().Value("title").Equal("The Little Prince")
+	response.Object().Value("payload").Array().Element(0).Object().Value("summary").Equal("Summary1")
+	response.Object().Value("payload").Array().Element(0).Object().Value("current_city").Equal("Toronto")
 	response.Object().Value("payload").Array().Element(1).Object().Value("ID").Equal(2)
 	response.Object().Value("payload").Array().Element(1).Object().Value("content").Equal("Fiction")
 	response.Object().Value("payload").Array().Element(1).Object().Value("title").Equal("Hitchhiker's Guide to the Galaxy")
+	response.Object().Value("payload").Array().Element(1).Object().Value("summary").Equal("Summary2")
+	response.Object().Value("payload").Array().Element(1).Object().Value("current_city").Equal("Toronto")
 
 }
 
@@ -131,7 +143,7 @@ func (suite *endpointTestSuite) TestCreateAuthor() {
 			FirstName:     "Edmund",
 			LastName:      "Pevensie",
 			OriginCountry: "Narnia",
-			CurrentCity:   "London",
+			Bio:           "bio",
 		},
 	}
 
@@ -167,9 +179,11 @@ func (suite *endpointTestSuite) TestCreateStory() {
 func (suite *endpointTestSuite) TestGetStoryByID() {
 	json := []models.Story{
 		{
-			Title:    "Swan Lake for Beginners",
-			Content:  "Short Story",
-			AuthorID: 1,
+			Title:       "Swan Lake for Beginners",
+			Content:     "Short Story",
+			Summary:     "Summary1",
+			CurrentCity: "Toronto",
+			AuthorID:    1,
 		},
 	}
 
@@ -183,7 +197,9 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 				{
 					"author_id": 1,
 					"content": "Short Story",
-					"title": "Swan Lake for Beginners"
+					"title": "Swan Lake for Beginners",
+					"summary": "Summary1",
+					"current_city": "Toronto"
 				}],
 				"status": "OK"
 			}`
@@ -192,6 +208,8 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 	response.Object().Value("payload").Object().Value("ID").Equal(1)
 	response.Object().Value("payload").Object().Value("content").Equal("Short Story")
 	response.Object().Value("payload").Object().Value("title").Equal("Swan Lake for Beginners")
+	response.Object().Value("payload").Object().Value("summary").Equal("Summary1")
+	response.Object().Value("payload").Object().Value("current_city").Equal("Toronto")
 
 }
 
