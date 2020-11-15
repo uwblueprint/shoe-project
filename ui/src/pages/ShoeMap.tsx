@@ -17,7 +17,7 @@ const MapContainer = styled.div`
   align-items: center;
 `;
 
-var markerList = [
+const markerList = [
   {
     lat: 43.4723,
     lng: -80.321796,
@@ -29,7 +29,7 @@ var markerList = [
   {
     lat: 43.4323,
     lng: -80.391796,
-  }
+  },
 ];
 
 export const ShoeMap: React.FC = () => {
