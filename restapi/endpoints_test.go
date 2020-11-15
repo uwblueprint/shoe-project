@@ -75,21 +75,25 @@ func (suite *endpointTestSuite) TestHealthCheck() {
 func (suite *endpointTestSuite) TestGetAllStories() {
 	json_story1 := []models.Story{
 		{
-			Title:       "The Little Prince",
-			Content:     "Children",
-			Summary:     "Summary1",
-			CurrentCity: "Toronto",
-			AuthorID:    1,
+			Title:           "The Little Prince",
+			Content:         "Children",
+			Summary:         "Summary1",
+			CurrentCity:     "Toronto",
+			AuthorFirstName: "Antoine",
+			AuthorLastName:  "dSE",
+			AuthorCountry:   "France",
 		},
 	}
 
 	json_story2 := []models.Story{
 		{
-			Title:       "Hitchhiker's Guide to the Galaxy",
-			Content:     "Fiction",
-			Summary:     "Summary2",
-			CurrentCity: "Toronto",
-			AuthorID:    2,
+			Title:           "Hitchhiker's Guide to the Galaxy",
+			Content:         "Fiction",
+			Summary:         "Summary2",
+			CurrentCity:     "Toronto",
+			AuthorFirstName: "Douglas",
+			AuthorLastName:  "Adams",
+			AuthorCountry:   "UK",
 		},
 	}
 
@@ -104,14 +108,18 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 	mock := `{
 		"payload": [
 		{
-			"author_id": 1,
+			"author_first_name": "Antoine",
+			"author_last_name": "dSE",
+			"author_country": "France",
 			"content": "Children",
 			"title": "The Little Prince",
 			"summary": "Summary1",
 			"current_city": "Toronto"
 		},
 		{
-			"author_id": 2,
+			"author_first_name": "Douglas",
+			"author_last_name": "Adams",
+			"author_country": "UK",
 			"content": "Fiction",
 			"title": "Hitchhiker's Guide to the Galaxy",
 			"summary": "Summary2",
@@ -124,11 +132,18 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 	//Verify response matches
 	response.Schema(mock)
 
+	response.Object().Value("payload").Array().Element(0).Object().Value("author_first_name").Equal("Antoine")
+	response.Object().Value("payload").Array().Element(0).Object().Value("author_last_name").Equal("dSE")
+	response.Object().Value("payload").Array().Element(0).Object().Value("author_country").Equal("France")
 	response.Object().Value("payload").Array().Element(0).Object().Value("ID").Equal(1)
 	response.Object().Value("payload").Array().Element(0).Object().Value("content").Equal("Children")
 	response.Object().Value("payload").Array().Element(0).Object().Value("title").Equal("The Little Prince")
 	response.Object().Value("payload").Array().Element(0).Object().Value("summary").Equal("Summary1")
 	response.Object().Value("payload").Array().Element(0).Object().Value("current_city").Equal("Toronto")
+
+	response.Object().Value("payload").Array().Element(1).Object().Value("author_first_name").Equal("Douglas")
+	response.Object().Value("payload").Array().Element(1).Object().Value("author_last_name").Equal("Adams")
+	response.Object().Value("payload").Array().Element(1).Object().Value("author_country").Equal("UK")
 	response.Object().Value("payload").Array().Element(1).Object().Value("ID").Equal(2)
 	response.Object().Value("payload").Array().Element(1).Object().Value("content").Equal("Fiction")
 	response.Object().Value("payload").Array().Element(1).Object().Value("title").Equal("Hitchhiker's Guide to the Galaxy")
@@ -160,9 +175,11 @@ func (suite *endpointTestSuite) TestCreateAuthor() {
 func (suite *endpointTestSuite) TestCreateStory() {
 	json := []models.Story{
 		{
-			Title:    "Jane Eyre",
-			Content:  "Classic",
-			AuthorID: 2,
+			Title:           "Jane Eyre",
+			Content:         "Classic",
+			AuthorFirstName: "Charlotte",
+			AuthorLastName:  "Bronte",
+			AuthorCountry:   "UK",
 		},
 	}
 
@@ -179,11 +196,13 @@ func (suite *endpointTestSuite) TestCreateStory() {
 func (suite *endpointTestSuite) TestGetStoryByID() {
 	json := []models.Story{
 		{
-			Title:       "Swan Lake for Beginners",
-			Content:     "Short Story",
-			Summary:     "Summary1",
-			CurrentCity: "Toronto",
-			AuthorID:    1,
+			Title:           "Half of a Yellow Sun",
+			Content:         "Fiction",
+			Summary:         "Summary1",
+			CurrentCity:     "Toronto",
+			AuthorFirstName: "Chimamanda",
+			AuthorLastName:  "Ngozi Adieche",
+			AuthorCountry:   "Nigeria",
 		},
 	}
 
@@ -195,22 +214,25 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 	mock := `{
 				"payload": [
 				{
-					"author_id": 1,
-					"content": "Short Story",
-					"title": "Swan Lake for Beginners",
+					"author_country": "Nigeria",
+					"author_first_name": "Chimamanda",
+					"author_last_name": "Ngozi Adieche",
+					"current_city": "Toronto",
+					"content": "Fiction",
 					"summary": "Summary1",
-					"current_city": "Toronto"
+					"title": "Half of a Yellow Sun"
 				}],
 				"status": "OK"
 			}`
 	//Verify they are the same
 	response.Schema(mock)
-	response.Object().Value("payload").Object().Value("ID").Equal(1)
-	response.Object().Value("payload").Object().Value("content").Equal("Short Story")
-	response.Object().Value("payload").Object().Value("title").Equal("Swan Lake for Beginners")
+	response.Object().Value("payload").Object().Value("author_first_name").Equal("Chimamanda")
+	response.Object().Value("payload").Object().Value("author_last_name").Equal("Ngozi Adieche")
+	response.Object().Value("payload").Object().Value("author_country").Equal("Nigeria")
+	response.Object().Value("payload").Object().Value("content").Equal("Fiction")
+	response.Object().Value("payload").Object().Value("title").Equal("Half of a Yellow Sun")
 	response.Object().Value("payload").Object().Value("summary").Equal("Summary1")
 	response.Object().Value("payload").Object().Value("current_city").Equal("Toronto")
-
 }
 
 func (suite *endpointTestSuite) TearDownSuite() {
