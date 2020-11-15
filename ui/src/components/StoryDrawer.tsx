@@ -1,19 +1,19 @@
 import * as React from "react";
-import Drawer from '@material-ui/core/Drawer';
+import Drawer from "@material-ui/core/Drawer";
 import {
   DrawerAuthorText,
   DrawerContentText,
   DrawerCountryText,
   DrawerRightText,
-  DrawerTitleText
+  DrawerTitleText,
 } from "../styles/typography";
-import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
+import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
 import styled from "styled-components";
 import ChinaFlag from "../assets/flags/China.png";
 import TempShoe from "../assets/images/temp.png";
-import { colors } from "../styles/colors"
+import { colors } from "../styles/colors";
 
 const StyledIconButton = styled(Button)`
   position: absolute;
@@ -34,14 +34,14 @@ const StyledIconButton = styled(Button)`
 `;
 
 const StyledImage = styled.img`
-border-radius: 0px;
-width: 100%;
+  border-radius: 0px;
+  width: 100%;
 `;
 
 const StyledRoot = styled.div`
-width: 100vh;
-padding-left: 30vh;
-padding-right: 30vh;
+  width: 100vh;
+  padding-left: 30vh;
+  padding-right: 30vh;
 `;
 
 const StyledFlagImage = styled.img`
@@ -51,7 +51,7 @@ const StyledFlagImage = styled.img`
 
 export enum StoryDrawerState {
   Open,
-  Closed
+  Closed,
 }
 
 interface StoryDrawerProps {
@@ -65,36 +65,55 @@ interface StoryDrawerProps {
   setState: (newState: StoryDrawerState) => void;
 }
 
-export function StoryDrawer({ title, author, date, country, currentCity, content, state, setState }: StoryDrawerProps): JSX.Element {
+export function StoryDrawer({
+  title,
+  author,
+  date,
+  country,
+  currentCity,
+  content,
+  state,
+  setState,
+}: StoryDrawerProps): JSX.Element {
   return (
-    <Drawer anchor="right" open={state == StoryDrawerState.Open} onClose={() => setState(StoryDrawerState.Closed)}>
+    <Drawer
+      anchor="right"
+      open={state == StoryDrawerState.Open}
+      onClose={() => setState(StoryDrawerState.Closed)}
+    >
       <StyledIconButton onClick={() => setState(StoryDrawerState.Closed)}>
         <ArrowForwardIcon />
       </StyledIconButton>
       <StyledRoot>
-      <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12}>
-          <DrawerTitleText>{title}</DrawerTitleText>
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12}>
+            <DrawerTitleText>{title}</DrawerTitleText>
+          </Grid>
+          <Grid item xs={2}>
+            <StyledFlagImage alt="flag" src={ChinaFlag} />
+          </Grid>
+          <Grid item xs={4}>
+            <DrawerCountryText>{"Origin: " + country}</DrawerCountryText>
+            <DrawerAuthorText>{author}</DrawerAuthorText>
+          </Grid>
+          <Grid
+            item
+            xs={6}
+            alignItems="flex-end"
+            alignContent="flex-end"
+            justify="flex-end"
+          >
+            <DrawerRightText>{currentCity}</DrawerRightText>
+            <DrawerRightText>{date}</DrawerRightText>
+          </Grid>
+          <Grid item xs={12}>
+            <StyledImage src={TempShoe} alt="Temporary Image" />
+          </Grid>
+          <Grid item xs={12}>
+            <DrawerContentText>{content}</DrawerContentText>
+          </Grid>
         </Grid>
-        <Grid item xs={2}>
-          <StyledFlagImage alt="flag" src={ChinaFlag}/>
-        </Grid>
-        <Grid item xs={4}>
-          <DrawerCountryText>{"Origin: " + country}</DrawerCountryText>
-          <DrawerAuthorText>{author}</DrawerAuthorText>
-        </Grid>
-        <Grid item xs={6} alignItems="flex-end" alignContent="flex-end" justify="flex-end">
-          <DrawerRightText>{currentCity}</DrawerRightText>
-          <DrawerRightText>{date}</DrawerRightText>
-        </Grid>
-        <Grid item xs={12}>
-          <StyledImage src={TempShoe} alt="Temporary Image" />
-        </Grid>
-        <Grid item xs={12}>
-          <DrawerContentText>{content}</DrawerContentText>
-        </Grid>
-      </Grid>
       </StyledRoot>
     </Drawer>
-  )
+  );
 }

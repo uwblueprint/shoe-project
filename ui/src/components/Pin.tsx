@@ -42,7 +42,7 @@ export interface PinProps {
 export function Pin({
   state = PinState.Resting,
   position,
-  openDrawer
+  openDrawer,
 }: PinProps): JSX.Element {
   const icon = new L.Icon({
     iconUrl: state === PinState.Unfocused ? unfocused : resting,
@@ -56,10 +56,7 @@ export function Pin({
       state === PinState.Selected ? new L.Point(58, 70) : new L.Point(50, 61),
   });
   return (
-
-    <Marker 
-      position={position} 
-      icon={icon}>
+    <Marker position={position} icon={icon}>
       <StyledPopup>
         <PinPreview
           title={"Story Title"}
