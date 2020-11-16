@@ -40,7 +40,7 @@ export const ShoeMap: React.FC = () => {
     <MapContainer>
       <StyledMap center={currentLocation} zoom={zoom} zoomControl={false}>
         <TileLayer
-          url={`https://api.mapbox.com/styles/v1/mapbox/streets-v9/tiles/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`}
+          url={`https://api.mapbox.com/styles/v1/hanlinc27/ckhjy5wat2dvz1aplv4tkaghb/tiles/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`}
         />
         <PinCluster clusterPositions={markerList} />ß
         <ZoomControl position="topright" />
