@@ -19,7 +19,10 @@ export interface PinClusterProps {
   openDrawer: () => void;
 }
 
-export function PinCluster({ clusterPositions, openDrawer }: PinClusterProps): JSX.Element {
+export function PinCluster({
+  clusterPositions,
+  openDrawer,
+}: PinClusterProps): JSX.Element {
   return (
     <MarkerClusterGroup
       showCoverageOnHover={false}
