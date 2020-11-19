@@ -78,7 +78,7 @@ export function StoryDrawer({
   return (
     <Drawer
       anchor="right"
-      open={state == StoryDrawerState.Open}
+      open={state === StoryDrawerState.Open}
       onClose={() => setState(StoryDrawerState.Closed)}
     >
       <StyledIconButton onClick={() => setState(StoryDrawerState.Closed)}>
