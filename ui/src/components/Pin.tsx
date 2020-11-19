@@ -35,11 +35,13 @@ export enum PinState {
 export interface PinProps {
   state?: PinState;
   position: [number, number];
+  openDrawer: () => void;
 }
 
 export function Pin({
   state = PinState.Resting,
   position,
+  openDrawer,
 }: PinProps): JSX.Element {
   const icon = new L.Icon({
     iconUrl: state === PinState.Unfocused ? unfocused : resting,
@@ -63,6 +65,7 @@ export function Pin({
           author={"Jie Li"}
           date={"Dec 20, 2020"}
           country={"China"}
+          openDrawer={openDrawer}
         />
       </StyledPopup>
     </Marker>

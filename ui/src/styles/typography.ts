@@ -10,6 +10,7 @@ export const fontSize = Object.freeze({
   body1: "16px",
   body2: "14px",
   caption: "14px",
+  mobile: "10px",
 });
 
 export const TitleText = styled.p`
@@ -59,7 +60,7 @@ export const CardDetailText = styled.p`
   margin: 16px 0px 0px 0px !important;
 
   @media ${device.mobileS} {
-    font-size: 10px;
+    font-size: ${fontSize.mobile};
   }
 `;
 
@@ -73,6 +74,72 @@ export const CardTagText = styled.span`
   margin-left: 9px;
 
   @media ${device.mobileS} {
-    font-size: 10px;
+    font-size: ${fontSize.mobile};
+  }
+`;
+
+export const DrawerTitleText = styled.span`
+  font-family: Canela;
+  font-size: ${fontSize.h1Text};
+  font-style: normal;
+  font-weight: 400;
+  line-height: 37px;
+  letter-spacing: 0em;
+  text-align: left;
+  @media ${device.mobileS} {
+    font-size: ${fontSize.h2Text};
+  }
+`;
+
+export const DrawerCountryText = styled.div`
+  font-family: Poppins;
+  font-size: ${fontSize.subtitle};
+  font-style: normal;
+  font-weight: 500;
+  line-height: 19px;
+  letter-spacing: 0em;
+  text-align: left;
+  @media ${device.mobileS} {
+    font-size: ${fontSize.mobile};
+  }
+`;
+
+export const DrawerAuthorText = styled.div`
+  font-family: Poppins;
+  font-size: ${fontSize.subtitle};
+  font-style: normal;
+  font-weight: 500;
+  line-height: 19px;
+  letter-spacing: 0em;
+  text-align: left;
+  opacity: 0.5;
+  @media ${device.mobileS} {
+    font-size: ${fontSize.mobile};
+  }
+`;
+
+export const DrawerRightText = styled.div`
+  font-family: Poppins;
+  font-size: ${fontSize.subtitle};
+  font-style: normal;
+  font-weight: 500;
+  line-height: 19px;
+  letter-spacing: 0em;
+  text-align: right;
+  opacity: 0.5;
+  @media ${device.mobileS} {
+    font-size: ${fontSize.mobile};
+  }
+`;
+
+export const DrawerContentText = styled.span`
+  font-size: ${fontSize.subtitle};
+  font-style: normal;
+  font-weight: 400;
+  line-height: 32px;
+  letter-spacing: 0em;
+  text-align: left;
+  @media ${device.mobileS} {
+    font-size: ${fontSize.mobile};
   }
 `;
