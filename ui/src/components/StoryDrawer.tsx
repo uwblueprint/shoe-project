@@ -104,7 +104,7 @@ export function StoryDrawer({
             alignContent="flex-end"
             justify="flex-end"
           >
-            <DrawerRightText>{currentCity}</DrawerRightText>
+            <DrawerRightText>{currentCity}, Canada</DrawerRightText>
             <DrawerRightText>{date}</DrawerRightText>
           </Grid>
           <Grid item xs={12}>
