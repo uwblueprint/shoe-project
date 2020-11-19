@@ -16,9 +16,10 @@ const createClusterCustomIcon = function () {
 
 export interface PinClusterProps {
   clusterPositions: { lat: number; lng: number }[];
+  openDrawer: () => void;
 }
 
-export function PinCluster({ clusterPositions }: PinClusterProps): JSX.Element {
+export function PinCluster({ clusterPositions, openDrawer }: PinClusterProps): JSX.Element {
   return (
     <MarkerClusterGroup
       showCoverageOnHover={false}
@@ -31,6 +32,7 @@ export function PinCluster({ clusterPositions }: PinClusterProps): JSX.Element {
             key={key}
             position={[marker.lat, marker.lng]}
             state={PinState.Resting}
+            openDrawer={openDrawer}
           />
         );
       })}
