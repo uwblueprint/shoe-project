@@ -42,10 +42,11 @@ const StyledRoot = styled.div`
   width: 100vh;
   padding-left: 30vh;
   padding-right: 30vh;
+  padding-bottom: 10vh;
 `;
 
 const StyledFlagImage = styled.img`
-  border-radius: 10px;
+  border-radius: 5px;
   width: 100%;
 `;
 
@@ -89,10 +90,10 @@ export function StoryDrawer({
           <Grid item xs={12}>
             <DrawerTitleText>{title}</DrawerTitleText>
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={1}>
             <StyledFlagImage alt="flag" src={ChinaFlag} />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={5}>
             <DrawerCountryText>{"Origin: " + country}</DrawerCountryText>
             <DrawerAuthorText>{author}</DrawerAuthorText>
           </Grid>
