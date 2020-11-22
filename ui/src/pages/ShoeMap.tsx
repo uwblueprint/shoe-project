@@ -5,6 +5,7 @@ import "leaflet/dist/leaflet.css";
 import { PinCluster } from "../components/PinCluster";
 import { StoryDrawer, StoryDrawerState } from "../components/StoryDrawer";
 import { useState } from "react";
+import ShoeMapLogo from "../assets/shoe-project-logo.svg";
 
 const StyledMap = styled(Map)`
   height: 100vh;
@@ -15,6 +16,7 @@ const MapContainer = styled.div`
   height: 100%;
   width: 100%;
   display: flex;
+
   flex-direction: column;
   align-items: center;
 `;
@@ -52,6 +54,8 @@ export const ShoeMap: React.FC = () => {
             clusterPositions={markerList}
             openDrawer={() => setIsDrawerOpen(StoryDrawerState.Open)}
           />
+                  {/* <ShoeMapLogo/> */}
+
           <ZoomControl position="topright" />
         </StyledMap>
       </MapContainer>
