@@ -37,13 +37,14 @@ const markerList = [
 export const ShoeMap: React.FC = () => {
   const zoom = 12;
   const minZoom = 3;
+  const maxZoom = 18;
   const currentLocation = { lat: 43.4723, lng: -80.5449 };
   const [isDrawerOpen, setIsDrawerOpen] = useState(StoryDrawerState.Closed);
 
   return (
     <React.Fragment>
       <MapContainer>
-        <StyledMap center={currentLocation} zoom = {zoom} minZoom={minZoom} zoomControl={false}>
+        <StyledMap center={currentLocation} zoom = {zoom} minZoom= { minZoom } maxZoom = {18} zoomControl={false}>
           <TileLayer
             url={`https://api.mapbox.com/styles/v1/hanlinc27/ckhjy5wat2dvz1aplv4tkaghb/tiles/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`}
           />
