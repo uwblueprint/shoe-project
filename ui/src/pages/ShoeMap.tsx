@@ -46,7 +46,7 @@ export const ShoeMap: React.FC = () => {
   return (
     <React.Fragment>
       <MapContainer>
-        <StyledMap center={currentLocation} zoom = {zoom} minZoom= { minZoom } maxZoom = {18} zoomControl={false}>
+        <StyledMap center={currentLocation} zoom = {zoom} minZoom= { minZoom } maxZoom = {maxZoom} zoomControl={false}>
           <TileLayer
             url={`https://api.mapbox.com/styles/v1/hanlinc27/ckhjy5wat2dvz1aplv4tkaghb/tiles/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`}
           />
