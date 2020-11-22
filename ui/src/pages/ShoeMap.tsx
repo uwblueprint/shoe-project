@@ -54,8 +54,6 @@ export const ShoeMap: React.FC = () => {
             clusterPositions={markerList}
             openDrawer={() => setIsDrawerOpen(StoryDrawerState.Open)}
           />
-                  {/* <ShoeMapLogo/> */}
-
           <ZoomControl position="topright" />
         </StyledMap>
       </MapContainer>
