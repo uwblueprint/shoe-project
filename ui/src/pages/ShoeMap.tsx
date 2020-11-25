@@ -50,6 +50,7 @@ const MapContainer = styled.div`
 `;
 
 const StyledLogo = styled.div`
+  background-image: url(${ShoeLogo});
   width: 87px;
   height: 87px;
   padding-left: 48px;
@@ -102,9 +103,7 @@ export const ShoeMap: React.FC = () => {
             <StyledHelpIcon>?</StyledHelpIcon>
           </Control>
           <Control position="bottomleft">
-            <StyledLogo>
-              <img src={ShoeLogo}></img>
-            </StyledLogo>
+            <StyledLogo></StyledLogo>
           </Control>
         </StyledMap>
       </MapContainer>
