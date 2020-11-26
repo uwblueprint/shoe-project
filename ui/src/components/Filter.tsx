@@ -9,7 +9,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Checkbox from '@material-ui/core/Checkbox';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import { makeStyles } from "@material-ui/core/styles";
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 
@@ -67,7 +66,7 @@ export function Filter(): JSX.Element {
       <FilterContainer>
         <Tagline>Show stories from:</Tagline>
         <Autocomplete
-          color={'primary'}
+          color="Primary"
           multiple
           loading={!countries}
           id="filter-autocomplete"
@@ -90,7 +89,7 @@ export function Filter(): JSX.Element {
                 checkedIcon={checkedIcon}
                 style={{ marginRight: 8 }}
                 checked={selected}
-                color={'secondary'}
+                color="secondary"
               />
               {option}
             </React.Fragment>
