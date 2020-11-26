@@ -110,7 +110,6 @@ export const ShoeMap: React.FC = () => {
           <TileLayer
             url={`https://api.mapbox.com/styles/v1/hanlinc27/ckhjy5wat2dvz1aplv4tkaghb/tiles/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`}
           />
-          <Filter />
           <PinCluster
             clusterPositions={markerList}
             openDrawer={() => setIsDrawerOpen(StoryDrawerState.Open)}

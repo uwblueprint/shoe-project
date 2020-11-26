@@ -23,7 +23,7 @@ function App(): JSX.Element {
       <Router>
         <Switch>
           <Route exact path="/">
-            <Home />
+           <ShoeMap />
           </Route>
           <Route path="/map">
             <ShoeMap />

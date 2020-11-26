@@ -34,24 +34,11 @@ const theme = createMuiTheme({
   },
 });
 
-const useStyles = makeStyles(theme => ({
-  clearIndicator: {
-    "& span": {
-      "& svg": {
-        "& path": {
-          d: "path('M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z')"
-        }
-      }
-    }
-  }
-}));
-
 const FilterContainer = styled.div`
   z-index: 1000;
   position: absolute;
   width: 324px;
   min-height: 61px;
-  max-height: 165px; 
   left: 46px;
   top: 70px;
 
@@ -61,16 +48,16 @@ const FilterContainer = styled.div`
 
   display: flex;
   padding: 16px;
+  margin-top: -30px;
   flex-direction: column;
 `;
 
 const Tagline = styled.span`
-  fontSize: ${fontSize.subtitle};
+  font-size: ${fontSize.subtitle};
   padding-bottom: 16px;
 `;
 
 export function Filter(): JSX.Element {
-  const classes = useStyles();
   const { data:countries, error } = useSWR<string[]>("/api/authors/origin_countries");
 
   if (error) return <div>Error!</div>;
@@ -85,9 +72,9 @@ export function Filter(): JSX.Element {
           loading={!countries}
           id="filter-autocomplete"
           options={countries || []}
-          style={{width: 312, overflowY: 'scroll', overflowX: "visible"}}
+          style={{width: 312}}
           disableCloseOnSelect
-          renderTags={(value, getTagProps) =>
+          renderTags={(value, getTagProps) => 
             value.map((option, index) => (
               <FilterChip
                 key={option}
@@ -96,9 +83,6 @@ export function Filter(): JSX.Element {
               />
             ))
           }
-          classes={{
-            clearIndicatorDirty: classes.clearIndicator
-          }}
           renderOption={(option, { selected }) => (
             <React.Fragment key={option}>
               <Checkbox
