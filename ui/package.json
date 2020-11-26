@@ -30,6 +30,7 @@
     "react-dom": ">= 16.8.0",
     "react-is": "^16.13.1",
     "react-leaflet": "^2.7.0",
+    "react-leaflet-control": "^2.1.2",
     "react-leaflet-markercluster": "^2.0.0",
     "react-router-dom": "^5.2.0",
     "styled-components": "^5.2.0",
