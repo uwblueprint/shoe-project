@@ -110,7 +110,7 @@ export const ShoeMap: React.FC = () => {
             openDrawer={() => setIsDrawerOpen(StoryDrawerState.Open)}
           />
           <ZoomControl position="bottomright" />
-          <AttributionControl position="topleft" />
+          <AttributionControl position="topright" />
           <Control position="bottomright">
             <StyledHelpIcon>?</StyledHelpIcon>
           </Control>
