@@ -7,17 +7,15 @@ import { PinCluster } from "../components/PinCluster";
 import { StoryDrawer, StoryDrawerState } from "../components/StoryDrawer";
 import { useState } from "react";
 import { colors } from "../styles";
+import ShoeLogo from "../assets/images/shoeproject-logo.svg";
 
 const StyledMap = styled(Map)`
   height: 100vh;
   width: 100vw;
-
   .leaflet-control {
     border: none;
-    box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.1);
     margin: 0px 24px 24px 0px;
   }
-
   .leaflet-bar a {
     width: 48px;
     height: 48px;
@@ -25,7 +23,6 @@ const StyledMap = styled(Map)`
     font-size: 26px;
     line-height: 45px;
     box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.1);
-
     :first-child {
       border-radius: 10px 10px 0px 0px;
     }
@@ -44,12 +41,10 @@ const StyledHelpIcon = styled.button`
   background-color: ${colors.white};
   border-radius: 10px;
   box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.1);
-
   &:hover {
     cursor: pointer;
     color: ${colors.primaryDark1};
   }
-
   &:focus {
     outline: 0;
     font-weight: 600;
@@ -62,9 +57,16 @@ const MapContainer = styled.div`
   height: 100%;
   width: 100%;
   display: flex;
-
   flex-direction: column;
   align-items: center;
+`;
+
+const StyledLogo = styled.div`
+  background-image: url(${ShoeLogo});
+  width: 87px;
+  height: 87px;
+  padding-left: 48px;
+  padding-bottom: 43.21px;
 `;
 
 const markerList = [
@@ -108,9 +110,12 @@ export const ShoeMap: React.FC = () => {
             openDrawer={() => setIsDrawerOpen(StoryDrawerState.Open)}
           />
           <ZoomControl position="bottomright" />
-          <AttributionControl position="bottomleft" />
+          <AttributionControl position="topright" />
           <Control position="bottomright">
             <StyledHelpIcon>?</StyledHelpIcon>
+          </Control>
+          <Control position="bottomleft">
+            <StyledLogo></StyledLogo>
           </Control>
         </StyledMap>
       </MapContainer>
