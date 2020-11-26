@@ -122,6 +122,7 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 			Content:         "Children",
 			Summary:         "Summary1",
 			CurrentCity:     "Toronto",
+			ImageURL:        "https://exampleurl.com",
 			AuthorFirstName: "Antoine",
 			AuthorLastName:  "dSE",
 			AuthorCountry:   "France",
@@ -134,6 +135,7 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 			Content:         "Fiction",
 			Summary:         "Summary2",
 			CurrentCity:     "Toronto",
+			ImageURL:        "https://exampleurl.com",
 			AuthorFirstName: "Douglas",
 			AuthorLastName:  "Adams",
 			AuthorCountry:   "UK",
@@ -157,7 +159,8 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 			"content": "Children",
 			"title": "The Little Prince",
 			"summary": "Summary1",
-			"current_city": "Toronto"
+			"current_city": "Toronto",
+			"image_url" : "https://exampleurl.com"
 		},
 		{
 			"author_first_name": "Douglas",
@@ -166,7 +169,8 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 			"content": "Fiction",
 			"title": "Hitchhiker's Guide to the Galaxy",
 			"summary": "Summary2",
-			"current_city": "Toronto"
+			"current_city": "Toronto",
+			"image_url" : "https://exampleurl.com"
 		}
 		],
 		"status": "OK"
@@ -183,6 +187,7 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 	response.Object().Value("payload").Array().Element(0).Object().Value("title").Equal("The Little Prince")
 	response.Object().Value("payload").Array().Element(0).Object().Value("summary").Equal("Summary1")
 	response.Object().Value("payload").Array().Element(0).Object().Value("current_city").Equal("Toronto")
+	response.Object().Value("payload").Array().Element(0).Object().Value("image_url").Equal("https://exampleurl.com")
 
 	response.Object().Value("payload").Array().Element(1).Object().Value("author_first_name").Equal("Douglas")
 	response.Object().Value("payload").Array().Element(1).Object().Value("author_last_name").Equal("Adams")
@@ -192,7 +197,7 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 	response.Object().Value("payload").Array().Element(1).Object().Value("title").Equal("Hitchhiker's Guide to the Galaxy")
 	response.Object().Value("payload").Array().Element(1).Object().Value("summary").Equal("Summary2")
 	response.Object().Value("payload").Array().Element(1).Object().Value("current_city").Equal("Toronto")
-
+	response.Object().Value("payload").Array().Element(0).Object().Value("image_url").Equal("https://exampleurl.com")
 }
 
 func (suite *endpointTestSuite) TestCreateAuthor() {
@@ -238,6 +243,9 @@ func (suite *endpointTestSuite) TestCreateStory() {
 		{
 			Title:           "Jane Eyre",
 			Content:         "Classic",
+			Summary:         "Summary",
+			CurrentCity:     "Toronto",
+			ImageURL:        "https://exampleurl.com",
 			AuthorFirstName: "Charlotte",
 			AuthorLastName:  "Bronte",
 			AuthorCountry:   "UK",
@@ -261,6 +269,7 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 			Content:         "Fiction",
 			Summary:         "Summary1",
 			CurrentCity:     "Toronto",
+			ImageURL:        "https://exampleurl.com",
 			AuthorFirstName: "Chimamanda",
 			AuthorLastName:  "Ngozi Adieche",
 			AuthorCountry:   "Nigeria",
@@ -281,7 +290,8 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 					"current_city": "Toronto",
 					"content": "Fiction",
 					"summary": "Summary1",
-					"title": "Half of a Yellow Sun"
+					"title": "Half of a Yellow Sun",
+					"image_url":"https://exampleurl.com"
 				}],
 				"status": "OK"
 			}`
@@ -294,6 +304,7 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 	response.Object().Value("payload").Object().Value("title").Equal("Half of a Yellow Sun")
 	response.Object().Value("payload").Object().Value("summary").Equal("Summary1")
 	response.Object().Value("payload").Object().Value("current_city").Equal("Toronto")
+	response.Object().Value("payload").Object().Value("image_url").Equal("https://exampleurl.com")
 }
 
 func (suite *endpointTestSuite) TearDownSuite() {
