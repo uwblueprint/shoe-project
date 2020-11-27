@@ -8,18 +8,25 @@ import (
 	"syreclabs.com/go/faker"
 )
 
+func DropTables(db *gorm.DB) error {
+	return db.Migrator().DropTable(&models.Author{}, &models.Story{}, &models.User{}, &models.Role{})
+}
+
 func CreateTables(db *gorm.DB) error {
-	return db.AutoMigrate(&models.Author{}, &models.Story{}, &models.User{})
+	return db.AutoMigrate(&models.Author{}, &models.Story{}, &models.User{}, &models.Role{})
+}
+
+func PopulateUserRoles(db *gorm.DB) error {
+	roles := []models.Role{{Role: "admin"}, {Role: "member"}}
+	return db.Create(&roles).Error
 }
 
 func CreateSuperUser(db *gorm.DB) error {
-	// Clear current superuser if any
-	db.Where("username = ?", config.GetSuperUserUsername()).Delete(models.User{})
-
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(config.GetSuperUserPassword()), 10)
 	superUser := models.User{
 		Username: config.GetSuperUserUsername(),
 		Password: string(hashedPassword),
+		RoleID:   1,
 	}
 	return db.Create(&superUser).Error
 }
