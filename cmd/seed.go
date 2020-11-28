@@ -25,6 +25,10 @@ var (
 				logger.Fatalw("Failed to connect to database", "Err", err)
 			}
 
+			if err := migrations.DropTables(db); err != nil {
+				logger.Fatalw("Failed to drop existing tables in database", "Err", err)
+			}
+
 			if err := migrations.CreateTables(db); err != nil {
 				logger.Fatalw("Database table creation failed", "Err", err)
 			}

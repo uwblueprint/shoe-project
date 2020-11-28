@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/go-chi/jwtauth"
 	"github.com/go-chi/render"
 	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
@@ -56,4 +57,25 @@ func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
 	}
 
 	return rest.JSONStatusOK(signedToken)
+}
+
+func (api api) PermissionAuthenticator() func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			_, claims, _ := jwtauth.FromContext(r.Context())
+			username := claims["username"]
+
+			hasPermission, err := api.enforcer.Enforce(username, r.URL.Path, r.Method)
+			if err != nil {
+				http.Error(w, http.StatusText(401), 401)
+				return
+			}
+			if !hasPermission {
+				http.Error(w, http.StatusText(401), 401)
+				return
+			}
+
+			next.ServeHTTP(w, r)
+		})
+	}
 }

@@ -4,6 +4,9 @@ go 1.14
 
 require (
 	github.com/biter777/countries v1.3.4
+	github.com/casbin/casbin v1.9.1
+	github.com/casbin/casbin/v2 v2.19.1
+	github.com/casbin/gorm-adapter/v3 v3.0.4
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gavv/httpexpect/v2 v2.1.0
 	github.com/go-chi/chi v4.1.2+incompatible
@@ -37,7 +40,7 @@ require (
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gorm.io/driver/postgres v1.0.2
 	gorm.io/driver/sqlite v1.1.3
-	gorm.io/gorm v1.20.2
+	gorm.io/gorm v1.20.7
 	honnef.co/go/tools v0.0.1-2020.1.6 // indirect
 	syreclabs.com/go/faker v1.2.2
 )
