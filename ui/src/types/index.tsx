@@ -11,6 +11,8 @@ interface Model {
 export interface Story extends Model {
   title: string;
   content: string;
+  latitude: number;
+  longitude: number;
 }
 
 export interface Author extends Model {
