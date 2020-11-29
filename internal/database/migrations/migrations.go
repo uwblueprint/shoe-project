@@ -1,6 +1,8 @@
 package migrations
 
 import (
+	"github.com/casbin/casbin/v2"
+	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
 	"golang.org/x/crypto/bcrypt"
@@ -25,7 +27,20 @@ func CreateSuperUser(db *gorm.DB) error {
 		Username: config.GetSuperUserUsername(),
 		Password: string(hashedPassword),
 	}
-	return db.Create(&superUser).Error
+
+	if err := db.Create(&superUser).Error; err != nil {
+		return err
+	}
+
+	a, _ := gormadapter.NewAdapterByDB(db)
+	e, _ := casbin.NewCachedEnforcer("auth_model.conf", a)
+
+	if _, err := e.AddPolicy(config.GetSuperUserUsername(), "/*", "*"); err != nil {
+		return err
+	}
+	e.InvalidateCache()
+
+	return nil
 }
 
 func Seed(db *gorm.DB) error {

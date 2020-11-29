@@ -35,12 +35,6 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 		locationFinder: locationFinder,
 	}
 
-	// Grant the superuser access to everything, regardless of whether the db has been seeded
-	if _, err := api.enforcer.AddPolicy(config.GetSuperUserUsername(), "/*", "*"); err != nil {
-		return r, err
-	}
-	api.enforcer.InvalidateCache()
-
 	// Public API
 	r.Group(func(r chi.Router) {
 		rest.GetHandler(r, "/health", api.health)

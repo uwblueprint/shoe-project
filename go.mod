@@ -4,7 +4,6 @@ go 1.14
 
 require (
 	github.com/biter777/countries v1.3.4
-	github.com/casbin/casbin v1.9.1
 	github.com/casbin/casbin/v2 v2.19.1
 	github.com/casbin/gorm-adapter/v3 v3.0.4
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
@@ -16,7 +15,6 @@ require (
 	github.com/google/go-cmp v0.5.2 // indirect
 	github.com/klauspost/compress v1.10.10 // indirect
 	github.com/kr/text v0.2.0 // indirect
-	github.com/lib/pq v1.8.0 // indirect
 	github.com/mattn/go-colorable v0.1.7 // indirect
 	github.com/mattn/go-sqlite3 v1.14.4 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
