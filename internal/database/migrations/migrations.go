@@ -18,7 +18,7 @@ func DropTables(db *gorm.DB) error {
 	return db.Migrator().DropTable(&models.Author{}, &models.Story{}, &models.User{})
 }
 
-func CreateSuperUser(db *gorm.DB) error {
+func CreateSuperUser(db *gorm.DB, casbinFilePath string) error {
 	// Clear current superuser if any
 	db.Where("username = ?", config.GetSuperUserUsername()).Delete(models.User{})
 
@@ -33,7 +33,7 @@ func CreateSuperUser(db *gorm.DB) error {
 	}
 
 	a, _ := gormadapter.NewAdapterByDB(db)
-	e, _ := casbin.NewCachedEnforcer("auth_model.conf", a)
+	e, _ := casbin.NewCachedEnforcer(casbinFilePath, a)
 
 	if _, err := e.AddPolicy(config.GetSuperUserUsername(), "/*", "*"); err != nil {
 		return err

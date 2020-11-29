@@ -33,7 +33,7 @@ var (
 				logger.Fatalw("Database table creation failed", "Err", err)
 			}
 
-			if err := migrations.CreateSuperUser(db); err != nil {
+			if err := migrations.CreateSuperUser(db, "auth_model.conf"); err != nil {
 				logger.Fatalw("Super user creation failed", "Err", err)
 			}
 

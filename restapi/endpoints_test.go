@@ -9,11 +9,14 @@ import (
 	"github.com/gavv/httpexpect/v2"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/suite"
+	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/internal/database/migrations"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
 	"github.com/uwblueprint/shoe-project/testutils"
 	"gorm.io/gorm"
 )
+
+const casbinFilePath = "../auth_model.conf"
 
 type endpointTestSuite struct {
 	suite.Suite
@@ -36,7 +39,7 @@ func (suite *endpointTestSuite) SetupSuite() {
 	viper.SetDefault("auth.superuser_username", "admin")
 	viper.SetDefault("auth.superuser_password", "root")
 
-	router, err := Router(db, testutils.MockLocationFinder{})
+	router, err := Router(db, testutils.MockLocationFinder{}, casbinFilePath)
 	if err != nil {
 		suite.FailNow("error while creating router", err)
 	}
@@ -49,9 +52,15 @@ func (suite *endpointTestSuite) SetupTest() {
 	if err := migrations.CreateTables(suite.db); err != nil {
 		suite.Fail("error while creating tables", err)
 	}
-	if err := migrations.CreateSuperUser(suite.db); err != nil {
+	if err := migrations.CreateSuperUser(suite.db, casbinFilePath); err != nil {
 		suite.Fail("error creating super user", err)
 	}
+
+	fmt.Println(config.GetSuperUserUsername())
+
+	//var users []models.User
+	//suite.db.Model(&users)
+	//fmt.Printf("\n\nUser: %s\n\n", users[0].Username)
 
 	suite.token = suite.endpoint.POST("/login").
 		WithJSON(map[string]string{

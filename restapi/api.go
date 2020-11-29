@@ -24,10 +24,10 @@ type api struct {
 	locationFinder location.LocationFinder
 }
 
-func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, error) {
+func Router(db *gorm.DB, locationFinder location.LocationFinder, casbinFilePath string) (http.Handler, error) {
 	r := server.CreateRouter()
 	a, _ := gormadapter.NewAdapterByDB(db)
-	e, _ := casbin.NewCachedEnforcer("auth_model.conf", a)
+	e, _ := casbin.NewCachedEnforcer(casbinFilePath, a)
 	api := api{
 		database:       db,
 		enforcer:       e,

@@ -46,7 +46,7 @@ var (
 				logger.Fatalw("Failed to initialize Mapbox location finder service")
 			}
 
-			apiRouter, err := restapi.Router(db, locationFinder)
+			apiRouter, err := restapi.Router(db, locationFinder, "auth_model.conf")
 			if err != nil {
 				logger.Fatalw("API Router Mount", "Err", err)
 			}
