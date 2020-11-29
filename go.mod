@@ -3,6 +3,7 @@ module github.com/uwblueprint/shoe-project
 go 1.14
 
 require (
+	github.com/biter777/countries v1.3.4
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gavv/httpexpect/v2 v2.1.0
 	github.com/go-chi/chi v4.1.2+incompatible
