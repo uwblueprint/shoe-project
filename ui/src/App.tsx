@@ -24,9 +24,6 @@ function App(): JSX.Element {
           <Route exact path="/">
             <ShoeMap />
           </Route>
-          <Route path="/map">
-            <ShoeMap />
-          </Route>
         </Switch>
       </Router>
     </SWRConfig>
