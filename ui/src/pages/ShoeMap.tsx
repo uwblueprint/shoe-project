@@ -4,18 +4,21 @@ import * as React from "react";
 import { useState } from "react";
 import { AttributionControl, Map, TileLayer, ZoomControl } from "react-leaflet";
 import Control from "react-leaflet-control";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import useSWR from "swr";
 
 import ShoeLogo from "../assets/images/shoeproject-logo.svg";
-import { Filter } from "../components/Filter";
-import { PinCluster } from "../components/PinCluster";
-import { StoryDrawer } from "../components/StoryDrawer";
+import { Filter, PinCluster, StoryDrawer } from "../components";
+import { HelpDrawer, HelpDrawerState } from "../components/HelpDrawer";
 import { TutorialState, WelcomeTutorial } from "../components/WelcomeTutorial";
 import { colors } from "../styles";
 import { Story } from "../types";
 
-const StyledMap = styled(Map)`
+interface StyledMapProps {
+  isHelpDrawerOpen: boolean;
+}
+
+const StyledMap = styled(Map)<StyledMapProps>`
   height: 100vh;
   width: 100vw;
   .leaflet-control {
@@ -35,6 +38,14 @@ const StyledMap = styled(Map)`
     :last-child {
       border-radius: 0px 0px 10px 10px;
     }
+  }
+  .leaflet-right {
+    ${(props: StyledMapProps) =>
+      props.isHelpDrawerOpen &&
+      css`
+        right: 28vw;
+        -webkit-transition: all 0.2s ease;
+      `};
   }
 `;
 
@@ -97,6 +108,9 @@ export const ShoeMap: React.FC = () => {
   const handleOpenDrawer = (s: Story) => () => setStory(s);
   const handleCloseDrawer = () => setStory(undefined);
   const [isTutorialOpen, setIsTutorialOpen] = useState(TutorialState.First);
+  const [isHelpDrawerOpen, setIsHelpDrawerOpen] = useState(
+    HelpDrawerState.Closed
+  );
 
   return (
     <React.Fragment>
@@ -109,6 +123,7 @@ export const ShoeMap: React.FC = () => {
           maxZoom={maxZoom}
           zoomControl={false}
           attributionControl={false}
+          isHelpDrawerOpen={isHelpDrawerOpen === HelpDrawerState.Open}
         >
           <TileLayer
             url={`https://api.mapbox.com/styles/v1/hanlinc27/ckhjy5wat2dvz1aplv4tkaghb/tiles/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`}
@@ -119,7 +134,11 @@ export const ShoeMap: React.FC = () => {
           <ZoomControl position="bottomright" />
           <AttributionControl position="topright" />
           <Control position="bottomright">
-            <StyledHelpIcon>?</StyledHelpIcon>
+            <StyledHelpIcon
+              onClick={() => setIsHelpDrawerOpen(HelpDrawerState.Open)}
+            >
+              ?
+            </StyledHelpIcon>
           </Control>
           <Control position="bottomleft">
             <StyledLogo></StyledLogo>
@@ -128,6 +147,11 @@ export const ShoeMap: React.FC = () => {
       </MapContainer>
       <StoryDrawer story={story} onClose={handleCloseDrawer} />
       <WelcomeTutorial state={isTutorialOpen} setState={setIsTutorialOpen} />
+      <HelpDrawer
+        state={isHelpDrawerOpen}
+        setIsHelpDrawerOpen={setIsHelpDrawerOpen}
+        setIsTutorialOpen={setIsTutorialOpen}
+      />
     </React.Fragment>
   );
 };

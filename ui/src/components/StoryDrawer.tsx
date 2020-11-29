@@ -9,11 +9,11 @@ import ChinaFlag from "../assets/flags/China.png";
 import TempShoe from "../assets/images/temp.png";
 import { colors } from "../styles/colors";
 import {
-  DrawerAuthorText,
-  DrawerContentText,
-  DrawerCountryText,
-  DrawerRightText,
-  DrawerTitleText,
+  StoryDrawerAuthorText,
+  StoryDrawerContentText,
+  StoryDrawerCountryText,
+  StoryDrawerRightText,
+  StoryDrawerTitleText,
 } from "../styles/typography";
 import { Story } from "../types";
 
@@ -81,14 +81,14 @@ export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
       <StyledRoot>
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12}>
-            <DrawerTitleText>{title}</DrawerTitleText>
+            <StoryDrawerTitleText>{title}</StoryDrawerTitleText>
           </Grid>
           <Grid item xs={1}>
             <StyledFlagImage alt="flag" src={ChinaFlag} />
           </Grid>
           <Grid item xs={5}>
-            <DrawerCountryText>{`Origin: ${author_country}`}</DrawerCountryText>
-            <DrawerAuthorText>{`${author_first_name} ${author_last_name}`}</DrawerAuthorText>
+            <StoryDrawerCountryText>{`Origin: ${author_country}`}</StoryDrawerCountryText>
+            <StoryDrawerAuthorText>{`${author_first_name} ${author_last_name}`}</StoryDrawerAuthorText>
           </Grid>
           <Grid
             item
@@ -98,14 +98,14 @@ export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
             justify="flex-end"
             container
           >
-            <DrawerRightText>{current_city}, Canada</DrawerRightText>
-            <DrawerRightText>{date}</DrawerRightText>
+            <StoryDrawerRightText>{current_city}, Canada</StoryDrawerRightText>
+            <StoryDrawerRightText>{date}</StoryDrawerRightText>
           </Grid>
           <Grid item xs={12}>
             <StyledImage src={TempShoe} alt="Temporary Image" />
           </Grid>
           <Grid item xs={12}>
-            <DrawerContentText>{content}</DrawerContentText>
+            <StoryDrawerContentText>{content}</StoryDrawerContentText>
           </Grid>
         </Grid>
       </StyledRoot>
