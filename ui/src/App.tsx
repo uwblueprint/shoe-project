@@ -2,8 +2,7 @@ import * as React from "react";
 import { SWRConfig } from "swr";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
-import { Home, ShoeMap } from "./pages";
-import {Filter} from './components/Filter';
+import { ShoeMap } from "./pages";
 
 const defaultFetcher = (
   input: RequestInfo,
@@ -23,7 +22,7 @@ function App(): JSX.Element {
       <Router>
         <Switch>
           <Route exact path="/">
-           <ShoeMap />
+            <ShoeMap />
           </Route>
           <Route path="/map">
             <ShoeMap />

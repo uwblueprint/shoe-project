@@ -5,12 +5,12 @@ import { colors, fontSize } from "../styles";
 
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Checkbox from '@material-ui/core/Checkbox';
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import { createMuiTheme } from '@material-ui/core/styles';
-import { ThemeProvider } from '@material-ui/styles';
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Checkbox from "@material-ui/core/Checkbox";
+import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@material-ui/icons/CheckBox";
+import { createMuiTheme } from "@material-ui/core/styles";
+import { ThemeProvider } from "@material-ui/styles";
 
 import { FilterChip } from "./FilterChip";
 
@@ -25,7 +25,7 @@ export interface FilterProps {
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: colors.primary
+      main: colors.primary,
     },
     secondary: {
       main: colors.primaryDark1,
@@ -57,7 +57,9 @@ const Tagline = styled.span`
 `;
 
 export function Filter(): JSX.Element {
-  const { data:countries, error } = useSWR<string[]>("/api/authors/origin_countries");
+  const { data: countries, error } = useSWR<string[]>(
+    "/api/authors/origin_countries"
+  );
 
   if (error) return <div>Error!</div>;
 
@@ -71,9 +73,9 @@ export function Filter(): JSX.Element {
           loading={!countries}
           id="filter-autocomplete"
           options={countries || []}
-          style={{width: 312}}
+          style={{ width: 312 }}
           disableCloseOnSelect
-          renderTags={(value, getTagProps) => 
+          renderTags={(value, getTagProps) =>
             value.map((option, index) => (
               <FilterChip
                 key={option}
@@ -94,7 +96,6 @@ export function Filter(): JSX.Element {
               {option}
             </React.Fragment>
           )}
-    
           renderInput={(params) => (
             <TextField
               {...params}
@@ -105,7 +106,9 @@ export function Filter(): JSX.Element {
                 ...params.InputProps,
                 endAdornment: (
                   <React.Fragment>
-                    {!countries ? <CircularProgress color="inherit" size={20} /> : null}
+                    {!countries ? (
+                      <CircularProgress color="inherit" size={20} />
+                    ) : null}
                     {params.InputProps.endAdornment}
                   </React.Fragment>
                 ),
