@@ -14,7 +14,7 @@ install:
 run: install
 	(\
 		source .venv/bin/activate; \
-		python add_images.py; \
+		python $(filename); \
 		deactivate \
 	)	
 

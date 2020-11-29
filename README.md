@@ -145,3 +145,21 @@ $ curl -H 'Accept: application/json' -H "Authorization: Bearer ${TOKEN}" http://
 ```
 
 Note that the key `Authorization: Bearer` is fixed, so don't change this.
+
+## Running Script
+
+Navigate into the scripts folder.
+```bash
+cd scripts
+```
+
+Set up the virtual environment.
+```bash
+make setup
+```
+
+Run the script by specifying the name of the script file. Make sure the script is included in the scripts folder.
+```bash
+make filename=[filename]
+```
+For add_images.py script, images folder with all the images that needs to be uploaded to s3 should be included in the scripts folder
