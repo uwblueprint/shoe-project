@@ -1,15 +1,21 @@
-default: setup
+default: run 
 
 setup:
 	python3 -m pip install virtualenv
 	python3 -m virtualenv .venv
 
-source:
-	ls
-	source .venv/bin/activate
+install:
+	(\
+		source .venv/bin/activate; \
+		pip install -r requirements.txt; \
+		deactivate \
+	)
 
-deactivate:
-	deactivate
+run: install
+	(\
+		source .venv/bin/activate; \
+		python add_images.py; \
+		deactivate \
+	)	
 
-install: source
-	pip install -r requirements.txt
+.PHONY: setup install run
