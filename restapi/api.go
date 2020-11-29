@@ -35,6 +35,11 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder, casbinFilePath 
 		locationFinder: locationFinder,
 	}
 
+	if _, err := e.AddPolicy(config.GetSuperUserUsername(), "/*", "*"); err != nil {
+		return r, err
+	}
+	e.InvalidateCache()
+
 	// Public API
 	r.Group(func(r chi.Router) {
 		rest.GetHandler(r, "/health", api.health)
