@@ -33,6 +33,8 @@ func (suite *endpointTestSuite) SetupSuite() {
 	viper.SetDefault("auth.jwt_key", "random")
 	viper.SetDefault("auth.jwt_expiry", "5m")
 	viper.SetDefault("auth.jwt_issuer", "endpoint_tests")
+	viper.SetDefault("auth.superuser_username", "admin")
+	viper.SetDefault("auth.superuser_password", "root")
 
 	router, err := Router(db, testutils.MockLocationFinder{})
 	if err != nil {
@@ -52,10 +54,10 @@ func (suite *endpointTestSuite) SetupTest() {
 	}
 
 	suite.token = suite.endpoint.POST("/login").
-		WithJSON([]models.User{{
-			Username: "admin",
-			Password: "root",
-		}}).
+		WithJSON(map[string]string{
+			"username": "admin",
+			"password": "root",
+		}).
 		Expect().
 		Status(http.StatusOK).JSON().Object().Value("payload").String().Raw()
 }

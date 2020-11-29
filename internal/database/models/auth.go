@@ -7,8 +7,8 @@ import (
 
 type User struct {
 	gorm.Model
-	Username string `json:"username" gorm:"unique"`
-	Password string `json:"password"`
+	Username string `json:"username" gorm:"unique; not null"`
+	Password string `json:"password" gorm:"not null"`
 }
 
 // Not persisted in db
