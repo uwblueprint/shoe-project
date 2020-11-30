@@ -47,7 +47,16 @@ const StyledButton = styled(Button)`
     position: absolute;
     left: 134px;
     bottom: 24px;
+    .MuiButton-label{
+      color: ${colors.primaryDark2};
+      font-size: 16px;
+      font-family: Poppins;
+      font-style: normal;
+font-weight: 500;
+line-height: 150%;
+margin: 0px 10px;
 
+    }
 && {
     box-shadow: none;
     background-color: ${colors.primaryLight4};
@@ -77,7 +86,7 @@ right: 21px;
 top: 29px;
 
   .MuiIcon-colorPrimary {
-    color: #2d6394;
+    color: ${colors.primaryDark2};
   }
 `;
 export function WelcomeScreens() {
@@ -101,7 +110,6 @@ export function WelcomeScreens() {
           come to Canada.
         </WelcomeDescriptionText>
         <StyledButton
-          text-color={colors.primaryDark2}
           text-align="center"
           variant="text"
           color={colors.primaryLight2}
