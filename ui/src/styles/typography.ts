@@ -52,6 +52,29 @@ export const CardDescriptionText = styled.p`
   }
 `;
 
+export const WelcomeTitleText = styled.p`
+  font-size: ${fontSize.h3Text};
+  font-weight: 500;
+  line-height: 30px;
+  text-align: center;
+  margin: 0px;
+  color: ${colors.black};
+`;
+
+export const WelcomeDescriptionText = styled.p`
+  font-size: ${fontSize.body2};
+  font-weight: normal;
+  line-height: 21px;
+  text-align: center;
+  align-items: center;
+  color: ${colors.black};
+  opacity: 0.7;
+  padding-bottom: 24px;
+  padding-left: 16px;
+  padding-right: 16px;
+
+  `;
+
 export const CardDetailText = styled.p`
   font-size: ${fontSize.caption};
   font-weight: 300;
