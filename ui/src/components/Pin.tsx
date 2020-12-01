@@ -6,7 +6,6 @@ import resting from "../assets/resting.svg";
 import unfocused from "../assets/unfocused.svg";
 import { PinPreview } from "./PinPreview";
 import { Story } from "../types";
-import { stringify } from "querystring";
 
 const StyledPopup = styled(Popup)`
   width: 392px;
@@ -61,9 +60,7 @@ export function Pin({
       <StyledPopup>
         <PinPreview
           title={story.title}
-          description={
-            story.summary
-          }
+          description={story.summary}
           author={story.author_first_name.concat(" ", story.author_last_name)}
           date={story.createdAt}
           country={story.author_country}
