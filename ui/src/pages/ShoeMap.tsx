@@ -1,5 +1,6 @@
 import * as React from "react";
 import styled from "styled-components";
+import useSWR from "swr";
 import { AttributionControl, Map, TileLayer, ZoomControl } from "react-leaflet";
 import Control from "react-leaflet-control";
 import "leaflet/dist/leaflet.css";
@@ -9,6 +10,7 @@ import { useState } from "react";
 import { colors } from "../styles";
 import ShoeLogo from "../assets/images/shoeproject-logo.svg";
 import { Filter } from "../components/Filter";
+import { Story } from "../types";
 
 const StyledMap = styled(Map)`
   height: 100vh;
@@ -70,20 +72,6 @@ const StyledLogo = styled.div`
   padding-bottom: 43.21px;
 `;
 
-const markerList = [
-  {
-    lat: 43.4723,
-    lng: -80.321796,
-  },
-  {
-    lat: 43.4923,
-    lng: -80.366873,
-  },
-  {
-    lat: 43.4323,
-    lng: -80.391796,
-  },
-];
 
 export const ShoeMap: React.FC = () => {
   const zoom = 12;
@@ -91,6 +79,8 @@ export const ShoeMap: React.FC = () => {
   const maxZoom = 18;
   const currentLocation = { lat: 43.4723, lng: -80.5449 };
   const [isDrawerOpen, setIsDrawerOpen] = useState(StoryDrawerState.Closed);
+
+  const { data:stories, error } = useSWR<Story[]>("/api/stories");
 
   return (
     <React.Fragment>
@@ -107,10 +97,12 @@ export const ShoeMap: React.FC = () => {
           <TileLayer
             url={`https://api.mapbox.com/styles/v1/hanlinc27/ckhjy5wat2dvz1aplv4tkaghb/tiles/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`}
           />
-          <PinCluster
-            clusterPositions={markerList}
+          {(stories && !error) &&
+            <PinCluster
+            stories={stories}
             openDrawer={() => setIsDrawerOpen(StoryDrawerState.Open)}
-          />
+            />
+          }
           <ZoomControl position="bottomright" />
           <AttributionControl position="topright" />
           <Control position="bottomright">

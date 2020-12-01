@@ -6,6 +6,7 @@ import "react-leaflet-markercluster/dist/styles.min.css";
 import "leaflet.markercluster";
 import MarkerClusterGroup from "react-leaflet-markercluster";
 import "leaflet/dist/leaflet.css";
+import { Story } from "../types";
 
 const createClusterCustomIcon = function () {
   return new L.Icon({
@@ -15,12 +16,12 @@ const createClusterCustomIcon = function () {
 };
 
 export interface PinClusterProps {
-  clusterPositions: { lat: number; lng: number }[];
+  stories: Story[];
   openDrawer: () => void;
 }
 
 export function PinCluster({
-  clusterPositions,
+  stories,
   openDrawer,
 }: PinClusterProps): JSX.Element {
   return (
@@ -29,11 +30,11 @@ export function PinCluster({
       spiderLegPolylineOptions={{ opacity: 0 }}
       iconCreateFunction={createClusterCustomIcon}
     >
-      {clusterPositions.map((marker, key) => {
+      {stories.map((story, key) => {
         return (
           <Pin
             key={key}
-            position={[marker.lat, marker.lng]}
+            story={story}
             state={PinState.Resting}
             openDrawer={openDrawer}
           />

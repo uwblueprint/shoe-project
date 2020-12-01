@@ -36,7 +36,7 @@ func (finder mapboxFinder) GetCityCenter(city string) (Coordinates, error) {
 	}
 
 	return Coordinates{
-		Latitude:  forward.Features[0].Center[0],
-		Longitude: forward.Features[0].Center[1],
+		Latitude:  forward.Features[0].Center[1],
+		Longitude: forward.Features[0].Center[0],
 	}, nil
 }
