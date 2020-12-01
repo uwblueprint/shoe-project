@@ -72,7 +72,6 @@ const StyledLogo = styled.div`
   padding-bottom: 43.21px;
 `;
 
-
 export const ShoeMap: React.FC = () => {
   const zoom = 12;
   const minZoom = 3;
@@ -80,7 +79,7 @@ export const ShoeMap: React.FC = () => {
   const currentLocation = { lat: 43.4723, lng: -80.5449 };
   const [isDrawerOpen, setIsDrawerOpen] = useState(StoryDrawerState.Closed);
 
-  const { data:stories, error } = useSWR<Story[]>("/api/stories");
+  const { data: stories, error } = useSWR<Story[]>("/api/stories");
 
   return (
     <React.Fragment>
@@ -97,12 +96,12 @@ export const ShoeMap: React.FC = () => {
           <TileLayer
             url={`https://api.mapbox.com/styles/v1/hanlinc27/ckhjy5wat2dvz1aplv4tkaghb/tiles/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`}
           />
-          {(stories && !error) &&
+          {stories && !error && (
             <PinCluster
-            stories={stories}
-            openDrawer={() => setIsDrawerOpen(StoryDrawerState.Open)}
+              stories={stories}
+              openDrawer={() => setIsDrawerOpen(StoryDrawerState.Open)}
             />
-          }
+          )}
           <ZoomControl position="bottomright" />
           <AttributionControl position="topright" />
           <Control position="bottomright">
