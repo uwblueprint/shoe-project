@@ -3,9 +3,6 @@ import styled from "styled-components";
 import Dialog from "@material-ui/core/Dialog";
 import { colors } from "../../styles/colors";
 import Button from "@material-ui/core/Button";
-import MuiDialogTitle from "@material-ui/core/DialogTitle";
-import MuiDialogContent from "@material-ui/core/DialogContent";
-import MuiDialogActions from "@material-ui/core/DialogActions";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 
@@ -93,8 +90,8 @@ const StyledTag = styled(Button)`
     background-color: ${colors.grey};    
 `;
 
-const StyledContainer = styled.div` 
-    display: inline-block;
+const StyledContainer = styled.div`
+  display: inline-block;
 `;
 export function NavigateScreen() {
   const [open, setOpen] = React.useState(false);
@@ -113,18 +110,16 @@ export function NavigateScreen() {
           Zoom in on any pin to see all the stories from that city.
         </NavigateDescriptionText>
         <StyledContainer>
-        <StyledTag  text-align="center"
-          variant="text"
-          disableElevation={true}
-          >1/3</StyledTag>
-
-        <StyledNextButton
-          text-align="center"
-          variant="text"
-          disableElevation={true}
-        >
-          NEXT
-        </StyledNextButton>
+          <StyledTag text-align="center" variant="text" disableElevation={true}>
+            1/3
+          </StyledTag>
+          <StyledNextButton
+            text-align="center"
+            variant="text"
+            disableElevation={true}
+          >
+            NEXT
+          </StyledNextButton>
         </StyledContainer>
       </StyledWelcome>
     </>

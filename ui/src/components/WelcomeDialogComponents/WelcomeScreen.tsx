@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 import Dialog from "@material-ui/core/Dialog";
-import { colors } from "../styles/colors";
+import { colors } from "../../styles/colors";
 import Button from "@material-ui/core/Button";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
 import MuiDialogContent from "@material-ui/core/DialogContent";
@@ -15,7 +15,7 @@ import {
   WelcomeDescriptionText,
   CardDetailText,
   CardTagText,
-} from "../styles/typography";
+} from "../../styles/typography";
 
 const StyledIconButton = styled(Button)`
   position: absolute;
@@ -44,20 +44,19 @@ const StyledWelcome = styled(Dialog)`
 `;
 
 const StyledButton = styled(Button)`
-    position: absolute;
-    left: 134px;
-    bottom: 24px;
-    .MuiButton-label{
-      color: ${colors.primaryDark2};
-      font-size: 16px;
-      font-family: Poppins;
-      font-style: normal;
-font-weight: 500;
-line-height: 150%;
-margin: 0px 10px;
-
-    }
-&& {
+  position: absolute;
+  left: 134px;
+  bottom: 24px;
+  .MuiButton-label {
+    color: ${colors.primaryDark2};
+    font-size: 16px;
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 150%;
+    margin: 0px 10px;
+  }
+  && {
     box-shadow: none;
     background-color: ${colors.primaryLight4};
     width: 222px;
@@ -81,15 +80,15 @@ const StyledLogo = styled.img`
 `;
 
 const StyledCloseIcon = styled(CloseIcon)`
-position: absolute;
-right: 21px;
-top: 29px;
+  position: absolute;
+  right: 21px;
+  top: 29px;
 
   .MuiIcon-colorPrimary {
     color: ${colors.primaryDark2};
   }
 `;
-export function WelcomeScreens() {
+export function WelcomeScreen() {
   const [open, setOpen] = React.useState(false);
 
   const handleClose = () => {
@@ -100,9 +99,9 @@ export function WelcomeScreens() {
     <>
       <StyledWelcome open={true}>
         {/* <StyledIconButton onClick={handleClose}> */}
-          <StyledCloseIcon color="primary" fontSize="small" />
+        <StyledCloseIcon color="primary" fontSize="small" />
         {/* </StyledIconButton> */}
-        <StyledLogo src = {ShoeLogo}></StyledLogo>
+        <StyledLogo src={ShoeLogo}></StyledLogo>
         <WelcomeTitleText>Welcome</WelcomeTitleText>
         <WelcomeDescriptionText>
           The Shoe Project Impact Page is an interactive map that showcases a

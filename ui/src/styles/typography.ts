@@ -72,9 +72,9 @@ export const WelcomeDescriptionText = styled.p`
   padding-bottom: 24px;
   padding-left: 16px;
   padding-right: 16px;
-  `;
+`;
 
-  export const NavigateTitleText = styled.p`
+export const NavigateTitleText = styled.p`
   font-size: ${fontSize.h3Text};
   font-weight: 500;
   line-height: 30px;
@@ -94,7 +94,7 @@ export const NavigateDescriptionText = styled.p`
   color: ${colors.black};
   padding-left: 24px;
   padding-right: 24px;
-  `;
+`;
 
 export const CardDetailText = styled.p`
   font-size: ${fontSize.caption};
