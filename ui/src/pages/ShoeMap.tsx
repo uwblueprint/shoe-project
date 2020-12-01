@@ -82,13 +82,6 @@ export const ShoeMap: React.FC = () => {
 
   const { data:stories, error } = useSWR<Story[]>("/api/stories");
 
-  var markerList = []
-  if(stories && !error){
-    stories.forEach(story => {
-      markerList.push({lat: story.latitude, lng: story.longitude})
-    });
-  }
-
   return (
     <React.Fragment>
       <MapContainer>
@@ -104,10 +97,12 @@ export const ShoeMap: React.FC = () => {
           <TileLayer
             url={`https://api.mapbox.com/styles/v1/hanlinc27/ckhjy5wat2dvz1aplv4tkaghb/tiles/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`}
           />
-          <PinCluster
-            clusterPositions={markerList}
+          {(stories && !error) &&
+            <PinCluster
+            stories={stories}
             openDrawer={() => setIsDrawerOpen(StoryDrawerState.Open)}
-          />
+            />
+          }
           <ZoomControl position="bottomright" />
           <AttributionControl position="topright" />
           <Control position="bottomright">

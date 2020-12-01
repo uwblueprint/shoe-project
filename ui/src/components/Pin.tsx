@@ -5,6 +5,8 @@ import { Marker, Popup } from "react-leaflet";
 import resting from "../assets/resting.svg";
 import unfocused from "../assets/unfocused.svg";
 import { PinPreview } from "./PinPreview";
+import { Story } from "../types";
+import { stringify } from "querystring";
 
 const StyledPopup = styled(Popup)`
   width: 392px;
@@ -34,13 +36,13 @@ export enum PinState {
 
 export interface PinProps {
   state?: PinState;
-  position: [number, number];
+  story: Story;
   openDrawer: () => void;
 }
 
 export function Pin({
   state = PinState.Resting,
-  position,
+  story,
   openDrawer,
 }: PinProps): JSX.Element {
   const icon = new L.Icon({
@@ -55,16 +57,16 @@ export function Pin({
       state === PinState.Selected ? new L.Point(58, 70) : new L.Point(50, 61),
   });
   return (
-    <Marker position={position} icon={icon}>
+    <Marker position={[story.latitude, story.longitude]} icon={icon}>
       <StyledPopup>
         <PinPreview
-          title={"Story Title"}
+          title={story.title}
           description={
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis turpis facilisis risus dolor. Euismod morbi vel vitae massa risus, commodo sed in arcu. Cras ..."
+            story.summary
           }
-          author={"Jie Li"}
-          date={"Dec 20, 2020"}
-          country={"China"}
+          author={story.author_first_name.concat(" ", story.author_last_name)}
+          date={story.createdAt}
+          country={story.author_country}
           openDrawer={openDrawer}
         />
       </StyledPopup>
