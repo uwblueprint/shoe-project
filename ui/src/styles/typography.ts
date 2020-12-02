@@ -80,8 +80,8 @@ export const NavigateTitleText = styled.p`
   line-height: 30px;
   text-align: left;
   padding-left: 24px;
+  padding-top: 16px;
   margin: 0px;
-  padding-top: 36px;
   color: ${colors.black};
 `;
 

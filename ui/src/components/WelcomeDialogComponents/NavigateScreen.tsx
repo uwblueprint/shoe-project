@@ -11,17 +11,17 @@ import {
   NavigateDescriptionText,
 } from "../../styles/typography";
 
-const StyledIconButton = styled(Button)`
-  position: absolute;
-  align-items: right;
-  margin-left: 372px;  
-  margin-top: 29px;
- 
-  && {
-    align: right;
-    box-shadow: none;
+const StyledIconButton = styled(IconButton)`
+    position: absolute;
+    margin: 0px;
+    padding: 0px;
+    left: 372px;
+    top: 29px;
     width: 14px;
     height: 14px;
+
+  && {
+    box-shadow: none;
   }
   }
 `;
@@ -60,10 +60,6 @@ const StyledNextButton = styled(Button)`
 `;
 
 const StyledCloseIcon = styled(CloseIcon)`
-  position: absolute;
-  right: 21px;
-  top: 29px;
-
   .MuiIcon-colorPrimary {
     color: ${colors.primaryDark2};
   }
@@ -94,7 +90,7 @@ const StyledContainer = styled.div`
   display: inline-block;
 `;
 export function NavigateScreen() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
 
   const handleClose = () => {
     setOpen(false);
@@ -102,8 +98,10 @@ export function NavigateScreen() {
 
   return (
     <>
-      <StyledWelcome open={true}>
-        <StyledCloseIcon color="primary" fontSize="small" />
+      <StyledWelcome open={open} onClose={handleClose}>
+        <StyledIconButton onClick={handleClose}>
+          <StyledCloseIcon color="primary" fontSize="small" />
+        </StyledIconButton>
         <NavigateTitleText>Navigating the Map</NavigateTitleText>
         <NavigateDescriptionText>
           The pins are placed on the city where these women currently reside.

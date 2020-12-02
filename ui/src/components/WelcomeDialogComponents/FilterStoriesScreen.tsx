@@ -6,6 +6,7 @@ import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import DialogTip from "../../assets/images/white-arrow.png";
+import OverlayCircle from "../../assets/images/clear-circle.svg";
 import {
   NavigateTitleText,
   NavigateDescriptionText,
@@ -15,25 +16,31 @@ const StyledArrowTip = styled.img`
   position: absolute;
   width: 29px;
   height: 26px;
-  left: 463px;
-  top: 597px;
-  transform: rotate(-90deg);
-  background: red;
+  left: -5%;
+  top: 25%;
+  background: none;
 `;
 
-const StyledIconButton = styled(Button)`
-position: absolute;
-display: flex;
-z-index: 0;
-margin: 0px;
-padding: 0px;
-left: 372px;
-top: 29px;
-width: 14px;
-height: 14px;
+const StyledOverlay = styled.img`
+  position: absolute;
+  width: 456px;
+  height: 456px;
+  left: -125%;
+  top: -45%;
+  background: none;
+`;
+
+const StyledIconButton = styled(IconButton)`
+    position: absolute;
+    margin: 0px;
+    padding: 0px;
+    left: 372px;
+    top: 29px;
+    width: 14px;
+    height: 14px;
+
   && {
     box-shadow: none;
-   
   }
   }
 `;
@@ -45,7 +52,8 @@ const StyledWelcome = styled(Dialog)`
     background: #ffffff;
     box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-
+    overflow-y: visible;
+    overflow-x: visible;
     bottom: 30%;
   }
 `;
@@ -73,11 +81,6 @@ const StyledNextButton = styled(Button)`
 `;
 
 const StyledCloseIcon = styled(CloseIcon)`
-  position: absolute;
-  z-index: 1;
-  right: 21px;
-  top: 29px;
-
   .MuiIcon-colorPrimary {
     color: ${colors.primaryDark2};
   }
@@ -109,7 +112,7 @@ const StyledContainer = styled.div`
 `;
 
 export function FilterStoriesScreen() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
 
   const handleClose = () => {
     setOpen(false);
@@ -117,12 +120,12 @@ export function FilterStoriesScreen() {
 
   return (
     <>
-      <StyledArrowTip src={DialogTip}></StyledArrowTip>
-
-      <StyledWelcome open={true}>
-        {/* <StyledIconButton> */}
-        <StyledCloseIcon color="primary" fontSize="small" />
-        {/* </StyledIconButton> */}
+      <StyledWelcome open={open} onClose={handleClose}>
+        <StyledArrowTip src={DialogTip}></StyledArrowTip>
+        <StyledOverlay src={OverlayCircle}></StyledOverlay>
+        <StyledIconButton onClick={handleClose}>
+          <StyledCloseIcon color="primary" fontSize="small" />
+        </StyledIconButton>
         <NavigateTitleText>Filter Stories</NavigateTitleText>
         <NavigateDescriptionText>
           Stories can be filtered by their author’s country of origin. Only
@@ -136,6 +139,7 @@ export function FilterStoriesScreen() {
             text-align="center"
             variant="text"
             disableElevation={true}
+            onClick={handleClose}
           >
             GOT IT
           </StyledNextButton>

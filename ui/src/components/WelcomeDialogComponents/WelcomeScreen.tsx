@@ -3,31 +3,27 @@ import styled from "styled-components";
 import Dialog from "@material-ui/core/Dialog";
 import { colors } from "../../styles/colors";
 import Button from "@material-ui/core/Button";
-import MuiDialogTitle from "@material-ui/core/DialogTitle";
-import MuiDialogContent from "@material-ui/core/DialogContent";
 import MuiDialogActions from "@material-ui/core/DialogActions";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
-import ShoeLogo from "../assets/images/test.svg";
+import ShoeLogo from "../../assets/images/welcome-shoe-logo.svg";
 
 import {
   WelcomeTitleText,
   WelcomeDescriptionText,
-  CardDetailText,
-  CardTagText,
 } from "../../styles/typography";
 
-const StyledIconButton = styled(Button)`
-  position: absolute;
-  align-items: right;
-  margin-left: 455px;  
-  margin-top: 29px;
- 
-  && {
-    align: right;
-    box-shadow: none;
+const StyledIconButton = styled(IconButton)`
+    position: absolute;
+    margin: 0px;
+    padding: 0px;
+    left: 455px;
+    top: 29px;
     width: 14px;
     height: 14px;
+
+  && {
+    box-shadow: none;
   }
   }
 `;
@@ -71,7 +67,6 @@ const StyledButton = styled(Button)`
 const StyledLogo = styled.img`
   margin-left: 189px;
   margin-right: 196px;
-  margin-top: 32px;
   margin-bottom: 16px;
   display: flex;
   background-repeat: no-repeat;
@@ -80,16 +75,12 @@ const StyledLogo = styled.img`
 `;
 
 const StyledCloseIcon = styled(CloseIcon)`
-  position: absolute;
-  right: 21px;
-  top: 29px;
-
   .MuiIcon-colorPrimary {
     color: ${colors.primaryDark2};
   }
 `;
 export function WelcomeScreen() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
 
   const handleClose = () => {
     setOpen(false);
@@ -97,10 +88,10 @@ export function WelcomeScreen() {
 
   return (
     <>
-      <StyledWelcome open={true}>
-        {/* <StyledIconButton onClick={handleClose}> */}
-        <StyledCloseIcon color="primary" fontSize="small" />
-        {/* </StyledIconButton> */}
+      <StyledWelcome open={open} onClose={handleClose}>
+        <StyledIconButton onClick={handleClose}>
+          <StyledCloseIcon color="primary" fontSize="small" />
+        </StyledIconButton>
         <StyledLogo src={ShoeLogo}></StyledLogo>
         <WelcomeTitleText>Welcome</WelcomeTitleText>
         <WelcomeDescriptionText>
