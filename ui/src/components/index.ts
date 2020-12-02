@@ -6,3 +6,4 @@ export { PinCluster } from "./PinCluster";
 export { PinPreview } from "./PinPreview";
 export { StoryDrawer } from "./StoryDrawer";
 export { TutorialState, WelcomeTutorial } from "./WelcomeTutorial";
+export { EdgePins } from "./EdgePins";
