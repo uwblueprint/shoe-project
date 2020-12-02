@@ -1,6 +1,8 @@
 package location
 
 import (
+	"errors"
+
 	mapbox "github.com/ryankurte/go-mapbox/lib"
 	"github.com/ryankurte/go-mapbox/lib/geocode"
 )
@@ -33,6 +35,9 @@ func (finder mapboxFinder) GetCityCenter(city string) (Coordinates, error) {
 	forward, err := finder.mapbox.Geocode.Forward(city, &finder.forwardOpts)
 	if err != nil {
 		return Coordinates{}, err
+	}
+	if len(forward.Features) == 0 {
+		return Coordinates{}, errors.New("Not a valid city")
 	}
 
 	return Coordinates{
