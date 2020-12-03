@@ -17,10 +17,10 @@ const createClusterCustomIcon = function () {
 
 export interface PinClusterProps {
   stories: Story[];
-  openDrawer: () => void;
+  openDrawer: (story: Story) => () => void;
 }
 
-export function PinCluster({
+export const PinCluster = React.memo(function PinCluster({
   stories,
   openDrawer,
 }: PinClusterProps): JSX.Element {
@@ -30,16 +30,17 @@ export function PinCluster({
       spiderLegPolylineOptions={{ opacity: 0 }}
       iconCreateFunction={createClusterCustomIcon}
     >
-      {stories.map((story, key) => {
+      {stories.map((story) => {
         return (
           <Pin
-            key={key}
+            id={story.ID.toString()}
+            key={story.ID}
             story={story}
             state={PinState.Resting}
-            openDrawer={openDrawer}
+            onPopupClick={openDrawer(story)}
           />
         );
       })}
     </MarkerClusterGroup>
   );
-}
+});

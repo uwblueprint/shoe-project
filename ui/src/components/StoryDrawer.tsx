@@ -14,6 +14,7 @@ import styled from "styled-components";
 import ChinaFlag from "../assets/flags/China.png";
 import TempShoe from "../assets/images/temp.png";
 import { colors } from "../styles/colors";
+import { Story } from "../types";
 
 const StyledIconButton = styled(Button)`
   position: absolute;
@@ -50,39 +51,30 @@ const StyledFlagImage = styled.img`
   width: 100%;
 `;
 
-export enum StoryDrawerState {
-  Open,
-  Closed,
-}
-
 interface StoryDrawerProps {
-  title: string;
-  author: string;
-  date: string;
-  country: string;
-  content: string;
-  currentCity: string;
-  state: StoryDrawerState;
-  setState: (newState: StoryDrawerState) => void;
+  story?: Story;
+  onClose: () => void;
 }
 
-export function StoryDrawer({
-  title,
-  author,
-  date,
-  country,
-  currentCity,
-  content,
-  state,
-  setState,
-}: StoryDrawerProps): JSX.Element {
+export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
+  if (story === undefined) {
+    return null;
+  }
+
+  const {
+    title,
+    author_first_name,
+    author_last_name,
+    author_country,
+    current_city,
+    content,
+    /* TODO: update date */
+    CreatedAt: date,
+  } = story;
+
   return (
-    <Drawer
-      anchor="right"
-      open={state === StoryDrawerState.Open}
-      onClose={() => setState(StoryDrawerState.Closed)}
-    >
-      <StyledIconButton onClick={() => setState(StoryDrawerState.Closed)}>
+    <Drawer anchor="right" open onClose={onClose}>
+      <StyledIconButton onClick={onClose}>
         <ArrowForwardIcon />
       </StyledIconButton>
       <StyledRoot>
@@ -94,8 +86,8 @@ export function StoryDrawer({
             <StyledFlagImage alt="flag" src={ChinaFlag} />
           </Grid>
           <Grid item xs={5}>
-            <DrawerCountryText>{"Origin: " + country}</DrawerCountryText>
-            <DrawerAuthorText>{author}</DrawerAuthorText>
+            <DrawerCountryText>{`Origin: ${author_country}`}</DrawerCountryText>
+            <DrawerAuthorText>{`${author_first_name} ${author_last_name}`}</DrawerAuthorText>
           </Grid>
           <Grid
             item
@@ -104,7 +96,7 @@ export function StoryDrawer({
             alignContent="flex-end"
             justify="flex-end"
           >
-            <DrawerRightText>{currentCity}, Canada</DrawerRightText>
+            <DrawerRightText>{current_city}, Canada</DrawerRightText>
             <DrawerRightText>{date}</DrawerRightText>
           </Grid>
           <Grid item xs={12}>

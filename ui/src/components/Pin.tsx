@@ -34,15 +34,16 @@ export enum PinState {
 }
 
 export interface PinProps {
+  id: string;
   state?: PinState;
   story: Story;
-  openDrawer: () => void;
+  onPopupClick?: () => void;
 }
 
 export function Pin({
   state = PinState.Resting,
   story,
-  openDrawer,
+  onPopupClick,
 }: PinProps): JSX.Element {
   const icon = new L.Icon({
     iconUrl: state === PinState.Unfocused ? unfocused : resting,
@@ -55,16 +56,17 @@ export function Pin({
     iconSize:
       state === PinState.Selected ? new L.Point(58, 70) : new L.Point(50, 61),
   });
+
   return (
     <Marker position={[story.latitude, story.longitude]} icon={icon}>
       <StyledPopup>
         <PinPreview
           title={story.title}
           description={story.summary}
-          author={story.author_first_name.concat(" ", story.author_last_name)}
-          date={story.createdAt}
+          author={`${story.author_first_name} ${story.author_last_name}`}
+          date={story.CreatedAt}
           country={story.author_country}
-          openDrawer={openDrawer}
+          onClick={onPopupClick}
         />
       </StyledPopup>
     </Marker>
