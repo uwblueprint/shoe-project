@@ -20,23 +20,10 @@ export interface PinClusterProps {
   openDrawer: (story: Story) => () => void;
 }
 
-function getPinState(id: string, selectedPin: string) {
-  switch (selectedPin) {
-    case "":
-      return PinState.Resting;
-    case id:
-      return PinState.Selected;
-    default:
-      return PinState.Unfocused;
-  }
-}
-
 export const PinCluster = React.memo(function PinCluster({
   stories,
   openDrawer,
 }: PinClusterProps): JSX.Element {
-  const [selectedPin, setSelectedPin] = React.useState("");
-
   return (
     <MarkerClusterGroup
       showCoverageOnHover={false}
@@ -49,9 +36,8 @@ export const PinCluster = React.memo(function PinCluster({
             id={story.ID.toString()}
             key={story.ID}
             story={story}
-            state={getPinState(story.ID.toString(), selectedPin)}
+            state={PinState.Resting}
             onPopupClick={openDrawer(story)}
-            setSelectedPin={setSelectedPin}
           />
         );
       })}

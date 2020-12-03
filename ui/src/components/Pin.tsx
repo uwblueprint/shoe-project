@@ -37,18 +37,14 @@ export interface PinProps {
   id: string;
   state?: PinState;
   story: Story;
-  setSelectedPin: React.Dispatch<React.SetStateAction<string>>;
   onPopupClick?: () => void;
 }
 
 export function Pin({
-  id,
   state = PinState.Resting,
   story,
   onPopupClick,
-  setSelectedPin,
 }: PinProps): JSX.Element {
-  const ref = React.useRef(null);
   const icon = new L.Icon({
     iconUrl: state === PinState.Unfocused ? unfocused : resting,
     iconRetinaUrl: state === PinState.Unfocused ? unfocused : resting,
@@ -62,12 +58,7 @@ export function Pin({
   });
 
   return (
-    <Marker
-      ref={ref}
-      position={[story.latitude, story.longitude]}
-      icon={icon}
-      onclick={() => setSelectedPin(id)}
-    >
+    <Marker position={[story.latitude, story.longitude]} icon={icon}>
       <StyledPopup>
         <PinPreview
           title={story.title}
