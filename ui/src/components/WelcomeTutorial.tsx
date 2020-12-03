@@ -25,6 +25,15 @@ const StyledArrowTip = styled.img`
   background: none;
 `;
 
+const StyledFilterArrowTip = styled.img`
+  position: absolute;
+  width: 29px;
+  height: 26px;
+  left: -5%;
+  top: 15%;
+  background: none;
+`;
+
 const StyledOverlay = styled.img`
   position: absolute;
   width: 84px;
@@ -74,7 +83,6 @@ const StyledWelcome = styled(Dialog)`
 
   .MuiBackdrop-root {
     opacity: 10%;
-    // background-color: transparent;
   }
 `;
 
@@ -91,7 +99,7 @@ const StyledFilterWelcome = styled(Dialog)`
   }
 `;
 const StyledNextButton = styled(Button)`
-  left: 229px;
+  left: 248px;
   .MuiButton-label {
     color: ${colors.primaryDark2};
     font-size: 16px;
@@ -113,7 +121,7 @@ const StyledNextButton = styled(Button)`
 `;
 
 const StyledFilterNextButton = styled(Button)`
-  left: 229px;
+  left: 235px;
   .MuiButton-label {
     color: ${colors.primaryDark2};
     font-size: 16px;
@@ -222,16 +230,6 @@ const StyledWelcomeLogo = styled.img`
   height: 109px;
 `;
 
-const StyledWelcomeCloseIcon = styled(CloseIcon)`
-  .MuiIcon-colorPrimary {
-    color: ${colors.primaryDark2};
-  }
-`;
-
-const StyledContainer = styled.div`
-  display: inline-block;
-`;
-
 const StyledNavigateIconButton = styled(IconButton)`
     position: absolute;
     margin: 0px;
@@ -259,7 +257,7 @@ const StyledNavigateWelcome = styled(Dialog)`
 `;
 
 const StyledNavigateNextButton = styled(Button)`
-  left: 229px;
+  left: 248px;
   .MuiButton-label {
     color: ${colors.primaryDark2};
     font-size: 16px;
@@ -277,12 +275,6 @@ const StyledNavigateNextButton = styled(Button)`
     &:active {
       background-color: ${colors.primaryLight3};
     }
-  }
-`;
-
-const StyledNavigateCloseIcon = styled(CloseIcon)`
-  .MuiIcon-colorPrimary {
-    color: ${colors.primaryDark2};
   }
 `;
 
@@ -307,24 +299,31 @@ const StyledNavigateTag = styled(Button)`
     background-color: ${colors.grey};    
 `;
 
-const StyledNavigateContainer = styled.div`
+const StyledContainer = styled.div`
   display: inline-block;
 `;
 
-export function WelcomeTutorial() {
-  const [open, setOpen] = React.useState("first");
+enum TutorialState {
+  First,
+  Second,
+  Third,
+  Fourth,
+}
+
+export function WelcomeTutorial(): JSX.Element {
+  const [open, setOpen] = React.useState(TutorialState.First);
   const handleClose = () => {
     setOpen(null);
   };
 
   return (
-    <>
+    <React.Fragment>
       <StyledWelcomeWelcome
-        open={open && open === "first"}
+        open={open === TutorialState.First}
         onClose={handleClose}
       >
         <StyledWelcomeIconButton onClick={handleClose}>
-          <StyledWelcomeCloseIcon color="primary" fontSize="small" />
+          <StyledCloseIcon color="primary" fontSize="small" />
         </StyledWelcomeIconButton>
         <StyledWelcomeLogo src={ShoeLogo}></StyledWelcomeLogo>
         <WelcomeTitleText>Welcome</WelcomeTitleText>
@@ -338,25 +337,25 @@ export function WelcomeTutorial() {
           variant="text"
           color={colors.primaryLight2}
           disableElevation={true}
-          onClick={() => setOpen("second")}
+          onClick={() => setOpen(TutorialState.Second)}
         >
           START TOUR
         </StyledWelcomeButton>
       </StyledWelcomeWelcome>
 
       <StyledNavigateWelcome
-        open={open && open === "second"}
+        open={open === TutorialState.Second}
         onClose={handleClose}
       >
         <StyledNavigateIconButton onClick={handleClose}>
-          <StyledNavigateCloseIcon color="primary" fontSize="small" />
+          <StyledCloseIcon color="primary" fontSize="small" />
         </StyledNavigateIconButton>
         <NavigateTitleText>Navigating the Map</NavigateTitleText>
         <NavigateDescriptionText>
           The pins are placed on the city where these women currently reside.
           Zoom in on any pin to see all the stories from that city.
         </NavigateDescriptionText>
-        <StyledNavigateContainer>
+        <StyledContainer>
           <StyledNavigateTag
             text-align="center"
             variant="text"
@@ -368,14 +367,14 @@ export function WelcomeTutorial() {
             text-align="center"
             variant="text"
             disableElevation={true}
-            onClick={() => setOpen("third")}
+            onClick={() => setOpen(TutorialState.Third)}
           >
             NEXT
           </StyledNavigateNextButton>
-        </StyledNavigateContainer>
+        </StyledContainer>
       </StyledNavigateWelcome>
 
-      <StyledWelcome open={open && open === "third"} onClose={handleClose}>
+      <StyledWelcome open={open === TutorialState.Third} onClose={handleClose}>
         <StyledArrowTip src={DialogTip}></StyledArrowTip>
         <StyledOverlay src={OverlayCircle}></StyledOverlay>
         <StyledIconButton onClick={handleClose}>
@@ -394,15 +393,15 @@ export function WelcomeTutorial() {
             text-align="center"
             variant="text"
             disableElevation={true}
-            onClick={() => setOpen("fourth")}
+            onClick={() => setOpen(TutorialState.Fourth)}
           >
             NEXT
           </StyledNextButton>
         </StyledContainer>
       </StyledWelcome>
 
-      <StyledFilterWelcome open={open === "fourth"} onClose={handleClose}>
-        <StyledArrowTip src={DialogTip}></StyledArrowTip>
+      <StyledFilterWelcome open={open === TutorialState.Fourth} onClose={handleClose}>
+        <StyledFilterArrowTip src={DialogTip}></StyledFilterArrowTip>
         <StyledFilterOverlay src={BigOverlayCircle}></StyledFilterOverlay>
         <StyledIconButton onClick={handleClose}>
           <StyledCloseIcon color="primary" fontSize="small" />
@@ -426,6 +425,6 @@ export function WelcomeTutorial() {
           </StyledFilterNextButton>
         </StyledContainer>
       </StyledFilterWelcome>
-    </>
+      </React.Fragment>
   );
 }
