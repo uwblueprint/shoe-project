@@ -68,6 +68,8 @@ export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
     author_country,
     current_city,
     content,
+    /* TODO: update date */
+    CreatedAt: date,
   } = story;
 
   return (
@@ -95,7 +97,7 @@ export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
             justify="flex-end"
           >
             <DrawerRightText>{current_city}, Canada</DrawerRightText>
-            {/* <DrawerRightText>{date}</DrawerRightText> */}
+            <DrawerRightText>{date}</DrawerRightText>
           </Grid>
           <Grid item xs={12}>
             <StyledImage src={TempShoe} alt="Temporary Image" />
