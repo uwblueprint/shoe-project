@@ -1,6 +1,6 @@
 import * as React from "react";
 import styled from "styled-components";
-import L, { PopupEvent } from "leaflet";
+import L from "leaflet";
 import { Marker, Popup } from "react-leaflet";
 import resting from "../assets/resting.svg";
 import unfocused from "../assets/unfocused.svg";

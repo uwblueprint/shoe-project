@@ -44,7 +44,6 @@ export const PinCluster = React.memo(function PinCluster({
       iconCreateFunction={createClusterCustomIcon}
     >
       {stories.map((story) => {
-        console.log(story);
         return (
           <Pin
             id={story.ID.toString()}
