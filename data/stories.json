@@ -6,7 +6,8 @@
             "first_name" : "Tanaz",
             "last_name" : "Bhathena",
             "origin_country" : "India"
-        },    
+        },
+        "image_url" : "https://shoeproject.s3.us-west-000.backblazeb2.com/wind_beneath_my_feet.jpg",   
         "summary" : "My mother always wanted me to be a lady. To defy her, after moving to Canada from Saudi Arabia, I bought shoes that were flat, round-toed and black – not the least bit ladylike. I wore these shoes to my high school award ceremony, my job interview, to driving lessons, to convocation. As the    years passed, I bought new shoes, including strappy, dainty, high-heels. But my unladylike black boots are the ones I return to when my feet are sore. They are the shoes that accompanied me on my journey to becoming Canadian – a woman free to fly as she wished.",
         "current_city" : "Toronto"
     },
@@ -17,7 +18,8 @@
             "first_name" : "Teenaz",
             "last_name" : "Javat",
             "origin_country" : "India"
-        },        
+        },
+        "image_url" : "https://shoeproject.s3.us-west-000.backblazeb2.com/window+to+the+world.jpg", 
         "summary" : "When Teenaz Javat came to Canada 15 years ago with her husband and infant daughter, she was made to put her career on hold. For nine years she stayed at home so that her kids could stay out of day care, which her husband abhorred. During those times her best friend and cultural informant, was the daily newspaper which she read while wearing the sappats she had brought from Pakistan.",
         "current_city" : "Toronto"
     },
@@ -41,6 +43,7 @@
             "last_name" : "Nejad",
             "origin_country" : "Iran"
         },
+        "image_url" : "https://shoeproject.s3.us-west-000.backblazeb2.com/invisibility+shoes.jpg",
         "summary" : "For some newcomers in Canada, adopting a new life includes adopting a new look and attire. But there are many social and cultural codes of appearance, and they need to be translated. Sometimes shoes play a strong role in this journey of transformation, even a funny role. As I went down that road, the shape of my shoes changed, reflecting my experience.",
         "current_city" : "Toronto"
     },
@@ -64,6 +67,7 @@
             "last_name" : "Li",
             "origin_country" : "China"
         },
+        "image_url" : "https://shoeproject.s3.us-west-000.backblazeb2.com/48-Reborn-shoe-story.jpg",
         "summary" : "I am the only child of my family under China’s One Child Policy.  I crocheted this pair of baby booties in white and blue for my future son.  I used the same technique that I learnt from my grandmother.  My grandparents raised me for my first twelve years, surrounding me with many special animal friends to keep me company.  In Canada, I began my journey towards motherhood—with no rules imposed.",
         "current_city" : "Toronto"
     },
@@ -99,7 +103,7 @@
             "last_name" : "Thapa-Bhattarai",
             "origin_country" : "Nepal"
         },
-
+        "image_url" : "https://shoeproject.s3.us-west-000.backblazeb2.com/55-Choosing-Shoes-shoe-story.jpg",
         "summary" : "These bright red, velvet shoes with gold embroidery are traditional, Nepali wedding shoes. In Nepal, most girls are married before eighteen, and without their consent. But I chose my own husband, against the wishes of his family and my own. Even so, I wanted traditional, handmade shoes with woven soles.  When I look at my wedding shoes, I feel a mixture of sadness and happiness—sadness that I lost my family’s support, and happiness that I made the decision to marry and to come to Canada to further my education and assert myself.",
         "current_city" : "Toronto"
     },
@@ -243,6 +247,7 @@
             "last_name" : "Reljic",
             "origin_country" : "Yugoslavia"
         },
+        "image_url" : "https://shoeproject.s3.us-west-000.backblazeb2.com/shoes+of+hope.jpg",
         "summary" : "If you have to leave your home at a moment's notice, what would you take? This story shows why Dusanka Reljic, a Serbian teacher escaping Croatia in 1995, took her Wallabees that were a gift from a Jordanian peacekeeper.",
         "current_city" : "Calgary"
     },
@@ -266,6 +271,7 @@
             "last_name" : "Nassar",
             "origin_country" : "Syria"
         },
+        "image_url" : "https://shoeproject.s3.us-west-000.backblazeb2.com/soar.jpg",
         "summary" : "I used to go out seeking adventures, but the one I didn't plan for was the one that made me find out who I am.  It took a war for me to know myself.",
         "current_city" : "Vancouver"
     },
@@ -277,6 +283,7 @@
             "last_name" : "K.",
             "origin_country" : "Iraq"
         },
+        "image_url" : "https://shoeproject.s3.us-west-000.backblazeb2.com/bright+shoes.jpg",
         "summary" : "A female journalist reporting on violence against women in an area where just being a woman is not easy receives multiple threats.  Eventually she finds herself running for her life.",
         "current_city" : "Vancouver"
     },
@@ -312,6 +319,7 @@
             "last_name" : "Cousineau",
             "origin_country" : "Chile"
         },
+        "image_url" : "https://shoeproject.s3.us-west-000.backblazeb2.com/high+heeled.jpg",
         "summary" : "In Chile, it was common practice for women to wear high heeled shoes. They were part of the expected professional attire for women. For me, they were a way to appear powerful and independent in the business world even though I did not feel this way inside. Tired of trying to meet social expectations wearing shoes that did not fit me, I ventured into the search for a new life, a place where I could create my own rules and choose my own type of shoes.",
         "current_city" : "Canmore"
     },
@@ -323,6 +331,7 @@
             "last_name" : "Kabbani",
             "origin_country" : "Syria"
         },
+        "image_url" : "https://shoeproject.s3.us-west-000.backblazeb2.com/qbs+qbs.jpg",
         "summary" : "In the early morning I was lazy and lay in bed. It was a chilly day in Toronto. But my room was filled with a lovely refreshing soap smell, a smell that took me back to a fall day in Damascus. I came back from school and opened the door to find my mom doing the seasonal cleaning. I could hear her voice: “Who’s that?”",
         "current_city" : "Toronto"
     },
@@ -334,6 +343,7 @@
             "last_name" : "Mokhovinkova",
             "origin_country" : "Russia"
         },
+        "image_url" : "https://shoeproject.s3.us-west-000.backblazeb2.com/special+occasion.jpg",
         "summary" : "A mother and her two daughters go on a cruise as a break from the unending harassment at home. When they arrive at the port, they get some terrifying news that changes their travel plans and their lives.",
         "current_city" : "Vancouver"
     },
