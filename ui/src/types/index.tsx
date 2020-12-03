@@ -1,10 +1,10 @@
 interface Model {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: {
-    time: string;
-    valid: boolean;
+  ID: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+  DeletedAt: {
+    Time: string;
+    Valid: boolean;
   };
 }
 

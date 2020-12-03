@@ -1,6 +1,6 @@
 import * as React from "react";
 import styled from "styled-components";
-import L from "leaflet";
+import L, { PopupEvent } from "leaflet";
 import { Marker, Popup } from "react-leaflet";
 import resting from "../assets/resting.svg";
 import unfocused from "../assets/unfocused.svg";
@@ -34,16 +34,22 @@ export enum PinState {
 }
 
 export interface PinProps {
+  id: string;
   state?: PinState;
   story: Story;
-  openDrawer: () => void;
+  setSelectedPin: React.Dispatch<React.SetStateAction<string>>
+  onPopupClick?: () => void;
 }
 
 export function Pin({
+  id,
   state = PinState.Resting,
   story,
-  openDrawer,
+  onPopupClick,
+  setSelectedPin,
 }: PinProps): JSX.Element {
+  const ref = React.useRef(null);
+  const ref2 = React.useRef(null);
   const icon = new L.Icon({
     iconUrl: state === PinState.Unfocused ? unfocused : resting,
     iconRetinaUrl: state === PinState.Unfocused ? unfocused : resting,
@@ -55,16 +61,22 @@ export function Pin({
     iconSize:
       state === PinState.Selected ? new L.Point(58, 70) : new L.Point(50, 61),
   });
+
   return (
-    <Marker position={[story.latitude, story.longitude]} icon={icon}>
-      <StyledPopup>
+    <Marker
+      ref={ref}
+      position={[story.latitude, story.longitude]}
+      icon={icon}
+      onclick={() => setSelectedPin(id)}
+    >
+      <StyledPopup ref={ref2}> 
         <PinPreview
           title={story.title}
           description={story.summary}
-          author={story.author_first_name.concat(" ", story.author_last_name)}
-          date={story.createdAt}
+          author={`${story.author_first_name} ${story.author_last_name}`}
+          date={story.CreatedAt}
           country={story.author_country}
-          openDrawer={openDrawer}
+          onClick={onPopupClick}
         />
       </StyledPopup>
     </Marker>

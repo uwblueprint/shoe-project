@@ -42,7 +42,7 @@ interface PinPreviewProps {
   author: string;
   date: string;
   country: string;
-  openDrawer: () => void;
+  onClick: () => void;
 }
 
 export function PinPreview({
@@ -51,7 +51,7 @@ export function PinPreview({
   author,
   date,
   country,
-  openDrawer,
+  onClick,
 }: PinPreviewProps): JSX.Element {
   return (
     <>
@@ -65,7 +65,7 @@ export function PinPreview({
           variant="contained"
           color="primary"
           disableElevation
-          onClick={openDrawer}
+          onClick={onClick}
         >
           Read Full Story
         </StyledButton>

@@ -17,29 +17,45 @@ const createClusterCustomIcon = function () {
 
 export interface PinClusterProps {
   stories: Story[];
-  openDrawer: () => void;
+  openDrawer: (story: Story) => () => void;
 }
 
-export function PinCluster({
+function getPinState(id: string, selectedPin: string) {
+  switch (selectedPin) {
+    case "":
+      return PinState.Resting;
+    case id:
+      return PinState.Selected;
+    default:
+      return PinState.Unfocused;
+  }
+}
+
+export const PinCluster = React.memo(function PinCluster({
   stories,
   openDrawer,
 }: PinClusterProps): JSX.Element {
+  const [selectedPin, setSelectedPin] = React.useState("");
+
   return (
     <MarkerClusterGroup
       showCoverageOnHover={false}
       spiderLegPolylineOptions={{ opacity: 0 }}
       iconCreateFunction={createClusterCustomIcon}
     >
-      {stories.map((story, key) => {
+      {stories.map((story) => {
+        console.log(story);
         return (
           <Pin
-            key={key}
+            id={story.ID.toString()}
+            key={story.ID}
             story={story}
-            state={PinState.Resting}
-            openDrawer={openDrawer}
+            state={getPinState(story.ID.toString(), selectedPin)}
+            onPopupClick={openDrawer(story)}
+            setSelectedPin={setSelectedPin}
           />
         );
       })}
     </MarkerClusterGroup>
   );
-}
+});

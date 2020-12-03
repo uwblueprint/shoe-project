@@ -5,8 +5,7 @@ import { AttributionControl, Map, TileLayer, ZoomControl } from "react-leaflet";
 import Control from "react-leaflet-control";
 import "leaflet/dist/leaflet.css";
 import { PinCluster } from "../components/PinCluster";
-import { StoryDrawer, StoryDrawerState } from "../components/StoryDrawer";
-import { useState } from "react";
+import { StoryDrawer } from "../components/StoryDrawer";
 import { colors } from "../styles";
 import ShoeLogo from "../assets/images/shoeproject-logo.svg";
 import { Filter } from "../components/Filter";
@@ -77,9 +76,12 @@ export const ShoeMap: React.FC = () => {
   const minZoom = 3;
   const maxZoom = 18;
   const currentLocation = { lat: 43.4723, lng: -80.5449 };
-  const [isDrawerOpen, setIsDrawerOpen] = useState(StoryDrawerState.Closed);
 
   const { data: stories, error } = useSWR<Story[]>("/api/stories");
+
+  const [story, setStory] = React.useState<Story | undefined>(undefined);
+  const handleOpenDrawer = (s: Story) => () => setStory(s);
+  const handleCloseDrawer = () => setStory(undefined);
 
   return (
     <React.Fragment>
@@ -97,10 +99,7 @@ export const ShoeMap: React.FC = () => {
             url={`https://api.mapbox.com/styles/v1/hanlinc27/ckhjy5wat2dvz1aplv4tkaghb/tiles/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`}
           />
           {stories && !error && (
-            <PinCluster
-              stories={stories}
-              openDrawer={() => setIsDrawerOpen(StoryDrawerState.Open)}
-            />
+            <PinCluster stories={stories} openDrawer={handleOpenDrawer} />
           )}
           <ZoomControl position="bottomright" />
           <AttributionControl position="topright" />
@@ -112,18 +111,7 @@ export const ShoeMap: React.FC = () => {
           </Control>
         </StyledMap>
       </MapContainer>
-      <StoryDrawer
-        title={"Story Title"}
-        author={"Jie Li"}
-        date={"Dec 20, 2020"}
-        country={"China"}
-        state={isDrawerOpen}
-        content={
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Diam non, nam dolor eget vitae. Velit massa turpis vitae ut tempus euismod. Pharetra tellus vitae mattis neque. Ipsum porttitor et enim bibendum ultricies. Egestas tortor, consequat odio urna amet. Dictumst est eu netus in iaculis cursus tincidunt dolor. Sed et enim volutpat, placerat molestie vestibulum, ac. Semper metus sit sit diam. Nam aenean nec iaculis ipsum suspendisse molestie. Commodo vitae ac ullamcorper justo. Aliquam, vestibulum sed in aenean consequat aliquam donec. Accumsan, ullamcorper tempus nisl, sit sollicitudin aliquet. Id gravida vel pretium sit diam. Ultricies neque libero scelerisque nunc, dignissim velit eget. Vitae sit magna magnis integer nulla nec arcu in senectus. Tincidunt eu commodo malesuada ultrices nulla eget urna. Nullam mi suspendisse vitae sagittis, vestibulum placerat eget eros, dictum. In adipiscing curabitur tellus etiam adipiscing sed fermentum. Aliquet molestie ornare lectus blandit aliquam malesuada arcu. Tellus vitae tristique facilisis dignissim volutpat, dictum in scelerisque. Iaculis viverra suspendisse lorem convallis habitasse malesuada erat sed et. Enim nibh mauris adipiscing velit non."
-        }
-        currentCity={"Toronto"}
-        setState={setIsDrawerOpen}
-      />
+      <StoryDrawer story={story} onClose={handleCloseDrawer} />
     </React.Fragment>
   );
 };
