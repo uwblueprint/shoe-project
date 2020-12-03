@@ -1,50 +1,47 @@
-import L, { LatLng } from "leaflet";
+import L, { LatLng, Point } from "leaflet";
 import * as React from "react";
-import RotatedMarker from 'leaflet-rotatedmarker';
-import { Pin, PinState } from "./Pin";
-import { CircleMarker, Marker } from "react-leaflet";
-
-import resting from "../assets/resting.svg";
+import { Marker } from "react-leaflet";
 import { EdgeType } from "./EdgePins";
-import styled from "styled-components";
 import { arrow } from "./Arrow";
 
 export interface EdgePinProps {
-    position: LatLng;
-    angle?: number;
-    edgeType: EdgeType
+  position: LatLng;
+  angle: number;
+  edgeType: EdgeType;
 }
 
-export function getAnchor(edgeType: EdgeType){
-  switch(edgeType){
+export function getAnchor(edgeType: EdgeType): Point {
+  switch (edgeType) {
     case EdgeType.Top:
-      return new L.Point(0, -40);
+      return new L.Point(0, -10);
     case EdgeType.Bottom:
-      return new L.Point(0, 120)
+      return new L.Point(0, 110);
     case EdgeType.Left:
-      return new L.Point(-30, 0)
-    case EdgeType.Right:
-      return new L.Point(80, 0)
+      return new L.Point(-30, 0);
+    default:
+      return new L.Point(80, 0);
   }
 }
 
 export function EdgePin({
   position,
   angle,
-  edgeType
+  edgeType,
 }: EdgePinProps): JSX.Element {
-  const icon = new L.Icon({
-    iconUrl: angle? arrow(angle) : resting,
-    iconRetinaUrl: angle?  arrow(angle): resting,
+  const arrowIcon = new L.Icon({
+    iconUrl: arrow(angle),
+    iconRetinaUrl: arrow(angle),
     iconAnchor: getAnchor(edgeType),
     popupAnchor: [-234, 200],
     shadowUrl: null,
     shadowSize: null,
     shadowAnchor: null,
-    iconSize: angle? new L.Point(60, 70): new L.Point(50, 60),
+    iconSize: new L.Point(60, 70),
   });
 
   return (
-    <Marker position={position} icon={icon} />
+    <React.Fragment>
+      <Marker position={position} icon={arrowIcon} />
+    </React.Fragment>
   );
 }

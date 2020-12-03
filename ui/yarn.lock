@@ -5591,11 +5591,6 @@ kleur@^3.0.3:
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-3.0.3.tgz#a79c9ecc86ee1ce3fa6206d1216c501f147fc07e"
   integrity sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
 
-leaflet-rotatedmarker@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/leaflet-rotatedmarker/-/leaflet-rotatedmarker-0.2.0.tgz#4467f49f98d1bfd56959bd9c6705203dd2601277"
-  integrity sha1-RGf0n5jRv9VpWb2cZwUgPdJgEnc=
-
 leaflet.markercluster@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/leaflet.markercluster/-/leaflet.markercluster-1.4.1.tgz#b53f2c4f2ca7306ddab1dbb6f1861d5e8aa6c5e5"
@@ -7086,13 +7081,6 @@ react-leaflet-markercluster@^2.0.0:
     leaflet "^1.6.0"
     leaflet.markercluster "^1.4.1"
     react-leaflet "^2.6.3"
-
-react-leaflet-rotatedmarker@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/react-leaflet-rotatedmarker/-/react-leaflet-rotatedmarker-0.1.0.tgz#954159ea7d663f927e16a0f9acc0c760b2329ae2"
-  integrity sha512-mzc3s04GsdkQHnWHbIF2/LhnUADuxpO89P4EQrmN57csu98tgUAcfRGUvetDn+ifyf6g+cLrcJs84jUMmaIjww==
-  dependencies:
-    leaflet-rotatedmarker "^0.2.0"
 
 react-leaflet@^2.6.3, react-leaflet@^2.7.0:
   version "2.8.0"
