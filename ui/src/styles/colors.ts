@@ -21,14 +21,19 @@ const redLight4 = "#FCDCDC";
 const light = "#F2F6F8";
 const dark = "#1E202D";
 const grey = "#7C7C7C";
+const neutral = "#EAF4F4";
+const neutralDark = "#1E202D";
 const black = "#000000";
 const white = "#FFFFFF";
 
 export const colors = Object.freeze({
+  neutral,
+  grey,
   black,
   white,
+  dark,
   neutralLight: light,
-  neutralDark: dark,
+  neutralDark: neutralDark,
   neutralGrey: grey,
   primary: teal,
   primaryDark1: tealDark1,
