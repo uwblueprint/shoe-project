@@ -6,7 +6,8 @@ import Control from "react-leaflet-control";
 import "leaflet/dist/leaflet.css";
 import { PinCluster } from "../components/PinCluster";
 import { StoryDrawer } from "../components/StoryDrawer";
-import { WelcomeScreens } from "../components/WelcomeScreens";
+import { WelcomeTutorial, TutorialState } from "../components/WelcomeTutorial";
+import { useState } from "react";
 import { colors } from "../styles";
 import ShoeLogo from "../assets/images/shoeproject-logo.svg";
 import { Filter } from "../components/Filter";
@@ -83,10 +84,10 @@ export const ShoeMap: React.FC = () => {
   const [story, setStory] = React.useState<Story | undefined>(undefined);
   const handleOpenDrawer = (s: Story) => () => setStory(s);
   const handleCloseDrawer = () => setStory(undefined);
+  const [isTutorialOpen, setIsTutorialOpen] = useState(TutorialState.First);
 
   return (
     <React.Fragment>
-      
       <MapContainer>
         <Filter />
         <StyledMap
@@ -115,8 +116,7 @@ export const ShoeMap: React.FC = () => {
         </StyledMap>
       </MapContainer>
       <StoryDrawer story={story} onClose={handleCloseDrawer} />
-      <WelcomeScreens></WelcomeScreens>
+      <WelcomeTutorial state={isTutorialOpen} setState={setIsTutorialOpen} />
     </React.Fragment>
-    
   );
 };

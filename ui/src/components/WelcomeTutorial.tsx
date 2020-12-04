@@ -157,7 +157,7 @@ const StyledTag = styled(Button)`
   height: 32px;
   left: 24px;
   border-radius: 5px;
-  background-color: ${colors.grey};
+  background-color: ${colors.neutralLight};
 
   .MuiButton-label {
     color: ${colors.neutralDark};
@@ -170,7 +170,7 @@ const StyledTag = styled(Button)`
   }
   && {
     box-shadow: none;
-    background-color: ${colors.grey};    
+    background-color: ${colors.neutralLight};    
 `;
 
 const StyledWelcomeIconButton = styled(IconButton)`
@@ -293,7 +293,7 @@ const StyledNavigateTag = styled(Button)`
   height: 32px;
   left: 24px;
   border-radius: 5px;
-  background-color: ${colors.grey};
+  background-color: ${colors.neutralLight};
 
   .MuiButton-label {
     color: ${colors.neutralDark};
@@ -306,7 +306,7 @@ const StyledNavigateTag = styled(Button)`
   }
   && {
     box-shadow: none;
-    background-color: ${colors.grey};    
+    background-color: ${colors.neutralLight};    
 `;
 
 const StyledContainer = styled.div`
