@@ -86,6 +86,7 @@ export const ShoeMap: React.FC = () => {
 
   return (
     <React.Fragment>
+      
       <MapContainer>
         <Filter />
         <StyledMap
@@ -103,6 +104,7 @@ export const ShoeMap: React.FC = () => {
             <PinCluster stories={stories} openDrawer={handleOpenDrawer} />
           )}
           <ZoomControl position="bottomright" />
+
           <AttributionControl position="topright" />
           <Control position="bottomright">
             <StyledHelpIcon>?</StyledHelpIcon>
@@ -115,5 +117,6 @@ export const ShoeMap: React.FC = () => {
       <StoryDrawer story={story} onClose={handleCloseDrawer} />
       <WelcomeScreens></WelcomeScreens>
     </React.Fragment>
+    
   );
 };

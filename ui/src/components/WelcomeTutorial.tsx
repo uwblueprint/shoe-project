@@ -9,6 +9,7 @@ import DialogTip from "../assets/images/white-arrow.png";
 import OverlayCircle from "../assets/images/small-clear-circle.svg";
 import BigOverlayCircle from "../assets/images/clear-circle.svg";
 import ShoeLogo from "../assets/images/welcome-shoe-logo.svg";
+
 import {
   WelcomeTitleText,
   WelcomeDescriptionText,
@@ -96,6 +97,9 @@ const StyledFilterWelcome = styled(Dialog)`
     overflow-y: visible;
     overflow-x: visible;
     bottom: 30%;
+  }
+  .MuiBackdrop-root {
+    background-color: transparent;
   }
 `;
 const StyledNextButton = styled(Button)`
@@ -193,6 +197,9 @@ const StyledWelcomeWelcome = styled(Dialog)`
     border-radius: 10px;
     margin: 0px;
   }
+  .MuiBackdrop-root {
+    background-color: transparent;
+  }
 `;
 
 const StyledWelcomeButton = styled(Button)`
@@ -254,6 +261,9 @@ const StyledNavigateWelcome = styled(Dialog)`
     border-radius: 10px;
     margin: 0px;
   }
+  .MuiBackdrop-root {
+    background-color: transparent;
+  }
 `;
 
 const StyledNavigateNextButton = styled(Button)`
@@ -303,23 +313,31 @@ const StyledContainer = styled.div`
   display: inline-block;
 `;
 
-enum TutorialState {
+export enum TutorialState {
   First,
   Second,
   Third,
   Fourth,
+  Closed,
 }
 
-export function WelcomeTutorial(): JSX.Element {
-  const [open, setOpen] = React.useState(TutorialState.First);
+interface TutorialStateProps {
+  state: TutorialState;
+  setState: (newState: TutorialState) => void;
+}
+
+export function WelcomeTutorial({
+  state,
+  setState,
+}: TutorialStateProps): JSX.Element {
   const handleClose = () => {
-    setOpen(null);
+    setState(TutorialState.Closed);
   };
 
   return (
     <React.Fragment>
       <StyledWelcomeWelcome
-        open={open === TutorialState.First}
+        open={state === TutorialState.First}
         onClose={handleClose}
       >
         <StyledWelcomeIconButton onClick={handleClose}>
@@ -337,14 +355,13 @@ export function WelcomeTutorial(): JSX.Element {
           variant="text"
           color={colors.primaryLight2}
           disableElevation={true}
-          onClick={() => setOpen(TutorialState.Second)}
+          onClick={() => setState(TutorialState.Second)}
         >
           START TOUR
         </StyledWelcomeButton>
       </StyledWelcomeWelcome>
-
       <StyledNavigateWelcome
-        open={open === TutorialState.Second}
+        open={state === TutorialState.Second}
         onClose={handleClose}
       >
         <StyledNavigateIconButton onClick={handleClose}>
@@ -367,14 +384,14 @@ export function WelcomeTutorial(): JSX.Element {
             text-align="center"
             variant="text"
             disableElevation={true}
-            onClick={() => setOpen(TutorialState.Third)}
+            onClick={() => setState(TutorialState.Third)}
           >
             NEXT
           </StyledNavigateNextButton>
         </StyledContainer>
       </StyledNavigateWelcome>
 
-      <StyledWelcome open={open === TutorialState.Third} onClose={handleClose}>
+      <StyledWelcome open={state === TutorialState.Third} onClose={handleClose}>
         <StyledArrowTip src={DialogTip}></StyledArrowTip>
         <StyledOverlay src={OverlayCircle}></StyledOverlay>
         <StyledIconButton onClick={handleClose}>
@@ -393,14 +410,17 @@ export function WelcomeTutorial(): JSX.Element {
             text-align="center"
             variant="text"
             disableElevation={true}
-            onClick={() => setOpen(TutorialState.Fourth)}
+            onClick={() => setState(TutorialState.Fourth)}
           >
             NEXT
           </StyledNextButton>
         </StyledContainer>
       </StyledWelcome>
 
-      <StyledFilterWelcome open={open === TutorialState.Fourth} onClose={handleClose}>
+      <StyledFilterWelcome
+        open={state === TutorialState.Fourth}
+        onClose={handleClose}
+      >
         <StyledFilterArrowTip src={DialogTip}></StyledFilterArrowTip>
         <StyledFilterOverlay src={BigOverlayCircle}></StyledFilterOverlay>
         <StyledIconButton onClick={handleClose}>
@@ -425,6 +445,6 @@ export function WelcomeTutorial(): JSX.Element {
           </StyledFilterNextButton>
         </StyledContainer>
       </StyledFilterWelcome>
-      </React.Fragment>
+    </React.Fragment>
   );
 }
