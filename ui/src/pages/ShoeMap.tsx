@@ -79,8 +79,18 @@ export const ShoeMap: React.FC = () => {
   const maxZoom = 18;
   const currentLocation = { lat: 43.4723, lng: -80.5449 };
 
-  const { data: stories, error } = useSWR<Story[]>("/api/stories");
-  const [filteredStories, setFilteredStories] = useState([]);
+  const { data, error } = useSWR<Story[]>("/api/stories");
+  const [filteredCountries, setFilteredCountries] = useState([]);
+  function onTagsChange(_, options: string[]) {
+    setFilteredCountries(options);
+  }
+  const stories =
+    filteredCountries.length === 0
+      ? data
+      : data.filter((story) =>
+          filteredCountries.includes(story.author_country)
+        );
+
   const [story, setStory] = React.useState<Story | undefined>(undefined);
   const handleOpenDrawer = (s: Story) => () => setStory(s);
   const handleCloseDrawer = () => setStory(undefined);
@@ -89,7 +99,7 @@ export const ShoeMap: React.FC = () => {
   return (
     <React.Fragment>
       <MapContainer>
-        <Filter state={filteredStories} setState={setFilteredStories}/>
+        <Filter onChange={onTagsChange} />
         <StyledMap
           center={currentLocation}
           zoom={zoom}
@@ -101,33 +111,10 @@ export const ShoeMap: React.FC = () => {
           <TileLayer
             url={`https://api.mapbox.com/styles/v1/hanlinc27/ckhjy5wat2dvz1aplv4tkaghb/tiles/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`}
           />
-          {(() => {
-
-            if(stories && filteredStories.length != 0){
-              var filteredStoryArr= new Array<Story>();
-
-              stories.forEach(function(story){
-                filteredStories.forEach(function (country){
-                  if(story.author_country == country){
-                    filteredStoryArr.push(story);
-                  }
-                });
-              });
-
-              return (
-              <PinCluster stories={filteredStoryArr} openDrawer={handleOpenDrawer} />
-              )
-            }
-
-            else if(stories){
-              return(
-                <PinCluster stories={stories} openDrawer={handleOpenDrawer} />
-              )
-            }
-
-          })()}
+          {stories && !error && (
+            <PinCluster stories={stories} openDrawer={handleOpenDrawer} />
+          )}
           <ZoomControl position="bottomright" />
-
           <AttributionControl position="topright" />
           <Control position="bottomright">
             <StyledHelpIcon>?</StyledHelpIcon>

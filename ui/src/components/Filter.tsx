@@ -17,8 +17,7 @@ const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 export interface FilterProps {
-  options: string[];
-  onChange: (options: string[]) => void;
+  onChange: (event: React.ChangeEvent, options: string[]) => void;
 }
 
 const theme = createMuiTheme({
@@ -55,18 +54,12 @@ const Tagline = styled.span`
   padding-bottom: 16px;
 `;
 
-export function Filter({state, setState}): JSX.Element {
+export function Filter({ onChange }: FilterProps): JSX.Element {
   const { data: countries, error } = useSWR<string[]>(
     "/api/authors/origin_countries"
   );
 
   if (error) return <div>Error!</div>;
-
-  function onTagsChange(event, values) {
-    setState(
-      values
-    );
-  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -79,7 +72,7 @@ export function Filter({state, setState}): JSX.Element {
           id="filter-autocomplete"
           options={countries || []}
           style={{ width: 312 }}
-          onChange={onTagsChange}
+          onChange={onChange}
           disableCloseOnSelect
           renderTags={(value, getTagProps) =>
             value.map((option, index) => (
