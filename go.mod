@@ -10,6 +10,7 @@ require (
 	github.com/go-chi/cors v1.1.1
 	github.com/go-chi/jwtauth v4.0.4+incompatible
 	github.com/go-chi/render v1.0.1
+	github.com/golangci/golangci-lint v1.31.0 // indirect
 	github.com/google/go-cmp v0.5.2 // indirect
 	github.com/klauspost/compress v1.10.10 // indirect
 	github.com/kr/text v0.2.0 // indirect
@@ -33,7 +34,7 @@ require (
 	go.uber.org/zap v1.10.0
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
-	golang.org/x/tools v0.0.0-20201028182000-5bbba6644ef5 // indirect
+	golang.org/x/tools v0.0.0-20201202200335-bef1c476418a // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gorm.io/driver/postgres v1.0.2
 	gorm.io/driver/sqlite v1.1.3
