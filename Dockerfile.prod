@@ -45,10 +45,12 @@ COPY --from=builder /go/bin/shoe-project /go/bin/shoe-project
 # copy our dist build
 COPY --from=builder /app/ui/dist /go/bin/ui/dist
 
-# use an unprivileged user.
-USER appuser:appuser
 RUN apk add --update libcap
 RUN setcap 'cap_net_bind_service=+ep' /go/bin/shoe-project
+
+# use an unprivileged user.
+USER appuser:appuser
+
 
 EXPOSE ${PORT}
 ENTRYPOINT ["/go/bin/shoe-project", "server"]
