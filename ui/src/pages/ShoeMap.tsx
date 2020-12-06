@@ -1,16 +1,18 @@
+import "leaflet/dist/leaflet.css";
+
 import * as React from "react";
-import styled from "styled-components";
-import useSWR from "swr";
+import { useState } from "react";
 import { AttributionControl, Map, TileLayer, ZoomControl } from "react-leaflet";
 import Control from "react-leaflet-control";
-import "leaflet/dist/leaflet.css";
-import { PinCluster } from "../components/PinCluster";
-import { StoryDrawer } from "../components/StoryDrawer";
-import { WelcomeTutorial, TutorialState } from "../components/WelcomeTutorial";
-import { useState } from "react";
-import { colors } from "../styles";
+import styled from "styled-components";
+import useSWR from "swr";
+
 import ShoeLogo from "../assets/images/shoeproject-logo.svg";
 import { Filter } from "../components/Filter";
+import { PinCluster } from "../components/PinCluster";
+import { StoryDrawer } from "../components/StoryDrawer";
+import { TutorialState, WelcomeTutorial } from "../components/WelcomeTutorial";
+import { colors } from "../styles";
 import { Story } from "../types";
 
 const StyledMap = styled(Map)`

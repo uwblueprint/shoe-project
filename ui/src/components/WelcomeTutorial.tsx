@@ -1,20 +1,20 @@
-import * as React from "react";
-import styled from "styled-components";
-import Dialog from "@material-ui/core/Dialog";
-import { colors } from "../styles/colors";
 import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
-import DialogTip from "../assets/images/white-arrow.png";
-import OverlayCircle from "../assets/images/small-clear-circle.svg";
-import BigOverlayCircle from "../assets/images/clear-circle.svg";
-import ShoeLogo from "../assets/images/welcome-shoe-logo.svg";
+import * as React from "react";
+import styled from "styled-components";
 
+import BigOverlayCircle from "../assets/images/clear-circle.svg";
+import OverlayCircle from "../assets/images/small-clear-circle.svg";
+import ShoeLogo from "../assets/images/welcome-shoe-logo.svg";
+import DialogTip from "../assets/images/white-arrow.png";
+import { colors } from "../styles/colors";
 import {
-  WelcomeTitleText,
-  WelcomeDescriptionText,
-  NavigateTitleText,
   NavigateDescriptionText,
+  NavigateTitleText,
+  WelcomeDescriptionText,
+  WelcomeTitleText,
 } from "../styles/typography";
 
 const StyledArrowTip = styled.img`

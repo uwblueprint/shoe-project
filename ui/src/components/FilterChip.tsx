@@ -1,6 +1,7 @@
+import Chip from "@material-ui/core/Chip";
 import * as React from "react";
 import styled from "styled-components";
-import Chip from "@material-ui/core/Chip";
+
 import { colors } from "../styles/colors";
 
 const StyledChip = styled(Chip)`

@@ -1,11 +1,12 @@
-import * as React from "react";
-import styled from "styled-components";
 import L from "leaflet";
+import * as React from "react";
 import { Marker, Popup } from "react-leaflet";
+import styled from "styled-components";
+
 import resting from "../assets/resting.svg";
 import unfocused from "../assets/unfocused.svg";
-import { PinPreview } from "./PinPreview";
 import { Story } from "../types";
+import { PinPreview } from "./PinPreview";
 
 const StyledPopup = styled(Popup)`
   width: 392px;
