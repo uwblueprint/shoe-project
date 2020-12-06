@@ -3,12 +3,13 @@
 ############################
 FROM golang:alpine AS builder
 
-RUN apk add --update nodejs yarn util-linux
+RUN apk add --update nodejs yarn util-linux libcap
 
 ENV PORT=8080
 ENV USER=appuser
 ENV UID=10001
 
+RUN setcap 'cap_net_bind_service=+ep' /app/croc-hunter
 # See https://stackoverflow.com/a/55757473/12429735RUN
 RUN adduser \
     --disabled-password \
@@ -21,6 +22,7 @@ RUN adduser \
 
 WORKDIR /app
 COPY . .
+RUN setcap 'cap_net_bind_service=+ep' /app
 
 # fetch dependencies
 RUN go mod download
