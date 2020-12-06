@@ -146,6 +146,10 @@ func GetDatabaseHost() string {
 	return viper.GetString("database.host")
 }
 
+func GetDatabaseURL() string {
+	return viper.GetString("database.url")
+}
+
 // -- auth --
 
 func GetJWTKey() *jwtauth.JWTAuth {
