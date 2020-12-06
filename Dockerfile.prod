@@ -37,19 +37,19 @@ RUN go build -ldflags="-w -s" -o /go/bin/shoe-project
 FROM alpine
 
 # import the user and group files from the builder.
-COPY --from=builder /etc/passwd /etc/passwd
-COPY --from=builder /etc/group /etc/group
+#COPY --from=builder /etc/passwd /etc/passwd
+#COPY --from=builder /etc/group /etc/group
 
 # copy our static executable.
 COPY --from=builder /go/bin/shoe-project /go/bin/shoe-project
 # copy our dist build
 COPY --from=builder /app/ui/dist /go/bin/ui/dist
 
-RUN apk add --update libcap
-RUN setcap 'cap_net_bind_service=+ep' /go/bin/shoe-project
+#RUN apk add --update libcap
+#RUN setcap 'cap_net_bind_service=+ep' /go/bin/shoe-project
 
 # use an unprivileged user.
-USER appuser:appuser
+#USER appuser:appuser
 
 
 EXPOSE ${PORT}
