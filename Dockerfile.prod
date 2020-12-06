@@ -3,7 +3,7 @@
 ############################
 FROM golang:alpine AS builder
 
-RUN apk add --update nodejs yarn util-linux libcap
+RUN apk add --update nodejs yarn util-linux
 
 ENV PORT=8080
 ENV USER=appuser
@@ -21,7 +21,6 @@ RUN adduser \
 
 WORKDIR /app
 COPY . .
-RUN setcap 'cap_net_bind_service=+ep' /app
 
 # fetch dependencies
 RUN go mod download
@@ -30,6 +29,7 @@ RUN cd ui && yarn && yarn build-prod
 
 # build
 RUN go build -ldflags="-w -s" -o /go/bin/shoe-project
+
 
 #############################
 ## STEP 2 build a small image
@@ -47,6 +47,8 @@ COPY --from=builder /app/ui/dist /go/bin/ui/dist
 
 # use an unprivileged user.
 USER appuser:appuser
+RUN apk add --update libcap
+RUN setcap 'cap_net_bind_service=+ep' /go/bin/shoe-project
 
 EXPOSE ${PORT}
 ENTRYPOINT ["/go/bin/shoe-project", "server"]
