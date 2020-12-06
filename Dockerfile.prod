@@ -9,7 +9,6 @@ ENV PORT=8080
 ENV USER=appuser
 ENV UID=10001
 
-RUN setcap 'cap_net_bind_service=+ep' /app/croc-hunter
 # See https://stackoverflow.com/a/55757473/12429735RUN
 RUN adduser \
     --disabled-password \
