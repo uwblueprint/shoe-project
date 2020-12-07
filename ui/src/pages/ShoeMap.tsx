@@ -79,7 +79,17 @@ export const ShoeMap: React.FC = () => {
   const maxZoom = 18;
   const currentLocation = { lat: 43.4723, lng: -80.5449 };
 
-  const { data: stories, error } = useSWR<Story[]>("/api/stories");
+  const { data, error } = useSWR<Story[]>("/api/stories");
+  const [filteredCountries, setFilteredCountries] = useState([]);
+  function onTagsChange(_, options: string[]) {
+    setFilteredCountries(options);
+  }
+  const stories =
+    filteredCountries.length === 0
+      ? data
+      : data.filter((story) =>
+          filteredCountries.includes(story.author_country)
+        );
 
   const [story, setStory] = React.useState<Story | undefined>(undefined);
   const handleOpenDrawer = (s: Story) => () => setStory(s);
@@ -89,7 +99,7 @@ export const ShoeMap: React.FC = () => {
   return (
     <React.Fragment>
       <MapContainer>
-        <Filter />
+        <Filter onChange={onTagsChange} />
         <StyledMap
           center={currentLocation}
           zoom={zoom}
@@ -105,7 +115,6 @@ export const ShoeMap: React.FC = () => {
             <PinCluster stories={stories} openDrawer={handleOpenDrawer} />
           )}
           <ZoomControl position="bottomright" />
-
           <AttributionControl position="topright" />
           <Control position="bottomright">
             <StyledHelpIcon>?</StyledHelpIcon>

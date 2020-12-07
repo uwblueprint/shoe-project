@@ -11,15 +11,13 @@ import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
-
 import { FilterChip } from "./FilterChip";
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 export interface FilterProps {
-  options: string[];
-  onChange: (options: string[]) => void;
+  onChange: (event: React.ChangeEvent, options: string[]) => void;
 }
 
 const theme = createMuiTheme({
@@ -56,7 +54,7 @@ const Tagline = styled.span`
   padding-bottom: 16px;
 `;
 
-export function Filter(): JSX.Element {
+export function Filter({ onChange }: FilterProps): JSX.Element {
   const { data: countries, error } = useSWR<string[]>(
     "/api/authors/origin_countries"
   );
@@ -74,6 +72,7 @@ export function Filter(): JSX.Element {
           id="filter-autocomplete"
           options={countries || []}
           style={{ width: 312 }}
+          onChange={onChange}
           disableCloseOnSelect
           renderTags={(value, getTagProps) =>
             value.map((option, index) => (
