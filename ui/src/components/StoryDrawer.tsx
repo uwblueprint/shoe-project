@@ -1,5 +1,13 @@
-import * as React from "react";
+import Button from "@material-ui/core/Button";
 import Drawer from "@material-ui/core/Drawer";
+import Grid from "@material-ui/core/Grid";
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
+import * as React from "react";
+import styled from "styled-components";
+
+import ChinaFlag from "../assets/flags/China.png";
+import TempShoe from "../assets/images/temp.png";
+import { colors } from "../styles/colors";
 import {
   DrawerAuthorText,
   DrawerContentText,
@@ -7,13 +15,6 @@ import {
   DrawerRightText,
   DrawerTitleText,
 } from "../styles/typography";
-import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
-import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
-import styled from "styled-components";
-import ChinaFlag from "../assets/flags/China.png";
-import TempShoe from "../assets/images/temp.png";
-import { colors } from "../styles/colors";
 import { Story } from "../types";
 
 const StyledIconButton = styled(Button)`

@@ -11,6 +11,7 @@ main
 # UI
 ui/dist/*
 node_modules/
+.eslintcache
 
 # OS generated files
 .DS_Store

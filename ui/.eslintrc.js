@@ -9,6 +9,7 @@ module.exports = {
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended",
+    "plugin:react-hooks/recommended",
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -18,7 +19,7 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: "module",
   },
-  plugins: ["react", "@typescript-eslint"],
+  plugins: ["react", "@typescript-eslint", "simple-import-sort"],
   rules: {
     // Make sure that all ts-ignore comments are given a description.
     "@typescript-eslint/ban-ts-comment": [
@@ -27,5 +28,9 @@ module.exports = {
         "ts-ignore": "allow-with-description",
       },
     ],
+    // Make sure imports are organized
+    "sort-imports": "off",
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error"
   },
 };

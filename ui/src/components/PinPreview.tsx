@@ -1,16 +1,17 @@
-import * as React from "react";
-import styled from "styled-components";
 import Button from "@material-ui/core/Button";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
-import { colors } from "../styles/colors";
+import * as React from "react";
+import styled from "styled-components";
+
 import ChinaFlag from "../assets/flags/China.png";
 import TempShoe from "../assets/images/temp.png";
+import { colors } from "../styles/colors";
 import {
-  CardTitleText,
   CardDescriptionText,
   CardDetailText,
   CardTagText,
+  CardTitleText,
 } from "../styles/typography";
 
 const StyledButton = styled(Button)`

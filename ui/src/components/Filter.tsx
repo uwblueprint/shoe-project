@@ -1,16 +1,16 @@
-import * as React from "react";
-import useSWR from "swr";
-import styled from "styled-components";
-import { colors, fontSize } from "../styles";
-
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import TextField from "@material-ui/core/TextField";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import Checkbox from "@material-ui/core/Checkbox";
-import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@material-ui/icons/CheckBox";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import { createMuiTheme } from "@material-ui/core/styles";
+import TextField from "@material-ui/core/TextField";
+import CheckBoxIcon from "@material-ui/icons/CheckBox";
+import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import { ThemeProvider } from "@material-ui/styles";
+import * as React from "react";
+import styled from "styled-components";
+import useSWR from "swr";
+
+import { colors, fontSize } from "../styles";
 import { FilterChip } from "./FilterChip";
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
