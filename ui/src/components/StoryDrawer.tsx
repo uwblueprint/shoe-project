@@ -96,6 +96,7 @@ export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
             alignItems="flex-end"
             alignContent="flex-end"
             justify="flex-end"
+            container
           >
             <DrawerRightText>{current_city}, Canada</DrawerRightText>
             <DrawerRightText>{date}</DrawerRightText>
