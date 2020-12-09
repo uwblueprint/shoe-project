@@ -54,9 +54,9 @@ const StyledAutocomplete = styled(Autocomplete)`
 `;
 
 const StyledCheckbox = styled(Checkbox)`
-.MuiCheckbox-colorPrimary{
-  color: ${colors.primaryDark1};
-}
+  .MuiCheckbox-colorPrimary{
+    color: ${colors.primaryDark1};
+  }
   margin-right: 8px;
 `;
 
