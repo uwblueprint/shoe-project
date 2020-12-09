@@ -87,7 +87,7 @@ export const ShoeMap: React.FC = () => {
     setFilteredCountries(options);
   }
   const stories =
-    filteredCountries.length === 0
+    !data || filteredCountries.length === 0
       ? data
       : data.filter((story) =>
           filteredCountries.includes(story.author_country)

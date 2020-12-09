@@ -55,17 +55,16 @@ const StyledFilterOverlay = styled.img`
 `;
 
 const StyledIconButton = styled(IconButton)`
-    position: absolute;
-    margin: 0px;
-    padding: 0px;
-    left: 372px;
-    top: 29px;
-    width: 14px;
-    height: 14px;   
+  position: absolute;
+  margin: 0px;
+  padding: 0px;
+  left: 372px;
+  top: 29px;
+  width: 14px;
+  height: 14px;
 
   && {
     box-shadow: none;
-  }
   }
 `;
 
@@ -168,23 +167,24 @@ const StyledTag = styled(Button)`
     line-height: 24px;
     margin: 0px 10px;
   }
+
   && {
     box-shadow: none;
-    background-color: ${colors.neutralLight};    
+    background-color: ${colors.neutralLight};
+  }
 `;
 
 const StyledWelcomeIconButton = styled(IconButton)`
-    position: absolute;
-    margin: 0px;
-    padding: 0px;
-    left: 455px;
-    top: 29px;
-    width: 14px;
-    height: 14px;
+  position: absolute;
+  margin: 0px;
+  padding: 0px;
+  left: 455px;
+  top: 29px;
+  width: 14px;
+  height: 14px;
 
   && {
     box-shadow: none;
-  }
   }
 `;
 
@@ -206,6 +206,8 @@ const StyledWelcomeButton = styled(Button)`
   position: absolute;
   left: 134px;
   bottom: 24px;
+  color: ${colors.primaryLight2};
+
   .MuiButton-label {
     color: ${colors.primaryDark2};
     font-size: 16px;
@@ -215,6 +217,7 @@ const StyledWelcomeButton = styled(Button)`
     line-height: 150%;
     margin: 0px 10px;
   }
+
   && {
     box-shadow: none;
     background-color: ${colors.primaryLight4};
@@ -238,17 +241,16 @@ const StyledWelcomeLogo = styled.img`
 `;
 
 const StyledNavigateIconButton = styled(IconButton)`
-    position: absolute;
-    margin: 0px;
-    padding: 0px;
-    left: 372px;
-    top: 29px;
-    width: 14px;
-    height: 14px;
+  position: absolute;
+  margin: 0px;
+  padding: 0px;
+  left: 372px;
+  top: 29px;
+  width: 14px;
+  height: 14px;
 
   && {
     box-shadow: none;
-  }
   }
 `;
 
@@ -261,6 +263,7 @@ const StyledNavigateWelcome = styled(Dialog)`
     border-radius: 10px;
     margin: 0px;
   }
+
   .MuiBackdrop-root {
     background-color: transparent;
   }
@@ -306,7 +309,8 @@ const StyledNavigateTag = styled(Button)`
   }
   && {
     box-shadow: none;
-    background-color: ${colors.neutralLight};    
+    background-color: ${colors.neutralLight};
+  }
 `;
 
 const StyledContainer = styled.div`
@@ -353,7 +357,6 @@ export function WelcomeTutorial({
         <StyledWelcomeButton
           text-align="center"
           variant="text"
-          color={colors.primaryLight2}
           disableElevation={true}
           onClick={() => setState(TutorialState.Second)}
         >
