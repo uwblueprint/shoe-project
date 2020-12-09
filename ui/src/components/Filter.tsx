@@ -80,7 +80,7 @@ const Tagline = styled.span`
   padding-bottom: 16px;
 `;
 
-  const useStyles = makeStyles({
+const useStyles = makeStyles(() => ({
   paper: {
     fontFamily: "Poppins",
     fontStyle: "normal",
@@ -88,7 +88,7 @@ const Tagline = styled.span`
     fontSize: "16px",
     lineHeight: "24px",
   },
-});
+}));
 
 export function Filter({ onChange }: FilterProps): JSX.Element {
   const { data: countries, error } = useSWR<string[]>(
@@ -97,7 +97,7 @@ export function Filter({ onChange }: FilterProps): JSX.Element {
 
   const classes = useStyles();
   if (error) return <div>Error!</div>;
-  
+
   return (
     <FilterContainer>
       <Tagline>Show stories from:</Tagline>
@@ -109,7 +109,9 @@ export function Filter({ onChange }: FilterProps): JSX.Element {
         options={countries || []}
         onChange={onChange}
         disableCloseOnSelect
-        className={classes.paper}
+        classes={{
+          paper: classes.paper,
+        }}
         renderTags={(value, getTagProps) =>
           value.map((option, index) => (
             <FilterChip
