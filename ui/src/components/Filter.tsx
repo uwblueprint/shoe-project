@@ -9,6 +9,7 @@ import { ThemeProvider } from "@material-ui/styles";
 import * as React from "react";
 import styled from "styled-components";
 import useSWR from "swr";
+import { makeStyles } from '@material-ui/core/styles';
 
 import { colors, fontSize } from "../styles";
 import { FilterChip } from "./FilterChip";
@@ -20,16 +21,44 @@ export interface FilterProps {
   onChange: (event: React.ChangeEvent, options: string[]) => void;
 }
 
-const theme = createMuiTheme({
-  palette: {
-    primary: {
-      main: colors.primary,
-    },
-    secondary: {
-      main: colors.primaryDark1,
-    },
-  },
-});
+const StyledAutocomplete = styled(Autocomplete)`
+  color: ${colors.primary};
+  width: 312px;
+
+  .MuiChip-label {
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: normal;
+    font-size: ${fontSize.subtitle};
+    line-height: 24px;    
+    color: ${colors.primaryDark3};
+  }
+
+  .MuiAutocomplete-inputRoot{
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: normal;
+  font-size: ${fontSize.subtitle};
+  line-height: 24px;
+  color: ${colors.grey};
+  }
+
+  .MuiInput-underline:before {
+    border-bottom: 1px solid ${colors.grey};
+  }
+
+  .MuiInput-underline:after {
+    border-bottom: 2px solid ${colors.primary};
+  }
+
+`;
+
+const StyledCheckbox = styled(Checkbox)`
+.MuiCheckbox-colorPrimary{
+  color: ${colors.primaryDark1};
+}
+  margin-right: 8px;
+`;
 
 const FilterContainer = styled.div`
   z-index: 1000;
@@ -54,6 +83,17 @@ const Tagline = styled.span`
   padding-bottom: 16px;
 `;
 
+const useStyles = makeStyles(() => ({
+  paper: {
+    fontFamily: "Poppins",
+    fontStyle: "normal",
+    fontWeight: "normal",
+    fontSize: "16px",
+    lineHeight: "24px",
+  }
+}
+));
+
 export function Filter({ onChange }: FilterProps): JSX.Element {
   const { data: countries, error } = useSWR<string[]>(
     "/api/authors/origin_countries"
@@ -62,60 +102,59 @@ export function Filter({ onChange }: FilterProps): JSX.Element {
   if (error) return <div>Error!</div>;
 
   return (
-    <ThemeProvider theme={theme}>
-      <FilterContainer>
-        <Tagline>Show stories from:</Tagline>
-        <Autocomplete
-          color="Primary"
-          multiple
-          loading={!countries}
-          id="filter-autocomplete"
-          options={countries || []}
-          style={{ width: 312 }}
-          onChange={onChange}
-          disableCloseOnSelect
-          renderTags={(value, getTagProps) =>
-            value.map((option, index) => (
-              <FilterChip
-                key={option}
-                label={option}
-                {...getTagProps({ index })}
-              />
-            ))
-          }
-          renderOption={(option, { selected }) => (
-            <React.Fragment key={option}>
-              <Checkbox
-                icon={icon}
-                checkedIcon={checkedIcon}
-                style={{ marginRight: 8 }}
-                checked={selected}
-                color="secondary"
-              />
-              {option}
-            </React.Fragment>
-          )}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              variant="standard"
-              label=""
-              placeholder="Countries"
-              InputProps={{
-                ...params.InputProps,
-                endAdornment: (
-                  <React.Fragment>
-                    {!countries ? (
-                      <CircularProgress color="inherit" size={20} />
-                    ) : null}
-                    {params.InputProps.endAdornment}
-                  </React.Fragment>
-                ),
-              }}
+    <FilterContainer>
+      <Tagline>Show stories from:</Tagline>
+      <StyledAutocomplete
+        color="Primary"
+        multiple
+        loading={!countries}
+        id="filter-autocomplete"
+        options={countries || []}
+        onChange={onChange}
+        disableCloseOnSelect
+        classes={{
+          paper: useStyles().paper
+        }}
+        renderTags={(value, getTagProps) =>
+          value.map((option, index) => (
+            <FilterChip
+              key={option}
+              label={option}
+              {...getTagProps({ index })}
             />
-          )}
-        />
-      </FilterContainer>
-    </ThemeProvider>
+          ))
+        }
+        renderOption={(option, { selected }) => (
+          <React.Fragment key={option}>
+            <StyledCheckbox
+              icon={icon}
+              checkedIcon={checkedIcon}
+              checked={selected}
+              color="primary"
+            />
+            {option}
+          </React.Fragment>
+        )}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            variant="standard"
+            label=""
+            placeholder="Countries"
+            InputProps={{
+              ...params.InputProps,
+              endAdornment: (
+                <React.Fragment>
+                  {!countries ? (
+                    <CircularProgress color="inherit" size={20} />
+                  ) : null}
+                  {params.InputProps.endAdornment}
+                </React.Fragment>
+              ),
+            }}
+          />
+        )}
+      />
+    </FilterContainer>
   );
 }

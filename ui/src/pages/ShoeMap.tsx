@@ -96,7 +96,7 @@ export const ShoeMap: React.FC = () => {
   const [story, setStory] = React.useState<Story | undefined>(undefined);
   const handleOpenDrawer = (s: Story) => () => setStory(s);
   const handleCloseDrawer = () => setStory(undefined);
-  const [isTutorialOpen, setIsTutorialOpen] = useState(TutorialState.First);
+  const [isTutorialOpen, setIsTutorialOpen] = useState(TutorialState.Closed);
 
   return (
     <React.Fragment>

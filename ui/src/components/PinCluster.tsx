@@ -38,7 +38,7 @@ export const PinCluster = React.memo(function PinCluster({
             id={story.ID.toString()}
             key={story.ID}
             story={story}
-            state={PinState.Resting}
+            state={PinState.Unfocused}
             onPopupClick={openDrawer(story)}
           />
         );
