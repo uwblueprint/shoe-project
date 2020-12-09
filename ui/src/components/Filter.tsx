@@ -1,15 +1,13 @@
 import Checkbox from "@material-ui/core/Checkbox";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { createMuiTheme } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { ThemeProvider } from "@material-ui/styles";
 import * as React from "react";
 import styled from "styled-components";
 import useSWR from "swr";
-import { makeStyles } from '@material-ui/core/styles';
 
 import { colors, fontSize } from "../styles";
 import { FilterChip } from "./FilterChip";
@@ -30,17 +28,17 @@ const StyledAutocomplete = styled(Autocomplete)`
     font-style: normal;
     font-weight: normal;
     font-size: ${fontSize.subtitle};
-    line-height: 24px;    
+    line-height: 24px;
     color: ${colors.primaryDark3};
   }
 
-  .MuiAutocomplete-inputRoot{
-  font-family: Poppins;
-  font-style: normal;
-  font-weight: normal;
-  font-size: ${fontSize.subtitle};
-  line-height: 24px;
-  color: ${colors.grey};
+  .MuiAutocomplete-inputRoot {
+    font-family: Poppins;
+    font-style: normal;
+    font-weight: normal;
+    font-size: ${fontSize.subtitle};
+    line-height: 24px;
+    color: ${colors.grey};
   }
 
   .MuiInput-underline:before {
@@ -50,11 +48,10 @@ const StyledAutocomplete = styled(Autocomplete)`
   .MuiInput-underline:after {
     border-bottom: 2px solid ${colors.primary};
   }
-
 `;
 
 const StyledCheckbox = styled(Checkbox)`
-  .MuiCheckbox-colorPrimary{
+  .MuiCheckbox-colorPrimary {
     color: ${colors.primaryDark1};
   }
   margin-right: 8px;
@@ -90,9 +87,8 @@ const useStyles = makeStyles(() => ({
     fontWeight: "normal",
     fontSize: "16px",
     lineHeight: "24px",
-  }
-}
-));
+  },
+}));
 
 export function Filter({ onChange }: FilterProps): JSX.Element {
   const { data: countries, error } = useSWR<string[]>(
@@ -113,7 +109,7 @@ export function Filter({ onChange }: FilterProps): JSX.Element {
         onChange={onChange}
         disableCloseOnSelect
         classes={{
-          paper: useStyles().paper
+          paper: useStyles().paper,
         }}
         renderTags={(value, getTagProps) =>
           value.map((option, index) => (
