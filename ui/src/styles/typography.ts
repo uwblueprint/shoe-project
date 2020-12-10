@@ -28,6 +28,7 @@ export const TitleText = styled.p`
 
 export const CardTitleText = styled.p`
   font-size: ${fontSize.h3Text};
+  font-family: Poppins;
   font-weight: 500;
   line-height: 30px;
   text-align: left;
@@ -41,6 +42,7 @@ export const CardTitleText = styled.p`
 
 export const CardDescriptionText = styled.p`
   font-size: ${fontSize.body1};
+  font-family: Poppins;
   font-weight: normal;
   line-height: 24px;
   text-align: left;
@@ -112,6 +114,7 @@ export const CardDetailText = styled.p`
 
 export const CardTagText = styled.span`
   font-size: ${fontSize.subtitle};
+  font-family: Poppins;
   font-weight: 500;
   line-height: 19px;
   text-align: left;

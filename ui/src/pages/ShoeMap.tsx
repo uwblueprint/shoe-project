@@ -76,10 +76,10 @@ const StyledLogo = styled.div`
 `;
 
 export const ShoeMap: React.FC = () => {
-  const zoom = 12;
-  const minZoom = 3;
+  const zoom = 4;
+  const minZoom = 4;
   const maxZoom = 18;
-  const currentLocation = { lat: 43.4723, lng: -80.5449 };
+  const currentLocation = { lat: 53.655697, lng: -100.13316 };
 
   const { data, error } = useSWR<Story[]>("/api/stories");
   const [filteredCountries, setFilteredCountries] = useState([]);

@@ -55,7 +55,7 @@ export function Pin({
     shadowSize: null,
     shadowAnchor: null,
     iconSize:
-      state === PinState.Selected ? new L.Point(58, 70) : new L.Point(50, 61),
+      state === PinState.Selected ? new L.Point(48, 57) : new L.Point(39, 48),
   });
 
   return (
