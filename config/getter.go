@@ -81,6 +81,15 @@ func GetProfilerPath() string {
 
 // -- server --
 
+func GetPort() *int {
+	if !viper.IsSet("port") {
+		return nil
+	}
+
+	port := viper.GetInt("port")
+	return &port
+}
+
 func GetServerHost() string {
 	return viper.GetString("server.host")
 }

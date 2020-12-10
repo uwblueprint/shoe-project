@@ -35,8 +35,13 @@ func New() (*Server, error) {
 
 // ListenAndServe will listen for requests
 func (s *Server) ListenAndServe(errChan chan error) error {
+	portToUse := config.GetServerPort()
+	if config.GetPort() != nil {
+		portToUse = *config.GetPort()
+	}
+
 	s.Server = &http.Server{
-		Addr:    net.JoinHostPort(config.GetServerHost(), strconv.Itoa(config.GetServerPort())),
+		Addr:    net.JoinHostPort(config.GetServerHost(), strconv.Itoa(portToUse)),
 		Handler: s.Router,
 	}
 
@@ -83,7 +88,7 @@ func (s *Server) ListenAndServe(errChan chan error) error {
 
 	logger.Infow("Server Listening",
 		"Host", config.GetServerHost(),
-		"Port", config.GetServerPort(),
+		"Port", portToUse,
 		"TLS", config.IsServerTLSEnabled(),
 	)
 

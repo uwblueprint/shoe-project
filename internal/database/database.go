@@ -10,10 +10,16 @@ import (
 )
 
 func Connect() (*gorm.DB, error) {
-	dsn := config.GetDatabaseURL()
-	if strings.TrimSpace(dsn) == "" {
-		dsn = fmt.Sprintf("user=%s password=%s dbname=%s port=%s sslmode=disable host=%s", config.GetDatabaseUser(),
-			config.GetDatabasePassword(), config.GetDatabaseName(), config.GetDatabasePort(), config.GetDatabaseHost())
+	dsn := strings.TrimSpace(config.GetDatabaseURL())
+	if dsn == "" {
+		dsn = fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
+			config.GetDatabaseUser(),
+			config.GetDatabasePassword(),
+			config.GetDatabaseHost(),
+			config.GetDatabasePort(),
+			config.GetDatabaseName(),
+		)
 	}
+
 	return gorm.Open(postgres.Open(dsn), &gorm.Config{})
 }
