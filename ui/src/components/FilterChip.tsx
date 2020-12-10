@@ -8,7 +8,7 @@ const StyledChip = styled(Chip)`
   background-color: ${colors.primaryLight3} !important;
   color: ${colors.primaryDark2} !important;
   .MuiChip-deleteIcon {
-    color: ${colors.primaryDark3};
+    color: ${colors.primaryDark2};
   }
 `;
 
