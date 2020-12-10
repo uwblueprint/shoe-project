@@ -90,27 +90,33 @@ export const ShoeMap: React.FC = () => {
   const zoom = 4;
   const minZoom = 4;
   const maxZoom = 18;
+  const timeoutSeconds = 1728000000;
   const currentLocation = { lat: 53.655697, lng: -100.13316 };
   const key = "timestamp";
 
-  let compareTimestamp = () => {
+  const setTimeStamp = () => {
+    const item = {
+      value: "value",
+      expiry: new Date().getTime(),
+    };
+    localStorage.setItem(key, JSON.stringify(item));
+  };
+
+  const compareTimestamp = () => {
     const oldTimestampStr = localStorage.getItem(key);
-    if (!oldTimestampStr){
-      return true;
+    if (!oldTimestampStr) {
+      setTimeStamp();
+      return TutorialState.First;
     }
     const oldTimestamp = JSON.parse(oldTimestampStr);
     const curTimestamp = new Date();
-    if ((curTimestamp.getTime() - oldTimestamp.expiry) > 2000){
+    if (curTimestamp.getTime() - oldTimestamp.expiry > timeoutSeconds) {
       localStorage.removeItem(key);
-      const item = {
-            value: "value",
-            expiry: new Date().getTime(),
-          }
-       localStorage.setItem(key, JSON.stringify(item));
-       return true;
+      setTimeStamp();
+      return TutorialState.First;
     }
-    return false;
-  }
+    return TutorialState.Closed;
+  };
 
   const { data: tokens, error: tokens_error } = useSWR<Tokens>(
     "/api/client_tokens"
@@ -131,7 +137,7 @@ export const ShoeMap: React.FC = () => {
   const [story, setStory] = React.useState<Story | undefined>(undefined);
   const handleOpenDrawer = (s: Story) => () => setStory(s);
   const handleCloseDrawer = () => setStory(undefined);
-  const [isTutorialOpen, setIsTutorialOpen] = useState(TutorialState.First);
+  const [isTutorialOpen, setIsTutorialOpen] = useState(compareTimestamp());
   const [isHelpDrawerOpen, setIsHelpDrawerOpen] = useState(
     HelpDrawerState.Closed
   );
@@ -172,11 +178,7 @@ export const ShoeMap: React.FC = () => {
         </StyledMap>
       </MapContainer>
       <StoryDrawer story={story} onClose={handleCloseDrawer} />
-      {
-
-
-      }
-      <WelcomeTutorial state={isTutorialOpen} setState={setIsTutorialOpen && compareTimestamp} />
+      <WelcomeTutorial state={isTutorialOpen} setState={setIsTutorialOpen} />
       <HelpDrawer
         state={isHelpDrawerOpen}
         setIsHelpDrawerOpen={setIsHelpDrawerOpen}
