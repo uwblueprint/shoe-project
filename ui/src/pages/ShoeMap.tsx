@@ -91,6 +91,26 @@ export const ShoeMap: React.FC = () => {
   const minZoom = 4;
   const maxZoom = 18;
   const currentLocation = { lat: 53.655697, lng: -100.13316 };
+  const key = "timestamp";
+
+  let compareTimestamp = () => {
+    const oldTimestampStr = localStorage.getItem(key);
+    if (!oldTimestampStr){
+      return true;
+    }
+    const oldTimestamp = JSON.parse(oldTimestampStr);
+    const curTimestamp = new Date();
+    if ((curTimestamp.getTime() - oldTimestamp.expiry) > 2000){
+      localStorage.removeItem(key);
+      const item = {
+            value: "value",
+            expiry: new Date().getTime(),
+          }
+       localStorage.setItem(key, JSON.stringify(item));
+       return true;
+    }
+    return false;
+  }
 
   const { data: tokens, error: tokens_error } = useSWR<Tokens>(
     "/api/client_tokens"
@@ -152,7 +172,11 @@ export const ShoeMap: React.FC = () => {
         </StyledMap>
       </MapContainer>
       <StoryDrawer story={story} onClose={handleCloseDrawer} />
-      <WelcomeTutorial state={isTutorialOpen} setState={setIsTutorialOpen} />
+      {
+
+
+      }
+      <WelcomeTutorial state={isTutorialOpen} setState={setIsTutorialOpen && compareTimestamp} />
       <HelpDrawer
         state={isHelpDrawerOpen}
         setIsHelpDrawerOpen={setIsHelpDrawerOpen}
