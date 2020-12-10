@@ -15,6 +15,15 @@ export const fontSize = Object.freeze({
   interactive: "16px",
 });
 
+export const Body1 = styled.span`
+  font-style: normal;
+  font-size: ${fontSize.body1};
+  line-height: 150%;
+  @media ${device.mobileS} {
+    font-size: ${fontSize.mobile};
+  }
+`;
+
 export const TitleText = styled.p`
   font-size: ${fontSize.h2Text};
   font-weight: 700;
@@ -127,7 +136,7 @@ export const CardTagText = styled.span`
   }
 `;
 
-export const DrawerTitleText = styled.span`
+export const StoryDrawerTitleText = styled.span`
   font-family: Canela;
   font-size: ${fontSize.h1Text};
   font-style: normal;
@@ -140,7 +149,7 @@ export const DrawerTitleText = styled.span`
   }
 `;
 
-export const DrawerCountryText = styled.div`
+export const StoryDrawerCountryText = styled.div`
   font-family: Poppins;
   font-size: ${fontSize.subtitle};
   font-style: normal;
@@ -153,7 +162,7 @@ export const DrawerCountryText = styled.div`
   }
 `;
 
-export const DrawerAuthorText = styled.div`
+export const StoryDrawerAuthorText = styled.div`
   font-family: Poppins;
   font-size: ${fontSize.subtitle};
   font-style: normal;
@@ -167,7 +176,7 @@ export const DrawerAuthorText = styled.div`
   }
 `;
 
-export const DrawerRightText = styled.div`
+export const StoryDrawerRightText = styled.div`
   font-family: Poppins;
   font-size: ${fontSize.subtitle};
   font-style: normal;
@@ -181,13 +190,51 @@ export const DrawerRightText = styled.div`
   }
 `;
 
-export const DrawerContentText = styled.span`
+export const StoryDrawerContentText = styled.span`
   font-size: ${fontSize.subtitle};
   font-style: normal;
   font-weight: 400;
   line-height: 32px;
   letter-spacing: 0em;
   text-align: left;
+  @media ${device.mobileS} {
+    font-size: ${fontSize.mobile};
+  }
+`;
+
+export const HelpDrawerBoxText = styled.span`
+  font-size: ${fontSize.body2};
+  font-style: normal;
+  font-weight: normal;
+  line-height: 150%;
+  text-align: left;
+  @media ${device.mobileS} {
+    font-size: ${fontSize.mobile};
+  }
+`;
+
+export const HelpDrawerTitleText = styled.p`
+  font-size: ${fontSize.h3Text};
+  font-style: normal;
+  font-weight: 500;
+  line-height: 30px;
+  text-align: left;
+  margin: 0 0 6px 0;
+  color: ${colors.black};
+  @media ${device.mobileS} {
+    font-size: ${fontSize.mobile};
+  }
+`;
+
+export const HelpDrawerLaunchButtonText = styled.span`
+  font-size: ${fontSize.subtitle};
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 150%;
+  text-align: center;
+  text-transform: uppercase;
+  color: ${colors.primaryDark2};
   @media ${device.mobileS} {
     font-size: ${fontSize.mobile};
   }
