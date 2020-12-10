@@ -29,7 +29,7 @@ const StyledAutocomplete = styled(Autocomplete)`
     font-weight: normal;
     font-size: ${fontSize.subtitle};
     line-height: 24px;
-    color: ${colors.primaryDark3};
+    color: ${colors.primaryDark2};
   }
 
   .MuiAutocomplete-inputRoot {
