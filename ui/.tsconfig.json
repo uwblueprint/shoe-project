@@ -12,7 +12,8 @@
         "jsx": "react",
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
-        "types": ["node"]
+        "types": ["jest","node"],
+        "typeRoots": ["./node_modules/@types"]
     },
     "include": [
         "./src/**/*"

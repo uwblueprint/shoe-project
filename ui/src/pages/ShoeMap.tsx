@@ -8,11 +8,23 @@ import styled, { css } from "styled-components";
 import useSWR from "swr";
 
 import ShoeLogo from "../assets/images/shoeproject-logo.svg";
-import { Filter, PinCluster, StoryDrawer } from "../components";
-import { HelpDrawer, HelpDrawerState } from "../components/HelpDrawer";
-import { TutorialState, WelcomeTutorial } from "../components/WelcomeTutorial";
+import {
+  Filter,
+  HelpDrawer,
+  HelpDrawerState,
+  PinCluster,
+  StoryDrawer,
+  TutorialState,
+  WelcomeTutorial,
+} from "../components";
+import welcomeTutorialFunctions from "../components/helpers/WelcomeTutorialFunctions";
 import { colors } from "../styles";
+<<<<<<< HEAD
 import { Story, Tokens } from "../types";
+=======
+import { Story } from "../types";
+const TIMEOUT_SECONDS = 1728000000;
+>>>>>>> 7cbd540... fixed help drawer console error, separated local storage functions, added tests
 
 interface StyledMapProps {
   isHelpDrawerOpen: boolean;
@@ -90,8 +102,8 @@ export const ShoeMap: React.FC = () => {
   const zoom = 4;
   const minZoom = 4;
   const maxZoom = 12;
-  const timeoutSeconds = 1728000000;
   const currentLocation = { lat: 53.655697, lng: -100.13316 };
+<<<<<<< HEAD
   const key = "timestamp";
 
   const setTimeStamp = () => {
@@ -121,6 +133,8 @@ export const ShoeMap: React.FC = () => {
   const { data: tokens, error: tokens_error } = useSWR<Tokens>(
     "/api/client_tokens"
   );
+=======
+>>>>>>> 7cbd540... fixed help drawer console error, separated local storage functions, added tests
   const { data, error } = useSWR<Story[]>("/api/stories");
 
   const [filteredCountries, setFilteredCountries] = useState([]);
@@ -137,7 +151,11 @@ export const ShoeMap: React.FC = () => {
   const [story, setStory] = React.useState<Story | undefined>(undefined);
   const handleOpenDrawer = (s: Story) => () => setStory(s);
   const handleCloseDrawer = () => setStory(undefined);
-  const [isTutorialOpen, setIsTutorialOpen] = useState(compareTimestamp());
+  const [isTutorialOpen, setIsTutorialOpen] = useState(
+    welcomeTutorialFunctions.checkIfValidTimestamp(TIMEOUT_SECONDS)
+      ? TutorialState.First
+      : TutorialState.Closed
+  );
   const [isHelpDrawerOpen, setIsHelpDrawerOpen] = useState(
     HelpDrawerState.Closed
   );
