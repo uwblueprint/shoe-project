@@ -1,6 +1,6 @@
 const tutorialKey = "tutorial_timestamp";
 
-function setTimeStamp() {
+function setTimeStamp(): void {
   const dateItem = {
     value: "value",
     expiry: new Date().getTime(),
@@ -8,7 +8,7 @@ function setTimeStamp() {
   localStorage.setItem(tutorialKey, JSON.stringify(dateItem));
 }
 
-function checkIfValidTimestamp(totalTimeout) {
+function checkIfValidTimestamp(totalTimeout: number): boolean {
   const oldTimestampStr = localStorage.getItem(tutorialKey);
   if (!oldTimestampStr) {
     setTimeStamp();

@@ -1,5 +1,3 @@
-import {} from "jest";
-
 import welcomeTutorialFunctions from "../components/helpers/WelcomeTutorialFunctions";
 
 describe("Welcome Tutorial", () => {
