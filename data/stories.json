@@ -173,7 +173,7 @@
         "author" : {
             "first_name" : "Winnie",
             "last_name" : "Muchuba",
-            "origin_country" : "The Democratic Republic of Congo"
+            "origin_country" : "Democratic Republic of the Congo"
         },
         "image_url": "https://shoeproject.s3.us-west-000.backblazeb2.com/Life+is+a+Miracle+-Winnie-Muchuba.jpg",
         "summary" : "The soil in Africa, especially in my country—the Democratic Republic of Congo—is red, a deep, welcoming red. The heat of the dry season is felt not only in the air and on the thermometer, but also radiating back into the soles of your shoes.",
@@ -395,5 +395,4 @@
         "summary" : "Civil war forces Ambika Thambu from beautiful Jaffna, Sri Lanka in 1997. She sets out wearing Bata slippers that make a happy “sadag sadag” sound as she walks. Even when all that holds the slippers together is a safety-pin, and even though at times she carries them, she doesn’t throw them away. Now she is a radio host, grateful to the black Bata slippers that brought her to her new life. ",
         "current_city" : "Toronto"
     }
-    
 ]
