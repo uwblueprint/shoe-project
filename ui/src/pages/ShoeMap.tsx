@@ -17,7 +17,7 @@ import {
   TutorialState,
   WelcomeTutorial,
 } from "../components";
-import welcomeTutorialFunctions from "../components/helpers/WelcomeTutorialFunctions";
+import { isTimestampExpired } from "../components/helpers/welcomeTutorialFunctions";
 import { colors } from "../styles";
 import { Story, Tokens } from "../types";
 const TIMEOUT_SECONDS = 1728000000;
@@ -119,7 +119,7 @@ export const ShoeMap: React.FC = () => {
   const handleOpenDrawer = (s: Story) => () => setStory(s);
   const handleCloseDrawer = () => setStory(undefined);
   const [isTutorialOpen, setIsTutorialOpen] = useState(
-    welcomeTutorialFunctions.checkIfValidTimestamp(TIMEOUT_SECONDS)
+    isTimestampExpired(TIMEOUT_SECONDS)
       ? TutorialState.First
       : TutorialState.Closed
   );
