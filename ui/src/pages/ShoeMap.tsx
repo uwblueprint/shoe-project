@@ -12,7 +12,7 @@ import { Filter, PinCluster, StoryDrawer } from "../components";
 import { HelpDrawer, HelpDrawerState } from "../components/HelpDrawer";
 import { TutorialState, WelcomeTutorial } from "../components/WelcomeTutorial";
 import { colors } from "../styles";
-import { Story } from "../types";
+import { Story, Tokens } from "../types";
 
 interface StyledMapProps {
   isHelpDrawerOpen: boolean;
@@ -92,7 +92,11 @@ export const ShoeMap: React.FC = () => {
   const maxZoom = 18;
   const currentLocation = { lat: 53.655697, lng: -100.13316 };
 
+  const { data: tokens, error: tokens_error } = useSWR<Tokens>(
+    "/api/client_tokens"
+  );
   const { data, error } = useSWR<Story[]>("/api/stories");
+
   const [filteredCountries, setFilteredCountries] = useState([]);
   function onTagsChange(_, options: string[]) {
     setFilteredCountries(options);
@@ -125,9 +129,11 @@ export const ShoeMap: React.FC = () => {
           attributionControl={false}
           isHelpDrawerOpen={isHelpDrawerOpen === HelpDrawerState.Open}
         >
-          <TileLayer
-            url={`https://api.mapbox.com/styles/v1/hanlinc27/ckhjy5wat2dvz1aplv4tkaghb/tiles/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`}
-          />
+          {tokens && !tokens_error && (
+            <TileLayer
+              url={`https://api.mapbox.com/styles/v1/hanlinc27/ckhjy5wat2dvz1aplv4tkaghb/tiles/{z}/{x}/{y}?access_token=${tokens.mapbox}`}
+            />
+          )}
           {stories && !error && (
             <PinCluster stories={stories} openDrawer={handleOpenDrawer} />
           )}
