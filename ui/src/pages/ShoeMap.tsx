@@ -13,6 +13,7 @@ import { HelpDrawer, HelpDrawerState } from "../components/HelpDrawer";
 import { TutorialState, WelcomeTutorial } from "../components/WelcomeTutorial";
 import { colors } from "../styles";
 import { Story } from "../types";
+import { ErrorPage } from "../components/ErrorPage";
 
 interface StyledMapProps {
   isHelpDrawerOpen: boolean;
@@ -114,44 +115,40 @@ export const ShoeMap: React.FC = () => {
 
   return (
     <React.Fragment>
-      <MapContainer>
-        <Filter onChange={onTagsChange} />
-        <StyledMap
-          center={currentLocation}
-          zoom={zoom}
-          minZoom={minZoom}
-          maxZoom={maxZoom}
-          zoomControl={false}
-          attributionControl={false}
-          isHelpDrawerOpen={isHelpDrawerOpen === HelpDrawerState.Open}
-        >
-          <TileLayer
-            url={`https://api.mapbox.com/styles/v1/hanlinc27/ckhjy5wat2dvz1aplv4tkaghb/tiles/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`}
-          />
-          {stories && !error && (
-            <PinCluster stories={stories} openDrawer={handleOpenDrawer} />
-          )}
-          <ZoomControl position="bottomright" />
-          <AttributionControl position="topright" />
-          <Control position="bottomright">
-            <StyledHelpIcon
-              onClick={() => setIsHelpDrawerOpen(HelpDrawerState.Open)}
+      { !error ? (
+        <div>
+          <MapContainer>
+            <Filter onChange={onTagsChange} />
+            <StyledMap
+              center={currentLocation}
+              zoom={zoom}
+              minZoom={minZoom}
+              maxZoom={maxZoom}
+              zoomControl={false}
+              attributionControl={false}
             >
-              ?
-            </StyledHelpIcon>
-          </Control>
-          <Control position="bottomleft">
-            <StyledLogo></StyledLogo>
-          </Control>
-        </StyledMap>
-      </MapContainer>
-      <StoryDrawer story={story} onClose={handleCloseDrawer} />
-      <WelcomeTutorial state={isTutorialOpen} setState={setIsTutorialOpen} />
-      <HelpDrawer
-        state={isHelpDrawerOpen}
-        setIsHelpDrawerOpen={setIsHelpDrawerOpen}
-        setIsTutorialOpen={setIsTutorialOpen}
-      />
+              <TileLayer
+                url={`https://api.mapbox.com/styles/v1/hanlinc27/ckhjy5wat2dvz1aplv4tkaghb/tiles/{z}/{x}/{y}?access_token=${process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}`}
+              />
+              {stories && !error && (
+                <PinCluster stories={stories} openDrawer={handleOpenDrawer} />
+              )}
+              <ZoomControl position="bottomright" />
+              <AttributionControl position="topright" />
+              <Control position="bottomright">
+                <StyledHelpIcon>?</StyledHelpIcon>
+              </Control>
+              <Control position="bottomleft">
+                <StyledLogo></StyledLogo>
+              </Control>
+            </StyledMap>
+          </MapContainer>
+          <StoryDrawer story={story} onClose={handleCloseDrawer} />
+          <WelcomeTutorial state={isTutorialOpen} setState={setIsTutorialOpen} />
+        </div>
+      ) : (
+        <ErrorPage/>
+      )}
     </React.Fragment>
   );
 };
