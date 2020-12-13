@@ -81,6 +81,15 @@ func GetProfilerPath() string {
 
 // -- server --
 
+func GetPort() *int {
+	if !viper.IsSet("port") {
+		return nil
+	}
+
+	port := viper.GetInt("port")
+	return &port
+}
+
 func GetServerHost() string {
 	return viper.GetString("server.host")
 }
@@ -144,6 +153,10 @@ func GetDatabasePort() string {
 
 func GetDatabaseHost() string {
 	return viper.GetString("database.host")
+}
+
+func GetDatabaseURL() string {
+	return viper.GetString("database.url")
 }
 
 // -- auth --
