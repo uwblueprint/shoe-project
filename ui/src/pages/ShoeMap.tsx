@@ -19,12 +19,8 @@ import {
 } from "../components";
 import welcomeTutorialFunctions from "../components/helpers/WelcomeTutorialFunctions";
 import { colors } from "../styles";
-<<<<<<< HEAD
 import { Story, Tokens } from "../types";
-=======
-import { Story } from "../types";
 const TIMEOUT_SECONDS = 1728000000;
->>>>>>> 7cbd540... fixed help drawer console error, separated local storage functions, added tests
 
 interface StyledMapProps {
   isHelpDrawerOpen: boolean;
@@ -103,38 +99,9 @@ export const ShoeMap: React.FC = () => {
   const minZoom = 4;
   const maxZoom = 12;
   const currentLocation = { lat: 53.655697, lng: -100.13316 };
-<<<<<<< HEAD
-  const key = "timestamp";
-
-  const setTimeStamp = () => {
-    const item = {
-      value: "value",
-      expiry: new Date().getTime(),
-    };
-    localStorage.setItem(key, JSON.stringify(item));
-  };
-
-  const compareTimestamp = () => {
-    const oldTimestampStr = localStorage.getItem(key);
-    if (!oldTimestampStr) {
-      setTimeStamp();
-      return TutorialState.First;
-    }
-    const oldTimestamp = JSON.parse(oldTimestampStr);
-    const curTimestamp = new Date();
-    if (curTimestamp.getTime() - oldTimestamp.expiry > timeoutSeconds) {
-      localStorage.removeItem(key);
-      setTimeStamp();
-      return TutorialState.First;
-    }
-    return TutorialState.Closed;
-  };
-
   const { data: tokens, error: tokens_error } = useSWR<Tokens>(
     "/api/client_tokens"
   );
-=======
->>>>>>> 7cbd540... fixed help drawer console error, separated local storage functions, added tests
   const { data, error } = useSWR<Story[]>("/api/stories");
 
   const [filteredCountries, setFilteredCountries] = useState([]);
