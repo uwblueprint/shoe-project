@@ -30,3 +30,7 @@ export interface Author extends Model {
   currentCity: string;
   stories?: Story[];
 }
+
+export interface Tokens {
+  mapbox: string;
+}
