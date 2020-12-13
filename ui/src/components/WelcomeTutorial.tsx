@@ -425,7 +425,6 @@ export function WelcomeTutorial({
         onClose={handleClose}
       >
         <StyledFilterArrowTip src={DialogTip}></StyledFilterArrowTip>
-        <StyledFilterOverlay src={BigOverlayCircle}></StyledFilterOverlay>
         <StyledIconButton onClick={handleClose}>
           <StyledCloseIcon color="primary" fontSize="small" />
         </StyledIconButton>
