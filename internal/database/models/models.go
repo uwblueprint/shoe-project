@@ -22,6 +22,7 @@ type Story struct {
 	Title           string  `gorm:"not null" json:"title"`
 	Content         string  `gorm:"type:text;not null" json:"content"`
 	CurrentCity     string  `gorm:"not null" json:"current_city"`
+	Date            string  `gorm:"not null" json:"date"`
 	Summary         string  `gorm:"type:text" json:"summary"`
 	Latitude        float64 `gorm:"not null" json:"latitude"`
 	Longitude       float64 `gorm:"not null" json:"longitude"`
