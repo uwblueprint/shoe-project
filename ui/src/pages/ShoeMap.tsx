@@ -23,11 +23,11 @@ const StyledMap = styled(Map)<StyledMapProps>`
   width: 100vw;
   .leaflet-control {
     border: none;
-    margin: 0px 24px 24px 0px;
+    margin: 0px 36px 16px 0px;
   }
   .leaflet-bar a {
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
     background-color: ${colors.white};
     font-size: 26px;
     line-height: 45px;
@@ -50,10 +50,11 @@ const StyledMap = styled(Map)<StyledMapProps>`
 `;
 
 const StyledHelpIcon = styled.button`
-  height: 48px;
-  width: 48px;
+  height: 40px;
+  width: 40px;
   font-size: 26px;
   font-weight: 500;
+  margin-bottom: 8px;
   border: none;
   background-color: ${colors.white};
   border-radius: 10px;
@@ -82,8 +83,9 @@ const StyledLogo = styled.div`
   background-image: url(${ShoeLogo});
   width: 87px;
   height: 87px;
-  padding-left: 48px;
-  padding-bottom: 43.21px;
+  padding-left: 42px;
+  padding-bottom: 30px;
+  left: 36px;
 `;
 
 export const ShoeMap: React.FC = () => {

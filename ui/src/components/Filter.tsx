@@ -62,8 +62,8 @@ const FilterContainer = styled.div`
   position: absolute;
   width: 324px;
   min-height: 61px;
-  left: 46px;
-  top: 70px;
+  left: 36px;
+  top: 16px;
 
   background: ${colors.white};
   box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.1);
@@ -71,7 +71,6 @@ const FilterContainer = styled.div`
 
   display: flex;
   padding: 16px;
-  margin-top: -30px;
   flex-direction: column;
 `;
 
