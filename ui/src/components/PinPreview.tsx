@@ -6,6 +6,7 @@ import styled from "styled-components";
 
 import WWFlag from "../assets/flags/WW.svg";
 import TempShoe from "../assets/images/temp.png";
+
 import { colors } from "../styles/colors";
 import {
   CardDescriptionText,
