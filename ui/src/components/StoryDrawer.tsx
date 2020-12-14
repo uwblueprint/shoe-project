@@ -6,7 +6,6 @@ import * as React from "react";
 import styled from "styled-components";
 
 import ChinaFlag from "../assets/flags/China.png";
-import TempShoe from "../assets/images/temp.png";
 import { colors } from "../styles/colors";
 import {
   StoryDrawerAuthorText,
@@ -69,6 +68,7 @@ export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
     author_country,
     current_city,
     content,
+    image_url,
     /* TODO: update date */
     CreatedAt: date,
   } = story;
@@ -102,7 +102,7 @@ export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
             <StoryDrawerRightText>{date}</StoryDrawerRightText>
           </Grid>
           <Grid item xs={12}>
-            <StyledImage src={TempShoe} alt="Temporary Image" />
+            <StyledImage src={image_url} alt="Temporary Image" />
           </Grid>
           <Grid item xs={12}>
             <StoryDrawerContentText>{content}</StoryDrawerContentText>
