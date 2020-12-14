@@ -5,7 +5,6 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import * as React from "react";
 import styled from "styled-components";
 
-import ChinaFlag from "../assets/flags/China.png";
 import TempShoe from "../assets/images/temp.png";
 import { colors } from "../styles/colors";
 import {
@@ -84,7 +83,7 @@ export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
             <StoryDrawerTitleText>{title}</StoryDrawerTitleText>
           </Grid>
           <Grid item xs={1}>
-            <StyledFlagImage alt="flag" src={ChinaFlag} />
+            <StyledFlagImage alt="flag" src={null} />
           </Grid>
           <Grid item xs={5}>
             <StoryDrawerCountryText>{`Origin: ${author_country}`}</StoryDrawerCountryText>

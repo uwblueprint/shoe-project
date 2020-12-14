@@ -4,7 +4,7 @@ import CardMedia from "@material-ui/core/CardMedia";
 import * as React from "react";
 import styled from "styled-components";
 
-import ChinaFlag from "../assets/flags/China.png";
+import WWFlag from "../assets/flags/WW.svg";
 import TempShoe from "../assets/images/temp.png";
 import { colors } from "../styles/colors";
 import {
@@ -46,6 +46,13 @@ interface PinPreviewProps {
   onClick: () => void;
 }
 
+function importFlag(importStr:string) {
+  var flag = import(importStr)
+  .catch(err => console.log(err))
+  console.log(flag)
+  return (flag)
+}
+
 export function PinPreview({
   title,
   description,
@@ -54,11 +61,18 @@ export function PinPreview({
   country,
   onClick,
 }: PinPreviewProps): JSX.Element {
+
+
+  const importStr = `../assets/flags/${country}.svg`
+
+  const flag = importFlag(importStr)
   return (
     <>
       <StyledMedia image={TempShoe} title="Temporary Image" />
       <StyledCardContent>
-        <img alt="flag" src={ChinaFlag} />
+        {/* {flag && (
+          <img alt="flag" src={flag} />
+        )} */}
         <CardTagText>{country}</CardTagText>
         <CardTitleText>{title}</CardTitleText>
         <CardDescriptionText>{description}</CardDescriptionText>
