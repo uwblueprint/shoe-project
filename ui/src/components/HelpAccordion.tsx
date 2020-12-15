@@ -10,7 +10,7 @@ import { colors } from "../styles/colors";
 import { Body1 } from "../styles/typography";
 
 interface StyledAccordionProps {
-  isHover: boolean;
+  ishover: boolean;
 }
 
 const StyledAccordion = styled(Accordion)<StyledAccordionProps>`
@@ -25,7 +25,7 @@ const StyledAccordion = styled(Accordion)<StyledAccordionProps>`
   .MuiAccordionSummary-content {
     margin: 10px 0px 10px 20px;
     ${(props: StyledAccordionProps) =>
-      props.isHover &&
+      props.ishover &&
       css`
         color: ${colors.primaryDark1};
       `};
@@ -49,7 +49,7 @@ const StyledAccordion = styled(Accordion)<StyledAccordionProps>`
     color: ${colors.black};
     transform: rotate(-90deg);
     ${(props: StyledAccordionProps) =>
-      props.isHover &&
+      props.ishover &&
       css`
         color: ${colors.primaryDark1};
       `};
@@ -89,10 +89,9 @@ export function HelpAccordion({ title, body }: HelpDrawerProps): JSX.Element {
   const [isHover, setIsHover] = useState(false);
   return (
     <StyledAccordion
-      boxShadow={0}
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
-      isHover={isHover}
+      ishover={isHover ? 1 : 0}
     >
       <StyledAccordionSummary
         expandIcon={<ExpandMoreIcon />}
