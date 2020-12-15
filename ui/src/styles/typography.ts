@@ -54,7 +54,7 @@ export const CardDescriptionText = styled.p`
   font-family: Poppins;
   font-weight: normal;
   line-height: 24px;
-  text-align: left;
+  text-align: justify;
   color: ${colors.black};
   opacity: 0.7;
   margin: 0;

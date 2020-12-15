@@ -8,11 +8,19 @@ import styled, { css } from "styled-components";
 import useSWR from "swr";
 
 import ShoeLogo from "../assets/images/shoeproject-logo.svg";
-import { Filter, PinCluster, StoryDrawer } from "../components";
-import { HelpDrawer, HelpDrawerState } from "../components/HelpDrawer";
-import { TutorialState, WelcomeTutorial } from "../components/WelcomeTutorial";
+import {
+  Filter,
+  HelpDrawer,
+  HelpDrawerState,
+  PinCluster,
+  StoryDrawer,
+  TutorialState,
+  WelcomeTutorial,
+} from "../components";
+import { isTimestampExpired } from "../components/helpers/welcomeTutorialFunctions";
 import { colors } from "../styles";
 import { Story, Tokens } from "../types";
+const TIMEOUT_SECONDS = 1728000000;
 
 interface StyledMapProps {
   isHelpDrawerOpen: boolean;
@@ -89,9 +97,8 @@ const StyledLogo = styled.div`
 export const ShoeMap: React.FC = () => {
   const zoom = 4;
   const minZoom = 4;
-  const maxZoom = 18;
+  const maxZoom = 12;
   const currentLocation = { lat: 53.655697, lng: -100.13316 };
-
   const { data: tokens, error: tokens_error } = useSWR<Tokens>(
     "/api/client_tokens"
   );
@@ -111,7 +118,11 @@ export const ShoeMap: React.FC = () => {
   const [story, setStory] = React.useState<Story | undefined>(undefined);
   const handleOpenDrawer = (s: Story) => () => setStory(s);
   const handleCloseDrawer = () => setStory(undefined);
-  const [isTutorialOpen, setIsTutorialOpen] = useState(TutorialState.First);
+  const [isTutorialOpen, setIsTutorialOpen] = useState(
+    isTimestampExpired(TIMEOUT_SECONDS)
+      ? TutorialState.First
+      : TutorialState.Closed
+  );
   const [isHelpDrawerOpen, setIsHelpDrawerOpen] = useState(
     HelpDrawerState.Closed
   );

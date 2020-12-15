@@ -12,7 +12,7 @@
         "jsx": "react",
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
-        "types": ["node"]
+        "types": ["jest","node"]
     },
     "include": [
         "./src/**/*"
