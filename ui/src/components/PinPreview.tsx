@@ -5,7 +5,6 @@ import * as React from "react";
 import styled from "styled-components";
 
 import ChinaFlag from "../assets/flags/China.png";
-import TempShoe from "../assets/images/temp.png";
 import { colors } from "../styles/colors";
 import {
   CardDescriptionText,
@@ -43,6 +42,7 @@ interface PinPreviewProps {
   author: string;
   date: string;
   country: string;
+  shoeImage: string;
   onClick: () => void;
 }
 
@@ -52,11 +52,12 @@ export function PinPreview({
   author,
   date,
   country,
+  shoeImage,
   onClick,
 }: PinPreviewProps): JSX.Element {
   return (
     <>
-      <StyledMedia image={TempShoe} title="Temporary Image" />
+      <StyledMedia image={shoeImage} title="Temporary Image" />
       <StyledCardContent>
         <img alt="flag" src={ChinaFlag} />
         <CardTagText>{country}</CardTagText>
