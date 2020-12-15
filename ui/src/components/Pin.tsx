@@ -62,6 +62,7 @@ export function Pin({
     <Marker position={[story.latitude, story.longitude]} icon={icon}>
       <StyledPopup>
         <PinPreview
+          shoeImage={story.image_url}
           title={story.title}
           description={story.summary}
           author={`${story.author_first_name} ${story.author_last_name}`}

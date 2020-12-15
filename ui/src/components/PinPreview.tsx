@@ -43,6 +43,7 @@ interface PinPreviewProps {
   author: string;
   date: string;
   country: string;
+  shoeImage: string;
   onClick: () => void;
 }
 
@@ -59,6 +60,7 @@ export function PinPreview({
   author,
   date,
   country,
+  shoeImage,
   onClick,
 }: PinPreviewProps): JSX.Element {
 
@@ -68,7 +70,7 @@ export function PinPreview({
   const flag = importFlag(importStr)
   return (
     <>
-      <StyledMedia image={TempShoe} title="Temporary Image" />
+      <StyledMedia image={shoeImage} title="Temporary Image" />
       <StyledCardContent>
         {/* {flag && (
           <img alt="flag" src={flag} />
