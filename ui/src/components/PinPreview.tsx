@@ -72,7 +72,7 @@ export function PinPreview({
           Read Full Story
         </StyledButton>
         <CardDetailText>
-          {author} • {date}
+          {author} • {date.substring(0,4)}
         </CardDetailText>
       </StyledCardContent>
     </>
