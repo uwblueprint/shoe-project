@@ -5,11 +5,6 @@ import CloseIcon from "@material-ui/icons/Close";
 import * as React from "react";
 import styled from "styled-components";
 
-<<<<<<< HEAD
-import OverlayCircle from "../assets/images/small-clear-circle.svg";
-=======
-import BigOverlayCircle from "../assets/images/clear-circle.svg";
->>>>>>> 5966a67... takeout overlay on tutorial for now
 import ShoeLogo from "../assets/images/welcome-shoe-logo.svg";
 import DialogTip from "../assets/images/white-arrow.png";
 import { colors } from "../styles/colors";
