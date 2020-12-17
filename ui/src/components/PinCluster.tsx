@@ -31,6 +31,7 @@ export const PinCluster = React.memo(function PinCluster({
       showCoverageOnHover={false}
       spiderLegPolylineOptions={{ opacity: 0 }}
       iconCreateFunction={createClusterCustomIcon}
+      zoomToBoundsOnClick={true}
     >
       {stories.map((story) => {
         return (
@@ -38,7 +39,7 @@ export const PinCluster = React.memo(function PinCluster({
             id={story.ID.toString()}
             key={story.ID}
             story={story}
-            state={PinState.Unfocused}
+            state={PinState.Resting}
             onPopupClick={openDrawer(story)}
           />
         );

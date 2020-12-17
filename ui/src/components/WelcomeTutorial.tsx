@@ -5,7 +5,6 @@ import CloseIcon from "@material-ui/icons/Close";
 import * as React from "react";
 import styled from "styled-components";
 
-import OverlayCircle from "../assets/images/small-clear-circle.svg";
 import ShoeLogo from "../assets/images/welcome-shoe-logo.svg";
 import DialogTip from "../assets/images/white-arrow.png";
 import { colors } from "../styles/colors";
@@ -31,16 +30,6 @@ const StyledFilterArrowTip = styled.img`
   height: 26px;
   left: -5%;
   top: 15%;
-  background: none;
-`;
-
-const StyledOverlay = styled.img`
-  position: absolute;
-  width: 84px;
-  height: 84px;
-  right: -68%;
-  top: 23%;
-  opacity: 15%
   background: none;
 `;
 
@@ -386,7 +375,6 @@ export function WelcomeTutorial({
 
       <StyledWelcome open={state === TutorialState.Third} onClose={handleClose}>
         <StyledArrowTip src={DialogTip}></StyledArrowTip>
-        <StyledOverlay src={OverlayCircle}></StyledOverlay>
         <StyledIconButton onClick={handleClose}>
           <StyledCloseIcon color="primary" fontSize="small" />
         </StyledIconButton>

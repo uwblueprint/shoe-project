@@ -110,6 +110,7 @@ export const NavigateDescriptionText = styled.p`
 
 export const CardDetailText = styled.p`
   font-size: ${fontSize.caption};
+  font-family: Poppins;
   font-weight: 300;
   line-height: 21px;
   text-align: left;
@@ -192,6 +193,7 @@ export const StoryDrawerRightText = styled.div`
 
 export const StoryDrawerContentText = styled.span`
   font-size: ${fontSize.subtitle};
+  white-space: pre-line;
   font-style: normal;
   font-weight: 400;
   line-height: 32px;
