@@ -59,16 +59,11 @@ const StyledCheckbox = styled(Checkbox)`
 
 const FilterContainer = styled.div`
   z-index: 1000;
-  position: absolute;
   width: 324px;
   min-height: 61px;
-  left: 36px;
-  top: 16px;
-
   background: ${colors.white};
   box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-
   display: flex;
   padding: 16px;
   flex-direction: column;

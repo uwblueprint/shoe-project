@@ -5,8 +5,8 @@ import CloseIcon from "@material-ui/icons/Close";
 import * as React from "react";
 import styled from "styled-components";
 
+import ShoeLogo from "../assets/images/shoe-project-logo.png";
 import OverlayCircle from "../assets/images/small-clear-circle.svg";
-import ShoeLogo from "../assets/images/welcome-shoe-logo.svg";
 import DialogTip from "../assets/images/white-arrow.png";
 import { colors } from "../styles/colors";
 import {
@@ -40,7 +40,7 @@ const StyledOverlay = styled.img`
   height: 84px;
   right: -68%;
   top: 23%;
-  opacity: 15%
+  opacity: 15%;
   background: none;
 `;
 
@@ -224,10 +224,8 @@ const StyledWelcomeLogo = styled.img`
   margin-left: 189px;
   margin-right: 196px;
   margin-bottom: 16px;
-  display: flex;
-  background-repeat: no-repeat;
-  width: 105px;
-  height: 109px;
+  width: 110px;
+  height: 110px;
 `;
 
 const StyledNavigateIconButton = styled(IconButton)`
@@ -337,7 +335,7 @@ export function WelcomeTutorial({
         <StyledWelcomeIconButton onClick={handleClose}>
           <StyledCloseIcon color="primary" fontSize="small" />
         </StyledWelcomeIconButton>
-        <StyledWelcomeLogo src={ShoeLogo}></StyledWelcomeLogo>
+        <StyledWelcomeLogo alt="Shoe Project Logo" src={ShoeLogo} />
         <WelcomeTitleText>Welcome</WelcomeTitleText>
         <WelcomeDescriptionText>
           The Shoe Project Impact Page is an interactive map that showcases a

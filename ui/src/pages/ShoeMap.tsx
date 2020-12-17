@@ -7,7 +7,7 @@ import Control from "react-leaflet-control";
 import styled, { css } from "styled-components";
 import useSWR from "swr";
 
-import ShoeLogo from "../assets/images/shoeproject-logo.svg";
+import ShoeLogo from "../assets/images/shoe-project-logo.png";
 import {
   Filter,
   HelpDrawer,
@@ -31,7 +31,7 @@ const StyledMap = styled(Map)<StyledMapProps>`
   width: 100vw;
   .leaflet-control {
     border: none;
-    margin: 0px 36px 16px 0px;
+    margin: 16px 36px;
   }
   .leaflet-bar a {
     width: 40px;
@@ -87,13 +87,10 @@ const MapContainer = styled.div`
   align-items: center;
 `;
 
-const StyledLogo = styled.div`
-  background-image: url(${ShoeLogo});
+const StyledLogo = styled.img`
   width: 87px;
-  height: 87px;
-  padding-left: 42px;
-  padding-bottom: 30px;
-  left: 36px;
+  height: 88px;
+  width: 88px;
 `;
 
 export const ShoeMap: React.FC = () => {
@@ -132,7 +129,6 @@ export const ShoeMap: React.FC = () => {
   return (
     <React.Fragment>
       <MapContainer>
-        <Filter onChange={onTagsChange} />
         <StyledMap
           center={currentLocation}
           zoom={zoom}
@@ -152,6 +148,9 @@ export const ShoeMap: React.FC = () => {
           )}
           <ZoomControl position="bottomright" />
           <AttributionControl position="topright" />
+          <Control position="topleft">
+            <Filter onChange={onTagsChange} />
+          </Control>
           <Control position="bottomright">
             <StyledHelpIcon
               onClick={() => setIsHelpDrawerOpen(HelpDrawerState.Open)}
@@ -160,7 +159,7 @@ export const ShoeMap: React.FC = () => {
             </StyledHelpIcon>
           </Control>
           <Control position="bottomleft">
-            <StyledLogo></StyledLogo>
+            <StyledLogo alt="Shoe Project Logo" src={ShoeLogo} />
           </Control>
         </StyledMap>
       </MapContainer>
