@@ -122,7 +122,7 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 		{
 			Title:           "The Little Prince",
 			Content:         "Children",
-			Date:            "January 2012",
+			Year:            2012,
 			Summary:         "Summary1",
 			CurrentCity:     "Toronto",
 			ImageURL:        "https://exampleurl.com",
@@ -136,7 +136,7 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 		{
 			Title:           "Hitchhiker's Guide to the Galaxy",
 			Content:         "Fiction",
-			Date:            "July 2012",
+			Year:            2012,
 			Summary:         "Summary2",
 			CurrentCity:     "Toronto",
 			ImageURL:        "https://exampleurl.com",
@@ -162,7 +162,7 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 			"author_country": "France",
 			"content": "Children",
 			"title": "The Little Prince",
-			"date": "January 2012",
+			"year": 2012,
 			"summary": "Summary1",
 			"current_city": "Toronto",
 			"image_url" : "https://exampleurl.com"
@@ -173,7 +173,7 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 			"author_country": "UK",
 			"content": "Fiction",
 			"title": "Hitchhiker's Guide to the Galaxy",
-			"date": "July 2012",
+			"year": 2012,
 			"summary": "Summary2",
 			"current_city": "Toronto",
 			"image_url" : "https://exampleurl.com"
@@ -191,7 +191,7 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 	response.Object().Value("payload").Array().Element(0).Object().Value("ID").Equal(1)
 	response.Object().Value("payload").Array().Element(0).Object().Value("content").Equal("Children")
 	response.Object().Value("payload").Array().Element(0).Object().Value("title").Equal("The Little Prince")
-	response.Object().Value("payload").Array().Element(0).Object().Value("date").Equal("January 2012")
+	response.Object().Value("payload").Array().Element(0).Object().Value("year").Equal(2012)
 	response.Object().Value("payload").Array().Element(0).Object().Value("summary").Equal("Summary1")
 	response.Object().Value("payload").Array().Element(0).Object().Value("current_city").Equal("Toronto")
 	response.Object().Value("payload").Array().Element(0).Object().Value("image_url").Equal("https://exampleurl.com")
@@ -202,7 +202,7 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 	response.Object().Value("payload").Array().Element(1).Object().Value("ID").Equal(2)
 	response.Object().Value("payload").Array().Element(1).Object().Value("content").Equal("Fiction")
 	response.Object().Value("payload").Array().Element(1).Object().Value("title").Equal("Hitchhiker's Guide to the Galaxy")
-	response.Object().Value("payload").Array().Element(1).Object().Value("date").Equal("July 2012")
+	response.Object().Value("payload").Array().Element(1).Object().Value("year").Equal(2012)
 	response.Object().Value("payload").Array().Element(1).Object().Value("summary").Equal("Summary2")
 	response.Object().Value("payload").Array().Element(1).Object().Value("current_city").Equal("Toronto")
 	response.Object().Value("payload").Array().Element(0).Object().Value("image_url").Equal("https://exampleurl.com")
@@ -251,7 +251,7 @@ func (suite *endpointTestSuite) TestCreateStory() {
 		{
 			Title:           "Jane Eyre",
 			Content:         "Classic",
-			Date:            "2019",
+			Year:            2019,
 			Summary:         "Summary",
 			CurrentCity:     "Toronto",
 			ImageURL:        "https://exampleurl.com",
@@ -276,7 +276,7 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 		{
 			Title:           "Half of a Yellow Sun",
 			Content:         "Fiction",
-			Date:            "2019",
+			Year:            2019,
 			Summary:         "Summary1",
 			CurrentCity:     "Toronto",
 			ImageURL:        "https://exampleurl.com",
@@ -299,7 +299,7 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 					"author_last_name": "Ngozi Adieche",
 					"current_city": "Toronto",
 					"content": "Fiction",
-					"date": "2019",
+					"year": 2019,
 					"summary": "Summary1",
 					"title": "Half of a Yellow Sun",
 					"image_url":"https://exampleurl.com"
@@ -313,7 +313,7 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 	response.Object().Value("payload").Object().Value("author_country").Equal("Nigeria")
 	response.Object().Value("payload").Object().Value("content").Equal("Fiction")
 	response.Object().Value("payload").Object().Value("title").Equal("Half of a Yellow Sun")
-	response.Object().Value("payload").Object().Value("date").Equal("2019")
+	response.Object().Value("payload").Object().Value("year").Equal(2019)
 	response.Object().Value("payload").Object().Value("summary").Equal("Summary1")
 	response.Object().Value("payload").Object().Value("current_city").Equal("Toronto")
 	response.Object().Value("payload").Object().Value("image_url").Equal("https://exampleurl.com")
