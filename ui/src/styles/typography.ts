@@ -193,7 +193,7 @@ export const StoryDrawerRightText = styled.div`
 
 export const StoryDrawerContentText = styled.span`
   font-size: ${fontSize.subtitle};
-  white-space: pre-line; 
+  white-space: pre-line;
   font-style: normal;
   font-weight: 400;
   line-height: 32px;

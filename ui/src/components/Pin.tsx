@@ -28,10 +28,10 @@ const StyledPopup = styled(Popup)`
   }
 `;
 
-function randomCoords(coordinate: number): number{
-  var num = Math.floor(Math.random()*99) + 1;
-  num *= Math.round(Math.random()) ? 1 : -1; 
-  return (coordinate+0.01*num);
+function randomCoords(coordinate: number): number {
+  let num = Math.floor(Math.random() * 99) + 1;
+  num *= Math.round(Math.random()) ? 1 : -1;
+  return coordinate + 0.01 * num;
 }
 
 export enum PinState {
@@ -65,7 +65,10 @@ export function Pin({
   });
 
   return (
-    <Marker position={[randomCoords(story.latitude), randomCoords(story.longitude)]} icon={icon}>
+    <Marker
+      position={[randomCoords(story.latitude), randomCoords(story.longitude)]}
+      icon={icon}
+    >
       <StyledPopup>
         <PinPreview
           shoeImage={story.image_url}
