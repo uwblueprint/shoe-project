@@ -1,12 +1,16 @@
 import "leaflet/dist/leaflet.css";
 
+import { LatLng, LatLngBounds } from "leaflet";
 import * as React from "react";
+import { useRef, useState } from "react";
 import { AttributionControl, Map, TileLayer, ZoomControl } from "react-leaflet";
 import Control from "react-leaflet-control";
 import styled, { css } from "styled-components";
 import useSWR from "swr";
+
 import ShoeLogo from "../assets/images/shoeproject-logo.svg";
 import {
+  EdgePins,
   Filter,
   HelpDrawer,
   HelpDrawerState,
@@ -14,15 +18,11 @@ import {
   StoryDrawer,
   TutorialState,
   WelcomeTutorial,
-  EdgePins,
 } from "../components";
 import { isTimestampExpired } from "../components/helpers/welcomeTutorialFunctions";
 import { colors } from "../styles";
 import { Story, Tokens } from "../types";
-import { useRef, useState } from "react";
-import { LatLng, LatLngBounds } from "leaflet";
 const TIMEOUT_SECONDS = 1728000000;
-
 
 interface StyledMapProps {
   isHelpDrawerOpen: boolean;
@@ -119,9 +119,11 @@ export const ShoeMap: React.FC = () => {
           filteredCountries.includes(story.author_country)
         );
 
-  const storyPostitions = stories.map(story => {
-    return { lat: story.latitude, lng: story.longitude}
-  })
+  const storyPostitions = stories
+    ? stories.map((story) => {
+        return { lat: story.latitude, lng: story.longitude };
+      })
+    : [];
 
   const [story, setStory] = React.useState<Story | undefined>(undefined);
   const handleOpenDrawer = (s: Story) => () => setStory(s);
@@ -139,18 +141,15 @@ export const ShoeMap: React.FC = () => {
   const [center, setCenter] = useState(null as LatLng);
 
   const setMoveAndZoomListeners = () => {
-    console.log("here");
-    if(mapRef && mapRef.current){
-      console.log(mapRef.current)
-      const onMoveOrZoom = (event) => {
-        if(mapRef && mapRef.current && mapRef.current.leafletElement){
-        setMapBounds(mapRef.current.leafletElement.getBounds());
-        setCenter(mapRef.current.leafletElement.getCenter());
-        console.log("set")
+    if (mapRef && mapRef.current) {
+      const onMoveOrZoom = () => {
+        if (mapRef && mapRef.current && mapRef.current.leafletElement) {
+          setMapBounds(mapRef.current.leafletElement.getBounds());
+          setCenter(mapRef.current.leafletElement.getCenter());
         }
       };
-      mapRef.current.leafletElement.on('moveend', onMoveOrZoom);
-      mapRef.current.leafletElement.on('zoomend', onMoveOrZoom);
+      mapRef.current.leafletElement.on("moveend", onMoveOrZoom);
+      mapRef.current.leafletElement.on("zoomend", onMoveOrZoom);
     }
   };
 
@@ -176,13 +175,13 @@ export const ShoeMap: React.FC = () => {
           )}
           {stories && !error && (
             <React.Fragment>
-            <PinCluster stories={stories} openDrawer={handleOpenDrawer} />
-            <EdgePins
-            stories={storyPostitions}
-            currPosition={center}
-            mapBounds={mapBounds}
-          />
-          </React.Fragment>
+              <PinCluster stories={stories} openDrawer={handleOpenDrawer} />
+              <EdgePins
+                stories={storyPostitions}
+                currPosition={center}
+                mapBounds={mapBounds}
+              />
+            </React.Fragment>
           )}
           <ZoomControl position="bottomright" />
           <AttributionControl position="topright" />

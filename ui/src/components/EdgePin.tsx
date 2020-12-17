@@ -1,6 +1,7 @@
 import L, { LatLng, Point } from "leaflet";
 import * as React from "react";
 import { Marker } from "react-leaflet";
+
 import { EdgeType } from "./EdgePins";
 import { rotatedArrowSVG } from "./RotatedArrowSVG";
 
@@ -17,9 +18,9 @@ export function getAnchor(edgeType: EdgeType): Point {
     case EdgeType.Top:
       return new L.Point(0, -10);
     case EdgeType.Bottom:
-      return new L.Point(0, 110);
+      return new L.Point(0, 70);
     case EdgeType.Left:
-      return new L.Point(-30, 0);
+      return new L.Point(-20, 0);
     default:
       return new L.Point(80, 0);
   }
@@ -32,7 +33,7 @@ export function EdgePin({
 }: EdgePinProps): JSX.Element {
   const arrowIcon = new L.Icon({
     iconUrl: rotatedArrowSVG(angle),
-    iconRetinaUrl:rotatedArrowSVG(angle),
+    iconRetinaUrl: rotatedArrowSVG(angle),
     iconAnchor: getAnchor(edgeType),
     popupAnchor: [-234, 200],
     shadowUrl: null,
@@ -41,7 +42,5 @@ export function EdgePin({
     iconSize: new L.Point(60, 70),
   });
 
-  return (
-    <Marker position={position} icon={arrowIcon} />
-  );
+  return <Marker position={position} icon={arrowIcon} />;
 }

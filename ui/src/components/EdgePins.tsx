@@ -1,8 +1,10 @@
-import L, { LatLng, LatLngBounds } from "leaflet";
-import * as React from "react";
 import "react-leaflet-markercluster/dist/styles.min.css";
 import "leaflet.markercluster";
 import "leaflet/dist/leaflet.css";
+
+import L, { LatLng, LatLngBounds } from "leaflet";
+import * as React from "react";
+
 import { EdgePinCluster } from "./EdgePinCluster";
 
 export enum EdgeType {
@@ -19,9 +21,9 @@ function intersects(a, b, c, d, p, q, r, s) {
     // return false if the lines are parallel or non-distinct
     return false;
   } else {
-    // calculate the value we multiply by if our points are 
-    // p1 = (x1, y1) and p2 = (x2, y2) and our equations for the 
-    // point of intersection are x1 + lambda * (x2 - x1) and 
+    // calculate the value we multiply by if our points are
+    // p1 = (x1, y1) and p2 = (x2, y2) and our equations for the
+    // point of intersection are x1 + lambda * (x2 - x1) and
     // y1 + lambda * (y2 - y1), then check if this is valid
     const lambda = ((s - q) * (r - a) + (p - r) * (s - b)) / det;
     const gamma = ((b - d) * (r - a) + (c - a) * (s - b)) / det;
@@ -49,7 +51,12 @@ function angleFromCoordinate(lat1, long1, lat2, long2) {
   return brng - 80;
 }
 
-function getPOIInfo(pin: LatLng, corners: LatLng[], currPosition: LatLng, edgePinsInfo: { pos: LatLng; angle: number; edgeType: EdgeType }[]) {
+function getPOIInfo(
+  pin: LatLng,
+  corners: LatLng[],
+  currPosition: LatLng,
+  edgePinsInfo: { pos: LatLng; angle: number; edgeType: EdgeType }[]
+) {
   // iterate through the 4 sides of our current map view and find the point
   // of intersection between the line from the center of the map view to pin
   // and the side we are currently looking at
@@ -115,7 +122,9 @@ export function EdgePins({
     return { lat: story.lat, lng: story.lng };
   });
 
-  const isVisible = !pinPositions.some((pos) => mapBounds.contains(L.latLng(pos.lat, pos.lng)));
+  const isVisible = !pinPositions.some((pos) =>
+    mapBounds.contains(L.latLng(pos.lat, pos.lng))
+  );
 
   // do not display the edge pins if there are markers in view
   if (!isVisible) return null;
@@ -132,7 +141,7 @@ export function EdgePins({
 
   // get the closest three pins
   const closestPins: LatLng[] = distances.map((distance) => {
-     return distanceToPos[distance];
+    return distanceToPos[distance];
   });
 
   const edgePinsInfo: { pos: LatLng; angle: number; edgeType: EdgeType }[] = [];
@@ -149,6 +158,5 @@ export function EdgePins({
   closestPins.forEach((pin) => {
     getPOIInfo(pin, corners, currPosition, edgePinsInfo);
   });
-
   return <EdgePinCluster clusterData={edgePinsInfo} />;
 }

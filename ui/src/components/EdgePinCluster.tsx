@@ -1,9 +1,11 @@
-import * as React from "react";
-import L, { LatLng } from "leaflet";
 import "react-leaflet-markercluster/dist/styles.min.css";
 import "leaflet.markercluster";
-import MarkerClusterGroup from "react-leaflet-markercluster";
 import "leaflet/dist/leaflet.css";
+
+import L, { LatLng } from "leaflet";
+import * as React from "react";
+import MarkerClusterGroup from "react-leaflet-markercluster";
+
 import { EdgePin, getAnchor } from "./EdgePin";
 import { EdgeType } from "./EdgePins";
 import { rotatedArrowSVG } from "./RotatedArrowSVG";
@@ -56,26 +58,34 @@ export function EdgePinCluster({
   const bottomCluster = clusterData.filter(
     (data) => data.edgeType === EdgeType.Bottom
   );
-  const clustersByDirection = [bottomCluster, rightCluster, topCluster, leftCluster];
+  const clustersByDirection = [
+    bottomCluster,
+    rightCluster,
+    topCluster,
+    leftCluster,
+  ];
   return (
     <React.Fragment>
-      {clustersByDirection.map((cluster, index)=> {
+      {clustersByDirection.map((cluster, index) => {
+        return (
           <MarkerClusterGroup
-          showCoverageOnHover={false}
-          spiderLegPolylineOptions={{ opacity: 0 }}
-          iconCreateFunction={() => createClusterCustomIcon(index)}
-        >
-          {cluster.map((marker, key) => {
-            return (
-              <EdgePin
-                key={key}
-                position={marker.pos}
-                angle={marker.angle}
-                edgeType={marker.edgeType}
-              />
-            );
-          })}
-        </MarkerClusterGroup>
+            key={index}
+            showCoverageOnHover={false}
+            spiderLegPolylineOptions={{ opacity: 0 }}
+            iconCreateFunction={() => createClusterCustomIcon(index)}
+          >
+            {cluster.map((marker, key) => {
+              return (
+                <EdgePin
+                  key={key}
+                  position={marker.pos}
+                  angle={marker.angle}
+                  edgeType={marker.edgeType}
+                />
+              );
+            })}
+          </MarkerClusterGroup>
+        );
       })}
     </React.Fragment>
   );

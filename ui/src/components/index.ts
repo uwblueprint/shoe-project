@@ -1,3 +1,4 @@
+export { EdgePins } from "./EdgePins";
 export { Filter } from "./Filter";
 export { HelpAccordion } from "./HelpAccordion";
 export { HelpDrawer, HelpDrawerState } from "./HelpDrawer";
@@ -6,4 +7,3 @@ export { PinCluster } from "./PinCluster";
 export { PinPreview } from "./PinPreview";
 export { StoryDrawer } from "./StoryDrawer";
 export { TutorialState, WelcomeTutorial } from "./WelcomeTutorial";
-export { EdgePins } from "./EdgePins";
