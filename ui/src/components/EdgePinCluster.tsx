@@ -6,22 +6,22 @@ import MarkerClusterGroup from "react-leaflet-markercluster";
 import "leaflet/dist/leaflet.css";
 import { EdgePin, getAnchor } from "./EdgePin";
 import { EdgeType } from "./EdgePins";
-import { arrow } from "./Arrow";
+import { rotatedArrowSVG } from "./RotatedArrowSVG";
 
-const createClusterCustomIcon = function (edgeType: EdgeType) {
+const createClusterCustomIcon = (edgeType: EdgeType) => {
   let icon;
   switch (edgeType) {
     case EdgeType.Right:
-      icon = arrow(0);
+      icon = rotatedArrowSVG(0);
       break;
     case EdgeType.Bottom:
-      icon = arrow(90);
+      icon = rotatedArrowSVG(90);
       break;
     case EdgeType.Top:
-      icon = arrow(270);
+      icon = rotatedArrowSVG(270);
       break;
     case EdgeType.Left:
-      icon = arrow(180);
+      icon = rotatedArrowSVG(180);
       break;
   }
 
@@ -56,72 +56,27 @@ export function EdgePinCluster({
   const bottomCluster = clusterData.filter(
     (data) => data.edgeType === EdgeType.Bottom
   );
+  const clustersByDirection = [bottomCluster, rightCluster, topCluster, leftCluster];
   return (
     <React.Fragment>
-      <MarkerClusterGroup
-        showCoverageOnHover={false}
-        spiderLegPolylineOptions={{ opacity: 0 }}
-        iconCreateFunction={() => createClusterCustomIcon(EdgeType.Right)}
-      >
-        {rightCluster.map((marker, key) => {
-          return (
-            <EdgePin
-              key={key}
-              position={marker.pos}
-              angle={marker.angle}
-              edgeType={marker.edgeType}
-            />
-          );
-        })}
-      </MarkerClusterGroup>
-      <MarkerClusterGroup
-        showCoverageOnHover={false}
-        spiderLegPolylineOptions={{ opacity: 0 }}
-        iconCreateFunction={() => createClusterCustomIcon(EdgeType.Left)}
-      >
-        {leftCluster.map((marker, key) => {
-          return (
-            <EdgePin
-              key={key}
-              position={marker.pos}
-              angle={marker.angle}
-              edgeType={marker.edgeType}
-            />
-          );
-        })}
-      </MarkerClusterGroup>
-      <MarkerClusterGroup
-        showCoverageOnHover={false}
-        spiderLegPolylineOptions={{ opacity: 0 }}
-        iconCreateFunction={() => createClusterCustomIcon(EdgeType.Top)}
-      >
-        {topCluster.map((marker, key) => {
-          return (
-            <EdgePin
-              key={key}
-              position={marker.pos}
-              angle={marker.angle}
-              edgeType={marker.edgeType}
-            />
-          );
-        })}
-      </MarkerClusterGroup>
-      <MarkerClusterGroup
-        showCoverageOnHover={false}
-        spiderLegPolylineOptions={{ opacity: 0 }}
-        iconCreateFunction={() => createClusterCustomIcon(EdgeType.Bottom)}
-      >
-        {bottomCluster.map((marker, key) => {
-          return (
-            <EdgePin
-              key={key}
-              position={marker.pos}
-              angle={marker.angle}
-              edgeType={marker.edgeType}
-            />
-          );
-        })}
-      </MarkerClusterGroup>
+      {clustersByDirection.map((cluster, index)=> {
+          <MarkerClusterGroup
+          showCoverageOnHover={false}
+          spiderLegPolylineOptions={{ opacity: 0 }}
+          iconCreateFunction={() => createClusterCustomIcon(index)}
+        >
+          {cluster.map((marker, key) => {
+            return (
+              <EdgePin
+                key={key}
+                position={marker.pos}
+                angle={marker.angle}
+                edgeType={marker.edgeType}
+              />
+            );
+          })}
+        </MarkerClusterGroup>
+      })}
     </React.Fragment>
   );
 }

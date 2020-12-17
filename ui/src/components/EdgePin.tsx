@@ -2,7 +2,7 @@ import L, { LatLng, Point } from "leaflet";
 import * as React from "react";
 import { Marker } from "react-leaflet";
 import { EdgeType } from "./EdgePins";
-import { arrow } from "./Arrow";
+import { rotatedArrowSVG } from "./RotatedArrowSVG";
 
 export interface EdgePinProps {
   position: LatLng;
@@ -10,6 +10,8 @@ export interface EdgePinProps {
   edgeType: EdgeType;
 }
 
+// These numbers came from trial and error, and create a space
+// between the pins and the edge of the map
 export function getAnchor(edgeType: EdgeType): Point {
   switch (edgeType) {
     case EdgeType.Top:
@@ -29,8 +31,8 @@ export function EdgePin({
   edgeType,
 }: EdgePinProps): JSX.Element {
   const arrowIcon = new L.Icon({
-    iconUrl: arrow(angle),
-    iconRetinaUrl: arrow(angle),
+    iconUrl: rotatedArrowSVG(angle),
+    iconRetinaUrl:rotatedArrowSVG(angle),
     iconAnchor: getAnchor(edgeType),
     popupAnchor: [-234, 200],
     shadowUrl: null,
@@ -40,8 +42,6 @@ export function EdgePin({
   });
 
   return (
-    <React.Fragment>
-      <Marker position={position} icon={arrowIcon} />
-    </React.Fragment>
+    <Marker position={position} icon={arrowIcon} />
   );
 }

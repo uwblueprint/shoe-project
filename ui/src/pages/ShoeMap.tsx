@@ -1,7 +1,7 @@
 import "leaflet/dist/leaflet.css";
 
 import * as React from "react";
-import { AttributionControl, Map, TileLayer, ZoomControl, Marker } from "react-leaflet";
+import { AttributionControl, Map, TileLayer, ZoomControl } from "react-leaflet";
 import Control from "react-leaflet-control";
 import styled, { css } from "styled-components";
 import useSWR from "swr";
@@ -22,6 +22,7 @@ import { Story, Tokens } from "../types";
 import { useRef, useState } from "react";
 import { LatLng, LatLngBounds } from "leaflet";
 const TIMEOUT_SECONDS = 1728000000;
+
 
 interface StyledMapProps {
   isHelpDrawerOpen: boolean;
@@ -177,7 +178,7 @@ export const ShoeMap: React.FC = () => {
             <React.Fragment>
             <PinCluster stories={stories} openDrawer={handleOpenDrawer} />
             <EdgePins
-            pinPositions={storyPostitions}
+            stories={storyPostitions}
             currPosition={center}
             mapBounds={mapBounds}
           />
