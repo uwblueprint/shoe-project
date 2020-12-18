@@ -28,12 +28,6 @@ const StyledPopup = styled(Popup)`
   }
 `;
 
-function randomCoords(coordinate: number): number {
-  let num = Math.floor(Math.random() * 99) + 1;
-  num *= Math.round(Math.random()) ? 1 : -1;
-  return coordinate + 0.01 * num;
-}
-
 export enum PinState {
   Resting,
   Selected,
@@ -65,10 +59,7 @@ export function Pin({
   });
 
   return (
-    <Marker
-      position={[randomCoords(story.latitude), randomCoords(story.longitude)]}
-      icon={icon}
-    >
+    <Marker position={[story.latitude, story.longitude]} icon={icon}>
       <StyledPopup>
         <PinPreview
           shoeImage={story.image_url}

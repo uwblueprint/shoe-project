@@ -3,8 +3,11 @@ package restapi
 import (
 	"encoding/json"
 	"fmt"
+	"math"
+	"math/rand"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
@@ -12,6 +15,10 @@ import (
 	"github.com/uwblueprint/shoe-project/restapi/rest"
 	"gorm.io/gorm"
 )
+
+func init() {
+	rand.Seed(time.Now().UTC().UnixNano())
+}
 
 func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var stories []models.Story
@@ -54,8 +61,8 @@ func (api api) CreateStories(w http.ResponseWriter, r *http.Request) render.Rend
 		if err != nil {
 			return rest.ErrInvalidRequest(api.logger, fmt.Sprintf("Story %d has an invalid current city", i), err)
 		}
-		stories[i].Latitude = coordinates.Latitude
-		stories[i].Longitude = coordinates.Longitude
+		stories[i].Latitude = randomCoords(coordinates.Latitude)
+		stories[i].Longitude = randomCoords(coordinates.Longitude)
 	}
 
 	if err := api.database.Create(&stories).Error; err != nil {
@@ -77,4 +84,13 @@ func (api api) ReturnStoriesByCountries(w http.ResponseWriter, r *http.Request) 
 	}
 
 	return rest.JSONStatusOK(stories)
+}
+
+func randomCoords(coordinate float64) float64 {
+	num := math.Floor(rand.Float64()*99) + 1
+	if math.Round(rand.Float64()) == 1 {
+		num *= 1
+	}
+
+	return coordinate + 0.003*num
 }
