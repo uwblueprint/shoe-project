@@ -23,5 +23,3 @@ ehthumbs.db
 Thumbs.db
 
 .venv
-go.sum
-ui/yarn.lock
