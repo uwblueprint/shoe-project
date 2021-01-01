@@ -4,7 +4,6 @@ import CardMedia from "@material-ui/core/CardMedia";
 import * as React from "react";
 import styled from "styled-components";
 
-import ChinaFlag from "../assets/flags/China.png";
 import { colors } from "../styles/colors";
 import {
   CardDescriptionText,
@@ -59,7 +58,6 @@ export function PinPreview({
     <>
       <StyledMedia image={shoeImage} title="Temporary Image" />
       <StyledCardContent>
-        <img alt="flag" src={ChinaFlag} />
         <CardTagText>{country}</CardTagText>
         <CardTitleText>{title}</CardTitleText>
         <CardDescriptionText>{description}</CardDescriptionText>
