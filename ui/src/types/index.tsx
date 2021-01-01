@@ -12,6 +12,7 @@ export interface Story extends Model {
   title: string;
   content: string;
   current_city: string;
+  year: number;
   summary: string;
   latitude: number;
   longitude: number;

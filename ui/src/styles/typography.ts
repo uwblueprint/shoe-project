@@ -130,7 +130,6 @@ export const CardTagText = styled.span`
   text-align: left;
   color: ${colors.black};
   opacity: 0.7;
-  margin-left: 9px;
 
   @media ${device.mobileS} {
     font-size: ${fontSize.mobile};

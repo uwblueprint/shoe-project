@@ -66,7 +66,7 @@ export function Pin({
           title={story.title}
           description={story.summary}
           author={`${story.author_first_name} ${story.author_last_name}`}
-          date={story.CreatedAt}
+          date={story.year.toString()}
           country={story.author_country}
           onClick={onPopupClick}
         />

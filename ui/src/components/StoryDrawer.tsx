@@ -5,7 +5,6 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import * as React from "react";
 import styled from "styled-components";
 
-import ChinaFlag from "../assets/flags/China.png";
 import { colors } from "../styles/colors";
 import {
   StoryDrawerAuthorText,
@@ -46,11 +45,6 @@ const StyledRoot = styled.div`
   padding-bottom: 10vh;
 `;
 
-const StyledFlagImage = styled.img`
-  border-radius: 5px;
-  width: 100%;
-`;
-
 interface StoryDrawerProps {
   story?: Story;
   onClose: () => void;
@@ -69,8 +63,7 @@ export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
     current_city,
     content,
     image_url,
-    /* TODO: update date */
-    CreatedAt: date,
+    year,
   } = story;
 
   return (
@@ -82,9 +75,6 @@ export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12}>
             <StoryDrawerTitleText>{title}</StoryDrawerTitleText>
-          </Grid>
-          <Grid item xs={1}>
-            <StyledFlagImage alt="flag" src={ChinaFlag} />
           </Grid>
           <Grid item xs={5}>
             <StoryDrawerCountryText>{`Origin: ${author_country}`}</StoryDrawerCountryText>
@@ -98,8 +88,9 @@ export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
             justify="flex-end"
             container
           >
-            <StoryDrawerRightText>{current_city}, Canada</StoryDrawerRightText>
-            <StoryDrawerRightText>{date}</StoryDrawerRightText>
+            <StoryDrawerRightText>
+              {current_city}, Canada • {year}
+            </StoryDrawerRightText>
           </Grid>
           <Grid item xs={12}>
             <StyledImage src={image_url} alt="Temporary Image" />
