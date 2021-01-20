@@ -5,6 +5,7 @@ import (
 	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/internal/database"
 	"github.com/uwblueprint/shoe-project/internal/database/migrations"
+	"github.com/uwblueprint/shoe-project/internal/location"
 	"go.uber.org/zap"
 )
 
@@ -33,7 +34,12 @@ var (
 				logger.Fatalw("Super user creation failed", "Err", err)
 			}
 
-			if err := migrations.Seed(db); err != nil {
+			locationFinder, err := location.NewMapboxFinder(config.GetMapBoxToken(), "CA")
+			if err != nil {
+				logger.Fatalw("Failed to initialize Mapbox location finder service")
+			}
+
+			if err := migrations.Seed(db, locationFinder); err != nil {
 				logger.Fatalw("Database seed failed", "Err", err)
 			}
 
