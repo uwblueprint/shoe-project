@@ -50,7 +50,7 @@ export function Pin({
     iconUrl: state === PinState.Unfocused ? unfocused : resting,
     iconRetinaUrl: state === PinState.Unfocused ? unfocused : resting,
     iconAnchor: state === PinState.Selected ? [29, 70] : [25, 61],
-    popupAnchor: [-234, 200],
+    popupAnchor: [234, -100],
     shadowUrl: null,
     shadowSize: null,
     shadowAnchor: null,
@@ -58,9 +58,15 @@ export function Pin({
       state === PinState.Selected ? new L.Point(48, 57) : new L.Point(39, 48),
   });
 
+  const leftPaddingPoint = L.point(500, 75);
+  const rightPaddingPoint = L.point(100, 400);
+
   return (
     <Marker position={[story.latitude, story.longitude]} icon={icon}>
-      <StyledPopup>
+      <StyledPopup
+        autoPanPaddingTopLeft={leftPaddingPoint}
+        autoPanPaddingBottomRight={rightPaddingPoint}
+      >
         <PinPreview
           shoeImage={story.image_url}
           title={story.title}
