@@ -1,5 +1,6 @@
 import "leaflet/dist/leaflet.css";
 
+import L from "leaflet";
 import * as React from "react";
 import { useState } from "react";
 import { AttributionControl, Map, TileLayer, ZoomControl } from "react-leaflet";
@@ -101,6 +102,10 @@ export const ShoeMap: React.FC = () => {
   const minZoom = 4;
   const maxZoom = 12;
   const currentLocation = { lat: 53.655697, lng: -100.13316 };
+  const southWest = L.latLng(40.712, -74.227);
+  const northEast = L.latLng(70.774, -120.125);
+  const mapBounds = L.latLngBounds(southWest, northEast);
+
   const { data: tokens, error: tokens_error } = useSWR<Tokens>(
     "/api/client_tokens"
   );
@@ -134,6 +139,7 @@ export const ShoeMap: React.FC = () => {
       <MapContainer>
         <Filter onChange={onTagsChange} />
         <StyledMap
+          maxBounds={mapBounds}
           center={currentLocation}
           zoom={zoom}
           minZoom={minZoom}
