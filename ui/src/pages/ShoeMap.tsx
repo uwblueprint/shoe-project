@@ -6,6 +6,8 @@ import { AttributionControl, Map, TileLayer, ZoomControl } from "react-leaflet";
 import Control from "react-leaflet-control";
 import styled, { css } from "styled-components";
 import useSWR from "swr";
+import L from "leaflet";
+
 
 import ShoeLogo from "../assets/images/shoeproject-logo.svg";
 import {
@@ -101,6 +103,11 @@ export const ShoeMap: React.FC = () => {
   const minZoom = 4;
   const maxZoom = 12;
   const currentLocation = { lat: 53.655697, lng: -100.13316 };
+  var southWest = L.latLng(40.712, -74.227),
+  northEast = L.latLng(70.774, -120.125),
+  mapBounds = L.latLngBounds(southWest, northEast);
+
+
   const { data: tokens, error: tokens_error } = useSWR<Tokens>(
     "/api/client_tokens"
   );
@@ -129,11 +136,13 @@ export const ShoeMap: React.FC = () => {
     HelpDrawerState.Closed
   );
 
+  
   return (
     <React.Fragment>
       <MapContainer>
         <Filter onChange={onTagsChange} />
         <StyledMap
+          maxBounds={mapBounds}
           center={currentLocation}
           zoom={zoom}
           minZoom={minZoom}
