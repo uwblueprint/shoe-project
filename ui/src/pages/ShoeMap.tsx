@@ -104,9 +104,16 @@ export const ShoeMap: React.FC = () => {
   const minZoom = 4;
   const maxZoom = 12;
   const currentLocation = { lat: 53.655697, lng: -100.13316 };
+<<<<<<< HEAD
   const southWest = L.latLng(40.712, -50.227);
   const northEast = L.latLng(70.774, -150.125);
   const mapBounds = L.latLngBounds(southWest, northEast);
+=======
+  var southWest = L.latLng(40.712, -50.227),
+  northEast = L.latLng(70.774, -150.125),
+  mapBounds = L.latLngBounds(southWest, northEast);
+
+>>>>>>> a063fba (another fix)
 
   const { data: tokens, error: tokens_error } = useSWR<Tokens>(
     "/api/client_tokens"
