@@ -6,6 +6,7 @@ import (
 	"github.com/uwblueprint/shoe-project/internal/database/models"
 	"github.com/uwblueprint/shoe-project/internal/location"
 	"golang.org/x/crypto/bcrypt"
+	"github.com/uwblueprint/shoe-project/restapi"
 	"gorm.io/gorm"
 	"io/ioutil"
 )
@@ -68,8 +69,8 @@ func Seed(db *gorm.DB, locationFinder location.LocationFinder) error {
 		if err != nil {
 			return err
 		}
-		stories[i].Latitude = coordinates.Latitude
-		stories[i].Longitude = coordinates.Longitude
+		stories[i].Latitude = restapi.RandomCoords(coordinates.Latitude);
+		stories[i].Longitude = restapi.RandomCoords(coordinates.Longitude);
 	}
 
 	return db.Create(&stories).Error

@@ -61,8 +61,8 @@ func (api api) CreateStories(w http.ResponseWriter, r *http.Request) render.Rend
 		if err != nil {
 			return rest.ErrInvalidRequest(api.logger, fmt.Sprintf("Story %d has an invalid current city", i), err)
 		}
-		stories[i].Latitude = randomCoords(coordinates.Latitude)
-		stories[i].Longitude = randomCoords(coordinates.Longitude)
+		stories[i].Latitude = RandomCoords(coordinates.Latitude)
+		stories[i].Longitude = RandomCoords(coordinates.Longitude)
 	}
 
 	if err := api.database.Create(&stories).Error; err != nil {
@@ -86,7 +86,7 @@ func (api api) ReturnStoriesByCountries(w http.ResponseWriter, r *http.Request) 
 	return rest.JSONStatusOK(stories)
 }
 
-func randomCoords(coordinate float64) float64 {
+func RandomCoords(coordinate float64) float64 {
 	num := math.Floor(rand.Float64()*99) + 1
 	if math.Round(rand.Float64()) == 1 {
 		num *= 1
