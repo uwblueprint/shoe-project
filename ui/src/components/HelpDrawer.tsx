@@ -6,6 +6,8 @@ import styled from "styled-components";
 
 import { TutorialState } from "../components/WelcomeTutorial";
 import { colors } from "../styles/colors";
+import { device } from "../styles/device";
+
 import {
   HelpDrawerBoxText,
   HelpDrawerLaunchButtonText,
@@ -18,6 +20,10 @@ const StyledRoot = styled.div`
   height: 100vh;
   margin: 24px;
   position: relative;
+
+  @media ${device.mobileL} {
+   width: 95vw;
+  }
 `;
 
 const ScrollArea = styled.div`
@@ -27,7 +33,7 @@ const ScrollArea = styled.div`
 
 const StyledBox = styled.div`
   border: 1.5px solid ${colors.primary};
-  background: ${colors.primaryLight4}80;
+  background: ${colors.primaryLight4};
   border-radius: 10px;
   margin: 12px 0px;
   padding: 24px;

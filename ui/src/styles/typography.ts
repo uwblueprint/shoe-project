@@ -12,6 +12,7 @@ export const fontSize = Object.freeze({
   body2: "14px",
   caption: "14px",
   mobile: "10px",
+  mobile2: "24px",
   interactive: "16px",
 });
 
@@ -19,8 +20,8 @@ export const Body1 = styled.span`
   font-style: normal;
   font-size: ${fontSize.body1};
   line-height: 150%;
-  @media ${device.mobileS} {
-    font-size: ${fontSize.mobile};
+  @media ${device.mobileL} {
+    font-size: ${fontSize.h2Text};
   }
 `;
 
@@ -30,7 +31,7 @@ export const TitleText = styled.p`
   text-align: center;
   color: ${colors.secondaryDark2};
 
-  @media ${device.mobileS} {
+  @media ${device.mobileL} {
     font-size: ${fontSize.h3Text};
   }
 `;
@@ -58,7 +59,7 @@ export const CardDescriptionText = styled.p`
   opacity: 0.7;
   margin: 0;
 
-  @media ${device.mobileS} {
+  @media ${device.mobileL} {
     font-size: ${fontSize.body2};
   }
 `;
@@ -116,7 +117,7 @@ export const CardDetailText = styled.p`
   color: ${colors.black};
   margin: 16px 0px 0px 0px !important;
 
-  @media ${device.mobileS} {
+  @media ${device.mobileL} {
     font-size: ${fontSize.mobile};
   }
 `;
@@ -130,7 +131,7 @@ export const CardTagText = styled.span`
   color: ${colors.black};
   opacity: 0.7;
 
-  @media ${device.mobileS} {
+  @media ${device.mobileL} {
     font-size: ${fontSize.mobile};
   }
 `;
@@ -143,7 +144,7 @@ export const StoryDrawerTitleText = styled.span`
   line-height: 37px;
   letter-spacing: 0em;
   text-align: left;
-  @media ${device.mobileS} {
+  @media ${device.mobileL} {
     font-size: ${fontSize.h2Text};
   }
 `;
@@ -170,7 +171,7 @@ export const StoryDrawerAuthorText = styled.div`
   letter-spacing: 0em;
   text-align: left;
   opacity: 0.5;
-  @media ${device.mobileS} {
+  @media ${device.mobileL} {
     font-size: ${fontSize.mobile};
   }
 `;
@@ -184,7 +185,7 @@ export const StoryDrawerRightText = styled.div`
   letter-spacing: 0em;
   text-align: right;
   opacity: 0.5;
-  @media ${device.mobileS} {
+  @media ${device.mobileL} {
     font-size: ${fontSize.mobile};
   }
 `;
@@ -197,7 +198,7 @@ export const StoryDrawerContentText = styled.span`
   line-height: 32px;
   letter-spacing: 0em;
   text-align: left;
-  @media ${device.mobileS} {
+  @media ${device.mobileL} {
     font-size: ${fontSize.mobile};
   }
 `;
@@ -208,8 +209,9 @@ export const HelpDrawerBoxText = styled.span`
   font-weight: normal;
   line-height: 150%;
   text-align: left;
-  @media ${device.mobileS} {
-    font-size: ${fontSize.mobile};
+  @media ${device.mobileL} {
+    font-size: ${fontSize.h3Text};
+
   }
 `;
 
@@ -221,9 +223,10 @@ export const HelpDrawerTitleText = styled.p`
   text-align: left;
   margin: 0 0 6px 0;
   color: ${colors.black};
-  @media ${device.mobileS} {
-    font-size: ${fontSize.mobile};
+  @media ${device.mobileL} {
+    font-size: ${fontSize.h1Text};
   }
+  
 `;
 
 export const HelpDrawerLaunchButtonText = styled.span`
@@ -235,7 +238,9 @@ export const HelpDrawerLaunchButtonText = styled.span`
   text-align: center;
   text-transform: uppercase;
   color: ${colors.primaryDark2};
-  @media ${device.mobileS} {
-    font-size: ${fontSize.mobile};
+  @media ${device.mobileL} {
+    font-size: ${fontSize.mobile2};
+    padding-top: 24px;
+    padding-bototm: 24px;
   }
 `;

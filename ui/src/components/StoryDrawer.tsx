@@ -6,6 +6,8 @@ import * as React from "react";
 import styled from "styled-components";
 
 import { colors } from "../styles/colors";
+import { device } from "../styles/device";
+
 import {
   StoryDrawerAuthorText,
   StoryDrawerContentText,
@@ -14,6 +16,12 @@ import {
   StoryDrawerTitleText,
 } from "../styles/typography";
 import { Story } from "../types";
+
+const StyledDrawer = styled(Drawer)`
+  .MuiDrawer-paperAnchorRight{  
+    width: 100%;
+  }
+`;
 
 const StyledIconButton = styled(Button)`
   position: absolute;
@@ -36,13 +44,22 @@ const StyledIconButton = styled(Button)`
 const StyledImage = styled.img`
   border-radius: 0px;
   width: 100%;
+  @media ${device.mobileL} {
+    margin-left: 1vh;
+    margin-right: 1vh;
+   }
 `;
 
 const StyledRoot = styled.div`
-  width: 100vh;
   padding-left: 30vh;
   padding-right: 30vh;
   padding-bottom: 10vh;
+
+   @media ${device.mobileL} {
+     padding-left: 1vh;
+     padding-right: 1vh;
+    }
+
 `;
 
 interface StoryDrawerProps {
@@ -67,7 +84,7 @@ export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
   } = story;
 
   return (
-    <Drawer anchor="right" open onClose={onClose}>
+    <StyledDrawer anchor="right" open onClose={onClose}>
       <StyledIconButton onClick={onClose}>
         <ArrowForwardIcon />
       </StyledIconButton>
@@ -100,6 +117,6 @@ export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
           </Grid>
         </Grid>
       </StyledRoot>
-    </Drawer>
+    </StyledDrawer>
   );
 }
