@@ -103,8 +103,8 @@ export const ShoeMap: React.FC = () => {
   const minZoom = 4;
   const maxZoom = 12;
   const currentLocation = { lat: 53.655697, lng: -100.13316 };
-  var southWest = L.latLng(40.712, -74.227),
-  northEast = L.latLng(70.774, -120.125),
+  var southWest = L.latLng(40.712, -50.227),
+  northEast = L.latLng(70.774, -150.125),
   mapBounds = L.latLngBounds(southWest, northEast);
 
 
