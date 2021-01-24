@@ -21,9 +21,11 @@ const StyledRoot = styled.div`
   margin: 24px;
   position: relative;
 
-  @media ${device.mobileL} {
+  @media ${device.laptop} {
    width: 95vw;
+   height: 100vh;
   }
+
 `;
 
 const ScrollArea = styled.div`

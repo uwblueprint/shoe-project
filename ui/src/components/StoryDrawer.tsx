@@ -44,7 +44,8 @@ const StyledIconButton = styled(Button)`
 const StyledImage = styled.img`
   border-radius: 0px;
   width: 100%;
-  @media ${device.mobileL} {
+
+  @media ${device.mobileS} {
     margin-left: 1vh;
     margin-right: 1vh;
    }
@@ -55,11 +56,16 @@ const StyledRoot = styled.div`
   padding-right: 30vh;
   padding-bottom: 10vh;
 
-   @media ${device.mobileL} {
-     padding-left: 1vh;
-     padding-right: 1vh;
+
+  @media ${device.laptop}  {
+     padding-left: 2.5vh;
+     padding-right: 2.5vh;
     }
 
+`;
+const StyledDrawerContainer = styled.div`
+  position: relative;
+  margin-bottom: 21px;
 `;
 
 interface StoryDrawerProps {
@@ -93,23 +99,22 @@ export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
           <Grid item xs={12}>
             <StoryDrawerTitleText>{title}</StoryDrawerTitleText>
           </Grid>
-          <Grid item xs={5}>
-            <StoryDrawerCountryText>{`Origin: ${author_country}`}</StoryDrawerCountryText>
+          <Grid item xs={12}>
+            <StoryDrawerCountryText>Origin: {author_country}</StoryDrawerCountryText>
+            <StyledDrawerContainer>
             <StoryDrawerAuthorText>{`${author_first_name} ${author_last_name}`}</StoryDrawerAuthorText>
-          </Grid>
-          <Grid
-            item
-            xs={6}
-            alignItems="flex-end"
-            alignContent="flex-end"
-            justify="flex-end"
-            container
-          >
             <StoryDrawerRightText>
               {current_city}, Canada • {year}
             </StoryDrawerRightText>
+            </StyledDrawerContainer>
           </Grid>
-          <Grid item xs={12}>
+          
+          <Grid 
+          item 
+          xs={12}
+          justify="flex-end"
+          alignContent="flex-end"
+          >
             <StyledImage src={image_url} alt="Temporary Image" />
           </Grid>
           <Grid item xs={12}>

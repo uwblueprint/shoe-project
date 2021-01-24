@@ -20,9 +20,9 @@ export const Body1 = styled.span`
   font-style: normal;
   font-size: ${fontSize.body1};
   line-height: 150%;
-  @media ${device.mobileL} {
-    font-size: ${fontSize.h2Text};
-  }
+  @media ${device.laptop} {
+    font-size: 2em;
+ }
 `;
 
 export const TitleText = styled.p`
@@ -31,7 +31,7 @@ export const TitleText = styled.p`
   text-align: center;
   color: ${colors.secondaryDark2};
 
-  @media ${device.mobileL} {
+  @media ${device.mobileS} {
     font-size: ${fontSize.h3Text};
   }
 `;
@@ -59,7 +59,7 @@ export const CardDescriptionText = styled.p`
   opacity: 0.7;
   margin: 0;
 
-  @media ${device.mobileL} {
+  @media ${device.mobileS} {
     font-size: ${fontSize.body2};
   }
 `;
@@ -117,7 +117,7 @@ export const CardDetailText = styled.p`
   color: ${colors.black};
   margin: 16px 0px 0px 0px !important;
 
-  @media ${device.mobileL} {
+  @media ${device.mobileS} {
     font-size: ${fontSize.mobile};
   }
 `;
@@ -131,7 +131,7 @@ export const CardTagText = styled.span`
   color: ${colors.black};
   opacity: 0.7;
 
-  @media ${device.mobileL} {
+  @media ${device.mobileS} {
     font-size: ${fontSize.mobile};
   }
 `;
@@ -144,50 +144,50 @@ export const StoryDrawerTitleText = styled.span`
   line-height: 37px;
   letter-spacing: 0em;
   text-align: left;
-  @media ${device.mobileL} {
+  @media ${device.mobileS} {
     font-size: ${fontSize.h2Text};
   }
 `;
 
 export const StoryDrawerCountryText = styled.div`
   font-family: Poppins;
-  font-size: ${fontSize.subtitle};
   font-style: normal;
   font-weight: 500;
   line-height: 19px;
   letter-spacing: 0em;
   text-align: left;
-  @media ${device.mobileS} {
-    font-size: ${fontSize.mobile};
-  }
+  opacity: 0.7;
+  @media ${device.laptop} {
+    font-size: 1em;
+ }
 `;
 
 export const StoryDrawerAuthorText = styled.div`
   font-family: Poppins;
-  font-size: ${fontSize.subtitle};
   font-style: normal;
   font-weight: 500;
   line-height: 19px;
   letter-spacing: 0em;
-  text-align: left;
+  display: inline;
+  position: absolute;
   opacity: 0.5;
-  @media ${device.mobileL} {
-    font-size: ${fontSize.mobile};
-  }
+  @media ${device.laptop} {
+    font-size: 2em;
+ }
 `;
 
 export const StoryDrawerRightText = styled.div`
   font-family: Poppins;
-  font-size: ${fontSize.subtitle};
   font-style: normal;
   font-weight: 500;
   line-height: 19px;
+  position: absolute;
+  right: 0;
   letter-spacing: 0em;
-  text-align: right;
   opacity: 0.5;
-  @media ${device.mobileL} {
-    font-size: ${fontSize.mobile};
-  }
+  @media ${device.laptop} {
+    font-size: 2em;
+ }
 `;
 
 export const StoryDrawerContentText = styled.span`
@@ -198,9 +198,8 @@ export const StoryDrawerContentText = styled.span`
   line-height: 32px;
   letter-spacing: 0em;
   text-align: left;
-  @media ${device.mobileL} {
-    font-size: ${fontSize.mobile};
-  }
+  
+
 `;
 
 export const HelpDrawerBoxText = styled.span`
@@ -209,9 +208,8 @@ export const HelpDrawerBoxText = styled.span`
   font-weight: normal;
   line-height: 150%;
   text-align: left;
-  @media ${device.mobileL} {
-    font-size: ${fontSize.h3Text};
-
+  @media ${device.laptop} {
+    font-size: 1.5em;
   }
 `;
 
@@ -223,8 +221,8 @@ export const HelpDrawerTitleText = styled.p`
   text-align: left;
   margin: 0 0 6px 0;
   color: ${colors.black};
-  @media ${device.mobileL} {
-    font-size: ${fontSize.h1Text};
+  @media ${device.laptop} {
+     font-size: 2em;
   }
   
 `;
@@ -238,7 +236,7 @@ export const HelpDrawerLaunchButtonText = styled.span`
   text-align: center;
   text-transform: uppercase;
   color: ${colors.primaryDark2};
-  @media ${device.mobileL} {
+  @media ${device.laptop} {
     font-size: ${fontSize.mobile2};
     padding-top: 24px;
     padding-bototm: 24px;
