@@ -7,6 +7,7 @@ Requirements:
 - [Docker Compose](https://docs.docker.com/compose/install/)
 - Yarn >= 1.20
 - Node >= 12 (We recommend managing node versions with https://volta.sh/)
+- Go (latest version)
 - `.env` file pinned on Slack channel
 
 
