@@ -22,7 +22,7 @@ export const Body1 = styled.span`
   line-height: 150%;
   @media ${device.laptop} {
     font-size: 2em;
- }
+  }
 `;
 
 export const TitleText = styled.p`
@@ -71,6 +71,9 @@ export const WelcomeTitleText = styled.p`
   text-align: center;
   margin: 0px;
   color: ${colors.black};
+  @media ${device.laptop} {
+    font-size: 2.5em;
+  }
 `;
 
 export const WelcomeDescriptionText = styled.p`
@@ -84,6 +87,10 @@ export const WelcomeDescriptionText = styled.p`
   padding-bottom: 24px;
   padding-left: 16px;
   padding-right: 16px;
+  @media ${device.laptop} {
+    font-size: 1.5em;
+    line-height: 120%;
+  }
 `;
 
 export const NavigateTitleText = styled.p`
@@ -95,6 +102,10 @@ export const NavigateTitleText = styled.p`
   padding-top: 16px;
   margin: 0px;
   color: ${colors.black};
+
+  @media ${device.laptop} {
+    font-size: 2em;
+  }
 `;
 
 export const NavigateDescriptionText = styled.p`
@@ -106,6 +117,10 @@ export const NavigateDescriptionText = styled.p`
   color: ${colors.black};
   padding-left: 24px;
   padding-right: 24px;
+  @media ${device.laptop} {
+    font-size: 1.5em;
+    line-height: 120%;
+  }
 `;
 
 export const CardDetailText = styled.p`
@@ -159,7 +174,7 @@ export const StoryDrawerCountryText = styled.div`
   opacity: 0.7;
   @media ${device.laptop} {
     font-size: 1em;
- }
+  }
 `;
 
 export const StoryDrawerAuthorText = styled.div`
@@ -173,7 +188,7 @@ export const StoryDrawerAuthorText = styled.div`
   opacity: 0.5;
   @media ${device.laptop} {
     font-size: 2em;
- }
+  }
 `;
 
 export const StoryDrawerRightText = styled.div`
@@ -187,7 +202,7 @@ export const StoryDrawerRightText = styled.div`
   opacity: 0.5;
   @media ${device.laptop} {
     font-size: 2em;
- }
+  }
 `;
 
 export const StoryDrawerContentText = styled.span`
@@ -198,8 +213,6 @@ export const StoryDrawerContentText = styled.span`
   line-height: 32px;
   letter-spacing: 0em;
   text-align: left;
-  
-
 `;
 
 export const HelpDrawerBoxText = styled.span`
@@ -222,9 +235,8 @@ export const HelpDrawerTitleText = styled.p`
   margin: 0 0 6px 0;
   color: ${colors.black};
   @media ${device.laptop} {
-     font-size: 2em;
+    font-size: 2em;
   }
-  
 `;
 
 export const HelpDrawerLaunchButtonText = styled.span`

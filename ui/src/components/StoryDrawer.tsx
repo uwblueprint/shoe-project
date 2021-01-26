@@ -7,7 +7,6 @@ import styled from "styled-components";
 
 import { colors } from "../styles/colors";
 import { device } from "../styles/device";
-
 import {
   StoryDrawerAuthorText,
   StoryDrawerContentText,
@@ -18,7 +17,7 @@ import {
 import { Story } from "../types";
 
 const StyledDrawer = styled(Drawer)`
-  .MuiDrawer-paperAnchorRight{  
+  .MuiDrawer-paperAnchorRight {
     width: 100%;
   }
 `;
@@ -48,7 +47,7 @@ const StyledImage = styled.img`
   @media ${device.mobileS} {
     margin-left: 1vh;
     margin-right: 1vh;
-   }
+  }
 `;
 
 const StyledRoot = styled.div`
@@ -56,12 +55,10 @@ const StyledRoot = styled.div`
   padding-right: 30vh;
   padding-bottom: 10vh;
 
-
-  @media ${device.laptop}  {
-     padding-left: 2.5vh;
-     padding-right: 2.5vh;
-    }
-
+  @media ${device.laptop} {
+    padding-left: 2.5vh;
+    padding-right: 2.5vh;
+  }
 `;
 const StyledDrawerContainer = styled.div`
   position: relative;
@@ -100,21 +97,18 @@ export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
             <StoryDrawerTitleText>{title}</StoryDrawerTitleText>
           </Grid>
           <Grid item xs={12}>
-            <StoryDrawerCountryText>Origin: {author_country}</StoryDrawerCountryText>
+            <StoryDrawerCountryText>
+              Origin: {author_country}
+            </StoryDrawerCountryText>
             <StyledDrawerContainer>
-            <StoryDrawerAuthorText>{`${author_first_name} ${author_last_name}`}</StoryDrawerAuthorText>
-            <StoryDrawerRightText>
-              {current_city}, Canada • {year}
-            </StoryDrawerRightText>
+              <StoryDrawerAuthorText>{`${author_first_name} ${author_last_name}`}</StoryDrawerAuthorText>
+              <StoryDrawerRightText>
+                {current_city}, Canada • {year}
+              </StoryDrawerRightText>
             </StyledDrawerContainer>
           </Grid>
-          
-          <Grid 
-          item 
-          xs={12}
-          justify="flex-end"
-          alignContent="flex-end"
-          >
+
+          <Grid item xs={12} justify="flex-end" alignContent="flex-end">
             <StyledImage src={image_url} alt="Temporary Image" />
           </Grid>
           <Grid item xs={12}>

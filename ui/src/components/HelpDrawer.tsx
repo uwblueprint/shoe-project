@@ -7,7 +7,6 @@ import styled from "styled-components";
 import { TutorialState } from "../components/WelcomeTutorial";
 import { colors } from "../styles/colors";
 import { device } from "../styles/device";
-
 import {
   HelpDrawerBoxText,
   HelpDrawerLaunchButtonText,
@@ -22,10 +21,9 @@ const StyledRoot = styled.div`
   position: relative;
 
   @media ${device.laptop} {
-   width: 95vw;
-   height: 100vh;
+    width: 95vw;
+    height: 100vh;
   }
-
 `;
 
 const ScrollArea = styled.div`
