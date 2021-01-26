@@ -7,6 +7,8 @@ import { AttributionControl, Map, TileLayer, ZoomControl } from "react-leaflet";
 import Control from "react-leaflet-control";
 import styled, { css } from "styled-components";
 import useSWR from "swr";
+import L from "leaflet";
+
 
 import ShoeLogo from "../assets/images/shoeproject-logo.svg";
 import {
@@ -134,6 +136,7 @@ export const ShoeMap: React.FC = () => {
     HelpDrawerState.Closed
   );
 
+  
   return (
     <React.Fragment>
       <MapContainer>
