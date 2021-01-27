@@ -95,6 +95,7 @@ const StyledLogo = styled.div`
   padding-left: 42px;
   padding-bottom: 30px;
   left: 36px;
+  cursor: pointer;
 `;
 
 export const ShoeMap: React.FC = () => {
@@ -166,7 +167,13 @@ export const ShoeMap: React.FC = () => {
             </StyledHelpIcon>
           </Control>
           <Control position="bottomleft">
-            <StyledLogo></StyledLogo>
+            <a
+              href="https://theshoeproject.online/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <StyledLogo />
+            </a>
           </Control>
         </StyledMap>
       </MapContainer>
