@@ -27,6 +27,7 @@ type Story struct {
 	Latitude        float64 `gorm:"not null" json:"latitude"`
 	Longitude       float64 `gorm:"not null" json:"longitude"`
 	ImageURL        string  `gorm:"type:text" json:"image_url"`
+	VideoURL        string  `gorm:"type:text" json:"video_url"`
 	AuthorFirstName string  `json:"author_first_name"`
 	AuthorLastName  string  `json:"author_last_name"`
 	AuthorCountry   string  `json:"author_country"`
