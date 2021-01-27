@@ -1,6 +1,7 @@
 import "leaflet/dist/leaflet.css";
 
 import L from "leaflet";
+import L from "leaflet";
 import * as React from "react";
 import { useState } from "react";
 import { AttributionControl, Map, TileLayer, ZoomControl } from "react-leaflet";

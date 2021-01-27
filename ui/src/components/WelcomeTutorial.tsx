@@ -8,6 +8,7 @@ import styled from "styled-components";
 import ShoeLogo from "../assets/images/welcome-shoe-logo.svg";
 import DialogTip from "../assets/images/white-arrow.png";
 import { colors } from "../styles/colors";
+import { device } from "../styles/device";
 import {
   NavigateDescriptionText,
   NavigateTitleText,
@@ -41,7 +42,9 @@ const StyledIconButton = styled(IconButton)`
   top: 29px;
   width: 14px;
   height: 14px;
-
+  @media ${device.laptop} {
+    left: 90%;
+  }
   && {
     box-shadow: none;
   }
@@ -58,6 +61,11 @@ const StyledWelcome = styled(Dialog)`
     overflow-x: visible;
     margin: 0px;
     top: 20%;
+
+    @media ${device.laptop} {
+      width: 80vw;
+      height: 20vh;
+    }
   }
 
   .MuiBackdrop-root {
@@ -75,6 +83,11 @@ const StyledFilterWelcome = styled(Dialog)`
     overflow-y: visible;
     overflow-x: visible;
     bottom: 30%;
+
+    @media ${device.laptop} {
+      width: 80vw;
+      height: 20vh;
+    }
   }
   .MuiBackdrop-root {
     background-color: transparent;
@@ -82,6 +95,9 @@ const StyledFilterWelcome = styled(Dialog)`
 `;
 const StyledNextButton = styled(Button)`
   left: 248px;
+  @media ${device.laptop} {
+    left: 60%;
+  }
   .MuiButton-label {
     color: ${colors.primaryDark2};
     font-size: 16px;
@@ -90,20 +106,29 @@ const StyledNextButton = styled(Button)`
     font-weight: 500;
     line-height: 150%;
     margin: 0px 10px;
+
+    @media ${device.laptop} {
+      font-size: 2em;
+    }
   }
   && {
     box-shadow: none;
     background-color: ${colors.primaryLight4};
-    width: 80px;
-    height: 40px;
     &:active {
       background-color: ${colors.primaryLight3};
+    }
+    @media ${device.laptop} {
+      width: 100px;
+      height: 60px;
     }
   }
 `;
 
 const StyledFilterNextButton = styled(Button)`
   left: 235px;
+  @media ${device.laptop} {
+    left: 60%;
+  }
   .MuiButton-label {
     color: ${colors.primaryDark2};
     font-size: 16px;
@@ -112,6 +137,9 @@ const StyledFilterNextButton = styled(Button)`
     font-weight: 500;
     line-height: 150%;
     margin: 0px 10px;
+    @media ${device.laptop} {
+      font-size: 2em;
+    }
   }
   && {
     box-shadow: none;
@@ -120,6 +148,10 @@ const StyledFilterNextButton = styled(Button)`
     height: 40px;
     &:active {
       background-color: ${colors.primaryLight3};
+    }
+    @media ${device.laptop} {
+      width: 150px;
+      height: 60px;
     }
   }
 `;
@@ -145,11 +177,18 @@ const StyledTag = styled(Button)`
     font-weight: 400;
     line-height: 24px;
     margin: 0px 10px;
+    @media ${device.laptop} {
+      font-size: 2em;
+    }
   }
 
   && {
     box-shadow: none;
     background-color: ${colors.neutralLight};
+    @media ${device.laptop} {
+      width: 70px;
+      height: 60px;
+    }
   }
 `;
 
@@ -165,6 +204,9 @@ const StyledWelcomeIconButton = styled(IconButton)`
   && {
     box-shadow: none;
   }
+  @media ${device.laptop} {
+    left: 90%;
+  }
 `;
 
 const StyledWelcomeWelcome = styled(Dialog)`
@@ -175,6 +217,12 @@ const StyledWelcomeWelcome = styled(Dialog)`
     box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     margin: 0px;
+
+    @media ${device.laptop} {
+      position: absolute;
+      width: 80vw;
+      height: 35vh;
+    }
   }
   .MuiBackdrop-root {
     background-color: transparent;
@@ -183,7 +231,7 @@ const StyledWelcomeWelcome = styled(Dialog)`
 
 const StyledWelcomeButton = styled(Button)`
   position: absolute;
-  left: 134px;
+  left: 30%;
   bottom: 24px;
   color: ${colors.primaryLight2};
 
@@ -195,6 +243,10 @@ const StyledWelcomeButton = styled(Button)`
     font-weight: 500;
     line-height: 150%;
     margin: 0px 10px;
+
+    @media ${device.laptop} {
+      font-size: 1.5rem;
+    }
   }
 
   && {
@@ -210,13 +262,19 @@ const StyledWelcomeButton = styled(Button)`
 `;
 
 const StyledWelcomeLogo = styled.img`
-  margin-left: 189px;
-  margin-right: 196px;
+  margin-left: 40%;
   margin-bottom: 16px;
   display: flex;
   background-repeat: no-repeat;
   width: 105px;
   height: 109px;
+
+  @media ${device.laptop} {
+    margin-bottom: 1.5em;
+    width: 34%;
+    margin-left: 33%;
+    height: 37%;
+  }
 `;
 
 const StyledNavigateIconButton = styled(IconButton)`
@@ -231,6 +289,9 @@ const StyledNavigateIconButton = styled(IconButton)`
   && {
     box-shadow: none;
   }
+  @media ${device.laptop} {
+    left: 90%;
+  }
 `;
 
 const StyledNavigateWelcome = styled(Dialog)`
@@ -241,6 +302,10 @@ const StyledNavigateWelcome = styled(Dialog)`
     box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
     margin: 0px;
+    @media ${device.laptop} {
+      width: 90vw;
+      height: 20vh;
+    }
   }
 
   .MuiBackdrop-root {
@@ -250,6 +315,11 @@ const StyledNavigateWelcome = styled(Dialog)`
 
 const StyledNavigateNextButton = styled(Button)`
   left: 248px;
+
+  @media ${device.laptop} {
+    left: 60%;
+  }
+
   .MuiButton-label {
     color: ${colors.primaryDark2};
     font-size: 16px;
@@ -258,12 +328,19 @@ const StyledNavigateNextButton = styled(Button)`
     font-weight: 500;
     line-height: 150%;
     margin: 0px 10px;
+
+    @media ${device.laptop} {
+      font-size: 2em;
+    }
   }
+
   && {
     box-shadow: none;
     background-color: ${colors.primaryLight4};
-    width: 80px;
-    height: 40px;
+    @media ${device.laptop} {
+      width: 100px;
+      height: 60px;
+    }
     &:active {
       background-color: ${colors.primaryLight3};
     }
@@ -276,7 +353,9 @@ const StyledNavigateTag = styled(Button)`
   left: 24px;
   border-radius: 5px;
   background-color: ${colors.neutralLight};
-
+  @media ${device.laptop} {
+    padding-top: 20px;
+  }
   .MuiButton-label {
     color: ${colors.neutralDark};
     font-size: 16px;
@@ -285,10 +364,18 @@ const StyledNavigateTag = styled(Button)`
     font-weight: 400;
     line-height: 24px;
     margin: 0px 10px;
+
+    @media ${device.laptop} {
+      font-size: 2em;
+    }
   }
   && {
     box-shadow: none;
     background-color: ${colors.neutralLight};
+    @media ${device.laptop} {
+      width: 70px;
+      height: 60px;
+    }
   }
 `;
 
