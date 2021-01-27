@@ -1,6 +1,7 @@
 package restapi
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"math"
@@ -9,6 +10,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
@@ -44,6 +49,59 @@ func (api api) ReturnStoryByID(w http.ResponseWriter, r *http.Request) render.Re
 	}
 
 	return rest.JSONStatusOK(story)
+}
+
+type imageStruct struct {
+	image string
+}
+
+func (api api) UploadToS3(w http.ResponseWriter, r *http.Request) render.Renderer {
+	// Declare a new Story struct.
+	//var image imageStruct
+
+	// respond to the client with the error message and a 400 status code.
+	//if err := json.NewDecoder(r.Body).Decode(&image); err != nil {
+	//return rest.ErrInvalidRequest(api.logger, "Invalid payload", err)
+	//}
+	awsAccessKeyID := "Insert Key ID here"
+	awsSecretAccessKey := "Insert Secret Here"
+	s3Config := &aws.Config{
+		Credentials:      credentials.NewStaticCredentials(awsAccessKeyID, awsSecretAccessKey, ""),
+		Endpoint:         aws.String("https://s3.us-west-000.backblazeb2.com"),
+		Region:           aws.String("us-west-002"),
+		S3ForcePathStyle: aws.Bool(true),
+	}
+	newSession := session.New(s3Config)
+
+	s3Client := s3.New(newSession)
+
+	file, h, err := r.FormFile("image")
+	if err != nil {
+		return rest.ErrInvalidRequest(api.logger, "Error", err)
+	}
+	defer file.Close()
+	var buff bytes.Buffer
+	fileSize, err := buff.ReadFrom(file)
+	//fileInfo, _ := file.Stat()
+	//size := fileInfo.Size()
+	buffer := make([]byte, fileSize) // read file content to buffer
+
+	file.Read(buffer)
+	fileBytes := bytes.NewReader(buffer)
+	//fileType := http.DetectContentType(buffer)
+	bucket := aws.String("shoeproject")
+	_, err = s3Client.PutObject(&s3.PutObjectInput{
+		Body:          fileBytes,
+		Bucket:        bucket,
+		Key:           aws.String(h.Filename),
+		ContentLength: aws.Int64(fileSize),
+		ContentType:   aws.String("image/png"),
+	})
+	if err != nil {
+		return rest.ErrInvalidRequest(api.logger, "Error", err)
+	}
+	//fmt.Print(resp)
+	return rest.MsgStatusOK("Image Uploaded Successfully")
 }
 
 func (api api) CreateStories(w http.ResponseWriter, r *http.Request) render.Renderer {
