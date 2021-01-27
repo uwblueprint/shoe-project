@@ -1,6 +1,7 @@
 import "leaflet/dist/leaflet.css";
 
 import L from "leaflet";
+import L from "leaflet";
 import * as React from "react";
 import { useState } from "react";
 import { AttributionControl, Map, TileLayer, ZoomControl } from "react-leaflet";
@@ -20,7 +21,6 @@ import {
 } from "../components";
 import { isTimestampExpired } from "../components/helpers/welcomeTutorialFunctions";
 import { colors } from "../styles";
-import { device } from "../styles/device";
 import { Story, Tokens } from "../types";
 const TIMEOUT_SECONDS = 1728000000;
 
@@ -79,12 +79,6 @@ const StyledHelpIcon = styled.button`
     color: ${colors.primaryDark1};
     border: 2px solid ${colors.primaryDark1};
   }
-
-  @media ${device.laptop} {
-    height: 72px;
-    width: 72px;
-    font-size: 2.5rem;
-  }
 `;
 
 const MapContainer = styled.div`
@@ -109,22 +103,9 @@ export const ShoeMap: React.FC = () => {
   const minZoom = 4;
   const maxZoom = 12;
   const currentLocation = { lat: 53.655697, lng: -100.13316 };
-<<<<<<< HEAD
-<<<<<<< HEAD
   const southWest = L.latLng(40.712, -50.227);
   const northEast = L.latLng(70.774, -150.125);
   const mapBounds = L.latLngBounds(southWest, northEast);
-=======
-  var southWest = L.latLng(40.712, -50.227),
-  northEast = L.latLng(70.774, -150.125),
-  mapBounds = L.latLngBounds(southWest, northEast);
-
->>>>>>> a063fba (another fix)
-=======
-  const southWest = L.latLng(40.712, -50.227),
-    northEast = L.latLng(70.774, -150.125),
-    mapBounds = L.latLngBounds(southWest, northEast);
->>>>>>> bd2e774 (finish mobile screens and lint)
 
   const { data: tokens, error: tokens_error } = useSWR<Tokens>(
     "/api/client_tokens"
