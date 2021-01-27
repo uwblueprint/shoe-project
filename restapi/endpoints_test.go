@@ -126,6 +126,7 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 			Summary:         "Summary1",
 			CurrentCity:     "Toronto",
 			ImageURL:        "https://exampleurl.com",
+			VideoURL:        "https://youtube.com",
 			AuthorFirstName: "Antoine",
 			AuthorLastName:  "dSE",
 			AuthorCountry:   "France",
@@ -165,7 +166,8 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 			"year": 2012,
 			"summary": "Summary1",
 			"current_city": "Toronto",
-			"image_url" : "https://exampleurl.com"
+			"image_url" : "https://exampleurl.com",
+			"video_url":"https://youtube.com"
 		},
 		{
 			"author_first_name": "Douglas",
@@ -176,7 +178,8 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 			"year": 2012,
 			"summary": "Summary2",
 			"current_city": "Toronto",
-			"image_url" : "https://exampleurl.com"
+			"image_url" : "https://exampleurl.com",
+			"video_url": ""
 		}
 		],
 		"status": "OK"
@@ -195,6 +198,7 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 	response.Object().Value("payload").Array().Element(0).Object().Value("summary").Equal("Summary1")
 	response.Object().Value("payload").Array().Element(0).Object().Value("current_city").Equal("Toronto")
 	response.Object().Value("payload").Array().Element(0).Object().Value("image_url").Equal("https://exampleurl.com")
+	response.Object().Value("payload").Array().Element(0).Object().Value("video_url").Equal("https://youtube.com")
 
 	response.Object().Value("payload").Array().Element(1).Object().Value("author_first_name").Equal("Douglas")
 	response.Object().Value("payload").Array().Element(1).Object().Value("author_last_name").Equal("Adams")
@@ -255,6 +259,7 @@ func (suite *endpointTestSuite) TestCreateStory() {
 			Summary:         "Summary",
 			CurrentCity:     "Toronto",
 			ImageURL:        "https://exampleurl.com",
+			VideoURL:        "https://youtube.com",
 			AuthorFirstName: "Charlotte",
 			AuthorLastName:  "Bronte",
 			AuthorCountry:   "UK",
@@ -280,6 +285,7 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 			Summary:         "Summary1",
 			CurrentCity:     "Toronto",
 			ImageURL:        "https://exampleurl.com",
+			VideoURL:        "https://youtube.com",
 			AuthorFirstName: "Chimamanda",
 			AuthorLastName:  "Ngozi Adieche",
 			AuthorCountry:   "Nigeria",
@@ -302,7 +308,8 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 					"year": 2019,
 					"summary": "Summary1",
 					"title": "Half of a Yellow Sun",
-					"image_url":"https://exampleurl.com"
+					"image_url":"https://exampleurl.com",
+					"video_url":"https://youtube.com"
 				}],
 				"status": "OK"
 			}`
@@ -317,6 +324,7 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 	response.Object().Value("payload").Object().Value("summary").Equal("Summary1")
 	response.Object().Value("payload").Object().Value("current_city").Equal("Toronto")
 	response.Object().Value("payload").Object().Value("image_url").Equal("https://exampleurl.com")
+	response.Object().Value("payload").Object().Value("video_url").Equal("https://youtube.com")
 }
 
 func (suite *endpointTestSuite) TearDownSuite() {
