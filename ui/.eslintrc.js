@@ -10,6 +10,7 @@ module.exports = {
     "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:react-hooks/recommended",
+    "plugin:jsx-a11y/recommended"
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -31,6 +32,9 @@ module.exports = {
     // Make sure imports are organized
     "sort-imports": "off",
     "simple-import-sort/imports": "error",
-    "simple-import-sort/exports": "error"
+    "simple-import-sort/exports": "error",
+    // React stuff
+    "react/jsx-boolean-value": "error",
+    "react/no-array-index-key": "error"
   },
 };

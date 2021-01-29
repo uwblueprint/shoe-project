@@ -423,7 +423,7 @@ export function WelcomeTutorial({
         <StyledWelcomeButton
           text-align="center"
           variant="text"
-          disableElevation={true}
+          disableElevation
           onClick={() => setState(TutorialState.Second)}
         >
           START TOUR
@@ -445,14 +445,14 @@ export function WelcomeTutorial({
           <StyledNavigateTag
             text-align="center"
             variant="text"
-            disableElevation={true}
+            disableElevation
           >
             1/3
           </StyledNavigateTag>
           <StyledNavigateNextButton
             text-align="center"
             variant="text"
-            disableElevation={true}
+            disableElevation
             onClick={() => setState(TutorialState.Third)}
           >
             NEXT
@@ -471,13 +471,13 @@ export function WelcomeTutorial({
           Project. To preview a story, click on any pin.
         </NavigateDescriptionText>
         <StyledContainer>
-          <StyledTag text-align="center" variant="text" disableElevation={true}>
+          <StyledTag text-align="center" variant="text" disableElevation>
             2/3
           </StyledTag>
           <StyledNextButton
             text-align="center"
             variant="text"
-            disableElevation={true}
+            disableElevation
             onClick={() => setState(TutorialState.Fourth)}
           >
             NEXT
@@ -499,13 +499,13 @@ export function WelcomeTutorial({
           stories from selected countries will remain on the map.
         </NavigateDescriptionText>
         <StyledContainer>
-          <StyledTag text-align="center" variant="text" disableElevation={true}>
+          <StyledTag text-align="center" variant="text" disableElevation>
             3/3
           </StyledTag>
           <StyledFilterNextButton
             text-align="center"
             variant="text"
-            disableElevation={true}
+            disableElevation
             onClick={handleClose}
           >
             GOT IT
