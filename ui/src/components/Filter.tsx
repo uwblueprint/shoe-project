@@ -11,6 +11,7 @@ import styled from "styled-components";
 import useSWR from "swr";
 
 import { colors, fontSize } from "../styles";
+import { device } from "../styles/device";
 import { FilterChip } from "./FilterChip";
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
@@ -24,6 +25,26 @@ export interface FilterProps {
 const StyledAutocomplete = styled(Autocomplete)`
   color: ${colors.primary};
   width: 312px;
+  @media ${device.laptop} {
+    padding-left: 2em;
+    width: 86vw;
+
+    .MuiChip-root {
+      height: 60px;
+      border-radius: 3em;
+      margin-bottom: 1.4em;
+    }
+
+    .MuiChip-deleteIcon {
+      height: 2em;
+      width: 1.6em;
+      padding-right: 0.7em;
+      padding-left: 0.4em;
+    }
+    .MuiAutocomplete-option {
+      font-size: 40px;
+    }
+  }
 
   .MuiChip-label {
     font-family: Poppins;
@@ -32,6 +53,11 @@ const StyledAutocomplete = styled(Autocomplete)`
     font-size: ${fontSize.subtitle};
     line-height: 24px;
     color: ${colors.primaryDark2};
+    @media ${device.laptop} {
+      padding-left: 20px;
+      font-size: 3em;
+      line-height: 4em;
+    }
   }
 
   .MuiAutocomplete-inputRoot {
@@ -41,6 +67,15 @@ const StyledAutocomplete = styled(Autocomplete)`
     font-size: ${fontSize.subtitle};
     line-height: 24px;
     color: ${colors.grey};
+    @media ${device.laptop} {
+      font-size: 40px;
+      padding-bottom: 10px;
+      padding-right: 56px;
+    }
+  }
+
+  .MuiIconButton-label {
+    padding-left: 30px;
   }
 
   .MuiInput-underline:before {
@@ -69,6 +104,9 @@ const StyledCheckbox = styled(Checkbox)`
     color: ${colors.primaryDark1};
   }
   margin-right: 8px;
+  @media ${device.laptop} {
+    transform: scale(2);
+  }
 `;
 
 const FilterContainer = styled.div`
@@ -78,6 +116,13 @@ const FilterContainer = styled.div`
   min-height: 61px;
   left: 36px;
   top: 16px;
+
+  @media ${device.laptop} {
+    margin-top: 1.5vh;
+    width: 90vw;
+    min-height: 10.25vh;
+    border-radius: 1.5em;
+  }
 
   background: ${colors.white};
   box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.1);
@@ -105,6 +150,17 @@ const Top = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-bottom: 16px;
+  @media ${device.laptop} {
+    padding-top: 0.75em;
+    margin-bottom: 0.75em;
+    padding-left: 0.7em;
+    font-size: 3em;
+  }
+`;
+
+const StyledDiv = styled.div`
+  font-size: 40px;
 `;
 
 const useStyles = makeStyles(() => ({
@@ -114,6 +170,9 @@ const useStyles = makeStyles(() => ({
     fontWeight: "normal",
     fontSize: "16px",
     lineHeight: "24px",
+  },
+  textStyle: {
+    fontSize: "40px",
   },
 }));
 
@@ -180,6 +239,7 @@ export function Filter({ onChange, tags }: FilterProps): JSX.Element {
         renderInput={(params) => (
           <TextField
             {...params}
+            classes={{ paper: classes.textStyle }}
             variant="standard"
             label=""
             placeholder="Countries"
