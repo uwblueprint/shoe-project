@@ -17,6 +17,7 @@ export interface Story extends Model {
   latitude: number;
   longitude: number;
   image_url: string;
+  video_url: string;
   author_first_name: string;
   author_last_name: string;
   author_country: string;
