@@ -1,7 +1,6 @@
 import "leaflet/dist/leaflet.css";
 
 import L from "leaflet";
-import L from "leaflet";
 import * as React from "react";
 import { useState } from "react";
 import { AttributionControl, Map, TileLayer, ZoomControl } from "react-leaflet";
@@ -19,9 +18,9 @@ import {
   TutorialState,
   WelcomeTutorial,
 } from "../components";
-import { isTimestampExpired } from "../components/helpers/welcomeTutorialFunctions";
 import { colors } from "../styles";
 import { Story, Tokens } from "../types";
+import { isTimestampExpired } from "../util/timestamp";
 const TIMEOUT_SECONDS = 1728000000;
 
 interface StyledMapProps {
