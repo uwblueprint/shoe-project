@@ -3,22 +3,23 @@ import { Redirect, Route, RouteProps } from "react-router-dom";
 
 import { User } from "../types";
 
-// These auth helpers are based on: https://usehooks.com/useAuth/
-const AuthContext = React.createContext({});
-
-export function useAuth(): Record<string, unknown> {
-  return React.useContext(AuthContext);
-}
-
-export function useProvideAuth(): {
+interface AuthContextType {
   user: User | null;
   signin: () => void;
   signout: () => void;
-} {
+}
+
+// These auth helpers are based on: https://usehooks.com/useAuth/
+const AuthContext = React.createContext({});
+
+export function useAuth(): AuthContextType {
+  return React.useContext(AuthContext) as AuthContextType;
+}
+
+export function useProvideAuth(): AuthContextType {
   const [user, setUser] = React.useState<User | null>(null);
 
   // TODO: Write signin function
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   const signin = () => {
     setUser({ username: "Abhijeet" });
   };
