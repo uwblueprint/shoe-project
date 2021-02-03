@@ -31,14 +31,14 @@ const StyledAutocomplete = styled(Autocomplete)`
     width: 86vw;
 
     .MuiChip-root {
-      height: 60px;
+      height: 5.5em;
       border-radius: 3em;
       margin-bottom: 1.4em;
     }
 
     .MuiChip-deleteIcon {
-      height: 2em;
-      width: 1.6em;
+      height: 1em;
+      width: 0.5em;
       padding-right: 0.7em;
       padding-left: 0.4em;
     }
@@ -50,12 +50,6 @@ const StyledAutocomplete = styled(Autocomplete)`
     }
   }
 
-  /* .MuiAutocomplete-option {
-    font-size: 40px;
-    padding-top: 30px;
-    padding-bottom: 30px;
-  } */
-
   .MuiChip-label {
     font-family: Poppins;
     font-style: normal;
@@ -64,8 +58,10 @@ const StyledAutocomplete = styled(Autocomplete)`
     line-height: 24px;
     color: ${colors.primaryDark2};
     @media ${device.mobile} {
-      padding-left: 20px;
+      padding-left: 0.5em;
+      padding-right: 0.75em;
       font-size: 3em;
+      line-height: 1.5em;
     }
   }
 
@@ -109,9 +105,9 @@ const StyledCheckbox = styled(Checkbox)`
     color: ${colors.primaryDark1};
   }
   margin-right: 8px;
-  transform: scale(0.5);
+  transform: scale(1);
   @media ${device.mobile} {
-    transform: scale(1);
+    transform: scale(2);
   }
 `;
 
@@ -128,6 +124,7 @@ const FilterContainer = styled.div`
     width: 90vw;
     min-height: 8.5vh;
     border-radius: 1.5em;
+    padding-bottom: 1vh;
   }
 
   background: ${colors.white};
@@ -141,6 +138,9 @@ const FilterContainer = styled.div`
 
 const Tagline = styled.span`
   font-size: ${fontSize.subtitle};
+  @media ${device.mobile} {
+    font-size: 40px;
+  }
 `;
 
 const ClearButton = styled(Button)`
@@ -149,6 +149,9 @@ const ClearButton = styled(Button)`
   .MuiButton-label {
     color: ${colors.secondary};
     font-size: ${fontSize.interactive};
+    @media ${device.mobile} {
+      font-size: 40px;
+    }
   }
 `;
 
@@ -158,15 +161,9 @@ const Top = styled.div`
   align-items: center;
   padding-bottom: 16px;
   @media ${device.mobile} {
-    padding-top: 0.75em;
-    margin-bottom: 0.75em;
     padding-left: 0.7em;
     font-size: 3em;
   }
-`;
-
-const StyledDiv = styled.div`
-  font-size: 40px;
 `;
 
 const CheckboxLabel = styled.label`
