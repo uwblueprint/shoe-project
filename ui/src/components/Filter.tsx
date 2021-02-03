@@ -7,6 +7,7 @@ import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import * as React from "react";
+import { ScaleControl } from "react-leaflet";
 import styled from "styled-components";
 import useSWR from "swr";
 
@@ -25,7 +26,7 @@ export interface FilterProps {
 const StyledAutocomplete = styled(Autocomplete)`
   color: ${colors.primary};
   width: 312px;
-  @media ${device.laptop} {
+  @media ${device.mobile} {
     padding-left: 2em;
     width: 86vw;
 
@@ -41,10 +42,13 @@ const StyledAutocomplete = styled(Autocomplete)`
       padding-right: 0.7em;
       padding-left: 0.4em;
     }
-    .MuiAutocomplete-option {
-      font-size: 40px;
-    }
   }
+
+  /* .MuiAutocomplete-option {
+    font-size: 40px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+  } */
 
   .MuiChip-label {
     font-family: Poppins;
@@ -53,7 +57,7 @@ const StyledAutocomplete = styled(Autocomplete)`
     font-size: ${fontSize.subtitle};
     line-height: 24px;
     color: ${colors.primaryDark2};
-    @media ${device.laptop} {
+    @media ${device.mobile} {
       padding-left: 20px;
       font-size: 3em;
       line-height: 4em;
@@ -67,7 +71,7 @@ const StyledAutocomplete = styled(Autocomplete)`
     font-size: ${fontSize.subtitle};
     line-height: 24px;
     color: ${colors.grey};
-    @media ${device.laptop} {
+    @media ${device.mobile} {
       font-size: 40px;
       padding-bottom: 10px;
       padding-right: 56px;
@@ -104,7 +108,7 @@ const StyledCheckbox = styled(Checkbox)`
     color: ${colors.primaryDark1};
   }
   margin-right: 8px;
-  @media ${device.laptop} {
+  @media ${device.mobile} {
     transform: scale(2);
   }
 `;
@@ -117,10 +121,10 @@ const FilterContainer = styled.div`
   left: 36px;
   top: 16px;
 
-  @media ${device.laptop} {
+  @media ${device.mobile} {
     margin-top: 1.5vh;
     width: 90vw;
-    min-height: 10.25vh;
+    min-height: 8.5vh;
     border-radius: 1.5em;
   }
 
@@ -151,7 +155,7 @@ const Top = styled.div`
   justify-content: space-between;
   align-items: center;
   padding-bottom: 16px;
-  @media ${device.laptop} {
+  @media ${device.mobile} {
     padding-top: 0.75em;
     margin-bottom: 0.75em;
     padding-left: 0.7em;
@@ -170,10 +174,28 @@ const useStyles = makeStyles(() => ({
     fontWeight: "normal",
     fontSize: "16px",
     lineHeight: "24px",
+    // "@media (max-width: 1000px)": {
+    //   ".MuiAutocomplete-option": {
+    //     fontSize: "40px",
+    //     paddingTop: "30px",
+    //     paddingBottom: "30px",
+    //   },
+    // },
   },
-  textStyle: {
-    fontSize: "40px",
+  "@media (max-width: 1000px)": {
+    ".MuiAutocomplete-option": {
+      fontSize: "40px",
+      paddingTop: "30px",
+      paddingBottom: "30px",
+    },
   },
+  // "@global": {
+  //   ".MuiAutocomplete-option": {
+  //     fontSize: "40px",
+  //     paddingTop: "30px",
+  //     paddingBottom: "30px",
+  //   },
+  // },
 }));
 
 export function Filter({ onChange, tags }: FilterProps): JSX.Element {
@@ -195,6 +217,7 @@ export function Filter({ onChange, tags }: FilterProps): JSX.Element {
   };
 
   const classes = useStyles();
+  useStyles();
   if (error) return <div>Error!</div>;
 
   return (
@@ -239,7 +262,6 @@ export function Filter({ onChange, tags }: FilterProps): JSX.Element {
         renderInput={(params) => (
           <TextField
             {...params}
-            classes={{ paper: classes.textStyle }}
             variant="standard"
             label=""
             placeholder="Countries"

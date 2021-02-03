@@ -9,6 +9,8 @@ import styled, { css } from "styled-components";
 import useSWR from "swr";
 
 import ShoeLogo from "../assets/images/shoeproject-logo.svg";
+import { device } from "../styles/device";
+
 import {
   Filter,
   HelpDrawer,
@@ -35,6 +37,9 @@ const StyledMap = styled(Map)<StyledMapProps>`
     margin: 0px 36px 16px 0px;
   }
   .leaflet-bar a {
+    @media ${device.mobile} {
+      display: none;
+    }
     width: 40px;
     height: 40px;
     background-color: ${colors.white};
@@ -78,6 +83,12 @@ const StyledHelpIcon = styled.button`
     color: ${colors.primaryDark1};
     border: 2px solid ${colors.primaryDark1};
   }
+  @media ${device.mobile} {
+    height: 6vh;
+    width: 6vh;
+    font-size: 80px;
+    border-radius: 30px;
+  }
 `;
 
 const MapContainer = styled.div`
@@ -95,6 +106,12 @@ const StyledLogo = styled.div`
   padding-left: 42px;
   padding-bottom: 30px;
   left: 36px;
+  @media ${device.mobile} {
+    padding-bottom: 3vh;
+    margin-left: 2vw;
+    width: 110px;
+    transform: scale(1.5);
+  }
 `;
 
 export const ShoeMap: React.FC = () => {
@@ -166,7 +183,7 @@ export const ShoeMap: React.FC = () => {
             </StyledHelpIcon>
           </Control>
           <Control position="bottomleft">
-            <StyledLogo></StyledLogo>
+            <StyledLogo />
           </Control>
         </StyledMap>
       </MapContainer>
