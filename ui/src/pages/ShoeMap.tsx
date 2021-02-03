@@ -111,7 +111,7 @@ export const ShoeMap: React.FC = () => {
   );
   const { data, error } = useSWR<Story[]>("/api/stories");
 
-  const [filteredCountries, setFilteredCountries] = useState([]);
+  const [filteredCountries, setFilteredCountries] = useState<string[]>([]);
   function onTagsChange(_, options: string[]) {
     setFilteredCountries(options);
   }
@@ -137,7 +137,7 @@ export const ShoeMap: React.FC = () => {
   return (
     <React.Fragment>
       <MapContainer>
-        <Filter onChange={onTagsChange} />
+        <Filter onChange={onTagsChange} tags={filteredCountries} />
         <StyledMap
           maxBounds={mapBounds}
           center={currentLocation}

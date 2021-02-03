@@ -1,3 +1,4 @@
+import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { makeStyles } from "@material-ui/core/styles";
@@ -17,6 +18,7 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 export interface FilterProps {
   onChange: (event: React.ChangeEvent, options: string[]) => void;
+  tags: string[];
 }
 
 const StyledAutocomplete = styled(Autocomplete)`
@@ -42,11 +44,23 @@ const StyledAutocomplete = styled(Autocomplete)`
   }
 
   .MuiInput-underline:before {
-    border-bottom: 1px solid ${colors.grey};
+    border-bottom: 1px solid ${colors.primary};
+  }
+
+  .MuiInput-underline:hover:not(.Mui-disabled):before {
+    border-bottom: 2px solid ${colors.primary};
   }
 
   .MuiInput-underline:after {
     border-bottom: 2px solid ${colors.primary};
+  }
+
+  .MuiAutocomplete-clearIndicator {
+    display: none;
+  }
+
+  .MuiAutocomplete-inputRoot[class*="MuiInput-root"] {
+    padding-bottom: 6px;
   }
 `;
 
@@ -76,7 +90,21 @@ const FilterContainer = styled.div`
 
 const Tagline = styled.span`
   font-size: ${fontSize.subtitle};
-  padding-bottom: 16px;
+`;
+
+const ClearButton = styled(Button)`
+  visibility: ${(props) => (props.hidden ? "hidden" : "visible")};
+
+  .MuiButton-label {
+    color: ${colors.secondary};
+    font-size: ${fontSize.interactive};
+  }
+`;
+
+const Top = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const useStyles = makeStyles(() => ({
@@ -89,17 +117,35 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export function Filter({ onChange }: FilterProps): JSX.Element {
+export function Filter({ onChange, tags }: FilterProps): JSX.Element {
   const { data: countries, error } = useSWR<string[]>(
     "/api/authors/origin_countries"
   );
+  const endAdornmentParentRef = React.useRef<HTMLDivElement>();
+
+  const handleClearClick = (_: Event) => {
+    if (
+      endAdornmentParentRef &&
+      endAdornmentParentRef.current &&
+      endAdornmentParentRef.current.children.length > 0
+    ) {
+      const endAdornmentDiv = endAdornmentParentRef.current.children[0];
+      // Click actual button
+      (endAdornmentDiv.children[0] as HTMLButtonElement).click();
+    }
+  };
 
   const classes = useStyles();
   if (error) return <div>Error!</div>;
 
   return (
     <FilterContainer>
-      <Tagline>Show stories from:</Tagline>
+      <Top>
+        <Tagline>Show stories from:</Tagline>
+        <ClearButton hidden={tags.length === 0} onClick={handleClearClick}>
+          CLEAR
+        </ClearButton>
+      </Top>
       <StyledAutocomplete
         color="Primary"
         multiple
@@ -140,12 +186,12 @@ export function Filter({ onChange }: FilterProps): JSX.Element {
             InputProps={{
               ...params.InputProps,
               endAdornment: (
-                <React.Fragment>
+                <div ref={endAdornmentParentRef}>
                   {!countries ? (
                     <CircularProgress color="inherit" size={20} />
                   ) : null}
                   {params.InputProps.endAdornment}
-                </React.Fragment>
+                </div>
               ),
             }}
           />
