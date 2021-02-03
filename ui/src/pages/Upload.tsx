@@ -17,15 +17,13 @@ export const Upload: React.FC = () => {
     setAge(event.target.value);
   };
   return (
-    <Grid>
+    <Grid container alignContent="center">
       <FormControl>
       <TextField required id="standard-required" label="Story Title" defaultValue="Lorem Ipsum" />
       <TextField required id="standard-required" label="Author" defaultValue="Jane Doe" />
     
-      </FormControl>
 
-    <FormControl>
-    <FormControl>
+      <FormControl>
         <InputLabel id="Country of Origin">Country of Origin</InputLabel>
         <Select
           labelId="demo-simple-select-label"
@@ -37,8 +35,9 @@ export const Upload: React.FC = () => {
           <MenuItem value={20}>India</MenuItem>
           <MenuItem value={30}>Russia</MenuItem>
         </Select>
-</FormControl>
-     
+        </FormControl>
+
+     <FormControl>
         <InputLabel id="Current Location">Current Location</InputLabel>
         <Select
           labelId="demo-simple-select-label"
@@ -50,6 +49,9 @@ export const Upload: React.FC = () => {
           <MenuItem value={20}>Calgary</MenuItem>
           <MenuItem value={30}>Vancouver</MenuItem>
         </Select>
+        </FormControl>
+
+        <FormControl>
         <InputLabel id="demo-simple-select-label">Year Published</InputLabel>
         <Select
           labelId="demo-simple-select-label"
@@ -61,6 +63,8 @@ export const Upload: React.FC = () => {
           <MenuItem value={20}>2020</MenuItem>
           <MenuItem value={30}>2019</MenuItem>
         </Select>
+        </FormControl>
+
         </FormControl>
 
     </Grid>
