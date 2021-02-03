@@ -122,7 +122,7 @@ export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
           </Grid>
           <Grid item xs={12}>
             <StyledVideo
-              src="https://www.youtube.com/embed/O0xn7fNpwiU"
+              src={video_url}
               frameborder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowfullscreen
