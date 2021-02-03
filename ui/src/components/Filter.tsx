@@ -93,11 +93,11 @@ const Tagline = styled.span`
 `;
 
 const ClearButton = styled(Button)`
-  visibility: ${props => props.hidden ? "hidden" : "visible"};
+  visibility: ${(props) => (props.hidden ? "hidden" : "visible")};
 
   .MuiButton-label {
     color: ${colors.secondary};
-    font-size: ${fontSize.interactive}
+    font-size: ${fontSize.interactive};
   }
 `;
 
@@ -124,12 +124,16 @@ export function Filter({ onChange, tags }: FilterProps): JSX.Element {
   const endAdornmentParentRef = React.useRef<HTMLDivElement>();
 
   const handleClearClick = (_: Event) => {
-    if (endAdornmentParentRef && endAdornmentParentRef.current && endAdornmentParentRef.current.children.length > 0) {
+    if (
+      endAdornmentParentRef &&
+      endAdornmentParentRef.current &&
+      endAdornmentParentRef.current.children.length > 0
+    ) {
       const endAdornmentDiv = endAdornmentParentRef.current.children[0];
       // Click actual button
       (endAdornmentDiv.children[0] as HTMLButtonElement).click();
     }
-  }
+  };
 
   const classes = useStyles();
   if (error) return <div>Error!</div>;
@@ -138,7 +142,9 @@ export function Filter({ onChange, tags }: FilterProps): JSX.Element {
     <FilterContainer>
       <Top>
         <Tagline>Show stories from:</Tagline>
-        <ClearButton hidden={tags.length === 0} onClick={handleClearClick}>CLEAR</ClearButton>
+        <ClearButton hidden={tags.length === 0} onClick={handleClearClick}>
+          CLEAR
+        </ClearButton>
       </Top>
       <StyledAutocomplete
         color="Primary"
