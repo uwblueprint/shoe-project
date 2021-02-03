@@ -2,7 +2,8 @@ import * as React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { SWRConfig } from "swr";
 
-import { ShoeMap } from "./pages";
+import { AuthProvider, PrivateRoute } from "./hooks/auth";
+import { Admin, Login, ShoeMap } from "./pages";
 
 const defaultFetcher = (
   input: RequestInfo,
@@ -19,13 +20,21 @@ function App(): JSX.Element {
         fetcher: defaultFetcher,
       }}
     >
-      <Router>
-        <Switch>
-          <Route exact path="/">
-            <ShoeMap />
-          </Route>
-        </Switch>
-      </Router>
+      <AuthProvider>
+        <Router>
+          <Switch>
+            <Route exact path="/">
+              <ShoeMap />
+            </Route>
+            <Route path="/login">
+              <Login />
+            </Route>
+            <PrivateRoute path="/admin">
+              <Admin />
+            </PrivateRoute>
+          </Switch>
+        </Router>
+      </AuthProvider>
     </SWRConfig>
   );
 }
