@@ -44,7 +44,11 @@ const StyledAutocomplete = styled(Autocomplete)`
   }
 
   .MuiInput-underline:before {
-    border-bottom: 1px solid ${colors.grey};
+    border-bottom: 1px solid ${colors.primary};
+  }
+
+  .MuiInput-underline:hover:not(.Mui-disabled):before {
+    border-bottom: 2px solid ${colors.primary};
   }
 
   .MuiInput-underline:after {
@@ -53,6 +57,10 @@ const StyledAutocomplete = styled(Autocomplete)`
 
   .MuiAutocomplete-clearIndicator {
     display: none;
+  }
+
+  .MuiAutocomplete-inputRoot[class*="MuiInput-root"] {
+    padding-bottom: 6px;
   }
 `;
 
