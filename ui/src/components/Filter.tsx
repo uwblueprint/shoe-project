@@ -43,6 +43,12 @@ const StyledAutocomplete = styled(Autocomplete)`
       padding-left: 0.4em;
     }
   }
+  .MuiSvgIcon-root {
+    transform: scale(1);
+    @media ${device.mobile} {
+      transform: scale(3);
+    }
+  }
 
   /* .MuiAutocomplete-option {
     font-size: 40px;
@@ -77,10 +83,6 @@ const StyledAutocomplete = styled(Autocomplete)`
     }
   }
 
-  .MuiIconButton-label {
-    padding-left: 30px;
-  }
-
   .MuiInput-underline:before {
     border-bottom: 1px solid ${colors.primary};
   }
@@ -107,8 +109,9 @@ const StyledCheckbox = styled(Checkbox)`
     color: ${colors.primaryDark1};
   }
   margin-right: 8px;
+  transform: scale(0.5);
   @media ${device.mobile} {
-    transform: scale(2);
+    transform: scale(1);
   }
 `;
 
@@ -171,6 +174,7 @@ const CheckboxLabel = styled.label`
     font-size: 40px;
     padding-top: 30px;
     padding-bottom: 30px;
+    padding-left: 15px;
   }
 `;
 
@@ -181,28 +185,7 @@ const useStyles = makeStyles(() => ({
     fontWeight: "normal",
     fontSize: "16px",
     lineHeight: "24px",
-    // "@media (max-width: 1000px)": {
-    //   ".MuiAutocomplete-option": {
-    //     fontSize: "40px",
-    //     paddingTop: "30px",
-    //     paddingBottom: "30px",
-    //   },
-    // },
   },
-  "@media (max-width: 1000px)": {
-    ".MuiAutocomplete-option": {
-      fontSize: "40px",
-      paddingTop: "30px",
-      paddingBottom: "30px",
-    },
-  },
-  // "@global": {
-  //   ".MuiAutocomplete-option": {
-  //     fontSize: "40px",
-  //     paddingTop: "30px",
-  //     paddingBottom: "30px",
-  //   },
-  // },
 }));
 
 export function Filter({ onChange, tags }: FilterProps): JSX.Element {
