@@ -138,6 +138,14 @@ const StyledDiv = styled.div`
   font-size: 40px;
 `;
 
+const CheckboxLabel = styled.label`
+  @media ${device.mobile} {
+    font-size: 40px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+  }
+`;
+
 const useStyles = makeStyles(() => ({
   paper: {
     fontFamily: "Poppins",
@@ -204,12 +212,13 @@ export function Filter({ onChange }: FilterProps): JSX.Element {
         renderOption={(option, { selected }) => (
           <React.Fragment key={option}>
             <StyledCheckbox
+              id={option}
               icon={icon}
               checkedIcon={checkedIcon}
               checked={selected}
               color="primary"
             />
-            {option}
+            <CheckboxLabel htmlFor={option}>{option}</CheckboxLabel>
           </React.Fragment>
         )}
         renderInput={(params) => (
