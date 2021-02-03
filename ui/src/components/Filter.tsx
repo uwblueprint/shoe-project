@@ -60,7 +60,6 @@ const StyledAutocomplete = styled(Autocomplete)`
     @media ${device.mobile} {
       padding-left: 20px;
       font-size: 3em;
-      line-height: 4em;
     }
   }
 
