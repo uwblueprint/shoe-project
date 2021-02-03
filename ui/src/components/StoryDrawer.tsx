@@ -3,6 +3,7 @@ import Drawer from "@material-ui/core/Drawer";
 import Grid from "@material-ui/core/Grid";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import * as React from "react";
+import Image from "react-graceful-image";
 import styled from "styled-components";
 
 import { colors } from "../styles/colors";
@@ -40,7 +41,7 @@ const StyledIconButton = styled(Button)`
   }
 `;
 
-const StyledImage = styled.img`
+const StyledImage = styled(Image)`
   border-radius: 0px;
   width: 100%;
 
@@ -115,7 +116,7 @@ export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
           </Grid>
 
           <Grid item xs={12} justify="flex-end" alignContent="flex-end">
-            <StyledImage src={image_url} alt="Temporary Image" />
+            <StyledImage src={image_url} alt="Image of shoe" />
           </Grid>
           <Grid item xs={12}>
             <StoryDrawerContentText>{content}</StoryDrawerContentText>

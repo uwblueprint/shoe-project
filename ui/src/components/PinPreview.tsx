@@ -1,7 +1,9 @@
 import Button from "@material-ui/core/Button";
+import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import * as React from "react";
+import Image from "react-graceful-image";
 import styled from "styled-components";
 
 import { colors } from "../styles/colors";
@@ -26,7 +28,6 @@ const StyledButton = styled(Button)`
 `;
 
 const StyledMedia = styled(CardMedia)`
-  border-radius: 10px 10px 0px 0px;
   height: 211px;
 `;
 
@@ -34,6 +35,12 @@ const StyledCardContent = styled(CardContent)`
   border-radius: 10px;
   overflow: hidden;
 `;
+
+const StyledCard = styled(Card)`
+  .MuiPaper-rounded {
+    border-radius: 10px;
+  }
+`
 
 interface PinPreviewProps {
   title: string;
@@ -55,8 +62,8 @@ export function PinPreview({
   onClick,
 }: PinPreviewProps): JSX.Element {
   return (
-    <>
-      <StyledMedia image={shoeImage} title="Temporary Image" />
+    <StyledCard>
+      <StyledMedia alt="Image of shoe" image={shoeImage} title="Image of shoe" />
       <StyledCardContent>
         <CardTagText>{country}</CardTagText>
         <CardTitleText>{title}</CardTitleText>
@@ -73,6 +80,6 @@ export function PinPreview({
           {author} • {date}
         </CardDetailText>
       </StyledCardContent>
-    </>
+    </StyledCard>
   );
 }
