@@ -169,11 +169,7 @@ export const ShoeMap: React.FC = () => {
             </StyledHelpIcon>
           </Control>
           <Control position="bottomleft">
-            <a
-              href={SHOE_PROJECT_URL}
-              target="_blank"
-              rel="noreferrer"
-            >
+            <a href={SHOE_PROJECT_URL} target="_blank" rel="noreferrer">
               <StyledLogo />
             </a>
           </Control>
