@@ -21,7 +21,9 @@ import {
 import { colors } from "../styles";
 import { Story, Tokens } from "../types";
 import { isTimestampExpired } from "../util/timestamp";
+
 const TIMEOUT_SECONDS = 1728000000;
+const SHOE_PROJECT_URL = "https://theshoeproject.online/our-stories";
 
 interface StyledMapProps {
   isHelpDrawerOpen: boolean;
@@ -168,7 +170,7 @@ export const ShoeMap: React.FC = () => {
           </Control>
           <Control position="bottomleft">
             <a
-              href="https://theshoeproject.online/"
+              href={SHOE_PROJECT_URL}
               target="_blank"
               rel="noreferrer"
             >
