@@ -9,8 +9,6 @@ import styled, { css } from "styled-components";
 import useSWR from "swr";
 
 import ShoeLogo from "../assets/images/shoeproject-logo.svg";
-import { device } from "../styles/device";
-
 import {
   Filter,
   HelpDrawer,
@@ -21,6 +19,7 @@ import {
   WelcomeTutorial,
 } from "../components";
 import { colors } from "../styles";
+import { device } from "../styles/device";
 import { Story, Tokens } from "../types";
 import { isTimestampExpired } from "../util/timestamp";
 const TIMEOUT_SECONDS = 1728000000;
