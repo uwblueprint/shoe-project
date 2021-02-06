@@ -37,4 +37,4 @@ jobs:
       working-directory: ./ui
       run: yarn test
     - name: No yarn.lock in root folder
-      run: 'test -f yarn.lock && exit 1'
+      run: 'test -f yarn.lock || exit 1'
