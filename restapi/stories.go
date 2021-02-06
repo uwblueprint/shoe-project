@@ -165,7 +165,7 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 	story.Longitude = randomCoords(coordinates.Longitude)
 	//regex to find youtube video id
 	re := regexp.MustCompile(`(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})`)
-	videoURL := "https://www.youtube.com/watch?v=ao6jHx27gB8"
+	videoURL := r.FormValue("video_url")
 	match := re.FindAllStringSubmatch(videoURL, 2)
 
 	story.VideoURL = "https://www.youtube.com/embed/" + match[0][1]
