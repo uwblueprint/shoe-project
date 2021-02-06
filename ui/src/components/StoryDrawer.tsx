@@ -120,14 +120,16 @@ export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
           <Grid item xs={12}>
             <StoryDrawerContentText>{content}</StoryDrawerContentText>
           </Grid>
-          <Grid item xs={12}>
-            <StyledVideo
-              src={video_url}
-              frameborder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen
-            ></StyledVideo>
-          </Grid>
+          {video_url && (
+            <Grid item xs={12}>
+              <StyledVideo
+                src={video_url}
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></StyledVideo>
+            </Grid>
+          )}
         </Grid>
       </StyledRoot>
     </StyledDrawer>
