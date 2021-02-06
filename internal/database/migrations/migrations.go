@@ -2,12 +2,13 @@ package migrations
 
 import (
 	"encoding/json"
+	"io/ioutil"
+
 	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
 	"github.com/uwblueprint/shoe-project/internal/location"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
-	"io/ioutil"
 )
 
 func CreateTables(db *gorm.DB) error {
@@ -47,14 +48,12 @@ func Seed(db *gorm.DB, locationFinder location.LocationFinder) error {
 		return err
 	}
 
-
 	// read in the stories file from stories.json
 	var stories []models.Story
 	err = parseJson("data/stories.json", &stories)
 	if err != nil {
 		return err
 	}
-
 
 	// create authors and stories in DB
 	err = db.Create(&authors).Error

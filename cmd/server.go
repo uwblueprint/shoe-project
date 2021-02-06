@@ -33,8 +33,15 @@ var (
 				logger.Fatalw("Get Executable Path", "Err", err)
 			}
 
-			// create and mount ui handler
-			server.Router.Mount("/", uiHandler(fmt.Sprintf("%s/ui/dist", filepath.Dir(executablePath))))
+			dir := fmt.Sprintf("%s/ui/dist", filepath.Dir(executablePath))
+			fs := http.FileServer(http.Dir(dir))
+			server.Router.Get("/*", func(w http.ResponseWriter, r *http.Request) {
+				if _, err := os.Stat(dir + r.RequestURI); os.IsNotExist(err) {
+					http.StripPrefix(r.RequestURI, fs).ServeHTTP(w, r)
+				} else {
+					fs.ServeHTTP(w, r)
+				}
+			})
 
 			db, err := database.Connect()
 			if err != nil {
@@ -85,10 +92,6 @@ var (
 		},
 	}
 )
-
-func uiHandler(dir string) http.Handler {
-	return http.FileServer(http.Dir(dir))
-}
 
 // init creates api command
 func init() {
