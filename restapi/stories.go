@@ -90,8 +90,10 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 		Region:           aws.String(os.Getenv("BUCKET_REGION")),
 		S3ForcePathStyle: aws.Bool(true),
 	}
-	newSession := session.New(s3Config)
-
+	newSession, err := session.NewSession(s3Config)
+	if err != nil {
+		return rest.ErrInvalidRequest(api.logger, "Error connecting with AWS S3 Bucket", err)
+	}
 	s3Client := s3.New(newSession)
 	file, h, err := r.FormFile("image")
 	if err != nil {
@@ -102,7 +104,10 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 	size := h.Size
 	buffer := make([]byte, size) // read file content to buffer
 
-	file.Read(buffer)
+	_, err = file.Read(buffer)
+	if err != nil {
+		return rest.ErrInvalidRequest(api.logger, "Could not read the file", err)
+	}
 
 	fileBytes := bytes.NewReader(buffer)
 	fileType := http.DetectContentType(buffer)
@@ -154,14 +159,13 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 	city := story.CurrentCity
 	coordinates, err := api.locationFinder.GetCityCenter(city)
 	if err != nil {
-		return rest.ErrInvalidRequest(api.logger, fmt.Sprintf("Story has an invalid current city"), err)
+		return rest.ErrInvalidRequest(api.logger, "Story has an invalid current city", err)
 	}
 	story.Latitude = randomCoords(coordinates.Latitude)
 	story.Longitude = randomCoords(coordinates.Longitude)
-	videoURL := r.FormValue("video_url")
 	//regex to find youtube video id
 	re := regexp.MustCompile(`(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})`)
-	videoURL = "https://www.youtube.com/watch?v=ao6jHx27gB8"
+	videoURL := "https://www.youtube.com/watch?v=ao6jHx27gB8"
 	match := re.FindAllStringSubmatch(videoURL, 2)
 
 	story.VideoURL = "https://www.youtube.com/embed/" + match[0][1]
