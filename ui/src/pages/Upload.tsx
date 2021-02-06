@@ -1,73 +1,180 @@
+import { FormControl } from "@material-ui/core";
+import { TextField } from "@material-ui/core";
+import { Grid } from "@material-ui/core/";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
+import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
-import { Redirect } from "react-router-dom";
-import { FormControl } from '@material-ui/core';
-import { TextField } from '@material-ui/core';
-import { Grid }from '@material-ui/core/';
-import Select from '@material-ui/core/Select';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import { makeStyles } from '@material-ui/core/styles';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
+// import React from 'react';
+// import {Chips} from 'react-chips';
+import styled from "styled-components";
 
+import { device } from "../styles/device";
+// https://yuvaleros.github.io/material-ui-dropzone/
+
+const StyledGrid = styled(Grid)`
+  margin-top: 48px;
+  @media ${device.laptop} {
+    justify: left;
+    width: 100vw;
+  }
+`;
 
 export const Upload: React.FC = () => {
-  const [age, setAge] = React.useState('');
+  // var [chips, setChips] = React.useState('');
+  const [state, setState] = React.useState<{
+    storyTitle: string;
+    storySummary: string;
+    author: string;
+    authorBio: string;
+    country: string;
+    city: string;
+    year: string | number;
+  }>({
+    storyTitle: "",
+    storySummary: "",
+    author: "",
+    authorBio: "",
+    country: "",
+    city: "",
+    year: 0,
+  });
 
-  const handleChange = (event) => {
-    setAge(event.target.value);
+  const handleChange = (
+    event: React.ChangeEvent<{ name?: string; value: unknown }>
+  ) => {
+    const name = event.target.name as keyof typeof state;
+    setState({
+      ...state,
+      [name]: event.target.value,
+    });
   };
+
+  // const handleChipsChange = event => {
+  //   console.log("hi");
+  // };
+
+  const handleSubmit = event => {
+    //some logic
+  };
+
   return (
-    <Grid container alignContent="center">
-      <FormControl>
-      <TextField required id="standard-required" label="Story Title" defaultValue="Lorem Ipsum" />
-      <TextField required id="standard-required" label="Author" defaultValue="Jane Doe" />
-    
-
-      <FormControl>
-        <InputLabel id="Country of Origin">Country of Origin</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={14}
-          onChange={handleChange}
-        >
-          <MenuItem value={10}>China</MenuItem>
-          <MenuItem value={20}>India</MenuItem>
-          <MenuItem value={30}>Russia</MenuItem>
-        </Select>
-        </FormControl>
-
-     <FormControl>
-        <InputLabel id="Current Location">Current Location</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={14}
-          onChange={handleChange}
-        >
-          <MenuItem value={10}>Toronto</MenuItem>
-          <MenuItem value={20}>Calgary</MenuItem>
-          <MenuItem value={30}>Vancouver</MenuItem>
-        </Select>
-        </FormControl>
-
+    <StyledGrid container justify="center" alignContent="center">
+      <form onSubmit={handleSubmit}>
         <FormControl>
-        <InputLabel id="demo-simple-select-label">Year Published</InputLabel>
-        <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={14}
-          onChange={handleChange}
-        >
-          <MenuItem value={10}>2021</MenuItem>
-          <MenuItem value={20}>2020</MenuItem>
-          <MenuItem value={30}>2019</MenuItem>
-        </Select>
-        </FormControl>
+          <TextField
+            onChange={handleChange}
+            variant="outlined"
+            required
+            id="story-title"
+            label="Story Title"
+            placeholder="Lorem ipsum"
+          />
+          <TextField
+            onChange={handleChange}
+            multiline
+            placeholder="Enter additional information here"
+            rows={8}
+            required
+            id="story-summary"
+            label="Story Summary"
+          />
+          <TextField
+            onChange={handleChange}
+            variant="outlined"
+            required
+            id="author-title"
+            label="Author"
+            placeholder="Lorem ipsum"
+          />
+          <TextField
+            onChange={handleChange}
+            multiline
+            placeholder="Enter additional information here"
+            rows={8}
+            required
+            id="author-bio"
+            label="Author Bio"
+          />
 
-        </FormControl>
+          <FormControl>
+            <InputLabel id="Country of Origin">Country of Origin</InputLabel>
+            <Select
+              value={state.country}
+              onChange={handleChange}
+              inputProps={{
+                name: "country",
+                id: "select-label-country",
+              }}
+            >
+              <MenuItem value={"China"}>China</MenuItem>
+              <MenuItem value={"India"}>India</MenuItem>
+              <MenuItem value={"Russia"}>Russia</MenuItem>
+            </Select>
+          </FormControl>
 
-    </Grid>
-  
+          <FormControl>
+            <InputLabel id="Current Location">Current City</InputLabel>
+            <Select
+              value={state.city}
+              onChange={handleChange}
+              inputProps={{
+                name: "city",
+                id: "select-label-city",
+              }}
+            >
+              <MenuItem value={"Toronto"}>Toronto</MenuItem>
+              <MenuItem value={"Calgary"}>Calgary</MenuItem>
+              <MenuItem value={"Vancouver"}>Vancouver</MenuItem>
+            </Select>
+          </FormControl>
+
+          <FormControl>
+            <InputLabel id="input-label-year">Year Published</InputLabel>
+            <Select
+              value={state.year}
+              onChange={handleChange}
+              inputProps={{
+                name: "year",
+                id: "select-label-year",
+              }}
+            >
+              <MenuItem value={2021}>2021</MenuItem>
+              <MenuItem value={2020}>2020</MenuItem>
+              <MenuItem value={2019}>2019</MenuItem>
+            </Select>
+          </FormControl>
+
+          <DropzoneArea
+            acceptedFiles={["image/*"]}
+            dropzoneText={"Drag and drop an image here or click"}
+            onChange={(files) => console.log("Files:", files)}
+          />
+
+          {/* <Chips
+          value={chips}
+          onChange={setChips}
+          suggestions={["Tag1", "Tag2", "Tag3"]}
+
+        /> */}
+
+          <TextField
+            required
+            id="video-link"
+            label="Video Link"
+            placeholder="www.youtube.com/link"
+          />
+          <TextField
+            multiline
+            placeholder="Lorem ipsum dolor sit amet, consectet ui i iadipiscing elit"
+            rows={8}
+            required
+            id="story-content"
+            label="Story"
+          />
+        </FormControl>
+      </form>
+    </StyledGrid>
   );
-  }
+};
