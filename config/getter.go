@@ -183,6 +183,14 @@ func GetTokenIssuer() string {
 	return viper.GetString("auth.jwt_issuer")
 }
 
+func GetGoogleClientId() string {
+	return viper.GetString("google.client_id")
+}
+
+func GetGoogleClientSecret() string {
+	return viper.GetString("google.client_secret")
+}
+
 func GetMapBoxToken() string {
 	return viper.GetString("mapbox.token")
 }
