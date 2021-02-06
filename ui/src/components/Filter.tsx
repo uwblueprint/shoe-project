@@ -7,7 +7,6 @@ import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import * as React from "react";
-import { ScaleControl } from "react-leaflet";
 import styled from "styled-components";
 import useSWR from "swr";
 
@@ -204,7 +203,6 @@ export function Filter({ onChange, tags }: FilterProps): JSX.Element {
   };
 
   const classes = useStyles();
-  useStyles();
   if (error) return <div>Error!</div>;
 
   return (
