@@ -12,8 +12,36 @@ import (
 	"github.com/uwblueprint/shoe-project/internal/database/models"
 	"github.com/uwblueprint/shoe-project/restapi/rest"
 	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 	"gorm.io/gorm"
 )
+
+func (api api) LoginV2(w http.ResponseWriter, r *http.Request) render.Renderer {
+	oauthconfig := &oauth2.Config{
+		ClientID:     config.GetGoogleClientId(),
+		ClientSecret: config.GetGoogleClientSecret(),
+		RedirectURL:  "http://localhost:8900/api/auth/callback",
+		Scopes: []string{
+			"https://www.googleapis.com/auth/userinfo.email",
+		},
+		Endpoint: google.Endpoint,
+	}
+
+	// TODO: randomize state param
+	var url string
+	url = oauthconfig.AuthCodeURL("try")
+	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
+
+	// TODO: figure out to stop html char escaping in url in json response
+	// bf := bytes.NewBuffer([]byte{})
+	// jsonEncoder := json.NewEncoder(bf)
+	// jsonEncoder.SetEscapeHTML(false)
+	// jsonEncoder.Encode(url)
+	// fmt.Println(url)
+
+	return rest.JSONStatusOK(url)
+}
 
 func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var user models.User
