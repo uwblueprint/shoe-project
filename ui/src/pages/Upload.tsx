@@ -1,13 +1,14 @@
-import { FormControl } from "@material-ui/core";
-import { TextField } from "@material-ui/core";
-import { Grid } from "@material-ui/core/";
-import InputLabel from "@material-ui/core/InputLabel";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
+import {
+  Button,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+} from "@material-ui/core/";
 import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
-// import React from 'react';
-// import {Chips} from 'react-chips';
 import styled from "styled-components";
 
 import { device } from "../styles/device";
@@ -22,27 +23,39 @@ const StyledGrid = styled(Grid)`
 `;
 
 export const Upload: React.FC = () => {
-  // var [chips, setChips] = React.useState('');
   const [state, setState] = React.useState<{
     storyTitle: string;
     storySummary: string;
+    storyContent: string;
     author: string;
     authorBio: string;
+    images: File[];
     country: string;
     city: string;
     year: string | number;
+    videoLink: string;
   }>({
     storyTitle: "",
     storySummary: "",
+    storyContent: "",
     author: "",
     authorBio: "",
+    images: [],
     country: "",
     city: "",
-    year: 0,
+    year: "",
+    videoLink: "",
   });
 
+  const setImage = (files: File[]) => {
+    setState({
+      ...state,
+      images: files,
+    });
+  };
+
   const handleChange = (
-    event: React.ChangeEvent<{ name?: string; value: unknown }>
+    event?: React.ChangeEvent<{ name?: string; value: unknown }>
   ) => {
     const name = event.target.name as keyof typeof state;
     setState({
@@ -51,12 +64,21 @@ export const Upload: React.FC = () => {
     });
   };
 
-  // const handleChipsChange = event => {
-  //   console.log("hi");
-  // };
+  const handleSubmit = (event) => {
+    event.preventDefault();
 
-  const handleSubmit = event => {
-    //some logic
+    const data = { state };
+    console.log(JSON.stringify(data));
+    fetch("localhost:8900/api/stories", {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((response) => console.log("Success:", JSON.stringify(response)))
+      .catch((error) => console.error("Error:", error));
   };
 
   return (
@@ -68,6 +90,7 @@ export const Upload: React.FC = () => {
             variant="outlined"
             required
             id="story-title"
+            name="storyTitle"
             label="Story Title"
             placeholder="Lorem ipsum"
           />
@@ -78,6 +101,7 @@ export const Upload: React.FC = () => {
             rows={8}
             required
             id="story-summary"
+            name="storySummary"
             label="Story Summary"
           />
           <TextField
@@ -85,6 +109,7 @@ export const Upload: React.FC = () => {
             variant="outlined"
             required
             id="author-title"
+            name="author"
             label="Author"
             placeholder="Lorem ipsum"
           />
@@ -95,6 +120,7 @@ export const Upload: React.FC = () => {
             rows={8}
             required
             id="author-bio"
+            name="authorBio"
             label="Author Bio"
           />
 
@@ -149,30 +175,36 @@ export const Upload: React.FC = () => {
           <DropzoneArea
             acceptedFiles={["image/*"]}
             dropzoneText={"Drag and drop an image here or click"}
-            onChange={(files) => console.log("Files:", files)}
+            onChange={(files) => {
+              setImage(files);
+            }}
           />
-
-          {/* <Chips
-          value={chips}
-          onChange={setChips}
-          suggestions={["Tag1", "Tag2", "Tag3"]}
-
-        /> */}
-
           <TextField
+            onChange={handleChange}
             required
             id="video-link"
             label="Video Link"
             placeholder="www.youtube.com/link"
+            inputProps={{
+              name: "videoLink",
+              id: "input-video-link",
+            }}
           />
           <TextField
+            onChange={handleChange}
             multiline
             placeholder="Lorem ipsum dolor sit amet, consectet ui i iadipiscing elit"
             rows={8}
             required
-            id="story-content"
+            inputProps={{
+              name: "storyContent",
+              id: "story-content",
+            }}
             label="Story"
           />
+          <Button color="primary" type="submit" variant="contained">
+            Submit Story
+          </Button>
         </FormControl>
       </form>
     </StyledGrid>
