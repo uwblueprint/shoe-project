@@ -1,8 +1,10 @@
 package restapi
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"time"
 
@@ -17,6 +19,23 @@ import (
 	"gorm.io/gorm"
 )
 
+func generateStateOauthCookie(w http.ResponseWriter) (string, error) {
+	duration, err := config.GetTokenExpiryDuration()
+	if err != nil {
+		return "", err
+	}
+	var expiration = time.Now().Add(duration)
+
+	b := make([]byte, 16)
+	rand.Read(b)
+	state := base64.URLEncoding.EncodeToString(b)
+	fmt.Println(state)
+	cookie := http.Cookie{Name: "oauthstate", Value: state, Expires: expiration, HttpOnly: true} // in prod, set Secure to true
+	http.SetCookie(w, &cookie)
+
+	return state, nil
+}
+
 func (api api) LoginV2(w http.ResponseWriter, r *http.Request) render.Renderer {
 	oauthconfig := &oauth2.Config{
 		ClientID:     config.GetGoogleClientId(),
@@ -28,9 +47,12 @@ func (api api) LoginV2(w http.ResponseWriter, r *http.Request) render.Renderer {
 		Endpoint: google.Endpoint,
 	}
 
-	// TODO: randomize state param
-	var url string
-	url = oauthconfig.AuthCodeURL("try")
+	state, err := generateStateOauthCookie(w)
+	if err != nil {
+		return rest.ErrInternal(api.logger, err)
+	}
+
+	url := oauthconfig.AuthCodeURL(state)
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
 
 	// TODO: figure out to stop html char escaping in url in json response
@@ -41,6 +63,16 @@ func (api api) LoginV2(w http.ResponseWriter, r *http.Request) render.Renderer {
 	// fmt.Println(url)
 
 	return rest.JSONStatusOK(url)
+}
+
+func (api api) AuthCallback(w http.ResponseWriter, r *http.Request) render.Renderer {
+	expectedState, _ := r.Cookie("oauthstate")
+	// http.Redirect(w, r, "/api/tempredirect", http.StatusTemporaryRedirect)
+	return rest.JSONStatusOK(expectedState)
+}
+
+func (api api) TempRedirect(w http.ResponseWriter, r *http.Request) render.Renderer {
+	return rest.JSONStatusOK("ok")
 }
 
 func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
