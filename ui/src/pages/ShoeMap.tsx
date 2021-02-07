@@ -19,9 +19,12 @@ import {
   WelcomeTutorial,
 } from "../components";
 import { colors } from "../styles";
+import { device } from "../styles/device";
 import { Story, Tokens } from "../types";
 import { isTimestampExpired } from "../util/timestamp";
+
 const TIMEOUT_SECONDS = 1728000000;
+const SHOE_PROJECT_URL = "https://theshoeproject.online/our-stories";
 
 interface StyledMapProps {
   isHelpDrawerOpen: boolean;
@@ -35,6 +38,9 @@ const StyledMap = styled(Map)<StyledMapProps>`
     margin: 0px 36px 16px 0px;
   }
   .leaflet-bar a {
+    @media ${device.mobile} {
+      display: none;
+    }
     width: 40px;
     height: 40px;
     background-color: ${colors.white};
@@ -78,6 +84,12 @@ const StyledHelpIcon = styled.button`
     color: ${colors.primaryDark1};
     border: 2px solid ${colors.primaryDark1};
   }
+  @media ${device.mobile} {
+    height: 6vh;
+    width: 6vh;
+    font-size: 80px;
+    border-radius: 30px;
+  }
 `;
 
 const MapContainer = styled.div`
@@ -95,6 +107,13 @@ const StyledLogo = styled.div`
   padding-left: 42px;
   padding-bottom: 30px;
   left: 36px;
+  cursor: pointer;
+  @media ${device.mobile} {
+    padding-bottom: 3vh;
+    margin-left: 2vw;
+    width: 110px;
+    transform: scale(1.5);
+  }
 `;
 
 export const ShoeMap: React.FC = () => {
@@ -166,7 +185,9 @@ export const ShoeMap: React.FC = () => {
             </StyledHelpIcon>
           </Control>
           <Control position="bottomleft">
-            <StyledLogo></StyledLogo>
+            <a href={SHOE_PROJECT_URL} target="_blank" rel="noreferrer">
+              <StyledLogo />
+            </a>
           </Control>
         </StyledMap>
       </MapContainer>

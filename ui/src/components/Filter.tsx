@@ -11,6 +11,7 @@ import styled from "styled-components";
 import useSWR from "swr";
 
 import { colors, fontSize } from "../styles";
+import { device } from "../styles/device";
 import { FilterChip } from "./FilterChip";
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
@@ -24,6 +25,29 @@ export interface FilterProps {
 const StyledAutocomplete = styled(Autocomplete)`
   color: ${colors.primary};
   width: 312px;
+  @media ${device.mobile} {
+    padding-left: 2em;
+    width: 86vw;
+
+    .MuiChip-root {
+      height: 5.5em;
+      border-radius: 3em;
+      margin-bottom: 1.4em;
+    }
+
+    .MuiChip-deleteIcon {
+      height: 1em;
+      width: 0.5em;
+      padding-right: 0.7em;
+      padding-left: 0.4em;
+    }
+  }
+  .MuiSvgIcon-root {
+    transform: scale(1);
+    @media ${device.mobile} {
+      transform: scale(3);
+    }
+  }
 
   .MuiChip-label {
     font-family: Poppins;
@@ -32,6 +56,12 @@ const StyledAutocomplete = styled(Autocomplete)`
     font-size: ${fontSize.subtitle};
     line-height: 24px;
     color: ${colors.primaryDark2};
+    @media ${device.mobile} {
+      padding-left: 0.5em;
+      padding-right: 0.75em;
+      font-size: 3em;
+      line-height: 1.5em;
+    }
   }
 
   .MuiAutocomplete-inputRoot {
@@ -41,6 +71,11 @@ const StyledAutocomplete = styled(Autocomplete)`
     font-size: ${fontSize.subtitle};
     line-height: 24px;
     color: ${colors.grey};
+    @media ${device.mobile} {
+      font-size: 40px;
+      padding-bottom: 10px;
+      padding-right: 56px;
+    }
   }
 
   .MuiInput-underline:before {
@@ -69,6 +104,10 @@ const StyledCheckbox = styled(Checkbox)`
     color: ${colors.primaryDark1};
   }
   margin-right: 8px;
+  transform: scale(1);
+  @media ${device.mobile} {
+    transform: scale(2);
+  }
 `;
 
 const FilterContainer = styled.div`
@@ -78,6 +117,14 @@ const FilterContainer = styled.div`
   min-height: 61px;
   left: 36px;
   top: 16px;
+
+  @media ${device.mobile} {
+    margin-top: 1.5vh;
+    width: 90vw;
+    min-height: 8.5vh;
+    border-radius: 1.5em;
+    padding-bottom: 1vh;
+  }
 
   background: ${colors.white};
   box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.1);
@@ -90,6 +137,9 @@ const FilterContainer = styled.div`
 
 const Tagline = styled.span`
   font-size: ${fontSize.subtitle};
+  @media ${device.mobile} {
+    font-size: 40px;
+  }
 `;
 
 const ClearButton = styled(Button)`
@@ -98,6 +148,9 @@ const ClearButton = styled(Button)`
   .MuiButton-label {
     color: ${colors.secondary};
     font-size: ${fontSize.interactive};
+    @media ${device.mobile} {
+      font-size: 40px;
+    }
   }
 `;
 
@@ -105,6 +158,20 @@ const Top = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-bottom: 16px;
+  @media ${device.mobile} {
+    padding-left: 0.7em;
+    font-size: 3em;
+  }
+`;
+
+const CheckboxLabel = styled.label`
+  @media ${device.mobile} {
+    font-size: 40px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    padding-left: 15px;
+  }
 `;
 
 const useStyles = makeStyles(() => ({
@@ -169,12 +236,13 @@ export function Filter({ onChange, tags }: FilterProps): JSX.Element {
         renderOption={(option, { selected }) => (
           <React.Fragment key={option}>
             <StyledCheckbox
+              id={option}
               icon={icon}
               checkedIcon={checkedIcon}
               checked={selected}
               color="primary"
             />
-            {option}
+            <CheckboxLabel htmlFor={option}>{option}</CheckboxLabel>
           </React.Fragment>
         )}
         renderInput={(params) => (
