@@ -62,7 +62,16 @@ export function Pin({
   const rightPaddingPoint = L.point(100, 400);
 
   return (
-    <Marker position={[story.latitude, story.longitude]} icon={icon}>
+    <Marker
+      position={[story.latitude, story.longitude]}
+      icon={icon}
+      onMouseOver={(e) => {
+        e.target.openPopup();
+      }}
+      onMouseOut={(e) => {
+        e.target.closePopup();
+      }}
+    >
       <StyledPopup
         autoPanPaddingTopLeft={leftPaddingPoint}
         autoPanPaddingBottomRight={rightPaddingPoint}
