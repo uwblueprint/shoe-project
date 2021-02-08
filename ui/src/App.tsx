@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { SWRConfig } from "swr";
 
 import { AuthProvider, PrivateRoute } from "./hooks/auth";
-import { Admin, Login, ShoeMap, Upload } from "./pages";
+import { Admin, Login, ShoeMap } from "./pages";
 
 const defaultFetcher = (
   input: RequestInfo,
@@ -28,9 +28,6 @@ function App(): JSX.Element {
             </Route>
             <Route path="/login">
               <Login />
-            </Route>
-            <Route path="/upload">
-              <Upload />
             </Route>
             <PrivateRoute path="/admin">
               <Admin />
