@@ -1,6 +1,7 @@
 package restapi
 
 import (
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -19,9 +20,6 @@ import (
 
 var oauthconfig *oauth2.Config
 
-// What is state?
-// Since your redirect_uri can be guessed, using a state value can increase your assurance that
-// an incoming connection is the result of an authentication request.
 func generateStateOauthCookie(w http.ResponseWriter) (string, error) {
 	duration, err := config.GetTokenExpiryDuration()
 	if err != nil {
@@ -50,7 +48,6 @@ func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
 		Endpoint: google.Endpoint,
 	}
 
-	// switch to using session storage instead of cookie?
 	state, err := generateStateOauthCookie(w)
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
@@ -58,13 +55,6 @@ func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
 
 	url := oauthconfig.AuthCodeURL(state)
 	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
-
-	// TODO: figure out to stop html char escaping in url in json response
-	// bf := bytes.NewBuffer([]byte{})
-	// jsonEncoder := json.NewEncoder(bf)
-	// jsonEncoder.SetEscapeHTML(false)
-	// jsonEncoder.Encode(url)
-	// fmt.Println(url)
 
 	return rest.JSONStatusOK(url)
 }
@@ -75,41 +65,38 @@ func (api api) AuthCallback(w http.ResponseWriter, r *http.Request) render.Rende
 		return rest.ErrUnauthorized("Invalid oauth state")
 	}
 
-	// request from google has an authorization code that
-	// we exchange the code for an access token and a refresh token
-	token, err := oauthconfig.Exchange(oauth2.NoContext, r.FormValue("code"))
+	// exchange received authorization code for an access token
+	token, err := oauthconfig.Exchange(context.Background(), r.FormValue("code"))
 	if err != nil {
 		return rest.ErrUnauthorized("Invalid authorization code")
 	}
 
-	// we use the access token to create a google client which we use to access user info
-	client := oauthconfig.Client(oauth2.NoContext, token)
+	// use access token to create a client which we use to access user info
+	client := oauthconfig.Client(context.Background(), token)
 	response, err := client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
 	if err != nil {
 		return rest.JSONStatusOK("Invalid access token")
 	}
 	defer response.Body.Close()
-	user := models.UserV2{}
+	user := models.User{}
 	err = json.NewDecoder(response.Body).Decode(&user)
+	if err != nil {
+		return rest.ErrInternal(api.logger, err)
+	}
 
 	// redirect if invalid
 	if user.Hd != "uwblueprint.org" && user.Hd != "theshoeproject.online" {
-		return rest.ErrUnauthorized("Please use your Blueprint or ShoeProject email.")
+		http.Redirect(w, r, "/api/unauthorized", http.StatusTemporaryRedirect)
 	}
 
-	// if valid, firstOrCreate user then call createJWTToken function, the redirect
+	// if valid, save to db and create jwt token
 	api.database.FirstOrCreate(&user)
 	jwtToken, err := generateJWTToken(user.Email)
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
 
-	// http.Redirect(w, r, "/api/tempredirect", http.StatusTemporaryRedirect)
 	return rest.JSONStatusOK(jwtToken)
-}
-
-func (api api) TempRedirect(w http.ResponseWriter, r *http.Request) render.Renderer {
-	return rest.JSONStatusOK("ok")
 }
 
 func generateJWTToken(email string) (string, error) {

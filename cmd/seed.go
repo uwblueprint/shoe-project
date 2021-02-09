@@ -38,10 +38,6 @@ var (
 				logger.Fatalw("Database table creation failed", "Err", err)
 			}
 
-			if err := migrations.CreateSuperUser(db); err != nil {
-				logger.Fatalw("Super user creation failed", "Err", err)
-			}
-
 			locationFinder, err := location.NewMapboxFinder(config.GetMapBoxToken(), "CA")
 			if err != nil {
 				logger.Fatalw("Failed to initialize Mapbox location finder service")

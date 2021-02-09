@@ -5,19 +5,16 @@ import (
 	"gorm.io/gorm"
 )
 
+// User stores all users that have ever signed in with a
+// uwblueprint or theshoeproject domains (stored in Hd field)
 type User struct {
-	gorm.Model
-	Username string `json:"username" gorm:"unique; not null"`
-	Password string `json:"password" gorm:"not null"`
-}
-
-type UserV2 struct {
 	gorm.Model
 	Email string `json:"email" gorm:"unique; not null"`
 	Hd    string `json:"hd" gorm:"not null"`
 }
 
-// Not persisted in db
+// Claims is a custom JWT claim type
+// not persisted in db
 type Claims struct {
 	Email string `json:"email"`
 	jwt.StandardClaims

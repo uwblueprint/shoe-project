@@ -53,18 +53,28 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 
 		rest.GetHandler(r, "/auth/callback", api.AuthCallback)
 		rest.GetHandler(r, "/client_tokens", api.ReturnClientTokens)
+		rest.GetHandler(r, "/unauthorized", api.UnauthorizedPage)
+
+		// TODO: move these back to private api once https://github.com/uwblueprint/shoe-project/issues/204 is closed
+		rest.PostHandler(r, "/stories", api.CreateStories)
+		rest.PostHandler(r, "/authors", api.CreateAuthors)
 	})
 
 	// Private API
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(config.GetJWTKey()))
 		r.Use(jwtauth.Authenticator)
-		rest.PostHandler(r, "/stories", api.CreateStories)
-		rest.PostHandler(r, "/authors", api.CreateAuthors)
+
+		// dummy call to check auth flow
+		rest.GetHandler(r, "/checkauth", api.checkAuthDummy)
 	})
 	return r, nil
 }
 
 func (api api) health(w http.ResponseWriter, r *http.Request) render.Renderer {
 	return rest.MsgStatusOK("Hello World")
+}
+
+func (api api) checkAuthDummy(w http.ResponseWriter, r *http.Request) render.Renderer {
+	return rest.MsgStatusOK("Working!")
 }
