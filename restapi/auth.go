@@ -13,10 +13,8 @@ import (
 	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
 	"github.com/uwblueprint/shoe-project/restapi/rest"
-	"golang.org/x/crypto/bcrypt"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
-	"gorm.io/gorm"
 )
 
 var oauthconfig *oauth2.Config
@@ -41,7 +39,7 @@ func generateStateOauthCookie(w http.ResponseWriter) (string, error) {
 	return state, nil
 }
 
-func (api api) LoginV2(w http.ResponseWriter, r *http.Request) render.Renderer {
+func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
 	oauthconfig = &oauth2.Config{
 		ClientID:     config.GetGoogleClientId(),
 		ClientSecret: config.GetGoogleClientSecret(),
@@ -71,11 +69,6 @@ func (api api) LoginV2(w http.ResponseWriter, r *http.Request) render.Renderer {
 	return rest.JSONStatusOK(url)
 }
 
-type User struct {
-	Email string `json:"email"`
-	Hd    string `json:"hd"`
-}
-
 func (api api) AuthCallback(w http.ResponseWriter, r *http.Request) render.Renderer {
 	expectedState, _ := r.Cookie("oauthstate")
 	if expectedState.Value != r.FormValue("state") {
@@ -96,47 +89,37 @@ func (api api) AuthCallback(w http.ResponseWriter, r *http.Request) render.Rende
 		return rest.JSONStatusOK("Invalid access token")
 	}
 	defer response.Body.Close()
-	user := User{}
+	user := models.UserV2{}
 	err = json.NewDecoder(response.Body).Decode(&user)
 
 	// redirect if invalid
+	if user.Hd != "uwblueprint.org" && user.Hd != "theshoeproject.online" {
+		return rest.ErrUnauthorized("Please use your Blueprint or ShoeProject email.")
+	}
+
 	// if valid, firstOrCreate user then call createJWTToken function, the redirect
+	api.database.FirstOrCreate(&user)
+	jwtToken, err := generateJWTToken(user.Email)
+	if err != nil {
+		return rest.ErrInternal(api.logger, err)
+	}
+
 	// http.Redirect(w, r, "/api/tempredirect", http.StatusTemporaryRedirect)
-	return rest.JSONStatusOK(user)
+	return rest.JSONStatusOK(jwtToken)
 }
 
 func (api api) TempRedirect(w http.ResponseWriter, r *http.Request) render.Renderer {
 	return rest.JSONStatusOK("ok")
 }
 
-func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
-	var user models.User
-	err := json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
-		rest.ErrInvalidRequest(api.logger, "Invalid login payload", err)
-	}
-
-	// Find user with username
-	var dbUser models.User
-	if err = api.database.Where("username=?", user.Username).First(&dbUser).Error; err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return rest.ErrNotFound(fmt.Sprintf("Could not find user with username %s", user.Username))
-		}
-		return rest.ErrInternal(api.logger, err)
-	}
-
-	// Validate password
-	if err = bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(user.Password)); err != nil {
-		return rest.ErrUnauthorized(fmt.Sprintf("Wrong password for username %s", user.Username))
-	}
-
+func generateJWTToken(email string) (string, error) {
 	jwtExpiry, err := config.GetTokenExpiryDuration()
 	if err != nil {
-		return rest.ErrInternal(api.logger, err)
+		return "", err
 	}
 
 	claim := &models.Claims{
-		Username: user.Username,
+		Email: email,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(jwtExpiry).Unix(),
 			Issuer:    config.GetTokenIssuer(),
@@ -146,8 +129,8 @@ func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
 	token := config.GetJWTKey()
 	_, signedToken, err := token.Encode(claim)
 	if err != nil {
-		return rest.ErrInternal(api.logger, err)
+		return "", err
 	}
 
-	return rest.JSONStatusOK(signedToken)
+	return signedToken, nil
 }

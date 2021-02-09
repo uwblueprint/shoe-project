@@ -11,8 +11,14 @@ type User struct {
 	Password string `json:"password" gorm:"not null"`
 }
 
+type UserV2 struct {
+	gorm.Model
+	Email string `json:"email" gorm:"unique; not null"`
+	Hd    string `json:"hd" gorm:"not null"`
+}
+
 // Not persisted in db
 type Claims struct {
-	Username string `json:"username"`
+	Email string `json:"email"`
 	jwt.StandardClaims
 }

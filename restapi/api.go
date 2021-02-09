@@ -51,7 +51,6 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 		rest.PostHandler(r, "/login", api.Login)
 		rest.PostHandler(r, "/story", api.CreateStoriesFormData)
 
-		rest.GetHandler(r, "/loginv2", api.LoginV2)
 		rest.GetHandler(r, "/auth/callback", api.AuthCallback)
 		rest.GetHandler(r, "/client_tokens", api.ReturnClientTokens)
 	})
