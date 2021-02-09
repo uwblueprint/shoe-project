@@ -19,6 +19,11 @@ import (
 	"gorm.io/gorm"
 )
 
+var oauthconfig *oauth2.Config
+
+// What is state?
+// Since your redirect_uri can be guessed, using a state value can increase your assurance that
+// an incoming connection is the result of an authentication request.
 func generateStateOauthCookie(w http.ResponseWriter) (string, error) {
 	duration, err := config.GetTokenExpiryDuration()
 	if err != nil {
@@ -37,7 +42,7 @@ func generateStateOauthCookie(w http.ResponseWriter) (string, error) {
 }
 
 func (api api) LoginV2(w http.ResponseWriter, r *http.Request) render.Renderer {
-	oauthconfig := &oauth2.Config{
+	oauthconfig = &oauth2.Config{
 		ClientID:     config.GetGoogleClientId(),
 		ClientSecret: config.GetGoogleClientSecret(),
 		RedirectURL:  "http://localhost:8900/api/auth/callback",
@@ -47,6 +52,7 @@ func (api api) LoginV2(w http.ResponseWriter, r *http.Request) render.Renderer {
 		Endpoint: google.Endpoint,
 	}
 
+	// switch to using session storage instead of cookie?
 	state, err := generateStateOauthCookie(w)
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
@@ -65,10 +71,38 @@ func (api api) LoginV2(w http.ResponseWriter, r *http.Request) render.Renderer {
 	return rest.JSONStatusOK(url)
 }
 
+type User struct {
+	Email string `json:"email"`
+	Hd    string `json:"hd"`
+}
+
 func (api api) AuthCallback(w http.ResponseWriter, r *http.Request) render.Renderer {
 	expectedState, _ := r.Cookie("oauthstate")
+	if expectedState.Value != r.FormValue("state") {
+		return rest.ErrUnauthorized("Invalid oauth state")
+	}
+
+	// request from google has an authorization code that
+	// we exchange the code for an access token and a refresh token
+	token, err := oauthconfig.Exchange(oauth2.NoContext, r.FormValue("code"))
+	if err != nil {
+		return rest.ErrUnauthorized("Invalid authorization code")
+	}
+
+	// we use the access token to create a google client which we use to access user info
+	client := oauthconfig.Client(oauth2.NoContext, token)
+	response, err := client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
+	if err != nil {
+		return rest.JSONStatusOK("Invalid access token")
+	}
+	defer response.Body.Close()
+	user := User{}
+	err = json.NewDecoder(response.Body).Decode(&user)
+
+	// redirect if invalid
+	// if valid, firstOrCreate user then call createJWTToken function, the redirect
 	// http.Redirect(w, r, "/api/tempredirect", http.StatusTemporaryRedirect)
-	return rest.JSONStatusOK(expectedState)
+	return rest.JSONStatusOK(user)
 }
 
 func (api api) TempRedirect(w http.ResponseWriter, r *http.Request) render.Renderer {
