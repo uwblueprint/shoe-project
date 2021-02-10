@@ -65,6 +65,11 @@ const StyledDrawerContainer = styled.div`
   margin-bottom: 21px;
 `;
 
+const StyledVideo = styled.iframe`
+  height: 40vw;
+  width: 100%;
+`;
+
 interface StoryDrawerProps {
   story?: Story;
   onClose: () => void;
@@ -83,6 +88,7 @@ export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
     current_city,
     content,
     image_url,
+    video_url,
     year,
   } = story;
 
@@ -114,6 +120,16 @@ export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
           <Grid item xs={12}>
             <StoryDrawerContentText>{content}</StoryDrawerContentText>
           </Grid>
+          {video_url && (
+            <Grid item xs={12}>
+              <StyledVideo
+                src={video_url}
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></StyledVideo>
+            </Grid>
+          )}
         </Grid>
       </StyledRoot>
     </StyledDrawer>
