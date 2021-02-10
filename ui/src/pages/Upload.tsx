@@ -24,27 +24,29 @@ const StyledGrid = styled(Grid)`
 
 export const Upload: React.FC = () => {
   const [state, setState] = React.useState<{
-    storyTitle: string;
-    storySummary: string;
-    storyContent: string;
-    author: string;
-    authorBio: string;
     images: File[];
-    country: string;
-    city: string;
-    year: string | number;
-    videoLink: string;
+    video_url: string;
+    title: string;
+    content: string;
+    summary: string;
+    author_first_name: string;
+    author_last_name: string;
+    author_country: string;
+    year: string;
+    current_city: string;
+    bio: string;
   }>({
-    storyTitle: "",
-    storySummary: "",
-    storyContent: "",
-    author: "",
-    authorBio: "",
     images: [],
-    country: "",
-    city: "",
+    video_url: "",
+    title: "",
+    content: "",
+    summary: "",
+    author_first_name: "",
+    author_last_name: "",
+    author_country: "",
     year: "",
-    videoLink: "",
+    current_city: "",
+    bio: "",
   });
 
   const setImage = (files: File[]) => {
@@ -57,6 +59,7 @@ export const Upload: React.FC = () => {
   const handleChange = (
     event?: React.ChangeEvent<{ name?: string; value: unknown }>
   ) => {
+    console.log(state.images);
     const name = event.target.name as keyof typeof state;
     setState({
       ...state,
@@ -69,8 +72,9 @@ export const Upload: React.FC = () => {
 
     const data = { state };
     console.log(JSON.stringify(data));
-    fetch("localhost:8900/api/stories", {
+    fetch("localhost:8900/api/stories_formdata", {
       method: "POST",
+      //should send in as form-data
       body: JSON.stringify(data),
       headers: {
         "Content-Type": "application/json",
@@ -90,7 +94,7 @@ export const Upload: React.FC = () => {
             variant="outlined"
             required
             id="story-title"
-            name="storyTitle"
+            name="title"
             label="Story Title"
             placeholder="Lorem ipsum"
           />
@@ -101,16 +105,25 @@ export const Upload: React.FC = () => {
             rows={8}
             required
             id="story-summary"
-            name="storySummary"
+            name="summary"
             label="Story Summary"
           />
           <TextField
             onChange={handleChange}
             variant="outlined"
             required
-            id="author-title"
-            name="author"
-            label="Author"
+            id="author-first-name"
+            name="author_first_name"
+            label="First Name"
+            placeholder="Lorem ipsum"
+          />
+           <TextField
+            onChange={handleChange}
+            variant="outlined"
+            required
+            id="author-last-name"
+            name="author_last_name"
+            label="Last Name"
             placeholder="Lorem ipsum"
           />
           <TextField
@@ -120,17 +133,17 @@ export const Upload: React.FC = () => {
             rows={8}
             required
             id="author-bio"
-            name="authorBio"
+            name="bio"
             label="Author Bio"
           />
 
           <FormControl>
             <InputLabel id="Country of Origin">Country of Origin</InputLabel>
             <Select
-              value={state.country}
+              value={state.author_country}
               onChange={handleChange}
               inputProps={{
-                name: "country",
+                name: "author_country",
                 id: "select-label-country",
               }}
             >
@@ -143,10 +156,10 @@ export const Upload: React.FC = () => {
           <FormControl>
             <InputLabel id="Current Location">Current City</InputLabel>
             <Select
-              value={state.city}
+              value={state.current_city}
               onChange={handleChange}
               inputProps={{
-                name: "city",
+                name: "current_city",
                 id: "select-label-city",
               }}
             >
@@ -166,9 +179,9 @@ export const Upload: React.FC = () => {
                 id: "select-label-year",
               }}
             >
-              <MenuItem value={2021}>2021</MenuItem>
-              <MenuItem value={2020}>2020</MenuItem>
-              <MenuItem value={2019}>2019</MenuItem>
+              <MenuItem value={"2021"}>2021</MenuItem>
+              <MenuItem value={"2020"}>2020</MenuItem>
+              <MenuItem value={"2019"}>2019</MenuItem>
             </Select>
           </FormControl>
 
@@ -179,6 +192,7 @@ export const Upload: React.FC = () => {
               setImage(files);
             }}
           />
+          {/* TODO: verify link */}
           <TextField
             onChange={handleChange}
             required
@@ -186,7 +200,7 @@ export const Upload: React.FC = () => {
             label="Video Link"
             placeholder="www.youtube.com/link"
             inputProps={{
-              name: "videoLink",
+              name: "video_url",
               id: "input-video-link",
             }}
           />
@@ -197,7 +211,7 @@ export const Upload: React.FC = () => {
             rows={8}
             required
             inputProps={{
-              name: "storyContent",
+              name: "content",
               id: "story-content",
             }}
             label="Story"
