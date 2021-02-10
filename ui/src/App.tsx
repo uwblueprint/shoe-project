@@ -26,7 +26,7 @@ function App(): JSX.Element {
             <Route exact path="/">
               <ShoeMap />
             </Route>
-            <Route path="/login">
+            <Route exact path="/login">
               <Login />
             </Route>
             <PrivateRoute path="/admin">
