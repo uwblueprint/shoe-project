@@ -22,6 +22,7 @@ export function useProvideAuth(): AuthContextType {
   // TODO: Write signin function
   const signin = () => {
     setUser({ username: "Abhijeet" });
+    console.log("ABHIJEET LOGGED IN");
   };
 
   // TODO: Write signout function

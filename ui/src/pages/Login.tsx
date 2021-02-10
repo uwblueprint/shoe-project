@@ -9,66 +9,68 @@ import Typography from "@material-ui/core/Typography";
 import styled, { css } from "styled-components";
 import { useAuth } from "../hooks/auth";
 
-const StyledCard = styled(Card)`
-  align-self: center;
-  max-width: 10vw;
-  max-height: 30vh;
-  /* display: flex;
+const CardDiv = styled.div`
+  display: flex;
   justify-content: center;
-  align-items: center; */
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  position: absolute;
 `;
-const useStyles = makeStyles({
-  root: {
-    minWidth: 275,
-    maxWidth: 275,
-  },
-  bullet: {
-    display: "inline-block",
-    margin: "0 2px",
-    transform: "scale(0.8)",
-  },
-  title: {
-    fontSize: 14,
-  },
-  pos: {
-    marginTop: 10,
-  },
-});
 
-export const Login: React.FC = () => {
+const StyledCard = styled(Card)`
+  max-height: 35vh;
+  max-width: 25vw;
+`;
+
+const TitleText = styled.p`
+  font-size: 20px;
+  line-height: 30px;
+  text-align: center;
+`;
+
+const MessageText = styled.p`
+  font-size: 13px;
+  text-align: center;
+`;
+
+const GoogleButton = styled.div`
+  text-align: center;
+  margin-bottom: 5vh;
+`;
+
+export const Login: React.FC<{ login: boolean }> = ({ login }) => {
   const auth = useAuth();
-  const classes = useStyles();
-  const bull = <span className={classes.bullet}>•</span>;
+
+  const title = login
+    ? "Welcome to the Shoe Project Admin Portal"
+    : "Sorry, that is not a valid email";
+  const description = login
+    ? "Please Sign In using your Shoe Project Email"
+    : "Make sure you are using a Shoe Project Organization Email";
 
   if (auth.user) {
     return <Redirect to="/admin" />;
   }
 
   return (
-    <StyledCard className={classes.root} variant="outlined">
-      <CardContent>
-        <Typography
-          className={classes.title}
-          color="textSecondary"
-          gutterBottom
-        >
-          Word of the Day
-        </Typography>
-        <Typography variant="h5" component="h2">
-          Welcome to the Shoe Project Admin Portal
-        </Typography>
-        <Typography className={classes.pos} color="textSecondary">
-          adjective
-        </Typography>
-        <Typography variant="body2" component="p">
-          Hel
-          <br />
-          {'"HEHEHEH"'}
-        </Typography>
-      </CardContent>
-      <CardActions>
-        <Button size="small">Learn More</Button>
-      </CardActions>
-    </StyledCard>
+    <CardDiv>
+      <StyledCard variant="outlined">
+        <CardContent>
+          <TitleText>{title}</TitleText>
+          <MessageText>{description}</MessageText>
+        </CardContent>
+        <GoogleButton>
+          <Button
+            size="small"
+            color="primary"
+            variant="contained"
+            onClick={auth.signin}
+          >
+            Sign In with Google
+          </Button>
+        </GoogleButton>
+      </StyledCard>
+    </CardDiv>
   );
 };

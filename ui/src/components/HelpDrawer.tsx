@@ -169,14 +169,6 @@ export function HelpDrawer({
                 }
               />
             </Grid>
-            <Grid item xs={12}>
-              <HelpAccordion
-                title={"Administrator Login"}
-                body={
-                  "If you are no longer able to find a story pin, click on a redirect icon and it will bring you to the nearest story."
-                }
-              />
-            </Grid>
           </ScrollArea>
           <Grid container direction="row" justify="center">
             <LaunchButton onClick={handleLaunchTour}>
