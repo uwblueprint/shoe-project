@@ -15,6 +15,18 @@ func CreateTables(db *gorm.DB) error {
 	return db.AutoMigrate(&models.Author{}, &models.Story{}, &models.User{})
 }
 
+func DropAllTables(db *gorm.DB) error {
+	err := db.Migrator().DropTable(&models.User{});
+	if err != nil {
+		return err;
+	}
+	err = db.Migrator().DropTable(&models.Story{});
+	if err != nil {
+		return err;
+	}
+	return db.Migrator().DropTable(&models.Author{});
+}
+
 func CreateSuperUser(db *gorm.DB) error {
 	// Clear current superuser if any
 	db.Where("username = ?", config.GetSuperUserUsername()).Delete(models.User{})
