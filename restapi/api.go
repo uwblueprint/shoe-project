@@ -2,7 +2,10 @@ package restapi
 
 import (
 	"net/http"
+	"os"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/jwtauth"
 	"github.com/go-chi/render"
@@ -19,6 +22,7 @@ type api struct {
 	database       *gorm.DB
 	logger         *zap.SugaredLogger
 	locationFinder location.LocationFinder
+	s3config       *aws.Config
 }
 
 func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, error) {
@@ -27,6 +31,12 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 		database:       db,
 		logger:         zap.S(),
 		locationFinder: locationFinder,
+		s3config: &aws.Config{
+			Credentials:      credentials.NewStaticCredentials(os.Getenv("B2_KEY_ID"), os.Getenv("B2_APP_KEY"), ""),
+			Endpoint:         aws.String(os.Getenv("BUCKET_ENDPOINT")),
+			Region:           aws.String(os.Getenv("BUCKET_REGION")),
+			S3ForcePathStyle: aws.Bool(true),
+		},
 	}
 
 	// Public API

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"regexp"
@@ -14,7 +15,6 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/biter777/countries"
@@ -24,6 +24,9 @@ import (
 	"github.com/uwblueprint/shoe-project/restapi/rest"
 	"gorm.io/gorm"
 )
+
+const youtubeRegex = `(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})`
+const youtubeEmbedURL = "https://www.youtube.com/embed/"
 
 func init() {
 	rand.Seed(time.Now().UTC().UnixNano())
@@ -80,35 +83,16 @@ func (api api) CreateStories(w http.ResponseWriter, r *http.Request) render.Rend
 	return rest.MsgStatusOK("Stories added successfully")
 }
 
-func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) render.Renderer {
+func (api api) s3upload(file multipart.File, size int64, name string) (string, error) {
+	newSession, err := session.NewSession(api.s3config)
 
-	awsAccessKeyID := os.Getenv("B2_KEY_ID")
-	awsSecretAccessKey := os.Getenv("B2_APP_KEY")
-	s3Config := &aws.Config{
-		Credentials:      credentials.NewStaticCredentials(awsAccessKeyID, awsSecretAccessKey, ""),
-		Endpoint:         aws.String(os.Getenv("BUCKET_ENDPOINT")),
-		Region:           aws.String(os.Getenv("BUCKET_REGION")),
-		S3ForcePathStyle: aws.Bool(true),
-	}
-	newSession, err := session.NewSession(s3Config)
-	if err != nil {
-		return rest.ErrInvalidRequest(api.logger, "Error connecting with AWS S3 Bucket", err)
-	}
-	s3Client := s3.New(newSession)
-	file, h, err := r.FormFile("image")
-	if err != nil {
-		return rest.ErrInvalidRequest(api.logger, "Error getting the image.", err)
-	}
-
-	defer file.Close()
-	size := h.Size
 	buffer := make([]byte, size) // read file content to buffer
 
 	_, err = file.Read(buffer)
 	if err != nil {
-		return rest.ErrInvalidRequest(api.logger, "Could not read the file", err)
+		return "", fmt.Errorf("Could not read file")
 	}
-
+	s3Client := s3.New(newSession)
 	fileBytes := bytes.NewReader(buffer)
 	fileType := http.DetectContentType(buffer)
 	bucket := aws.String(os.Getenv("BUCKET_NAME"))
@@ -116,15 +100,37 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 	_, err = s3Client.PutObject(&s3.PutObjectInput{
 		Body:          fileBytes,
 		Bucket:        bucket,
-		Key:           aws.String(h.Filename),
+		Key:           aws.String(name),
 		ContentLength: aws.Int64(size),
 		ContentType:   aws.String(fileType),
 	})
 	if err != nil {
-		return rest.ErrInvalidRequest(api.logger, "Error uploading file to s3", err)
+		return "", fmt.Errorf("Could not upload to S3")
 	}
-	resp := "https://" + os.Getenv("BUCKET_NAME") + ".s3.us-west-000.backblazeb2.com/" + h.Filename
+	return fmt.Sprintf("https://%s.s3.us-west-000.backblazeb2.com/%s", os.Getenv("BUCKET_NAME"), name), nil
+}
 
+func convertYoutubeURL(originalURL string) (string, error) {
+	re := regexp.MustCompile(youtubeRegex)
+	match := re.FindAllStringSubmatch(originalURL, 2)
+	if len(match) == 0 {
+		return "", fmt.Errorf("Invalid Youtube Link")
+	}
+	return youtubeEmbedURL + match[0][1], nil
+}
+
+func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) render.Renderer {
+
+	file, h, err := r.FormFile("image")
+
+	if err != nil {
+		return rest.ErrInvalidRequest(api.logger, "Error getting the image.", err)
+	}
+	res, err := api.s3upload(file, h.Size, h.Filename)
+	if err != nil {
+		return rest.ErrInvalidRequest(api.logger, "Error uploading the image to s3.", err)
+	}
+	defer file.Close()
 	var story models.Story
 	var author models.Author
 	author.FirstName = r.FormValue("author_first_name")
@@ -146,15 +152,15 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 		return rest.ErrInternal(api.logger, err)
 	}
 
-	story.ImageURL = resp
+	story.ImageURL = res
 	story.Title = r.FormValue("title")
 	story.Content = r.FormValue("content")
 	story.CurrentCity = r.FormValue("current_city")
-	i, err := strconv.ParseUint(r.FormValue("year"), 10, 64)
+	year, err := strconv.ParseUint(r.FormValue("year"), 10, 64)
 	if err != nil {
 		return rest.ErrInvalidRequest(api.logger, "Error parsing year field", nil)
 	}
-	story.Year = uint(i)
+	story.Year = uint(year)
 	story.Summary = r.FormValue("summary")
 	city := story.CurrentCity
 	coordinates, err := api.locationFinder.GetCityCenter(city)
@@ -163,12 +169,15 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 	}
 	story.Latitude = randomCoords(coordinates.Latitude)
 	story.Longitude = randomCoords(coordinates.Longitude)
-	//regex to find youtube video id
-	re := regexp.MustCompile(`(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})`)
-	videoURL := r.FormValue("video_url")
-	match := re.FindAllStringSubmatch(videoURL, 2)
 
-	story.VideoURL = "https://www.youtube.com/embed/" + match[0][1]
+	videoURL := r.FormValue("video_url")
+	if videoURL != "" {
+		convertedURL, err := convertYoutubeURL(videoURL)
+		if err != nil {
+			return rest.ErrInvalidRequest(api.logger, "Invalid Youtube Link", err)
+		}
+		story.VideoURL = convertedURL
+	}
 
 	story.AuthorFirstName = r.FormValue("author_first_name")
 	story.AuthorLastName = r.FormValue("author_last_name")
