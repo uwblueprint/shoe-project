@@ -85,6 +85,9 @@ func (api api) CreateStories(w http.ResponseWriter, r *http.Request) render.Rend
 
 func (api api) s3upload(file multipart.File, size int64, name string) (string, error) {
 	newSession, err := session.NewSession(api.s3config)
+	if err != nil {
+		return "", fmt.Errorf("Could not connect with S3")
+	}
 
 	buffer := make([]byte, size) // read file content to buffer
 
