@@ -29,6 +29,8 @@ module.exports = {
         "ts-ignore": "allow-with-description",
       },
     ],
+    // Allow for variables prepended with _ to be ignored
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     // Make sure imports are organized
     "sort-imports": "off",
     "simple-import-sort/imports": "error",

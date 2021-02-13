@@ -36,3 +36,7 @@ export interface Author extends Model {
 export interface Tokens {
   mapbox: string;
 }
+
+export interface User extends Partial<Model> {
+  username: string;
+}

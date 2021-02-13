@@ -2,7 +2,7 @@ import {
   isTimestampExpired,
   setTimeStamp,
   tutorialKey,
-} from "../components/helpers/welcomeTutorialFunctions";
+} from "../../util/timestamp";
 
 describe("Welcome Tutorial", () => {
   it("Should store current date in local storage", async () => {
