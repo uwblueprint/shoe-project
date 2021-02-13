@@ -9,10 +9,10 @@ import {
 } from "@material-ui/core/";
 import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
+import { useReducer } from "react";
 import styled from "styled-components";
 
 import { device } from "../styles/device";
-// https://yuvaleros.github.io/material-ui-dropzone/
 
 const StyledGrid = styled(Grid)`
   margin-top: 48px;
@@ -23,36 +23,25 @@ const StyledGrid = styled(Grid)`
 `;
 
 export const Upload: React.FC = () => {
-  const [state, setState] = React.useState<{
-    image: any;
-    video_url: string;
-    title: string;
-    content: string;
-    summary: string;
-    author_first_name: string;
-    author_last_name: string;
-    author_country: string;
-    year: string;
-    current_city: string;
-    bio: string;
-  }>({
-    image: "",
-    video_url: "",
-    title: "",
-    content: "",
-    summary: "",
-    author_first_name: "",
-    author_last_name: "",
-    author_country: "",
-    year: "",
-    current_city: "",
-    bio: "",
-  });
+  const [formInput, setFormInput] = useReducer(
+    (state, newState) => ({ ...state, ...newState }),
+    {
+      image: {} as File,
+      video_url: "",
+      title: "",
+      content: "",
+      summary: "",
+      author_first_name: "",
+      author_last_name: "",
+      author_country: "",
+      year: "",
+      current_city: "",
+      bio: "",
+    }
+  );
 
   const setImage = (files: File[]) => {
-    console.log(files[0]);
-    setState({
-      ...state,
+    setFormInput({
       image: files[0],
     });
   };
@@ -60,10 +49,8 @@ export const Upload: React.FC = () => {
   const handleChange = (
     event?: React.ChangeEvent<{ name?: string; value: unknown }>
   ) => {
-    console.log(state.image);
-    const name = event.target.name as keyof typeof state;
-    setState({
-      ...state,
+    const name = event.target.name as keyof typeof formInput;
+    setFormInput({
       [name]: event.target.value,
     });
   };
@@ -71,39 +58,19 @@ export const Upload: React.FC = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    var form_data = new FormData();
-    for (var key in state){
-      form_data.append(key, state[key]);
+    const form_data = new FormData();
+    for (const key in formInput) {
+      form_data.append(key, formInput[key]);
     }
 
-    var requestOptions = {
-      method: 'POST',
+    fetch("/api/story", {
+      method: "POST",
       body: form_data,
-      redirect: 'follow'
-    };
-
-  fetch("/api/story", {
-    method: 'POST',
-    body: form_data,
-    redirect: 'follow'
-  })
-  .then(response => response.text())
-  .then(result => console.log(result))
-  .catch(error => console.log('error', error));
-    // const data = { state };
-    // console.log(JSON.stringify(data));
-    // fetch("api/story", {
-    //   method: "POST",
-    //   //should send in as form-data
-    //   body: form_data,
-    //   headers: {
-    //     // "Content-Type": "multipart/form-data",
-    //     "Accept": "*/*"
-    //   },
-    // })
-    //   .then((response) => response.json())
-    //   .then((response) => console.log("Success:", JSON.stringify(response)))
-    //   .catch((error) => console.error("Error:", error));
+      redirect: "follow",
+    })
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.log("Error: ", error));
   };
 
   return (
@@ -138,7 +105,7 @@ export const Upload: React.FC = () => {
             label="First Name"
             placeholder="Lorem ipsum"
           />
-           <TextField
+          <TextField
             onChange={handleChange}
             variant="outlined"
             required
@@ -161,7 +128,7 @@ export const Upload: React.FC = () => {
           <FormControl>
             <InputLabel id="Country of Origin">Country of Origin</InputLabel>
             <Select
-              value={state.author_country}
+              value={formInput.author_country}
               onChange={handleChange}
               inputProps={{
                 name: "author_country",
@@ -177,7 +144,7 @@ export const Upload: React.FC = () => {
           <FormControl>
             <InputLabel id="Current Location">Current City</InputLabel>
             <Select
-              value={state.current_city}
+              value={formInput.current_city}
               onChange={handleChange}
               inputProps={{
                 name: "current_city",
@@ -187,13 +154,14 @@ export const Upload: React.FC = () => {
               <MenuItem value={"Toronto"}>Toronto</MenuItem>
               <MenuItem value={"Calgary"}>Calgary</MenuItem>
               <MenuItem value={"Vancouver"}>Vancouver</MenuItem>
+              <MenuItem value={"Thunder Bay"}>Thunder Bay</MenuItem>
             </Select>
           </FormControl>
 
           <FormControl>
             <InputLabel id="input-label-year">Year Published</InputLabel>
             <Select
-              value={state.year}
+              value={formInput.year}
               onChange={handleChange}
               inputProps={{
                 name: "year",
@@ -213,7 +181,6 @@ export const Upload: React.FC = () => {
               setImage(files);
             }}
           />
-          {/* TODO: verify link */}
           <TextField
             onChange={handleChange}
             required
