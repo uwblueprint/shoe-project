@@ -45,8 +45,10 @@ export const CardTitleText = styled.p`
   color: ${colors.black};
   margin: 16px 0px 8px 0px;
 
-  @media ${device.mobileS} {
-    font-size: ${fontSize.h3Text};
+  @media ${device.mobile} {
+    font-size: 4em;
+    line-height: normal;
+    font-weight: 600;
   }
 `;
 
@@ -59,8 +61,9 @@ export const CardDescriptionText = styled.p`
   opacity: 0.7;
   margin: 0;
 
-  @media ${device.mobileS} {
-    font-size: ${fontSize.body2};
+  @media ${device.mobile} {
+    font-size: 3em;
+    line-height: normal
   }
 `;
 
@@ -132,8 +135,9 @@ export const CardDetailText = styled.p`
   color: ${colors.black};
   margin: 16px 0px 0px 0px !important;
 
-  @media ${device.mobileS} {
-    font-size: ${fontSize.mobile};
+  @media ${device.mobile} {
+    font-size: 2.5em;
+    line-height: normal;
   }
 `;
 
@@ -146,8 +150,10 @@ export const CardTagText = styled.span`
   color: ${colors.black};
   opacity: 0.7;
 
-  @media ${device.mobileS} {
-    font-size: ${fontSize.mobile};
+  @media ${device.mobile} {
+    font-size: 3em;
+    line-height: normal;
+    font-weight: 600;
   }
 `;
 
