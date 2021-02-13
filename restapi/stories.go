@@ -149,10 +149,11 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 				return rest.ErrInvalidRequest(api.logger, "Unknown origin country", nil)
 			}
 			if err := api.database.Create(&author).Error; err != nil { //Adding author
-				return rest.ErrInternal(api.logger, err)
+				return rest.ErrInternal(api.logger, errAuthor)
 			}
+		} else {
+			return rest.ErrInternal(api.logger, errAuthor)
 		}
-		return rest.ErrInternal(api.logger, err)
 	}
 
 	story.ImageURL = ImageURL
