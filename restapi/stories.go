@@ -83,7 +83,7 @@ func (api api) CreateStories(w http.ResponseWriter, r *http.Request) render.Rend
 	return rest.MsgStatusOK("Stories added successfully")
 }
 
-func (api api) s3upload(file multipart.File, size int64, name string) (string, error) {
+func (api api) uploadImageTos3(file multipart.File, size int64, name string) (string, error) {
 	newSession, err := session.NewSession(api.s3config)
 	if err != nil {
 		return "", fmt.Errorf("Could not connect with S3")
@@ -119,7 +119,7 @@ func convertYoutubeURL(originalURL string) (string, error) {
 	if len(match) == 0 {
 		return "", fmt.Errorf("Invalid Youtube Link")
 	}
-	return youtubeEmbedURL + match[0][1], nil
+	return fmt.Sprintf("%s%s", youtubeEmbedURL, match[0][1]), nil
 }
 
 func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) render.Renderer {
@@ -129,7 +129,7 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 	if err != nil {
 		return rest.ErrInvalidRequest(api.logger, "Error getting the image.", err)
 	}
-	res, err := api.s3upload(file, h.Size, h.Filename)
+	ImageURL, err := api.uploadImageTos3(file, h.Size, h.Filename)
 	if err != nil {
 		return rest.ErrInvalidRequest(api.logger, "Error uploading the image to s3.", err)
 	}
@@ -155,13 +155,13 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 		return rest.ErrInternal(api.logger, err)
 	}
 
-	story.ImageURL = res
+	story.ImageURL = ImageURL
 	story.Title = r.FormValue("title")
 	story.Content = r.FormValue("content")
 	story.CurrentCity = r.FormValue("current_city")
 	year, err := strconv.ParseUint(r.FormValue("year"), 10, 64)
 	if err != nil {
-		return rest.ErrInvalidRequest(api.logger, "Error parsing year field", nil)
+		return rest.ErrInvalidRequest(api.logger, "Error parsing year field", err)
 	}
 	story.Year = uint(year)
 	story.Summary = r.FormValue("summary")
