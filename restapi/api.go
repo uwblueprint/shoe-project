@@ -47,7 +47,10 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 		rest.GetHandler(r, "/story/{storyID}", api.ReturnStoryByID)
 		rest.GetHandler(r, "/authors/origin_countries", api.ReturnAllCountries)
 		rest.PostHandler(r, "/login", api.Login)
+<<<<<<< HEAD
 		rest.PostHandler(r, "/story", api.CreateStoriesFormData)
+=======
+>>>>>>> 23cf5d1 (making endpoint private)
 
 		rest.GetHandler(r, "/client_tokens", api.ReturnClientTokens)
 	})
@@ -56,6 +59,10 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(config.GetJWTKey()))
 		r.Use(jwtauth.Authenticator)
+<<<<<<< HEAD
+=======
+		rest.PostHandler(r, "/story", api.CreateStoriesFormData)
+>>>>>>> 23cf5d1 (making endpoint private)
 		rest.PostHandler(r, "/stories", api.CreateStories)
 		rest.PostHandler(r, "/authors", api.CreateAuthors)
 	})
