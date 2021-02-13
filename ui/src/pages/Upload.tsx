@@ -24,7 +24,7 @@ const StyledGrid = styled(Grid)`
 
 export const Upload: React.FC = () => {
   const [state, setState] = React.useState<{
-    images: File[];
+    image: any;
     video_url: string;
     title: string;
     content: string;
@@ -36,7 +36,7 @@ export const Upload: React.FC = () => {
     current_city: string;
     bio: string;
   }>({
-    images: [],
+    image: "",
     video_url: "",
     title: "",
     content: "",
@@ -50,16 +50,17 @@ export const Upload: React.FC = () => {
   });
 
   const setImage = (files: File[]) => {
+    console.log(files[0]);
     setState({
       ...state,
-      images: files,
+      image: files[0],
     });
   };
 
   const handleChange = (
     event?: React.ChangeEvent<{ name?: string; value: unknown }>
   ) => {
-    console.log(state.images);
+    console.log(state.image);
     const name = event.target.name as keyof typeof state;
     setState({
       ...state,
@@ -70,19 +71,39 @@ export const Upload: React.FC = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const data = { state };
-    console.log(JSON.stringify(data));
-    fetch("localhost:8900/api/stories_formdata", {
-      method: "POST",
-      //should send in as form-data
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((response) => console.log("Success:", JSON.stringify(response)))
-      .catch((error) => console.error("Error:", error));
+    var form_data = new FormData();
+    for (var key in state){
+      form_data.append(key, state[key]);
+    }
+
+    var requestOptions = {
+      method: 'POST',
+      body: form_data,
+      redirect: 'follow'
+    };
+
+  fetch("/api/story", {
+    method: 'POST',
+    body: form_data,
+    redirect: 'follow'
+  })
+  .then(response => response.text())
+  .then(result => console.log(result))
+  .catch(error => console.log('error', error));
+    // const data = { state };
+    // console.log(JSON.stringify(data));
+    // fetch("api/story", {
+    //   method: "POST",
+    //   //should send in as form-data
+    //   body: form_data,
+    //   headers: {
+    //     // "Content-Type": "multipart/form-data",
+    //     "Accept": "*/*"
+    //   },
+    // })
+    //   .then((response) => response.json())
+    //   .then((response) => console.log("Success:", JSON.stringify(response)))
+    //   .catch((error) => console.error("Error:", error));
   };
 
   return (
@@ -149,7 +170,7 @@ export const Upload: React.FC = () => {
             >
               <MenuItem value={"China"}>China</MenuItem>
               <MenuItem value={"India"}>India</MenuItem>
-              <MenuItem value={"Russia"}>Russia</MenuItem>
+              <MenuItem value={"Sri Lanka"}>Sri Lanka</MenuItem>
             </Select>
           </FormControl>
 
