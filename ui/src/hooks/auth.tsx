@@ -21,13 +21,12 @@ export function useProvideAuth(): AuthContextType {
 
   // TODO: Write signin function
   const signin = () => {
-    setUser({ username: "Abhijeet" });
-    console.log("ABHIJEET LOGGED IN");
+    setUser({ email: "abhijeet@uwblueprint.org" });
   };
 
   // TODO: Write signout function
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  const signout = () => {};
+  const signout = () => { };
 
   return {
     user,
@@ -48,13 +47,13 @@ export const PrivateRoute: React.FC<RouteProps> = ({ children, ...rest }) => {
         auth.user ? (
           children
         ) : (
-          <Redirect
-            to={{
-              pathname: "/login",
-              state: { from: location },
-            }}
-          />
-        )
+            <Redirect
+              to={{
+                pathname: "/login",
+                state: { from: location },
+              }}
+            />
+          )
       }
     />
   );
