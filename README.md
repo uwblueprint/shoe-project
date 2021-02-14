@@ -114,7 +114,7 @@ You can check locally to make sure none of these issues show up by:
 ```bash
 make backend-check
 ```
-
+<!-- TOOD: add auth docs -->
 <!-- ## Authentication
 All the `create` endpoints are protected, which means you have to login before you can make POST requests to these endpoints.
 

@@ -14,6 +14,8 @@ import (
 	"github.com/uwblueprint/shoe-project/restapi/rest"
 	"github.com/uwblueprint/shoe-project/server"
 	"go.uber.org/zap"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 	"gorm.io/gorm"
 )
 
@@ -23,6 +25,7 @@ type api struct {
 	logger         *zap.SugaredLogger
 	locationFinder location.LocationFinder
 	s3config       *aws.Config
+	oauthconfig    *oauth2.Config
 }
 
 // Router sets up the go-chi routes for the server
@@ -38,6 +41,16 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 			Region:           aws.String(os.Getenv("BUCKET_REGION")),
 			S3ForcePathStyle: aws.Bool(true),
 		},
+	}
+
+	api.oauthconfig = &oauth2.Config{
+		ClientID:     config.GetGoogleClientId(),
+		ClientSecret: config.GetGoogleClientSecret(),
+		RedirectURL:  "http://localhost:8900/api/auth/callback",
+		Scopes: []string{
+			"https://www.googleapis.com/auth/userinfo.email",
+		},
+		Endpoint: google.Endpoint,
 	}
 
 	// Public API

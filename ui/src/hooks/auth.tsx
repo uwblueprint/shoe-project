@@ -26,7 +26,7 @@ export function useProvideAuth(): AuthContextType {
 
   // TODO: Write signout function
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  const signout = () => { };
+  const signout = () => {};
 
   return {
     user,
@@ -47,13 +47,13 @@ export const PrivateRoute: React.FC<RouteProps> = ({ children, ...rest }) => {
         auth.user ? (
           children
         ) : (
-            <Redirect
-              to={{
-                pathname: "/login",
-                state: { from: location },
-              }}
-            />
-          )
+          <Redirect
+            to={{
+              pathname: "/login",
+              state: { from: location },
+            }}
+          />
+        )
       }
     />
   );
