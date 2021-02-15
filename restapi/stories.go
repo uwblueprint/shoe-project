@@ -129,7 +129,7 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 	if err != nil {
 		return rest.ErrInvalidRequest(api.logger, "Error getting the image.", err)
 	}
-	ImageURL, err := api.uploadImageTos3(file, h.Size, h.Filename)
+	imageURL, err := api.uploadImageTos3(file, h.Size, h.Filename)
 	if err != nil {
 		return rest.ErrInvalidRequest(api.logger, "Error uploading the image to s3.", err)
 	}
