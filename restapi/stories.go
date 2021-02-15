@@ -156,7 +156,7 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 		}
 	}
 
-	story.ImageURL = ImageURL
+	story.ImageURL = imageURL
 	story.Title = r.FormValue("title")
 	story.Content = r.FormValue("content")
 	story.CurrentCity = r.FormValue("current_city")
