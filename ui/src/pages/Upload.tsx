@@ -119,7 +119,6 @@ export const Upload: React.FC = () => {
             multiline
             placeholder="Enter additional information here"
             rows={8}
-            required
             id="author-bio"
             name="bio"
             label="Author Bio"
@@ -183,7 +182,6 @@ export const Upload: React.FC = () => {
           />
           <TextField
             onChange={handleChange}
-            required
             id="video-link"
             label="Video Link"
             placeholder="www.youtube.com/link"
