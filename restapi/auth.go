@@ -57,25 +57,25 @@ func (api api) AuthCallback(w http.ResponseWriter, r *http.Request) render.Rende
 	}
 
 	// use access token to create a client which we use to access user info
+	user := models.User{}
 	client := api.oauthconfig.Client(context.Background(), token)
 	response, err := client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
 	if err != nil {
 		return rest.JSONStatusOK("Invalid access token")
 	}
 	defer response.Body.Close()
-	user := models.User{}
 	err = json.NewDecoder(response.Body).Decode(&user)
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
 
-	// redirect if invalid
-	if user.Hd != "uwblueprint.org" && user.Hd != "theshoeproject.online" {
+	// redirect if invalid user
+	err = api.database.FirstOrCreate(&user, models.User{Email: user.Email}).Error
+	if err != nil {
 		http.Redirect(w, r, "/api/unauthorized", http.StatusTemporaryRedirect)
 	}
 
-	// if valid, save to db and create jwt token
-	api.database.FirstOrCreate(&user)
+	// if valid create jwt token
 	jwtToken, err := generateJWTToken(user.Email)
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
