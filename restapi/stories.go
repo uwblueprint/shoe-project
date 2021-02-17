@@ -123,7 +123,6 @@ func convertYoutubeURL(originalURL string) (string, error) {
 }
 
 func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) render.Renderer {
-
 	file, h, err := r.FormFile("image")
 
 	if err != nil {
@@ -190,6 +189,10 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 	if err := api.database.Create(&story).Error; err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
+
+	// We set the story to be private when it is initially uploaded
+	story.IsPublic = false
+
 	return rest.MsgStatusOK("Story Added Successfully")
 }
 
