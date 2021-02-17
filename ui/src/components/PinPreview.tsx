@@ -66,7 +66,7 @@ const StyledCard = styled(Card)`
   @media ${device.mobile} {
     width: 90vw;
     height: fit-content;
-    border-radius: 1.5em;
+    border-radius: 1.5em !important;
   }
 `;
 
