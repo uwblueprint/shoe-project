@@ -76,7 +76,9 @@ export function PinPreview({
   const [imageURL, setImageURL] = React.useState("");
   const shoeImg =
     imageURL.length === 0 ? (
-      <LoadingCardContent><CircularProgress /></LoadingCardContent>
+      <LoadingCardContent>
+        <CircularProgress />
+      </LoadingCardContent>
     ) : (
       <StyledMedia alt="Image of shoe" image={imageURL} title="Image of shoe" />
     );

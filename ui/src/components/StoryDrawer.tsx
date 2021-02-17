@@ -4,7 +4,6 @@ import Drawer from "@material-ui/core/Drawer";
 import Grid from "@material-ui/core/Grid";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import * as React from "react";
-import Image from "react-graceful-image";
 import styled from "styled-components";
 
 import { colors } from "../styles/colors";
@@ -114,12 +113,13 @@ export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
   } = story;
 
   const shoeImg =
-  imageURL.length === 0 ? (
-    <LoadingContent><CircularProgress /></LoadingContent>
-  ) : (
-    <StyledImage src={image_url} alt="Image of shoe" />
-  );
-
+    imageURL.length === 0 ? (
+      <LoadingContent>
+        <CircularProgress />
+      </LoadingContent>
+    ) : (
+      <StyledImage src={image_url} alt="Image of shoe" />
+    );
 
   return (
     <StyledDrawer anchor="right" open onClose={onClose}>
