@@ -27,13 +27,17 @@ const GoogleButton = styled.div`
   margin-bottom: 5vh;
 `;
 
-export const Login: React.FC<{ login: boolean }> = ({ login }) => {
+interface LoginProps {
+  login: boolean;
+}
+
+export const Login: React.FC<LoginProps> = (props: LoginProps) => {
   const auth = useAuth();
 
-  const title = login
+  const title = props.login
     ? "Welcome to the Shoe Project Admin Portal"
     : "Sorry, that is not a valid email";
-  const description = login
+  const description = props.login
     ? "Please Sign In using your Shoe Project Email"
     : "Make sure you are using a Shoe Project Organization Email";
 
