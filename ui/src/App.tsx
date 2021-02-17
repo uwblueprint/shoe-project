@@ -26,8 +26,11 @@ function App(): JSX.Element {
             <Route exact path="/">
               <ShoeMap />
             </Route>
-            <Route path="/login">
-              <Login />
+            <Route exact path="/login">
+              <Login login />
+            </Route>
+            <Route exact path="/unauthorized">
+              <Login login={false} />
             </Route>
             <PrivateRoute path="/admin">
               <Admin />
