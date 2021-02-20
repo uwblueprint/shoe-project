@@ -14,9 +14,7 @@ func (api api) ReturnAllUniqueTags(w http.ResponseWriter, r *http.Request) rende
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
-
-	var length = len(tags)
-	names := make([]string, length)
+	names := make([]string, len(tags))
 	for i, t := range tags {
 		names[i] = t.Name
 	}

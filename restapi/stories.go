@@ -201,14 +201,12 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 }
 
 func (api api) AddTags(names []string, story models.Story) error {
-	var length = len(names)
-	tags := make([]models.Tag, length)
+	tags := make([]models.Tag, len(names))
 	for i, t := range names {
-		tag := models.Tag{
+		tags[i] = models.Tag{
 			Name:    strings.ToUpper(t),
 			StoryID: story.ID,
 		}
-		tags[i] = tag
 	}
 	return api.database.Create(&tags).Error
 }
