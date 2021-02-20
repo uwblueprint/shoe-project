@@ -127,6 +127,10 @@ func (suite *endpointTestSuite) TestReturnAllUniqueTags() {
 			Name:    "REFUGEE",
 			StoryID: 2,
 		},
+		{
+			Name:    "EDUCATION",
+			StoryID: 2,
+		},
 	}
 
 	suite.db.Create(&json)
