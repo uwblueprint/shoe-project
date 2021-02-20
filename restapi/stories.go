@@ -189,7 +189,25 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 	if err := api.database.Create(&story).Error; err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
+	names := r.Form["tags"]
+	if len(names) != 0 {
+		err = api.AddTags(names, story)
+		if err != nil {
+			return rest.ErrInvalidRequest(api.logger, "Error Adding Tags", err)
+		}
+	}
 	return rest.MsgStatusOK("Story Added Successfully")
+}
+
+func (api api) AddTags(names []string, story models.Story) error {
+	tags := make([]models.Tag, len(names))
+	for i, t := range names {
+		tags[i] = models.Tag{
+			Name:    strings.ToUpper(t),
+			StoryID: story.ID,
+		}
+	}
+	return api.database.Create(&tags).Error
 }
 
 func (api api) ReturnStoriesByCountries(w http.ResponseWriter, r *http.Request) render.Renderer {

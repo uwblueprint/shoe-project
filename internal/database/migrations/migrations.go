@@ -3,6 +3,7 @@ package migrations
 import (
 	"encoding/json"
 	"io/ioutil"
+	"math/rand"
 
 	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
@@ -12,7 +13,7 @@ import (
 )
 
 func CreateTables(db *gorm.DB) error {
-	return db.AutoMigrate(&models.Author{}, &models.Story{}, &models.User{})
+	return db.AutoMigrate(&models.Author{}, &models.Story{}, &models.User{}, &models.Tag{})
 }
 
 func DropAllTables(db *gorm.DB) error {
@@ -21,6 +22,10 @@ func DropAllTables(db *gorm.DB) error {
 		return err
 	}
 	err = db.Migrator().DropTable(&models.Story{})
+	if err != nil {
+		return err
+	}
+	err = db.Migrator().DropTable(&models.Tag{})
 	if err != nil {
 		return err
 	}
@@ -51,6 +56,13 @@ func parseJson(filename string, obj interface{}) error {
 	return nil
 }
 
+func ChooseRandomTag() string {
+	tagChoice := []string{"EDUCATION", "REFUGEE", "IMMIGRATION"}
+	randomIndex := rand.Intn(len(tagChoice))
+	pick := tagChoice[randomIndex]
+	return pick
+}
+
 func Seed(db *gorm.DB, locationFinder location.LocationFinder) error {
 	// read in the authors file from authors.json
 	var authors []models.Author
@@ -73,16 +85,26 @@ func Seed(db *gorm.DB, locationFinder location.LocationFinder) error {
 	}
 
 	// set lat long for coordinates
-	for i, story := range stories {
+	for _, story := range stories {
 		coordinates, err := locationFinder.GetCityCenter(story.CurrentCity)
 		if err != nil {
 			return err
 		}
-		stories[i].Latitude = coordinates.Latitude
-		stories[i].Longitude = coordinates.Longitude
-		// Make sure all stories are public for initially seeded stories
-		stories[i].IsVisible = true
+		story.Latitude = coordinates.Latitude
+		story.Longitude = coordinates.Longitude
+		story.IsVisible = true
+		err = db.Create(&story).Error
+		if err != nil {
+			return err
+		}
+		tag := models.Tag{
+			Name:    ChooseRandomTag(),
+			StoryID: story.ID,
+		}
+		err = db.Create(&tag).Error
+		if err != nil {
+			return err
+		}
 	}
-
-	return db.Create(&stories).Error
+	return nil
 }

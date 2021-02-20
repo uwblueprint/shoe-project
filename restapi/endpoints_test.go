@@ -117,6 +117,33 @@ func (suite *endpointTestSuite) TestReturnStoriesByCountries() {
 	response.Object().Value("payload").Array().Element(1).Object().Value("current_city").Equal("Montreal")
 }
 
+func (suite *endpointTestSuite) TestReturnAllUniqueTags() {
+	json := []models.Tag{
+		{
+			Name:    "EDUCATION",
+			StoryID: 1,
+		},
+		{
+			Name:    "REFUGEE",
+			StoryID: 2,
+		},
+		{
+			Name:    "EDUCATION",
+			StoryID: 2,
+		},
+	}
+
+	suite.db.Create(&json)
+
+	var response = suite.endpoint.GET("/tags").
+		Expect().
+		Status(http.StatusOK).JSON()
+
+	response.Object().Value("payload").Array().Length().Equal(2)
+	response.Object().Value("payload").Array().Element(0).Equal("EDUCATION")
+	response.Object().Value("payload").Array().Element(1).Equal("REFUGEE")
+}
+
 func (suite *endpointTestSuite) TestGetAllStories() {
 	jsonStory1 := []models.Story{
 		{
