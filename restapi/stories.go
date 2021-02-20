@@ -60,6 +60,33 @@ func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.R
 		if err != nil {
 			return rest.ErrInternal(api.logger, err)
 		}
+	// if len(sortString) != 0 {
+	// 	err := api.database.Order(sortString).Find(&stories).Error
+	// 	if err != nil {
+	// 		return rest.ErrInternal(api.logger, err)
+	// 	}
+	// } else {
+	// 	err := api.database.Find(&stories).Error
+	// 	if err != nil {
+	// 		return rest.ErrInternal(api.logger, err)
+	// 	}
+
+	// dbQuery := api.database.Where("is_visible = true")
+
+	// if len(sortString) != 0 {
+	// 	dbQuery.Order(sortString)
+	// }
+
+	// err := api.database.Where("is_visible = true").Find(&stories).Error
+	// if err != nil {
+	// 	return rest.ErrInternal(api.logger, err)
+	// }
+	// return rest.JSONStatusOK(stories)
+
+
+	err := api.database.Where("is_visible = true").Find(&stories).Error
+	if err != nil {
+		return rest.ErrInternal(api.logger, err)
 	}
 
 
