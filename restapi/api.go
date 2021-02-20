@@ -46,6 +46,7 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 		rest.GetHandler(r, "/stories/{countries}", api.ReturnStoriesByCountries)
 		rest.GetHandler(r, "/story/{storyID}", api.ReturnStoryByID)
 		rest.GetHandler(r, "/authors/origin_countries", api.ReturnAllCountries)
+		rest.GetHandler(r, "/tags", api.ReturnAllUniqueTags)
 		rest.PostHandler(r, "/login", api.Login)
 		rest.PostHandler(r, "/story", api.CreateStoriesFormData)
 

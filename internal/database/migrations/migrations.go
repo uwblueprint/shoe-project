@@ -3,6 +3,7 @@ package migrations
 import (
 	"encoding/json"
 	"io/ioutil"
+	"math/rand"
 
 	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
@@ -12,19 +13,23 @@ import (
 )
 
 func CreateTables(db *gorm.DB) error {
-	return db.AutoMigrate(&models.Author{}, &models.Story{}, &models.User{})
+	return db.AutoMigrate(&models.Author{}, &models.Story{}, &models.User{}, &models.Tag{})
 }
 
 func DropAllTables(db *gorm.DB) error {
-	err := db.Migrator().DropTable(&models.User{});
+	err := db.Migrator().DropTable(&models.User{})
 	if err != nil {
-		return err;
+		return err
 	}
-	err = db.Migrator().DropTable(&models.Story{});
+	err = db.Migrator().DropTable(&models.Story{})
 	if err != nil {
-		return err;
+		return err
 	}
-	return db.Migrator().DropTable(&models.Author{});
+	err = db.Migrator().DropTable(&models.Tag{})
+	if err != nil {
+		return err
+	}
+	return db.Migrator().DropTable(&models.Author{})
 }
 
 func CreateSuperUser(db *gorm.DB) error {
@@ -72,16 +77,29 @@ func Seed(db *gorm.DB, locationFinder location.LocationFinder) error {
 	if err != nil {
 		return err
 	}
-
+	var tags []models.Tag
 	// set lat long for coordinates
 	for i, story := range stories {
 		coordinates, err := locationFinder.GetCityCenter(story.CurrentCity)
 		if err != nil {
 			return err
 		}
+		tagChoice := []string{"Education", "Refugee", "Immigration"}
+		randomIndex := rand.Intn(len(tagChoice))
+		pick := tagChoice[randomIndex]
+		var tag models.Tag
+		tag.Name = pick
+		tag.Story = story
+		tags = append(tags, tag)
 		stories[i].Latitude = coordinates.Latitude
 		stories[i].Longitude = coordinates.Longitude
 	}
 
-	return db.Create(&stories).Error
+	// create tags
+	err = db.Create(&stories).Error
+	if err != nil {
+		return err
+	}
+
+	return db.Create(&tags).Error
 }
