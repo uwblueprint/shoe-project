@@ -14,14 +14,42 @@ import ReactTags from "react-tag-autocomplete";
 import styled from "styled-components";
 
 import countriesList from "../data/countries.json";
+import { colors } from "../styles/colors";
 import { device } from "../styles/device";
+import { fontSize } from "../styles/typography";
 
 const StyledGrid = styled(Grid)`
-  margin-top: 48px;
+  background-color: ${colors.primaryLight4};
   @media ${device.laptop} {
     justify: left;
     width: 100vw;
   }
+`;
+
+const StyledInputLabel = styled(InputLabel)`
+  width: 30vw;
+`;
+
+const StyledSelect = styled(Select)`
+  width: 30vw;
+  && {
+    margin-top: 12px;
+  }
+`;
+
+const StyledTextField = styled(TextField)`
+  width: 30vw;
+  && {
+    margin-top: 12px;
+    font-family: Poppins;
+  }
+`;
+
+const ImageContainer = styled.div`
+  width: 30vw;
+`;
+const StyledDropzoneArea = styled(DropzoneArea)`
+  width: 30vw;
 `;
 
 const StyledTags = styled(ReactTags)`
@@ -34,6 +62,22 @@ const StyledTags = styled(ReactTags)`
   }
 `;
 
+const StyledHeading = styled.div`
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500;
+  font-size: ${fontSize.h3Text};
+  line-height: 150%;
+  color: ${colors.black};
+  margin: 24px 0px 24px 0px;
+`;
+
+const StyledBackgroundColor = styled.div`
+  background-color: ${colors.white};
+  width: 40vw;
+  padding: 0px 0px 24px 24px;
+  margin-bottom: 24px;
+`;
 //Rough
 const tags = [
   { id: 1, name: "Educational" },
@@ -116,143 +160,188 @@ export const Upload: React.FC = () => {
     <StyledGrid container justify="center" alignContent="center">
       <form onSubmit={handleSubmit}>
         <FormControl>
-          <TextField
-            onChange={handleChange}
-            variant="outlined"
-            required
-            id="story-title"
-            name="title"
-            label="Story Title"
-            placeholder="Lorem ipsum"
-          />
-          <TextField
-            onChange={handleChange}
-            multiline
-            placeholder="Enter additional information here"
-            rows={8}
-            required
-            id="story-summary"
-            name="summary"
-            label="Story Summary"
-          />
-          <TextField
-            onChange={handleChange}
-            variant="outlined"
-            required
-            id="author-first-name"
-            name="author_first_name"
-            label="First Name"
-            placeholder="Lorem ipsum"
-          />
-          <TextField
-            onChange={handleChange}
-            variant="outlined"
-            required
-            id="author-last-name"
-            name="author_last_name"
-            label="Last Name"
-            placeholder="Lorem ipsum"
-          />
-          <TextField
-            onChange={handleChange}
-            multiline
-            placeholder="Enter additional information here"
-            rows={8}
-            id="author-bio"
-            name="bio"
-            label="Author Bio"
-          />
-
-          <FormControl>
-            <InputLabel id="Country of Origin">Country of Origin</InputLabel>
-            <Select
-              value={formInput.author_country}
+          <StyledBackgroundColor>
+            <StyledHeading>Story Information</StyledHeading>
+            <div>
+              <StyledTextField
+                onChange={handleChange}
+                variant="outlined"
+                required
+                id="story-title"
+                name="title"
+                label="Enter story title"
+                placeholder="Lorem ipsum"
+              />
+            </div>
+            <div>
+              <StyledTextField
+                onChange={handleChange}
+                multiline
+                placeholder="Enter additional information here"
+                variant="outlined"
+                required
+                id="story-summary"
+                name="summary"
+                label="Enter story summary "
+              />
+            </div>
+            <StyledTextField
               onChange={handleChange}
+              multiline
+              variant="outlined"
+              placeholder="Lorem ipsum dolor sit amet, consectet ui i iadipiscing elit"
+              rows={8}
+              required
               inputProps={{
-                name: "author_country",
-                id: "select-label-country",
+                name: "content",
+                id: "story-content",
               }}
-            >
-              {countriesList.map((country) => (
-                <MenuItem key={country.code} value={country.name}>
-                  {country.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+              label="Enter story"
+            />
+          </StyledBackgroundColor>
 
-          <FormControl>
-            <InputLabel id="Current Location">Current City</InputLabel>
-            <Select
-              value={formInput.current_city}
+          <StyledBackgroundColor>
+            <StyledHeading>Author Information</StyledHeading>
+            <div>
+              <StyledTextField
+                onChange={handleChange}
+                variant="outlined"
+                required
+                id="author-first-name"
+                name="author_first_name"
+                label="Enter author's first name"
+                placeholder="Lorem ipsum"
+              />
+            </div>
+            <div>
+              <StyledTextField
+                onChange={handleChange}
+                variant="outlined"
+                required
+                id="author-last-name"
+                name="author_last_name"
+                label="Enter author's last name"
+                placeholder="Lorem ipsum"
+              />
+            </div>
+            <div>
+              <StyledTextField
+                variant="outlined"
+                onChange={handleChange}
+                multiline
+                placeholder="Enter additional information here"
+                rows={4}
+                id="author-bio"
+                name="bio"
+                label="Enter author biography"
+              />
+            </div>
+          </StyledBackgroundColor>
+
+          <StyledBackgroundColor>
+            <StyledHeading>Additional Information</StyledHeading>
+
+            <div>
+              <FormControl>
+                <StyledInputLabel id="Country of Origin">
+                  Enter story&#39;s country of origin
+                </StyledInputLabel>
+                <StyledSelect
+                  variant="outlined"
+                  value={formInput.author_country}
+                  onChange={handleChange}
+                  inputProps={{
+                    name: "author_country",
+                    id: "select-label-country",
+                  }}
+                >
+                  {countriesList.map((country) => (
+                    <MenuItem key={country.code} value={country.name}>
+                      {country.name}
+                    </MenuItem>
+                  ))}
+                </StyledSelect>
+              </FormControl>
+            </div>
+            <div>
+              <FormControl>
+                <StyledInputLabel id="Current Location">
+                  Enter where story was written
+                </StyledInputLabel>
+                <StyledSelect
+                  variant="outlined"
+                  value={formInput.current_city}
+                  onChange={handleChange}
+                  inputProps={{
+                    name: "current_city",
+                    id: "select-label-city",
+                  }}
+                >
+                  <MenuItem value={"Toronto"}>Toronto</MenuItem>
+                  <MenuItem value={"Calgary"}>Calgary</MenuItem>
+                  <MenuItem value={"Vancouver"}>Vancouver</MenuItem>
+                  <MenuItem value={"Thunder Bay"}>Thunder Bay</MenuItem>
+                </StyledSelect>
+              </FormControl>
+            </div>
+            <div>
+              <FormControl>
+                <StyledInputLabel id="input-label-year">
+                  Year Published
+                </StyledInputLabel>
+                <StyledSelect
+                  variant="outlined"
+                  value={formInput.year}
+                  onChange={handleChange}
+                  inputProps={{
+                    name: "year",
+                    id: "select-label-year",
+                  }}
+                >
+                  <MenuItem value={"2021"}>2021</MenuItem>
+                  <MenuItem value={"2020"}>2020</MenuItem>
+                  <MenuItem value={"2019"}>2019</MenuItem>
+                </StyledSelect>
+              </FormControl>
+            </div>
+          </StyledBackgroundColor>
+
+          <StyledBackgroundColor>
+            <StyledHeading>Multimedia</StyledHeading>
+
+            <ImageContainer>
+              <StyledDropzoneArea
+                showFileNames
+                acceptedFiles={["image/*"]}
+                filesLimit={1}
+                dropzoneText={"Drag image here or select from device"}
+                onChange={(files) => {
+                  setImage(files);
+                }}
+              />
+            </ImageContainer>
+            <StyledTextField
               onChange={handleChange}
+              variant="outlined"
+              id="video-link"
+              label="Video Link"
+              placeholder="www.youtube.com/link"
               inputProps={{
-                name: "current_city",
-                id: "select-label-city",
+                name: "video_url",
+                id: "input-video-link",
               }}
-            >
-              <MenuItem value={"Toronto"}>Toronto</MenuItem>
-              <MenuItem value={"Calgary"}>Calgary</MenuItem>
-              <MenuItem value={"Vancouver"}>Vancouver</MenuItem>
-              <MenuItem value={"Thunder Bay"}>Thunder Bay</MenuItem>
-            </Select>
-          </FormControl>
+            />
 
-          <FormControl>
-            <InputLabel id="input-label-year">Year Published</InputLabel>
-            <Select
-              value={formInput.year}
-              onChange={handleChange}
-              inputProps={{
-                name: "year",
-                id: "select-label-year",
-              }}
-            >
-              <MenuItem value={"2021"}>2021</MenuItem>
-              <MenuItem value={"2020"}>2020</MenuItem>
-              <MenuItem value={"2019"}>2019</MenuItem>
-            </Select>
-          </FormControl>
-
-          <DropzoneArea
-            acceptedFiles={["image/*"]}
-            filesLimit={1}
-            dropzoneText={"Drag and drop an image here or click"}
-            onChange={(files) => {
-              setImage(files);
-            }}
-          />
-          <TextField
-            onChange={handleChange}
-            id="video-link"
-            label="Video Link"
-            placeholder="www.youtube.com/link"
-            inputProps={{
-              name: "video_url",
-              id: "input-video-link",
-            }}
-          />
-          <TextField
-            onChange={handleChange}
-            multiline
-            placeholder="Lorem ipsum dolor sit amet, consectet ui i iadipiscing elit"
-            rows={8}
-            required
-            inputProps={{
-              name: "content",
-              id: "story-content",
-            }}
-            label="Story"
-          />
-          <br></br>
-          <StyledTags
-            ref={storyTags}
-            tags={tags}
-            suggestions={suggestions}
-            onAddition={onAddition}
-            onDelete={onDelete}
-          ></StyledTags>
-
+            <br></br>
+            <br></br>
+            <StyledTags
+              ref={storyTags}
+              tags={tags}
+              suggestions={suggestions}
+              onAddition={onAddition}
+              onDelete={onDelete}
+            ></StyledTags>
+          </StyledBackgroundColor>
           <br></br>
 
           <Button color="primary" type="submit" variant="contained">
