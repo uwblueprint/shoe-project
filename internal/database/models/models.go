@@ -36,7 +36,7 @@ type Story struct {
 
 type Tag struct {
 	gorm.Model
-	Name    string `gorm:"not null" json:"name"`
-	StoryID uint   `gorm:"not null" json:"story_id"`
+	Name    string `gorm:"primaryKey;not null" json:"name"`
+	StoryID uint   `gorm:"primaryKey;not null" json:"story_id"`
 	Story   Story  `gorm:"foreignKey:StoryID" json:"story"`
 }

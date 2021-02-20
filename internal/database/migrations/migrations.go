@@ -56,6 +56,13 @@ func parseJson(filename string, obj interface{}) error {
 	return nil
 }
 
+func ChooseRandomTag() string {
+	tagChoice := []string{"EDUCATION", "REFUGEE", "IMMIGRATION"}
+	randomIndex := rand.Intn(len(tagChoice))
+	pick := tagChoice[randomIndex]
+	return pick
+}
+
 func Seed(db *gorm.DB, locationFinder location.LocationFinder) error {
 
 	// read in the authors file from authors.json
@@ -77,29 +84,27 @@ func Seed(db *gorm.DB, locationFinder location.LocationFinder) error {
 	if err != nil {
 		return err
 	}
-	var tags []models.Tag
+
 	// set lat long for coordinates
-	for i, story := range stories {
+	for _, story := range stories {
 		coordinates, err := locationFinder.GetCityCenter(story.CurrentCity)
 		if err != nil {
 			return err
 		}
-		tagChoice := []string{"Education", "Refugee", "Immigration"}
-		randomIndex := rand.Intn(len(tagChoice))
-		pick := tagChoice[randomIndex]
-		var tag models.Tag
-		tag.Name = pick
-		tag.Story = story
-		tags = append(tags, tag)
-		stories[i].Latitude = coordinates.Latitude
-		stories[i].Longitude = coordinates.Longitude
+		story.Latitude = coordinates.Latitude
+		story.Longitude = coordinates.Longitude
+		err = db.Create(&story).Error
+		if err != nil {
+			return err
+		}
+		tag := models.Tag{
+			Name:    ChooseRandomTag(),
+			StoryID: story.ID,
+		}
+		err = db.Create(&tag).Error
+		if err != nil {
+			return err
+		}
 	}
-
-	// create tags
-	err = db.Create(&stories).Error
-	if err != nil {
-		return err
-	}
-
-	return db.Create(&tags).Error
+	return nil
 }

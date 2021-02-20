@@ -10,11 +10,15 @@ import (
 
 func (api api) ReturnAllUniqueTags(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var tags []models.Tag
-
 	err := api.database.Distinct("name").Find(&tags).Error
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
 
-	return rest.JSONStatusOK(tags)
+	var length = len(tags)
+	names := make([]string, length)
+	for i, t := range tags {
+		names[i] = t.Name
+	}
+	return rest.JSONStatusOK(names)
 }

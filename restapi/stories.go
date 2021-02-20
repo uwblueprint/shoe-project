@@ -190,22 +190,25 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 	if err := api.database.Create(&story).Error; err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
-	fmt.Println(r.FormValue("bio"))
 	names := r.Form["tags"]
-	err = api.AddTags(names, story)
-	if err != nil {
-		return rest.ErrInvalidRequest(api.logger, "Error Adding Tags", err)
+	if len(names) != 0 {
+		err = api.AddTags(names, story)
+		if err != nil {
+			return rest.ErrInvalidRequest(api.logger, "Error Adding Tags", err)
+		}
 	}
 	return rest.MsgStatusOK("Story Added Successfully")
 }
 
 func (api api) AddTags(names []string, story models.Story) error {
-	var tags []models.Tag
-	for _, t := range names {
-		var tag models.Tag
-		tag.Name = t
-		tag.Story = story
-		tags = append(tags, tag)
+	var length = len(names)
+	tags := make([]models.Tag, length)
+	for i, t := range names {
+		tag := models.Tag{
+			Name:    strings.ToUpper(t),
+			StoryID: story.ID,
+		}
+		tags[i] = tag
 	}
 	return api.database.Create(&tags).Error
 }
