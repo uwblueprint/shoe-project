@@ -1,6 +1,8 @@
 import Button from "@material-ui/core/Button";
+import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import * as React from "react";
 import styled from "styled-components";
 
@@ -26,13 +28,30 @@ const StyledButton = styled(Button)`
 `;
 
 const StyledMedia = styled(CardMedia)`
-  border-radius: 10px 10px 0px 0px;
   height: 211px;
+  background: ${colors.neutralLight};
+`;
+
+const LoadingCardContent = styled(CardContent)`
+  height: 211px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const StyledCardContent = styled(CardContent)`
   border-radius: 10px;
   overflow: hidden;
+`;
+
+const StyledCard = styled(Card)`
+  .MuiPaper-rounded {
+    border-radius: 10px;
+  }
+`;
+
+const HiddenImg = styled.img`
+  display: none;
 `;
 
 interface PinPreviewProps {
@@ -54,9 +73,20 @@ export function PinPreview({
   shoeImage,
   onClick,
 }: PinPreviewProps): JSX.Element {
+  const [imageURL, setImageURL] = React.useState("");
+  const shoeImg =
+    imageURL.length === 0 ? (
+      <LoadingCardContent>
+        <CircularProgress />
+      </LoadingCardContent>
+    ) : (
+      <StyledMedia alt="Image of shoe" image={imageURL} title="Image of shoe" />
+    );
+
   return (
-    <>
-      <StyledMedia image={shoeImage} title="Temporary Image" />
+    <StyledCard>
+      <HiddenImg src={shoeImage} onLoad={() => setImageURL(shoeImage)} />
+      {shoeImg}
       <StyledCardContent>
         <CardTagText>{country}</CardTagText>
         <CardTitleText>{title}</CardTitleText>
@@ -73,6 +103,6 @@ export function PinPreview({
           {author} • {date}
         </CardDetailText>
       </StyledCardContent>
-    </>
+    </StyledCard>
   );
 }
