@@ -3,11 +3,8 @@ package restapi
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"math"
 	"math/rand"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
@@ -17,10 +14,6 @@ import (
 	"github.com/uwblueprint/shoe-project/restapi/rest"
 	"gorm.io/gorm"
 )
-
-type ZipcodeResponse struct {
-	Results []string `json:"results"`
-}
 
 func init() {
 	rand.Seed(time.Now().UTC().UnixNano())
@@ -52,16 +45,6 @@ func (api api) ReturnStoryByID(w http.ResponseWriter, r *http.Request) render.Re
 	return rest.JSONStatusOK(story)
 }
 
-func (api api) randomizePinLocation(city string) (latitude float64, longitude float64, err error) {
-	coordinates, err := api.locationFinder.GetCityCenter(city)
-	if err != nil {
-		return 0, 0, err
-	}
-	latitude = randomCoords(coordinates.Latitude)
-	longitude = randomCoords(coordinates.Longitude)
-	return latitude, longitude, nil
-}
-
 func (api api) CreateStories(w http.ResponseWriter, r *http.Request) render.Renderer {
 	// Declare a new Story struct.
 	var stories []models.Story
@@ -72,75 +55,17 @@ func (api api) CreateStories(w http.ResponseWriter, r *http.Request) render.Rend
 	}
 
 	for i := 0; i < len(stories); i++ {
-		city := stories[i].CurrentCity
-		stories[i].CurrentCity = strings.Title(strings.ToLower(city))
+		stories[i].CurrentCity = strings.Title(strings.ToLower(stories[i].CurrentCity))
 
 		// get number of stories with current city in db
 		var prevStories []models.Story
-		err := api.database.Where("current_city=?", city).Find(&prevStories).Error
+		var numStoriesInCity int64
+		var err error
+		api.database.Where("current_city=?", stories[i].CurrentCity).Model(&prevStories).Count(&numStoriesInCity)
+		stories[i].Latitude, stories[i].Longitude, err = api.locationFinder.GetPostalCode(stories[i].CurrentCity, numStoriesInCity)
 		if err != nil {
-			api.logger.Infof("A")
-			// default to randomizing if there is an error
-			stories[i].Latitude, stories[i].Longitude, err = api.randomizePinLocation(city)
-			if err != nil {
-				return rest.ErrInvalidRequest(api.logger, fmt.Sprintf("Story %d has an invalid current city", i), err)
-			}
-			continue
+			return rest.ErrInvalidRequest(api.logger, fmt.Sprintf("Story %d has an invalid current city", i), err)
 		}
-		numStoriesInCity := 0
-		if prevStories != nil {
-			numStoriesInCity = len(prevStories)
-		}
-		// query zipcode with numStoriesInCity + 1 results and take the last one
-		zipCodeToken := os.Getenv("ZIP_CODE_TOKEN")
-		resp, err := http.Get(fmt.Sprintf("https://app.zipcodebase.com/api/v1/code/city?apikey=%s&city=%s&country=ca&limit=%d", zipCodeToken, city, numStoriesInCity+1))
-		if err != nil || resp.StatusCode != 200 {
-			api.logger.Infof("B")
-			// default to randomizing if there is an error
-			stories[i].Latitude, stories[i].Longitude, err = api.randomizePinLocation(city)
-			if err != nil {
-				return rest.ErrInvalidRequest(api.logger, fmt.Sprintf("Story %d has an invalid current city", i), err)
-			}
-			continue
-		}
-		defer resp.Body.Close()
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			api.logger.Infof("C")
-			// default to randomizing if there is an error
-			stories[i].Latitude, stories[i].Longitude, err = api.randomizePinLocation(city)
-			if err != nil {
-				return rest.ErrInvalidRequest(api.logger, fmt.Sprintf("Story %d has an invalid current city", i), err)
-			}
-			continue
-		}
-		var zipcodeResp ZipcodeResponse
-		err = json.Unmarshal(body, &zipcodeResp)
-		if err != nil || zipcodeResp.Results == nil || len(zipcodeResp.Results) == 0 {
-			api.logger.Infof("D")
-			// default to randomizing if there is an error
-			stories[i].Latitude, stories[i].Longitude, err = api.randomizePinLocation(city)
-			if err != nil {
-				return rest.ErrInvalidRequest(api.logger, fmt.Sprintf("Story %d has an invalid current city", i), err)
-			}
-			continue
-		}
-
-		postalCode := zipcodeResp.Results[len(zipcodeResp.Results)-1]
-		api.logger.Infof(postalCode)
-		coordinates, err := api.locationFinder.GetCityCenter(postalCode)
-		if err != nil {
-			// default to randomizing if there is an error
-			api.logger.Infof("E")
-			stories[i].Latitude, stories[i].Longitude, err = api.randomizePinLocation(city)
-			if err != nil {
-				return rest.ErrInvalidRequest(api.logger, fmt.Sprintf("Story %d has an invalid current city", i), err)
-			}
-			continue
-		}
-		api.logger.Infof(fmt.Sprintf("lat=%d, lng=%d", coordinates.Latitude, coordinates.Longitude))
-		stories[i].Latitude = coordinates.Latitude
-		stories[i].Longitude = coordinates.Longitude
 	}
 
 	if err := api.database.Create(&stories).Error; err != nil {
@@ -162,13 +87,4 @@ func (api api) ReturnStoriesByCountries(w http.ResponseWriter, r *http.Request) 
 	}
 
 	return rest.JSONStatusOK(stories)
-}
-
-func randomCoords(coordinate float64) float64 {
-	num := math.Floor(rand.Float64()*99) + 1
-	if math.Round(rand.Float64()) == 1 {
-		num *= 1
-	}
-
-	return coordinate + 0.003*num
 }
