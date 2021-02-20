@@ -118,11 +118,12 @@ func (suite *endpointTestSuite) TestReturnStoriesByCountries() {
 }
 
 func (suite *endpointTestSuite) TestGetAllStories() {
-	json_story1 := []models.Story{
+	jsonStory1 := []models.Story{
 		{
 			Title:           "The Little Prince",
 			Content:         "Children",
 			Year:            2012,
+			IsVisible:       true,
 			Summary:         "Summary1",
 			CurrentCity:     "Toronto",
 			ImageURL:        "https://exampleurl.com",
@@ -133,11 +134,12 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 		},
 	}
 
-	json_story2 := []models.Story{
+	jsonStory2 := []models.Story{
 		{
 			Title:           "Hitchhiker's Guide to the Galaxy",
 			Content:         "Fiction",
 			Year:            2012,
+			IsVisible:       true,
 			Summary:         "Summary2",
 			CurrentCity:     "Toronto",
 			ImageURL:        "https://exampleurl.com",
@@ -148,8 +150,8 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 	}
 
 	//Add to sqlite db
-	suite.db.Create(&json_story1)
-	suite.db.Create(&json_story2)
+	suite.db.Create(&jsonStory1)
+	suite.db.Create(&jsonStory2)
 
 	var response = suite.endpoint.GET("/stories").
 		Expect().
@@ -164,6 +166,7 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 			"content": "Children",
 			"title": "The Little Prince",
 			"year": 2012,
+			"is_visible": true,
 			"summary": "Summary1",
 			"current_city": "Toronto",
 			"image_url" : "https://exampleurl.com",
@@ -176,6 +179,7 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 			"content": "Fiction",
 			"title": "Hitchhiker's Guide to the Galaxy",
 			"year": 2012,
+			"is_visible": true,
 			"summary": "Summary2",
 			"current_city": "Toronto",
 			"image_url" : "https://exampleurl.com",
@@ -195,6 +199,7 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 	response.Object().Value("payload").Array().Element(0).Object().Value("content").Equal("Children")
 	response.Object().Value("payload").Array().Element(0).Object().Value("title").Equal("The Little Prince")
 	response.Object().Value("payload").Array().Element(0).Object().Value("year").Equal(2012)
+	response.Object().Value("payload").Array().Element(0).Object().Value("is_visible").Equal(true)
 	response.Object().Value("payload").Array().Element(0).Object().Value("summary").Equal("Summary1")
 	response.Object().Value("payload").Array().Element(0).Object().Value("current_city").Equal("Toronto")
 	response.Object().Value("payload").Array().Element(0).Object().Value("image_url").Equal("https://exampleurl.com")
@@ -207,9 +212,51 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 	response.Object().Value("payload").Array().Element(1).Object().Value("content").Equal("Fiction")
 	response.Object().Value("payload").Array().Element(1).Object().Value("title").Equal("Hitchhiker's Guide to the Galaxy")
 	response.Object().Value("payload").Array().Element(1).Object().Value("year").Equal(2012)
+	response.Object().Value("payload").Array().Element(0).Object().Value("is_visible").Equal(true)
 	response.Object().Value("payload").Array().Element(1).Object().Value("summary").Equal("Summary2")
 	response.Object().Value("payload").Array().Element(1).Object().Value("current_city").Equal("Toronto")
 	response.Object().Value("payload").Array().Element(0).Object().Value("image_url").Equal("https://exampleurl.com")
+}
+
+func (suite *endpointTestSuite) TestVisibleStories() {
+	invisibleStory := []models.Story{
+		{
+			Title:           "The Little Prince",
+			Content:         "Children",
+			Year:            2012,
+			IsVisible:       false,
+			Summary:         "Summary1",
+			CurrentCity:     "Toronto",
+			ImageURL:        "https://exampleurl.com",
+			VideoURL:        "https://youtube.com",
+			AuthorFirstName: "Antoine",
+			AuthorLastName:  "dSE",
+			AuthorCountry:   "France",
+		},
+	}
+	visibleStory := []models.Story{
+		{
+			Title:           "Hitchhiker's Guide to the Galaxy",
+			Content:         "Fiction",
+			Year:            2012,
+			IsVisible:       true,
+			Summary:         "Summary2",
+			CurrentCity:     "Toronto",
+			ImageURL:        "https://exampleurl.com",
+			AuthorFirstName: "Douglas",
+			AuthorLastName:  "Adams",
+			AuthorCountry:   "UK",
+		},
+	}
+
+	suite.db.Create(&invisibleStory)
+	suite.db.Create(&visibleStory)
+
+	var response = suite.endpoint.GET("/stories").
+		Expect().
+		Status(http.StatusOK).JSON()
+
+	response.Object().Value("payload").Array().Length().Equal(1)
 }
 
 func (suite *endpointTestSuite) TestCreateAuthor() {
@@ -282,6 +329,7 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 			Title:           "Half of a Yellow Sun",
 			Content:         "Fiction",
 			Year:            2019,
+			IsVisible:       true,
 			Summary:         "Summary1",
 			CurrentCity:     "Toronto",
 			ImageURL:        "https://exampleurl.com",
@@ -306,6 +354,7 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 					"current_city": "Toronto",
 					"content": "Fiction",
 					"year": 2019,
+					"is_visible": true,
 					"summary": "Summary1",
 					"title": "Half of a Yellow Sun",
 					"image_url":"https://exampleurl.com",
@@ -321,6 +370,7 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 	response.Object().Value("payload").Object().Value("content").Equal("Fiction")
 	response.Object().Value("payload").Object().Value("title").Equal("Half of a Yellow Sun")
 	response.Object().Value("payload").Object().Value("year").Equal(2019)
+	response.Object().Value("payload").Object().Value("is_visible").Equal(true)
 	response.Object().Value("payload").Object().Value("summary").Equal("Summary1")
 	response.Object().Value("payload").Object().Value("current_city").Equal("Toronto")
 	response.Object().Value("payload").Object().Value("image_url").Equal("https://exampleurl.com")
