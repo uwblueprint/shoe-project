@@ -82,7 +82,7 @@ func (finder coordinatesFinder) randomizePinLocation(city string) (latitude floa
 	return latitude, longitude, nil
 }
 
-func (finder coordinatesFinder) GetPostalCode(city string, limit int64) (float64, float64, error) {
+func (finder coordinatesFinder) GetLatitudeAndLongitude(city string, limit int64) (float64, float64, error) {
 	// query zipcode with numStoriesInCity + 1 results and take the last one
 	resp, err := http.Get(fmt.Sprintf(zipCodeURL, finder.zipCodeToken, city, limit+1))
 	if err != nil || resp.StatusCode != 200 {

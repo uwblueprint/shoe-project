@@ -73,7 +73,7 @@ func (api api) CreateStories(w http.ResponseWriter, r *http.Request) render.Rend
 		var numStoriesInCity int64
 		var err error
 		api.database.Where("current_city=?", stories[i].CurrentCity).Model(&prevStories).Count(&numStoriesInCity)
-		stories[i].Latitude, stories[i].Longitude, err = api.locationFinder.GetPostalCode(stories[i].CurrentCity, numStoriesInCity)
+		stories[i].Latitude, stories[i].Longitude, err = api.locationFinder.GetLatitudeAndLongitude(stories[i].CurrentCity, numStoriesInCity)
 		if err != nil {
 			return rest.ErrInvalidRequest(api.logger, fmt.Sprintf("Story %d has an invalid current city", i), err)
 		}
@@ -161,7 +161,7 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 	story.ImageURL = imageURL
 	story.Title = r.FormValue("title")
 	story.Content = r.FormValue("content")
-	story.CurrentCity = r.FormValue("current_city")
+	story.CurrentCity = strings.Title(strings.ToLower(r.FormValue("current_city")))
 	year, err := strconv.ParseUint(r.FormValue("year"), 10, 64)
 	if err != nil {
 		return rest.ErrInvalidRequest(api.logger, "Error parsing year field", err)
@@ -169,12 +169,14 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 	story.Year = uint(year)
 	story.Summary = r.FormValue("summary")
 	city := story.CurrentCity
-	coordinates, err := api.locationFinder.GetCityCenter(city)
+	// get number of stories with current city in db
+	var prevStories []models.Story
+	var numStoriesInCity int64
+	api.database.Where("current_city=?", city).Model(&prevStories).Count(&numStoriesInCity)
+	story.Latitude, story.Longitude, err = api.locationFinder.GetLatitudeAndLongitude(city, numStoriesInCity)
 	if err != nil {
 		return rest.ErrInvalidRequest(api.logger, "Story has an invalid current city", err)
 	}
-	story.Latitude = randomCoords(coordinates.Latitude)
-	story.Longitude = randomCoords(coordinates.Longitude)
 
 	videoURL := r.FormValue("video_url")
 	if videoURL != "" {
