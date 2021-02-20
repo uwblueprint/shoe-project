@@ -47,7 +47,7 @@ func (api api) ReturnStoryByID(w http.ResponseWriter, r *http.Request) render.Re
 	var story models.Story
 	id := chi.URLParam(r, "storyID")
 
-	err := api.database.Where("id=?", id).First(&story).Error
+	err := api.database.Where("is_visible = true").Where("id=?", id).First(&story).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return rest.ErrNotFound(fmt.Sprintf("Could not find story with ID %s", id))
@@ -189,10 +189,6 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 	if err := api.database.Create(&story).Error; err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
-
-	// We set the story to be public when it is initially uploaded
-	story.IsVisible = true
-
 	return rest.MsgStatusOK("Story Added Successfully")
 }
 

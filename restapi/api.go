@@ -25,6 +25,7 @@ type api struct {
 	s3config       *aws.Config
 }
 
+// Router sets up the go-chi routes for the server
 func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, error) {
 	r := server.CreateRouter()
 	api := api{
