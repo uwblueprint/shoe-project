@@ -35,7 +35,7 @@ func init() {
 func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var stories []models.Story
 
-	err := api.database.Find(&stories).Error
+	err := api.database.Where("is_visible = true").Find(&stories).Error
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
@@ -190,8 +190,8 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 		return rest.ErrInternal(api.logger, err)
 	}
 
-	// We set the story to be private when it is initially uploaded
-	story.IsPublic = false
+	// We set the story to be public when it is initially uploaded
+	story.IsVisible = true
 
 	return rest.MsgStatusOK("Story Added Successfully")
 }

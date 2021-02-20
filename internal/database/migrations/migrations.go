@@ -81,7 +81,7 @@ func Seed(db *gorm.DB, locationFinder location.LocationFinder) error {
 		stories[i].Latitude = coordinates.Latitude
 		stories[i].Longitude = coordinates.Longitude
 		// Make sure all stories are public for initially seeded stories
-		stories[i].IsPublic = true
+		stories[i].IsVisible = true
 	}
 
 	return db.Create(&stories).Error

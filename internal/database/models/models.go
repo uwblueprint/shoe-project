@@ -25,7 +25,7 @@ type Story struct {
 	Content         string  `gorm:"type:text;not null" json:"content"`
 	CurrentCity     string  `gorm:"not null" json:"current_city"`
 	Year            uint    `gorm:"not null" json:"year"`
-	IsPublic        bool    `gorm:"not null" json:"is_public"`
+	IsVisible       bool    `gorm:"default:false" json:"is_visible"`
 	Summary         string  `gorm:"type:text" json:"summary"`
 	Latitude        float64 `gorm:"not null" json:"latitude"`
 	Longitude       float64 `gorm:"not null" json:"longitude"`
