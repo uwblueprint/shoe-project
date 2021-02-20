@@ -33,18 +33,21 @@ const StyledTags = styled(ReactTags)`
     }
   }
 `;
-export const Upload: React.FC = () => {
-  const tags = [
-    { id: 1, name: "Educational" },
-    { id: 2, name: "Inspirational" },
-  ];
 
-  const suggestions = [
-    { id: 3, name: "Refugee" },
-    { id: 4, name: "East Coast" },
-    { id: 5, name: "West Coast" },
-    { id: 6, name: "Territories" },
-  ];
+//Rough
+const tags = [
+  { id: 1, name: "Educational" },
+  { id: 2, name: "Inspirational" },
+];
+
+const suggestions = [
+  { id: 3, name: "Refugee" },
+  { id: 4, name: "East Coast" },
+  { id: 5, name: "West Coast" },
+  { id: 6, name: "Territories" },
+];
+
+export const Upload: React.FC = () => {
   const storyTags = useRef(null);
   const onDelete = (i: number) => {
     console.log("On Delete:");
@@ -62,7 +65,7 @@ export const Upload: React.FC = () => {
   const [formInput, setFormInput] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
     {
-      image: {} as File,
+      image: new File([""], "filename"),
       video_url: "",
       title: "",
       content: "",
@@ -94,14 +97,14 @@ export const Upload: React.FC = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const form_data = new FormData();
+    const formData = new FormData();
     for (const key in formInput) {
-      form_data.append(key, formInput[key]);
+      formData.append(key, formInput[key]);
     }
 
     fetch("/api/story", {
       method: "POST",
-      body: form_data,
+      body: formData,
       redirect: "follow",
     })
       .then((response) => response.text())
@@ -213,6 +216,7 @@ export const Upload: React.FC = () => {
 
           <DropzoneArea
             acceptedFiles={["image/*"]}
+            filesLimit={1}
             dropzoneText={"Drag and drop an image here or click"}
             onChange={(files) => {
               setImage(files);
