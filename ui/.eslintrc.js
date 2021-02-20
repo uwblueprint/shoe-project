@@ -37,6 +37,7 @@ module.exports = {
     "simple-import-sort/exports": "error",
     // React stuff
     "react/jsx-boolean-value": "error",
-    "react/no-array-index-key": "error"
+    "react/no-array-index-key": "error",
+    "react/prop-types": "off"
   },
 };

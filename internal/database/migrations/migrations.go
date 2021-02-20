@@ -64,7 +64,6 @@ func ChooseRandomTag() string {
 }
 
 func Seed(db *gorm.DB, locationFinder location.LocationFinder) error {
-
 	// read in the authors file from authors.json
 	var authors []models.Author
 	err := parseJson("data/authors.json", &authors)
@@ -93,6 +92,7 @@ func Seed(db *gorm.DB, locationFinder location.LocationFinder) error {
 		}
 		story.Latitude = coordinates.Latitude
 		story.Longitude = coordinates.Longitude
+		story.IsVisible = true
 		err = db.Create(&story).Error
 		if err != nil {
 			return err

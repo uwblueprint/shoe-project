@@ -254,3 +254,14 @@ export const HelpDrawerLaunchButtonText = styled.span`
     padding-bototm: 24px;
   }
 `;
+
+export const LoginTitleText = styled.p`
+  font-size: ${fontSize.h3Text};
+  line-height: 30px;
+  text-align: center;
+`;
+
+export const LoginMessageText = styled.p`
+  font-size: ${fontSize.body2};
+  text-align: center;
+`;

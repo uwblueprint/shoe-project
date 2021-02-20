@@ -35,7 +35,7 @@ func init() {
 func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var stories []models.Story
 
-	err := api.database.Find(&stories).Error
+	err := api.database.Where("is_visible = true").Find(&stories).Error
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
@@ -47,7 +47,7 @@ func (api api) ReturnStoryByID(w http.ResponseWriter, r *http.Request) render.Re
 	var story models.Story
 	id := chi.URLParam(r, "storyID")
 
-	err := api.database.Where("id=?", id).First(&story).Error
+	err := api.database.Where("is_visible = true").Where("id=?", id).First(&story).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return rest.ErrNotFound(fmt.Sprintf("Could not find story with ID %s", id))
@@ -123,7 +123,6 @@ func convertYoutubeURL(originalURL string) (string, error) {
 }
 
 func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) render.Renderer {
-
 	file, h, err := r.FormFile("image")
 
 	if err != nil {

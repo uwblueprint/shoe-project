@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// Author struct describes a story author
 type Author struct {
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
@@ -17,12 +18,14 @@ type Author struct {
 	Stories       []Story        `gorm:"foreignKey:AuthorFirstName,AuthorLastName,AuthorCountry;references:FirstName,LastName,OriginCountry;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"stories,omitempty"`
 }
 
+// Story struct describes a story rendered on the map
 type Story struct {
 	gorm.Model
 	Title           string  `gorm:"not null" json:"title"`
 	Content         string  `gorm:"type:text;not null" json:"content"`
 	CurrentCity     string  `gorm:"not null" json:"current_city"`
 	Year            uint    `gorm:"not null" json:"year"`
+	IsVisible       bool    `gorm:"default:false" json:"is_visible"`
 	Summary         string  `gorm:"type:text" json:"summary"`
 	Latitude        float64 `gorm:"not null" json:"latitude"`
 	Longitude       float64 `gorm:"not null" json:"longitude"`

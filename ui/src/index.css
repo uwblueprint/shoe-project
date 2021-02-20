@@ -6,3 +6,8 @@ body {
   line-height: 24px;
   margin: 0px;
 }
+
+/* Have to add global styling because popup is dynamic */
+.leaflet-zoom-animated {
+  border-radius: 10px;
+}
