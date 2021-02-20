@@ -16,15 +16,15 @@ func CreateTables(db *gorm.DB) error {
 }
 
 func DropAllTables(db *gorm.DB) error {
-	err := db.Migrator().DropTable(&models.User{});
+	err := db.Migrator().DropTable(&models.User{})
 	if err != nil {
-		return err;
+		return err
 	}
-	err = db.Migrator().DropTable(&models.Story{});
+	err = db.Migrator().DropTable(&models.Story{})
 	if err != nil {
-		return err;
+		return err
 	}
-	return db.Migrator().DropTable(&models.Author{});
+	return db.Migrator().DropTable(&models.Author{})
 }
 
 func CreateSuperUser(db *gorm.DB) error {
@@ -52,7 +52,6 @@ func parseJson(filename string, obj interface{}) error {
 }
 
 func Seed(db *gorm.DB, locationFinder location.LocationFinder) error {
-
 	// read in the authors file from authors.json
 	var authors []models.Author
 	err := parseJson("data/authors.json", &authors)
@@ -81,6 +80,8 @@ func Seed(db *gorm.DB, locationFinder location.LocationFinder) error {
 		}
 		stories[i].Latitude = coordinates.Latitude
 		stories[i].Longitude = coordinates.Longitude
+		// Make sure all stories are public for initially seeded stories
+		stories[i].IsVisible = true
 	}
 
 	return db.Create(&stories).Error
