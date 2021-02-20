@@ -7,6 +7,7 @@ import resting from "../assets/resting.svg";
 import unfocused from "../assets/unfocused.svg";
 import { Story } from "../types";
 import { PinPreview } from "./PinPreview";
+import { device } from "../styles/device";
 
 const StyledPopup = styled(Popup)`
   width: 392px;
@@ -21,10 +22,29 @@ const StyledPopup = styled(Popup)`
 
   .leaflet-popup-content-wrapper {
     padding: 0px;
+    @media {device.mobile} {
+      border-radius: 1.5em !important; /* class adds drop shadows so we need to adjust its border radius along with .leaflet-popup */
+    }
   }
 
   .leaflet-popup-tip {
     display: none;
+  }
+  
+  .leaflet-popup {
+    @media {device.mobile} {
+      width: fit-content !important; /* need !important or else it can't overwrite leaflet styling */
+      height: fit-content !important;
+      border-radius: 1.5em !important;
+    }
+  }
+  
+  .leaflet-popup-close-button {
+    @media {device.mobile} {
+      font-size: 5em !important;
+      right: 0.7em !important;
+      top: 0.3em !important;
+    }
   }
 `;
 

@@ -6,8 +6,11 @@ body {
   line-height: 24px;
   margin: 0px;
 }
+<<<<<<< HEAD
 
 /* Have to add global styling because popup is dynamic */
 .leaflet-zoom-animated {
   border-radius: 10px;
 }
+=======
+>>>>>>> Moved leaflet styling to Pin.tsx from index.css
