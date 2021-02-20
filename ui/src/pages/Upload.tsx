@@ -9,9 +9,11 @@ import {
 } from "@material-ui/core/";
 import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
-import { useReducer } from "react";
+import { useReducer, useRef } from "react";
+import ReactTags from "react-tag-autocomplete";
 import styled from "styled-components";
 
+import countriesList from "../data/countries.json";
 import { device } from "../styles/device";
 
 const StyledGrid = styled(Grid)`
@@ -22,7 +24,41 @@ const StyledGrid = styled(Grid)`
   }
 `;
 
+const StyledTags = styled(ReactTags)`
+  .react-tags {
+    .react-tags_selected {
+      .react-tags__selected-tag {
+        color: red !important;
+      }
+    }
+  }
+`;
 export const Upload: React.FC = () => {
+  const tags = [
+    { id: 1, name: "Educational" },
+    { id: 2, name: "Inspirational" },
+  ];
+
+  const suggestions = [
+    { id: 3, name: "Refugee" },
+    { id: 4, name: "East Coast" },
+    { id: 5, name: "West Coast" },
+    { id: 6, name: "Territories" },
+  ];
+  const storyTags = useRef(null);
+  const onDelete = (i: number) => {
+    console.log("On Delete:");
+    // const tempTags = tags.slice(0);
+    tags.splice(i, 1);
+    //Add logic
+  };
+
+  const onAddition = (tag: string) => {
+    console.log("On Addition:", tag);
+    // const tempTags = [].concat(tags, tag);
+    //Add logic
+  };
+
   const [formInput, setFormInput] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
     {
@@ -134,9 +170,11 @@ export const Upload: React.FC = () => {
                 id: "select-label-country",
               }}
             >
-              <MenuItem value={"China"}>China</MenuItem>
-              <MenuItem value={"India"}>India</MenuItem>
-              <MenuItem value={"Sri Lanka"}>Sri Lanka</MenuItem>
+              {countriesList.map((country) => (
+                <MenuItem key={country.code} value={country.name}>
+                  {country.name}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
 
@@ -202,6 +240,17 @@ export const Upload: React.FC = () => {
             }}
             label="Story"
           />
+          <br></br>
+          <StyledTags
+            ref={storyTags}
+            tags={tags}
+            suggestions={suggestions}
+            onAddition={onAddition}
+            onDelete={onDelete}
+          ></StyledTags>
+
+          <br></br>
+
           <Button color="primary" type="submit" variant="contained">
             Submit Story
           </Button>
