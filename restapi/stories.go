@@ -34,11 +34,34 @@ func init() {
 
 func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var stories []models.Story
+	r.ParseForm()
+	sort := r.Form["sort"]
+	order := r.Form["order"]
 
-	err := api.database.Where("is_visible = true").Find(&stories).Error
-	if err != nil {
-		return rest.ErrInternal(api.logger, err)
+	var sortString = ""
+	for i:=0; i < len(sort); i++ {
+		if(sort[i] == "author_name"){
+			sortString += "author_first_name" + " " + order[i] + ", " + "author_last_name" + " " + order[i]
+		}else {
+			sortString += sort[i] + " " + order[i]
+		}
+
+		if i != len(sort)-1{
+			sortString += ", "
+		}
 	}
+	if len(sortString) != 0 {
+		err := api.database.Order(sortString).Find(&stories).Error
+		if err != nil {
+			return rest.ErrInternal(api.logger, err)
+		}
+	} else {
+		err := api.database.Find(&stories).Error
+		if err != nil {
+			return rest.ErrInternal(api.logger, err)
+		}
+	}
+
 
 	return rest.JSONStatusOK(stories)
 }
