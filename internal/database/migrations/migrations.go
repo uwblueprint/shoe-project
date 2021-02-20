@@ -12,8 +12,12 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreateTables(db *gorm.DB) error {
+func RunMigration(db *gorm.DB) error {
 	return db.AutoMigrate(&models.Author{}, &models.Story{}, &models.User{}, &models.Tag{})
+}
+
+func CreateTables(db *gorm.DB) error {
+	return RunMigration(db)
 }
 
 func DropAllTables(db *gorm.DB) error {

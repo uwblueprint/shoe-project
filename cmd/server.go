@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/internal/database"
+	"github.com/uwblueprint/shoe-project/internal/database/migrations"
 	"github.com/uwblueprint/shoe-project/internal/location"
 	"github.com/uwblueprint/shoe-project/restapi"
 	"github.com/uwblueprint/shoe-project/server"
@@ -46,6 +47,11 @@ var (
 			db, err := database.Connect()
 			if err != nil {
 				logger.Fatalw("Failed to connect to database", "Err", err)
+			}
+
+			err = migrations.RunMigration(db)
+			if err != nil {
+				logger.Fatalw("Failed to migrate tables", "Err", err)
 			}
 
 			locationFinder, err := location.NewMapboxFinder(config.GetMapBoxToken(), "CA")
