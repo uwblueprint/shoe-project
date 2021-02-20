@@ -13,6 +13,11 @@ const StyledPopup = styled(Popup)`
   width: 392px;
   height: 467px;
   box-shadow: 0px 0px 25px 5px rgba(0, 0, 0, 0.2);
+  @media ${device.mobile} {
+    width: fit-content !important;
+    height: fit-content !important;
+    border-radius: 1.5em !important;
+  }
 
   .leaflet-popup-content {
     width: auto !important;
@@ -22,8 +27,8 @@ const StyledPopup = styled(Popup)`
 
   .leaflet-popup-content-wrapper {
     padding: 0px;
-    @media {device.mobile} {
-      border-radius: 1.5em !important; /* class adds drop shadows so we need to adjust its border radius along with .leaflet-popup */
+    @media ${device.mobile} {
+      border-radius: 1.5em !important;
     }
   }
 
@@ -31,16 +36,8 @@ const StyledPopup = styled(Popup)`
     display: none;
   }
   
-  .leaflet-popup {
-    @media {device.mobile} {
-      width: fit-content !important; /* need !important or else it can't overwrite leaflet styling */
-      height: fit-content !important;
-      border-radius: 1.5em !important;
-    }
-  }
-  
   .leaflet-popup-close-button {
-    @media {device.mobile} {
+    @media ${device.mobile} {
       font-size: 5em !important;
       right: 0.7em !important;
       top: 0.3em !important;
@@ -78,8 +75,8 @@ export function Pin({
       state === PinState.Selected ? new L.Point(48, 57) : new L.Point(39, 48),
   });
 
-  const leftPaddingPoint = L.point(500, 75);
-  const rightPaddingPoint = L.point(100, 400);
+  const leftPaddingPoint = window.screen.height <= parseInt(device.mobile) ? null : L.point(500, 75);
+  const rightPaddingPoint = window.screen.height <= parseInt(device.mobile) ? null : L.point(100, 400);
 
   return (
     <Marker position={[story.latitude, story.longitude]} icon={icon}>
