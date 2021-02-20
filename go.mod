@@ -3,11 +3,7 @@ module github.com/uwblueprint/shoe-project
 go 1.14
 
 require (
-<<<<<<< HEAD
 	github.com/aws/aws-sdk-go v1.37.12
-=======
-	github.com/aws/aws-sdk-go v1.37.10
->>>>>>> f9007a0 (fix: fixed POST request for working upload sotires)
 	github.com/biter777/countries v1.3.4
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gavv/httpexpect/v2 v2.1.0
@@ -23,7 +19,6 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.4 // indirect
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/onsi/ginkgo v1.13.0 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/ryankurte/go-mapbox v0.4.4
 	github.com/snowzach/certtools v1.0.2
 	github.com/spf13/afero v1.4.1 // indirect
