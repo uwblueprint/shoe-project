@@ -98,7 +98,7 @@ const StyledBackgroundColor = styled.div`
 
 export const Upload: React.FC = () => {
   const tagRef = useRef("");
-  const [value, setValue] = React.useState([]);
+  const [tagArray, setTagArrayValues] = React.useState([]);
 
   const storyTags = [
     "Inspirational",
@@ -141,7 +141,7 @@ export const Upload: React.FC = () => {
         event.preventDefault();
         event.stopPropagation();
         if (event.target.value.length > 0) {
-          setValue([...value, event.target.value]);
+          setTagArrayValues([...tagArray, event.target.value]);
         }
         break;
       }
@@ -160,7 +160,7 @@ export const Upload: React.FC = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     setFormInput({
-      tags: value,
+      tags: tagArray,
     });
     const formData = new FormData();
     for (const key in formInput) {
@@ -344,8 +344,8 @@ export const Upload: React.FC = () => {
                   options={storyTags}
                   defaultValue={[storyTags[0]]}
                   filterSelectedOptions
-                  onChange={(newValue) => setValue(newValue)}
-                  value={value}
+                  onChange={(newValue) => setTagArrayValues(newValue)}
+                  value={tagArray}
                   renderTags={(value: string[], getTagProps) =>
                     value.map((option: string, index: number) => (
                       <Chip
