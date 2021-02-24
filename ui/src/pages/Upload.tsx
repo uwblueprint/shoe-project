@@ -8,7 +8,7 @@ import {
   Select,
   TextField,
 } from "@material-ui/core/";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import Autocomplete, { RenderInputParams } from "@material-ui/lab/Autocomplete";
 import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
 import { useReducer, useRef } from "react";
@@ -95,6 +95,14 @@ const StyledBackgroundColor = styled.div`
   padding: 0px 0px 24px 24px;
   margin-bottom: 24px;
 `;
+
+interface InputProps {
+  onKeyDown: (event: Record<string, unknown>) => void;
+}
+
+interface TagParameters extends RenderInputParams {
+  inputProps: InputProps;
+}
 
 export const Upload: React.FC = () => {
   const tagRef = useRef("");
@@ -336,15 +344,15 @@ export const Upload: React.FC = () => {
               <FormControl>
                 <StyledFormLabels>Tags</StyledFormLabels>
                 <StyledTags
+                  autoHighlight
                   multiple
-                  freeSolo
                   ref={tagRef}
                   id="tags-outlined"
                   name="tags"
                   options={storyTags}
                   defaultValue={[storyTags[0]]}
                   filterSelectedOptions
-                  onChange={(newValue) => setTagArrayValues(newValue)}
+                  onChange={(event, newValue) => setTagArrayValues(newValue)}
                   value={tagArray}
                   renderTags={(value: string[], getTagProps) =>
                     value.map((option: string, index: number) => (
@@ -356,7 +364,7 @@ export const Upload: React.FC = () => {
                       />
                     ))
                   }
-                  renderInput={(params) => {
+                  renderInput={(params: TagParameters) => {
                     params.inputProps.onKeyDown = handleKeyDown;
                     return (
                       <TextField
