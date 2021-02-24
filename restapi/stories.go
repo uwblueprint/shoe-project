@@ -34,6 +34,7 @@ func init() {
 
 func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var stories []models.Story
+	var storiesByTags []models.Tag
 
 	getVisibility := r.URL.Query()["visibility"]
 	visibility := "true"
@@ -60,21 +61,27 @@ func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.R
 		}
 	}
 
-	gormRequest:= api.database
+	gormStories := api.database.Table("stories")
+	gormTags := api.database.Table("tags")
 
-	for i:=0; i < len(tags); i++{
-		if i == 0 {
-			gormRequest = gormRequest.Where("tags = ?", tags[i])
-		} else{
-			gormRequest = gormRequest.Or("tags = ?", tags[i])
-		}
-	} 
-
-	if len(sortString) != 0 {
-		gormRequest = gormRequest.Order(sortString)
+	err := gormTags.Where("name IN ?", tags).Find(&storiesByTags).Error
+	if err != nil {
+		return rest.ErrInternal(api.logger, err)
 	}
 
-	err := gormRequest.Where("is_visible = " + visibility).Find(&stories).Error
+	if len(storiesByTags) != 0 {
+		var storyIDs []string
+		for i:=0; i<len(storiesByTags); i++{
+			storyIDs = append(storyIDs, fmt.Sprint(storiesByTags[i].StoryID))
+		}
+		gormStories = gormStories.Where("id IN ?", storyIDs)
+	}
+
+	if len(sortString) != 0 {
+		gormStories = gormStories.Order(sortString)
+	}
+
+	err = gormStories.Where("is_visible = ?", visibility).Find(&stories).Error
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
