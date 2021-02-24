@@ -1,5 +1,6 @@
 import {
   Button,
+  Chip,
   FormControl,
   Grid,
   InputLabel,
@@ -7,10 +8,10 @@ import {
   Select,
   TextField,
 } from "@material-ui/core/";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
 import { useReducer, useRef } from "react";
-import ReactTags from "react-tag-autocomplete";
 import styled from "styled-components";
 
 import countriesList from "../data/countries.json";
@@ -29,7 +30,6 @@ const StyledGrid = styled(Grid)`
 const StyledInputLabel = styled(InputLabel)`
   && {
     position: relative;
-    transform: translate(0, 36px) scale(1);
     padding-left: 16px;
   }
 `;
@@ -56,6 +56,7 @@ const StyledSelect = styled(Select)`
 
 const StyledTextField = styled(TextField)`
   width: 30vw;
+
   && {
     margin-top: 12px;
     font-family: Poppins;
@@ -71,13 +72,10 @@ const StyledDropzoneArea = styled(DropzoneArea)`
   }
 `;
 
-const StyledTags = styled(ReactTags)`
-  .react-tags {
-    .react-tags_selected {
-      .react-tags__selected-tag {
-        color: red !important;
-      }
-    }
+const StyledTags = styled(Autocomplete)`
+  && {
+    margin-top: 12px;
+    width: 30vw;
   }
 `;
 
@@ -97,34 +95,21 @@ const StyledBackgroundColor = styled.div`
   padding: 0px 0px 24px 24px;
   margin-bottom: 24px;
 `;
-//Rough
-const tags = [
-  { id: 1, name: "Educational" },
-  { id: 2, name: "Inspirational" },
-];
-
-const suggestions = [
-  { id: 3, name: "Refugee" },
-  { id: 4, name: "East Coast" },
-  { id: 5, name: "West Coast" },
-  { id: 6, name: "Territories" },
-];
 
 export const Upload: React.FC = () => {
-  const storyTags = useRef(null);
-  const onDelete = (i: number) => {
-    console.log("On Delete:");
-    // const tempTags = tags.slice(0);
-    tags.splice(i, 1);
-    //Add logic
-  };
+  const tagRef = useRef("");
+  const [value, setValue] = React.useState([]);
 
-  const onAddition = (tag: string) => {
-    console.log("On Addition:", tag);
-    // const tempTags = [].concat(tags, tag);
-    //Add logic
-  };
-
+  const storyTags = [
+    "Inspirational",
+    "West Coast",
+    "East Coast",
+    "Territories",
+    "Covid-19",
+    "Funny",
+    "Children",
+    "Recent",
+  ];
   const [formInput, setFormInput] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
     {
@@ -137,6 +122,7 @@ export const Upload: React.FC = () => {
       author_last_name: "",
       author_country: "",
       year: "",
+      tags: [],
       current_city: "",
       bio: "",
     }
@@ -148,6 +134,20 @@ export const Upload: React.FC = () => {
     });
   };
 
+  const handleKeyDown = (event) => {
+    switch (event.key) {
+      case ",":
+      case " ": {
+        event.preventDefault();
+        event.stopPropagation();
+        if (event.target.value.length > 0) {
+          setValue([...value, event.target.value]);
+        }
+        break;
+      }
+      default:
+    }
+  };
   const handleChange = (
     event?: React.ChangeEvent<{ name?: string; value: unknown }>
   ) => {
@@ -159,7 +159,9 @@ export const Upload: React.FC = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
+    setFormInput({
+      tags: value,
+    });
     const formData = new FormData();
     for (const key in formInput) {
       formData.append(key, formInput[key]);
@@ -330,6 +332,44 @@ export const Upload: React.FC = () => {
                 </StyledSelect>
               </FormControl>
             </div>
+            <div>
+              <FormControl>
+                <StyledFormLabels>Tags</StyledFormLabels>
+                <StyledTags
+                  multiple
+                  freeSolo
+                  ref={tagRef}
+                  id="tags-outlined"
+                  name="tags"
+                  options={storyTags}
+                  defaultValue={[storyTags[0]]}
+                  filterSelectedOptions
+                  onChange={(newValue) => setValue(newValue)}
+                  value={value}
+                  renderTags={(value: string[], getTagProps) =>
+                    value.map((option: string, index: number) => (
+                      <Chip
+                        key={option}
+                        variant="outlined"
+                        label={option}
+                        {...getTagProps({ index })}
+                      />
+                    ))
+                  }
+                  renderInput={(params) => {
+                    params.inputProps.onKeyDown = handleKeyDown;
+                    return (
+                      <TextField
+                        {...params}
+                        variant="outlined"
+                        label="Shoe Tags"
+                        placeholder="Select Tags"
+                      />
+                    );
+                  }}
+                />
+              </FormControl>
+            </div>
           </StyledBackgroundColor>
 
           <StyledBackgroundColor>
@@ -359,16 +399,6 @@ export const Upload: React.FC = () => {
                 id: "input-video-link",
               }}
             />
-
-            <br></br>
-            <br></br>
-            <StyledTags
-              ref={storyTags}
-              tags={tags}
-              suggestions={suggestions}
-              onAddition={onAddition}
-              onDelete={onDelete}
-            ></StyledTags>
           </StyledBackgroundColor>
           <br></br>
 
