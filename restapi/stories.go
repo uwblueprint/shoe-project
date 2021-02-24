@@ -34,6 +34,7 @@ func init() {
 
 func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var stories []models.Story
+	id := chi.URLParam(r, "storyID")
 	r.ParseForm()
 	sort := r.Form["sort"]
 	order := r.Form["order"]
@@ -71,26 +72,26 @@ func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.R
 	// 		return rest.ErrInternal(api.logger, err)
 	// 	}
 
-	// dbQuery := api.database.Where("is_visible = true")
+	dbQuery := api.database.Where("is_visible = true")
 
-	// if len(sortString) != 0 {
-	// 	dbQuery.Order(sortString)
-	// }
+	if len(sortString) != 0 {
+		dbQuery.Order(sortString)
+	}
+
+	err := dbQuery.Find(&stories).Error
+	if err != nil {
+		return rest.ErrInternal(api.logger, err)
+	}
+	return rest.JSONStatusOK(stories)
+
 
 	// err := api.database.Where("is_visible = true").Find(&stories).Error
 	// if err != nil {
 	// 	return rest.ErrInternal(api.logger, err)
 	// }
+
+
 	// return rest.JSONStatusOK(stories)
-
-
-	err := api.database.Where("is_visible = true").Find(&stories).Error
-	if err != nil {
-		return rest.ErrInternal(api.logger, err)
-	}
-
-
-	return rest.JSONStatusOK(stories)
 }
 
 func (api api) ReturnStoryByID(w http.ResponseWriter, r *http.Request) render.Renderer {
