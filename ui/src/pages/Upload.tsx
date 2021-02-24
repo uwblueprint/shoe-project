@@ -324,7 +324,7 @@ export const Upload: React.FC = () => {
                   id="tags-outlined"
                   name="tags"
                   freeSolo
-                  options={tagOptions}
+                  options={tagOptions ? tagOptions : [""]}
                   filterSelectedOptions
                   onChange={(event, newValue) => setTagArrayValues(newValue)}
                   value={tagArray ? tagArray : [""]}
