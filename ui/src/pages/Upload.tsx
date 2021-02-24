@@ -19,7 +19,7 @@ import { device } from "../styles/device";
 import { fontSize } from "../styles/typography";
 
 const StyledGrid = styled(Grid)`
-  background-color: ${colors.primaryLight4};
+  background-color: ${colors.primaryLight6};
   @media ${device.laptop} {
     justify: left;
     width: 100vw;
@@ -27,13 +27,30 @@ const StyledGrid = styled(Grid)`
 `;
 
 const StyledInputLabel = styled(InputLabel)`
-  width: 30vw;
+  && {
+    position: relative;
+    transform: translate(0, 36px) scale(1);
+    padding-left: 16px;
+  }
+`;
+
+const StyledFormLabels = styled.div`
+  position: relative;
+  margin-bottom: 2px;
+  margin-top: 24px;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500;
+  font-size: ${fontSize.subtitle};
+  line-height: 120%;
+  color: ${colors.black};
 `;
 
 const StyledSelect = styled(Select)`
   width: 30vw;
   && {
-    margin-top: 12px;
+    align-items: center;
+    display: inline-block;
   }
 `;
 
@@ -49,7 +66,9 @@ const ImageContainer = styled.div`
   width: 30vw;
 `;
 const StyledDropzoneArea = styled(DropzoneArea)`
-  width: 30vw;
+  && {
+    margin-top: 12px;
+  }
 `;
 
 const StyledTags = styled(ReactTags)`
@@ -163,6 +182,7 @@ export const Upload: React.FC = () => {
           <StyledBackgroundColor>
             <StyledHeading>Story Information</StyledHeading>
             <div>
+              <StyledFormLabels>Title</StyledFormLabels>
               <StyledTextField
                 onChange={handleChange}
                 variant="outlined"
@@ -174,6 +194,7 @@ export const Upload: React.FC = () => {
               />
             </div>
             <div>
+              <StyledFormLabels>Summary</StyledFormLabels>
               <StyledTextField
                 onChange={handleChange}
                 multiline
@@ -185,6 +206,7 @@ export const Upload: React.FC = () => {
                 label="Enter story summary "
               />
             </div>
+            <StyledFormLabels>Story</StyledFormLabels>
             <StyledTextField
               onChange={handleChange}
               multiline
@@ -203,6 +225,7 @@ export const Upload: React.FC = () => {
           <StyledBackgroundColor>
             <StyledHeading>Author Information</StyledHeading>
             <div>
+              <StyledFormLabels>First Name</StyledFormLabels>
               <StyledTextField
                 onChange={handleChange}
                 variant="outlined"
@@ -214,6 +237,7 @@ export const Upload: React.FC = () => {
               />
             </div>
             <div>
+              <StyledFormLabels>Last Name</StyledFormLabels>
               <StyledTextField
                 onChange={handleChange}
                 variant="outlined"
@@ -225,6 +249,7 @@ export const Upload: React.FC = () => {
               />
             </div>
             <div>
+              <StyledFormLabels>Biography</StyledFormLabels>
               <StyledTextField
                 variant="outlined"
                 onChange={handleChange}
@@ -243,6 +268,7 @@ export const Upload: React.FC = () => {
 
             <div>
               <FormControl>
+                <StyledFormLabels>Country of Origin</StyledFormLabels>
                 <StyledInputLabel id="Country of Origin">
                   Enter story&#39;s country of origin
                 </StyledInputLabel>
@@ -265,6 +291,7 @@ export const Upload: React.FC = () => {
             </div>
             <div>
               <FormControl>
+                <StyledFormLabels>Current City</StyledFormLabels>
                 <StyledInputLabel id="Current Location">
                   Enter where story was written
                 </StyledInputLabel>
@@ -286,13 +313,12 @@ export const Upload: React.FC = () => {
             </div>
             <div>
               <FormControl>
-                <StyledInputLabel id="input-label-year">
-                  Year Published
-                </StyledInputLabel>
+                <StyledFormLabels>Year Published</StyledFormLabels>
                 <StyledSelect
                   variant="outlined"
                   value={formInput.year}
                   onChange={handleChange}
+                  defaultValue={"2021"}
                   inputProps={{
                     name: "year",
                     id: "select-label-year",
@@ -310,6 +336,7 @@ export const Upload: React.FC = () => {
             <StyledHeading>Multimedia</StyledHeading>
 
             <ImageContainer>
+              <StyledFormLabels>Add Image</StyledFormLabels>
               <StyledDropzoneArea
                 showFileNames
                 acceptedFiles={["image/*"]}
@@ -320,6 +347,7 @@ export const Upload: React.FC = () => {
                 }}
               />
             </ImageContainer>
+            <StyledFormLabels>Video Link</StyledFormLabels>
             <StyledTextField
               onChange={handleChange}
               variant="outlined"
