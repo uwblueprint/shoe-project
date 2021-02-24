@@ -8,11 +8,13 @@ import {
   Select,
   TextField,
 } from "@material-ui/core/";
-import Autocomplete, { RenderInputParams } from "@material-ui/lab/Autocomplete";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import RenderInputParams from "@material-ui/lab/Autocomplete";
 import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
 import { useReducer, useRef } from "react";
 import styled from "styled-components";
+import useSWR from "swr";
 
 import countriesList from "../data/countries.json";
 import { colors } from "../styles/colors";
@@ -108,16 +110,8 @@ export const Upload: React.FC = () => {
   const tagRef = useRef("");
   const [tagArray, setTagArrayValues] = React.useState([]);
 
-  const storyTags = [
-    "Inspirational",
-    "West Coast",
-    "East Coast",
-    "Territories",
-    "Covid-19",
-    "Funny",
-    "Children",
-    "Recent",
-  ];
+  const { data: tagOptions, error } = useSWR<string[]>("/api/tags");
+
   const [formInput, setFormInput] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
     {
@@ -130,7 +124,6 @@ export const Upload: React.FC = () => {
       author_last_name: "",
       author_country: "",
       year: "",
-      tags: [],
       current_city: "",
       bio: "",
     }
@@ -167,12 +160,13 @@ export const Upload: React.FC = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setFormInput({
-      tags: tagArray,
-    });
     const formData = new FormData();
     for (const key in formInput) {
       formData.append(key, formInput[key]);
+    }
+
+    for (const index in tagArray) {
+      formData.append("tags", tagArray[index]);
     }
 
     fetch("/api/story", {
@@ -184,6 +178,8 @@ export const Upload: React.FC = () => {
       .then((result) => console.log(result))
       .catch((error) => console.log("Error: ", error));
   };
+
+  if (error) return <div>Error fetching tags!</div>;
 
   return (
     <StyledGrid container justify="center" alignContent="center">
@@ -291,6 +287,7 @@ export const Upload: React.FC = () => {
                     id: "select-label-country",
                   }}
                 >
+                  <MenuItem value={"Thunder Bay"}>Thunder Bay</MenuItem>
                   {countriesList.map((country) => (
                     <MenuItem key={country.code} value={country.name}>
                       {country.name}
@@ -349,8 +346,8 @@ export const Upload: React.FC = () => {
                   ref={tagRef}
                   id="tags-outlined"
                   name="tags"
-                  options={storyTags}
-                  defaultValue={[storyTags[0]]}
+                  freeSolo
+                  options={tagOptions}
                   filterSelectedOptions
                   onChange={(event, newValue) => setTagArrayValues(newValue)}
                   value={tagArray}
@@ -372,7 +369,7 @@ export const Upload: React.FC = () => {
                         variant="outlined"
                         label="Shoe Tags"
                         placeholder="Select Tags"
-                      />
+                      ></TextField>
                     );
                   }}
                 />
