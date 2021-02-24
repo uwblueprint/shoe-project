@@ -265,3 +265,25 @@ export const LoginMessageText = styled.p`
   font-size: ${fontSize.body2};
   text-align: center;
 `;
+
+export const UploadStoriesHeading = styled.div`
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500;
+  font-size: ${fontSize.h3Text};
+  line-height: 150%;
+  color: ${colors.black};
+  margin: 24px 0px 24px 0px;
+`;
+
+export const UploadLabelsText = styled.div`
+  position: relative;
+  margin-bottom: 2px;
+  margin-top: 24px;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500;
+  font-size: ${fontSize.subtitle};
+  line-height: 120%;
+  color: ${colors.black};
+`;

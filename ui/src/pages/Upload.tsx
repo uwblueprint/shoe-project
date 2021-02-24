@@ -19,7 +19,7 @@ import useSWR from "swr";
 import countriesList from "../data/countries.json";
 import { colors } from "../styles/colors";
 import { device } from "../styles/device";
-import { fontSize } from "../styles/typography";
+import { UploadLabelsText, UploadStoriesHeading } from "../styles/typography";
 
 const StyledGrid = styled(Grid)`
   background-color: ${colors.primaryLight6};
@@ -34,18 +34,6 @@ const StyledInputLabel = styled(InputLabel)`
     position: relative;
     padding-left: 16px;
   }
-`;
-
-const StyledFormLabels = styled.div`
-  position: relative;
-  margin-bottom: 2px;
-  margin-top: 24px;
-  font-family: Poppins;
-  font-style: normal;
-  font-weight: 500;
-  font-size: ${fontSize.subtitle};
-  line-height: 120%;
-  color: ${colors.black};
 `;
 
 const StyledSelect = styled(Select)`
@@ -68,6 +56,7 @@ const StyledTextField = styled(TextField)`
 const ImageContainer = styled.div`
   width: 30vw;
 `;
+
 const StyledDropzoneArea = styled(DropzoneArea)`
   && {
     margin-top: 12px;
@@ -79,16 +68,6 @@ const StyledTags = styled(Autocomplete)`
     margin-top: 12px;
     width: 30vw;
   }
-`;
-
-const StyledHeading = styled.div`
-  font-family: Poppins;
-  font-style: normal;
-  font-weight: 500;
-  font-size: ${fontSize.h3Text};
-  line-height: 150%;
-  color: ${colors.black};
-  margin: 24px 0px 24px 0px;
 `;
 
 const StyledBackgroundColor = styled.div`
@@ -186,9 +165,9 @@ export const Upload: React.FC = () => {
       <form onSubmit={handleSubmit}>
         <FormControl>
           <StyledBackgroundColor>
-            <StyledHeading>Story Information</StyledHeading>
+            <UploadStoriesHeading>Story Information</UploadStoriesHeading>
             <div>
-              <StyledFormLabels>Title</StyledFormLabels>
+              <UploadLabelsText>Title</UploadLabelsText>
               <StyledTextField
                 onChange={handleChange}
                 variant="outlined"
@@ -200,7 +179,7 @@ export const Upload: React.FC = () => {
               />
             </div>
             <div>
-              <StyledFormLabels>Summary</StyledFormLabels>
+              <UploadLabelsText>Summary</UploadLabelsText>
               <StyledTextField
                 onChange={handleChange}
                 multiline
@@ -212,7 +191,7 @@ export const Upload: React.FC = () => {
                 label="Enter story summary "
               />
             </div>
-            <StyledFormLabels>Story</StyledFormLabels>
+            <UploadLabelsText>Story</UploadLabelsText>
             <StyledTextField
               onChange={handleChange}
               multiline
@@ -229,9 +208,9 @@ export const Upload: React.FC = () => {
           </StyledBackgroundColor>
 
           <StyledBackgroundColor>
-            <StyledHeading>Author Information</StyledHeading>
+            <UploadStoriesHeading>Author Information</UploadStoriesHeading>
             <div>
-              <StyledFormLabels>First Name</StyledFormLabels>
+              <UploadLabelsText>First Name</UploadLabelsText>
               <StyledTextField
                 onChange={handleChange}
                 variant="outlined"
@@ -243,7 +222,7 @@ export const Upload: React.FC = () => {
               />
             </div>
             <div>
-              <StyledFormLabels>Last Name</StyledFormLabels>
+              <UploadLabelsText>Last Name</UploadLabelsText>
               <StyledTextField
                 onChange={handleChange}
                 variant="outlined"
@@ -255,7 +234,7 @@ export const Upload: React.FC = () => {
               />
             </div>
             <div>
-              <StyledFormLabels>Biography</StyledFormLabels>
+              <UploadLabelsText>Biography</UploadLabelsText>
               <StyledTextField
                 variant="outlined"
                 onChange={handleChange}
@@ -270,11 +249,11 @@ export const Upload: React.FC = () => {
           </StyledBackgroundColor>
 
           <StyledBackgroundColor>
-            <StyledHeading>Additional Information</StyledHeading>
+            <UploadStoriesHeading>Additional Information</UploadStoriesHeading>
 
             <div>
               <FormControl>
-                <StyledFormLabels>Country of Origin</StyledFormLabels>
+                <UploadLabelsText>Country of Origin</UploadLabelsText>
                 <StyledInputLabel id="Country of Origin">
                   Enter story&#39;s country of origin
                 </StyledInputLabel>
@@ -298,7 +277,7 @@ export const Upload: React.FC = () => {
             </div>
             <div>
               <FormControl>
-                <StyledFormLabels>Current City</StyledFormLabels>
+                <UploadLabelsText>Current City</UploadLabelsText>
                 <StyledInputLabel id="Current Location">
                   Enter where story was written
                 </StyledInputLabel>
@@ -320,7 +299,7 @@ export const Upload: React.FC = () => {
             </div>
             <div>
               <FormControl>
-                <StyledFormLabels>Year Published</StyledFormLabels>
+                <UploadLabelsText>Year Published</UploadLabelsText>
                 <StyledSelect
                   variant="outlined"
                   value={formInput.year}
@@ -339,7 +318,7 @@ export const Upload: React.FC = () => {
             </div>
             <div>
               <FormControl>
-                <StyledFormLabels>Tags</StyledFormLabels>
+                <UploadLabelsText>Tags</UploadLabelsText>
                 <StyledTags
                   autoHighlight
                   multiple
@@ -378,10 +357,10 @@ export const Upload: React.FC = () => {
           </StyledBackgroundColor>
 
           <StyledBackgroundColor>
-            <StyledHeading>Multimedia</StyledHeading>
+            <UploadStoriesHeading>Multimedia</UploadStoriesHeading>
 
             <ImageContainer>
-              <StyledFormLabels>Add Image</StyledFormLabels>
+              <UploadLabelsText>Add Image</UploadLabelsText>
               <StyledDropzoneArea
                 showFileNames
                 acceptedFiles={["image/*"]}
@@ -392,7 +371,7 @@ export const Upload: React.FC = () => {
                 }}
               />
             </ImageContainer>
-            <StyledFormLabels>Video Link</StyledFormLabels>
+            <UploadLabelsText>Video Link</UploadLabelsText>
             <StyledTextField
               onChange={handleChange}
               variant="outlined"
