@@ -9,10 +9,9 @@ import {
   TextField,
 } from "@material-ui/core/";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import RenderInputParams from "@material-ui/lab/Autocomplete";
 import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
-import { useReducer, useRef } from "react";
+import { KeyboardEvent, useReducer, useState } from "react";
 import styled from "styled-components";
 import useSWR from "swr";
 
@@ -78,16 +77,17 @@ const StyledBackgroundColor = styled.div`
 `;
 
 interface InputProps {
-  onKeyDown: (event: Record<string, unknown>) => void;
+  onKeyDown: (
+    event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
 }
 
-interface TagParameters extends RenderInputParams {
+interface TagParameters {
   inputProps: InputProps;
 }
 
 export const Upload: React.FC = () => {
-  const tagRef = useRef("");
-  const [tagArray, setTagArrayValues] = React.useState([]);
+  const [tagArray, setTagArrayValues] = useState([]);
 
   const { data: tagOptions, error } = useSWR<string[]>("/api/tags");
 
@@ -266,7 +266,6 @@ export const Upload: React.FC = () => {
                     id: "select-label-country",
                   }}
                 >
-                  <MenuItem value={"Thunder Bay"}>Thunder Bay</MenuItem>
                   {countriesList.map((country) => (
                     <MenuItem key={country.code} value={country.name}>
                       {country.name}
@@ -322,14 +321,13 @@ export const Upload: React.FC = () => {
                 <StyledTags
                   autoHighlight
                   multiple
-                  ref={tagRef}
                   id="tags-outlined"
                   name="tags"
                   freeSolo
                   options={tagOptions}
                   filterSelectedOptions
                   onChange={(event, newValue) => setTagArrayValues(newValue)}
-                  value={tagArray}
+                  value={tagArray ? tagArray : [""]}
                   renderTags={(value: string[], getTagProps) =>
                     value.map((option: string, index: number) => (
                       <Chip
