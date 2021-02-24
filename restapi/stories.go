@@ -34,13 +34,21 @@ func init() {
 
 func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var stories []models.Story
-	id := chi.URLParam(r, "storyID")
+
+	getVisibility := r.URL.Query()["visibility"]
+	visibility := "true"
+	if getVisibility != nil {
+		visibility = getVisibility[0]
+	}
+
 	r.ParseForm()
 	sort := r.Form["sort"]
 	order := r.Form["order"]
+	tags := r.Form["tags"]
 
-	var sortString = ""
+	sortString := ""
 	for i:=0; i < len(sort); i++ {
+		//special case for author name because our db table doesnt have "name" in one column
 		if(sort[i] == "author_name"){
 			sortString += "author_first_name" + " " + order[i] + ", " + "author_last_name" + " " + order[i]
 		}else {
@@ -51,47 +59,27 @@ func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.R
 			sortString += ", "
 		}
 	}
-	if len(sortString) != 0 {
-		err := api.database.Order(sortString).Find(&stories).Error
-		if err != nil {
-			return rest.ErrInternal(api.logger, err)
-		}
-	} else {
-		err := api.database.Find(&stories).Error
-		if err != nil {
-			return rest.ErrInternal(api.logger, err)
-		}
-	// if len(sortString) != 0 {
-	// 	err := api.database.Order(sortString).Find(&stories).Error
-	// 	if err != nil {
-	// 		return rest.ErrInternal(api.logger, err)
-	// 	}
-	// } else {
-	// 	err := api.database.Find(&stories).Error
-	// 	if err != nil {
-	// 		return rest.ErrInternal(api.logger, err)
-	// 	}
 
-	dbQuery := api.database.Where("is_visible = true")
+	gormRequest:= api.database
+
+	for i:=0; i < len(tags); i++{
+		if i == 0 {
+			gormRequest = gormRequest.Where("tags = ?", tags[i])
+		} else{
+			gormRequest = gormRequest.Or("tags = ?", tags[i])
+		}
+	} 
 
 	if len(sortString) != 0 {
-		dbQuery.Order(sortString)
+		gormRequest = gormRequest.Order(sortString)
 	}
 
-	err := dbQuery.Find(&stories).Error
+	err := gormRequest.Where("is_visible = " + visibility).Find(&stories).Error
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
+
 	return rest.JSONStatusOK(stories)
-
-
-	// err := api.database.Where("is_visible = true").Find(&stories).Error
-	// if err != nil {
-	// 	return rest.ErrInternal(api.logger, err)
-	// }
-
-
-	// return rest.JSONStatusOK(stories)
 }
 
 func (api api) ReturnStoryByID(w http.ResponseWriter, r *http.Request) render.Renderer {
