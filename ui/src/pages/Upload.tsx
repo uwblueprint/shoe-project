@@ -31,15 +31,24 @@ const StyledGrid = styled(Grid)`
 const StyledInputLabel = styled(InputLabel)`
   && {
     position: relative;
+    font-family: Poppins;
     padding-left: 16px;
+    width: 30vw;
   }
 `;
 
 const StyledSelect = styled(Select)`
   width: 30vw;
   && {
+    font-family: Poppins;
     align-items: center;
     display: inline-block;
+  }
+`;
+
+const StyledMenuItem = styled(MenuItem)`
+  && {
+    font-family: Poppins;
   }
 `;
 
@@ -48,7 +57,9 @@ const StyledTextField = styled(TextField)`
 
   && {
     margin-top: 12px;
-    font-family: Poppins;
+    .MuiInputLabel-formControl {
+      font-family: Poppins !important;
+    }
   }
 `;
 
@@ -64,8 +75,15 @@ const StyledDropzoneArea = styled(DropzoneArea)`
 
 const StyledTags = styled(Autocomplete)`
   && {
+    font-family: Poppins;
     margin-top: 12px;
     width: 30vw;
+    .MuiInputLabel-root {
+      font-family: Poppins !important;
+    }
+    .MuiInputBase-input {
+      font-family: Poppins !important;
+    }
   }
 `;
 
@@ -166,31 +184,27 @@ export const Upload: React.FC = () => {
         <FormControl>
           <StyledBackgroundColor>
             <UploadStoriesHeading>Story Information</UploadStoriesHeading>
-            <div>
-              <UploadLabelsText>Title</UploadLabelsText>
-              <StyledTextField
-                onChange={handleChange}
-                variant="outlined"
-                required
-                id="story-title"
-                name="title"
-                label="Enter story title"
-                placeholder="Lorem ipsum"
-              />
-            </div>
-            <div>
-              <UploadLabelsText>Summary</UploadLabelsText>
-              <StyledTextField
-                onChange={handleChange}
-                multiline
-                placeholder="Enter additional information here"
-                variant="outlined"
-                required
-                id="story-summary"
-                name="summary"
-                label="Enter story summary "
-              />
-            </div>
+            <UploadLabelsText>Title</UploadLabelsText>
+            <StyledTextField
+              onChange={handleChange}
+              variant="outlined"
+              required
+              id="story-title"
+              name="title"
+              label="Enter story title"
+              placeholder="Lorem ipsum"
+            />
+            <UploadLabelsText>Summary</UploadLabelsText>
+            <StyledTextField
+              onChange={handleChange}
+              multiline
+              placeholder="Enter additional information here"
+              variant="outlined"
+              required
+              id="story-summary"
+              name="summary"
+              label="Enter story summary"
+            />
             <UploadLabelsText>Story</UploadLabelsText>
             <StyledTextField
               onChange={handleChange}
@@ -206,157 +220,137 @@ export const Upload: React.FC = () => {
               label="Enter story"
             />
           </StyledBackgroundColor>
-
           <StyledBackgroundColor>
             <UploadStoriesHeading>Author Information</UploadStoriesHeading>
-            <div>
-              <UploadLabelsText>First Name</UploadLabelsText>
-              <StyledTextField
-                onChange={handleChange}
-                variant="outlined"
-                required
-                id="author-first-name"
-                name="author_first_name"
-                label="Enter author's first name"
-                placeholder="Lorem ipsum"
-              />
-            </div>
-            <div>
-              <UploadLabelsText>Last Name</UploadLabelsText>
-              <StyledTextField
-                onChange={handleChange}
-                variant="outlined"
-                required
-                id="author-last-name"
-                name="author_last_name"
-                label="Enter author's last name"
-                placeholder="Lorem ipsum"
-              />
-            </div>
-            <div>
-              <UploadLabelsText>Biography</UploadLabelsText>
-              <StyledTextField
-                variant="outlined"
-                onChange={handleChange}
-                multiline
-                placeholder="Enter additional information here"
-                rows={4}
-                id="author-bio"
-                name="bio"
-                label="Enter author biography"
-              />
-            </div>
+            <UploadLabelsText>First Name</UploadLabelsText>
+            <StyledTextField
+              onChange={handleChange}
+              variant="outlined"
+              required
+              id="author-first-name"
+              name="author_first_name"
+              label="Enter author's first name"
+              placeholder="Lorem ipsum"
+            />
+            <UploadLabelsText>Last Name</UploadLabelsText>
+            <StyledTextField
+              onChange={handleChange}
+              variant="outlined"
+              required
+              id="author-last-name"
+              name="author_last_name"
+              label="Enter author's last name"
+              placeholder="Lorem ipsum"
+            />
+            <UploadLabelsText>Biography</UploadLabelsText>
+            <StyledTextField
+              variant="outlined"
+              onChange={handleChange}
+              multiline
+              placeholder="Enter additional information here"
+              rows={4}
+              id="author-bio"
+              name="bio"
+              label="Enter author biography"
+            />
           </StyledBackgroundColor>
 
           <StyledBackgroundColor>
             <UploadStoriesHeading>Additional Information</UploadStoriesHeading>
-
-            <div>
-              <FormControl>
-                <UploadLabelsText>Country of Origin</UploadLabelsText>
-                <StyledInputLabel id="Country of Origin">
-                  Enter story&#39;s country of origin
-                </StyledInputLabel>
-                <StyledSelect
-                  variant="outlined"
-                  value={formInput.author_country}
-                  onChange={handleChange}
-                  inputProps={{
-                    name: "author_country",
-                    id: "select-label-country",
-                  }}
-                >
-                  {countriesList.map((country) => (
-                    <MenuItem key={country.code} value={country.name}>
-                      {country.name}
-                    </MenuItem>
-                  ))}
-                </StyledSelect>
-              </FormControl>
-            </div>
-            <div>
-              <FormControl>
-                <UploadLabelsText>Current City</UploadLabelsText>
-                <StyledInputLabel id="Current Location">
-                  Enter where story was written
-                </StyledInputLabel>
-                <StyledSelect
-                  variant="outlined"
-                  value={formInput.current_city}
-                  onChange={handleChange}
-                  inputProps={{
-                    name: "current_city",
-                    id: "select-label-city",
-                  }}
-                >
-                  <MenuItem value={"Toronto"}>Toronto</MenuItem>
-                  <MenuItem value={"Calgary"}>Calgary</MenuItem>
-                  <MenuItem value={"Vancouver"}>Vancouver</MenuItem>
-                  <MenuItem value={"Thunder Bay"}>Thunder Bay</MenuItem>
-                </StyledSelect>
-              </FormControl>
-            </div>
-            <div>
-              <FormControl>
-                <UploadLabelsText>Year Published</UploadLabelsText>
-                <StyledSelect
-                  variant="outlined"
-                  value={formInput.year}
-                  onChange={handleChange}
-                  defaultValue={"2021"}
-                  inputProps={{
-                    name: "year",
-                    id: "select-label-year",
-                  }}
-                >
-                  <MenuItem value={"2021"}>2021</MenuItem>
-                  <MenuItem value={"2020"}>2020</MenuItem>
-                  <MenuItem value={"2019"}>2019</MenuItem>
-                </StyledSelect>
-              </FormControl>
-            </div>
-            <div>
-              <FormControl>
-                <UploadLabelsText>Tags</UploadLabelsText>
-                <StyledTags
-                  autoHighlight
-                  multiple
-                  id="tags-outlined"
-                  name="tags"
-                  freeSolo
-                  options={tagOptions ? tagOptions : [""]}
-                  filterSelectedOptions
-                  onChange={(event, newValue) => setTagArrayValues(newValue)}
-                  value={tagArray ? tagArray : [""]}
-                  renderTags={(value: string[], getTagProps) =>
-                    value.map((option: string, index: number) => (
-                      <Chip
-                        key={option}
-                        variant="outlined"
-                        label={option}
-                        {...getTagProps({ index })}
-                      />
-                    ))
-                  }
-                  renderInput={(params: TagParameters) => {
-                    params.inputProps.onKeyDown = handleKeyDown;
-                    return (
-                      <TextField
-                        {...params}
-                        variant="outlined"
-                        label="Shoe Tags"
-                        placeholder="Select Tags"
-                      ></TextField>
-                    );
-                  }}
-                />
-              </FormControl>
-            </div>
+            <FormControl>
+              <UploadLabelsText>Country of Origin</UploadLabelsText>
+              <StyledInputLabel id="Country of Origin">
+                Enter story&#39;s country of origin
+              </StyledInputLabel>
+              <StyledSelect
+                variant="outlined"
+                value={formInput.author_country}
+                onChange={handleChange}
+                inputProps={{
+                  name: "author_country",
+                  id: "select-label-country",
+                }}
+              >
+                {countriesList.map((country) => (
+                  <StyledMenuItem key={country.code} value={country.name}>
+                    {country.name}
+                  </StyledMenuItem>
+                ))}
+              </StyledSelect>
+            </FormControl>
+            <UploadLabelsText>Current City</UploadLabelsText>
+            <StyledInputLabel id="Current Location">
+              Enter where story was written
+            </StyledInputLabel>
+            <StyledSelect
+              variant="outlined"
+              value={formInput.current_city}
+              onChange={handleChange}
+              inputProps={{
+                name: "current_city",
+                id: "select-label-city",
+              }}
+            >
+              <StyledMenuItem value={"Toronto"}>Toronto</StyledMenuItem>
+              <StyledMenuItem value={"Calgary"}>Calgary</StyledMenuItem>
+              <StyledMenuItem value={"Vancouver"}>Vancouver</StyledMenuItem>
+              <StyledMenuItem value={"Thunder Bay"}>Thunder Bay</StyledMenuItem>
+            </StyledSelect>
+            <FormControl>
+              <UploadLabelsText>Year Published</UploadLabelsText>
+              <StyledSelect
+                variant="outlined"
+                value={formInput.year}
+                onChange={handleChange}
+                defaultValue={"2021"}
+                inputProps={{
+                  name: "year",
+                  id: "select-label-year",
+                }}
+              >
+                <StyledMenuItem value={"2021"}>2021</StyledMenuItem>
+                <StyledMenuItem value={"2020"}>2020</StyledMenuItem>
+                <StyledMenuItem value={"2019"}>2019</StyledMenuItem>
+              </StyledSelect>
+            </FormControl>
+            <FormControl>
+              <UploadLabelsText>Tags</UploadLabelsText>
+              <StyledTags
+                autoHighlight
+                multiple
+                id="tags-outlined"
+                name="tags"
+                freeSolo
+                options={tagOptions ? tagOptions : [""]}
+                filterSelectedOptions
+                onChange={(event, newValue) => setTagArrayValues(newValue)}
+                value={tagArray ? tagArray : [""]}
+                renderTags={(value: string[], getTagProps) =>
+                  value.map((option: string, index: number) => (
+                    <Chip
+                      key={option}
+                      variant="outlined"
+                      label={option}
+                      {...getTagProps({ index })}
+                    />
+                  ))
+                }
+                renderInput={(params: TagParameters) => {
+                  params.inputProps.onKeyDown = handleKeyDown;
+                  return (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      label="Shoe Tags"
+                      placeholder="Select Tags"
+                    ></TextField>
+                  );
+                }}
+              />
+            </FormControl>
           </StyledBackgroundColor>
-
           <StyledBackgroundColor>
             <UploadStoriesHeading>Multimedia</UploadStoriesHeading>
-
             <ImageContainer>
               <UploadLabelsText>Add Image</UploadLabelsText>
               <StyledDropzoneArea
@@ -382,8 +376,6 @@ export const Upload: React.FC = () => {
               }}
             />
           </StyledBackgroundColor>
-          <br></br>
-
           <Button color="primary" type="submit" variant="contained">
             Submit Story
           </Button>
