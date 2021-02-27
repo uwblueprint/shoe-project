@@ -323,10 +323,10 @@ export const Upload: React.FC = () => {
                 freeSolo
                 options={tagOptions ? tagOptions : [""]}
                 filterSelectedOptions
-                onChange={(event, newValue) => setTagArrayValues(newValue)}
+                onChange={(_, newValue) => setTagArrayValues(newValue)}
                 value={tagArray ? tagArray : [""]}
-                renderTags={(value: string[], getTagProps) =>
-                  value.map((option: string, index: number) => (
+                renderTags={(value, getTagProps) =>
+                  value.map((option, index) => (
                     <Chip
                       key={option}
                       variant="outlined"
