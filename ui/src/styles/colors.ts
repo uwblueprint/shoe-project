@@ -7,6 +7,7 @@ const tealLight2 = "#B7DFE5";
 const tealLight3 = "#D2EDF1";
 const tealLight4 = "#EBF7F9";
 const tealLight5 = "#E8EEEF";
+const tealLight6 = "#F5FBFC";
 
 /* Secondary Colours */
 const red = "#C42626";
@@ -43,6 +44,7 @@ export const colors = Object.freeze({
   primaryLight3: tealLight3,
   primaryLight4: tealLight4,
   primaryLight5: tealLight5,
+  primaryLight6: tealLight6,
   secondary: red,
   secondaryDark1: redDark1,
   secondaryDark2: redDark2,
