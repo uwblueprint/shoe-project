@@ -294,6 +294,7 @@ export const Upload: React.FC = () => {
               <StyledMenuItem value={"Toronto"}>Toronto</StyledMenuItem>
               <StyledMenuItem value={"Calgary"}>Calgary</StyledMenuItem>
               <StyledMenuItem value={"Vancouver"}>Vancouver</StyledMenuItem>
+              <StyledMenuItem value={"Halifax"}>Halifax</StyledMenuItem>
               <StyledMenuItem value={"Thunder Bay"}>Thunder Bay</StyledMenuItem>
             </StyledSelect>
             <FormControl>
