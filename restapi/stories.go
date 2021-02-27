@@ -32,22 +32,63 @@ func init() {
 	rand.Seed(time.Now().UTC().UnixNano())
 }
 
+type TaggedStory struct {
+	models.Story
+	Tags []string `json:"tags"`
+}
+
+func (api api) ReturnTaggedStories(stories []models.Story) []TaggedStory {
+	TaggedStories := make([]TaggedStory, len(stories))
+	for i, story := range stories {
+		TaggedStories[i] = api.ReturnTaggedStory(story)
+	}
+	return TaggedStories
+}
+
+func (api api) ReturnTaggedStory(story models.Story) TaggedStory {
+	var tags []models.Tag
+	err := api.database.Where("story_id=?", story.ID).Find(&tags).Error
+	if err != nil {
+		return TaggedStory{story, []string{}} //Test for this case
+	}
+	names := make([]string, len(tags))
+	for i, t := range tags {
+		names[i] = t.Name
+	}
+	TaggedStory := TaggedStory{story, names}
+	return TaggedStory
+}
+
 func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var stories []models.Story
 
-	err := api.database.Where("is_visible = true").Find(&stories).Error
+	err := api.database.Preload("Author").Where("is_visible = true").Find(&stories).Error
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
 
-	return rest.JSONStatusOK(stories)
+	return rest.JSONStatusOK(api.ReturnTaggedStories(stories))
 }
 
 func (api api) ReturnStoryByID(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var story models.Story
 	id := chi.URLParam(r, "storyID")
 
-	err := api.database.Where("is_visible = true").Where("id=?", id).First(&story).Error
+	err := api.database.Preload("Author").Where("id=?", id).First(&story).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return rest.ErrNotFound(fmt.Sprintf("Could not find story with ID %s", id))
+		}
+		return rest.ErrInternal(api.logger, err)
+	}
+	return rest.JSONStatusOK(api.ReturnTaggedStory(story))
+}
+
+func (api api) EditStoryByID(w http.ResponseWriter, r *http.Request) render.Renderer {
+	var story models.Story
+	id := chi.URLParam(r, "storyID")
+
+	err := api.database.Preload("Author").Where("id=?", id).First(&story).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return rest.ErrNotFound(fmt.Sprintf("Could not find story with ID %s", id))
