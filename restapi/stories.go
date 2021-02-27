@@ -27,6 +27,7 @@ import (
 
 const youtubeRegex = `(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})`
 const youtubeEmbedURL = "https://www.youtube.com/embed/"
+const s3KeyNameRegex = `^https://shoeproject.s3.us-west-000.backblazeb2.com/(.*)`
 
 func init() {
 	rand.Seed(time.Now().UTC().UnixNano())
@@ -94,6 +95,17 @@ func (api api) EditStoryByID(w http.ResponseWriter, r *http.Request) render.Rend
 			return rest.ErrNotFound(fmt.Sprintf("Could not find story with ID %s", id))
 		}
 		return rest.ErrInternal(api.logger, err)
+	}
+
+	imageKey, err := convertImageURLToKeyName(story.ImageURL)
+
+	if err != nil {
+		return rest.ErrInvalidRequest(api.logger, "ImageUrl of existing image is not valid", err)
+	}
+
+	msg, err := api.DeleteImageInS3(imageKey) //delete existing image
+	if err != nil {
+		return rest.ErrInvalidRequest(api.logger, msg, err)
 	}
 
 	file, h, err := r.FormFile("image")
@@ -231,6 +243,25 @@ func (api api) uploadImageTos3(file multipart.File, size int64, name string) (st
 	return fmt.Sprintf("https://%s.s3.us-west-000.backblazeb2.com/%s", os.Getenv("BUCKET_NAME"), name), nil
 }
 
+func (api api) DeleteImageInS3(name string) (string, error) {
+	newSession, err := session.NewSession(api.s3config)
+	if err != nil {
+		return "", fmt.Errorf("Could not connect with S3")
+	}
+
+	s3Client := s3.New(newSession)
+	bucket := aws.String(os.Getenv("BUCKET_NAME"))
+
+	_, err = s3Client.DeleteObject(&s3.DeleteObjectInput{
+		Bucket: bucket,
+		Key:    aws.String(name),
+	})
+	if err != nil {
+		return "", fmt.Errorf("Could not delete image in S3")
+	}
+	return "Image Successfully Deleted", nil
+}
+
 func convertYoutubeURL(originalURL string) (string, error) {
 	re := regexp.MustCompile(youtubeRegex)
 	match := re.FindAllStringSubmatch(originalURL, 2)
@@ -238,6 +269,15 @@ func convertYoutubeURL(originalURL string) (string, error) {
 		return "", fmt.Errorf("Invalid Youtube Link")
 	}
 	return fmt.Sprintf("%s%s", youtubeEmbedURL, match[0][1]), nil
+}
+
+func convertImageURLToKeyName(originalURL string) (string, error) {
+	re := regexp.MustCompile(s3KeyNameRegex)
+	match := re.FindAllStringSubmatch(originalURL, 2)
+	if len(match) == 0 {
+		return "", fmt.Errorf("Invalid Image Link")
+	}
+	return match[0][1], nil
 }
 
 func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) render.Renderer {
