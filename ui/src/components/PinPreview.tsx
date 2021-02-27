@@ -6,8 +6,8 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import * as React from "react";
 import styled from "styled-components";
 
-import { device } from "../styles/device";
 import { colors } from "../styles/colors";
+import { device } from "../styles/device";
 import {
   CardDescriptionText,
   CardDetailText,
@@ -27,10 +27,10 @@ const StyledButton = styled(Button)`
     }
 
     @media ${device.mobile} {
-       margin: 1.5vh 0;
-       font-size: 3em;
-       font-weight: 600;
-       height: 5vh;
+      margin: 1.5vh 0;
+      font-size: 3em;
+      font-weight: 600;
+      height: 5vh;
     }
   }
 `;
@@ -55,7 +55,7 @@ const StyledCardContent = styled(CardContent)`
   border-radius: 10px;
   overflow: hidden;
   @media ${device.mobile} {
-    padding: 3em !important; 
+    padding: 3em !important;
   }
 `;
 

@@ -64,7 +64,7 @@ export const CardDescriptionText = styled.p`
   @media ${device.mobile} {
     font-size: 3em;
     line-height: 1.5em;
-    height: 4.5em; 
+    height: 4.5em;
     position: relative;
     overflow: hidden;
 
@@ -76,7 +76,11 @@ export const CardDescriptionText = styled.p`
       right: 0;
       width: 70%;
       height: 1.5em;
-      background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 50%);
+      background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0),
+        rgba(255, 255, 255, 1) 50%
+      );
     }
   }
 `;
