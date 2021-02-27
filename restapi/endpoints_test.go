@@ -172,7 +172,7 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 			ImageURL:        "https://exampleurl.com",
 			AuthorFirstName: "Douglas",
 			AuthorLastName:  "Adams",
-			AuthorCountry:   "UK",
+			AuthorCountry:   "UK"  ,
 		},
 	}
 
