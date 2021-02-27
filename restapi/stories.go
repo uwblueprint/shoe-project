@@ -96,7 +96,84 @@ func (api api) EditStoryByID(w http.ResponseWriter, r *http.Request) render.Rend
 		return rest.ErrInternal(api.logger, err)
 	}
 
-	return rest.JSONStatusOK(story)
+	file, h, err := r.FormFile("image")
+
+	if err != nil {
+		return rest.ErrInvalidRequest(api.logger, "Error getting the image.", err)
+	}
+	imageURL, err := api.uploadImageTos3(file, h.Size, h.Filename)
+	if err != nil {
+		return rest.ErrInvalidRequest(api.logger, "Error uploading the image to s3.", err)
+	}
+	defer file.Close()
+
+	var author models.Author
+	author.FirstName = r.FormValue("author_first_name")
+	author.LastName = r.FormValue("author_last_name")
+	author.OriginCountry = r.FormValue("author_country")
+
+	errAuthor := api.database.First(&author).Error
+	if errAuthor != nil {
+		if errAuthor == gorm.ErrRecordNotFound {
+			country := countries.ByName(author.OriginCountry)
+			if country == countries.Unknown {
+				return rest.ErrInvalidRequest(api.logger, "Unknown origin country", nil)
+			}
+			if err := api.database.Create(&author).Error; err != nil { //Adding author
+				return rest.ErrInternal(api.logger, errAuthor)
+			}
+		} else {
+			return rest.ErrInternal(api.logger, errAuthor)
+		}
+	}
+	author.Bio = r.FormValue("bio")
+	api.database.Save(&author)
+	story.Author = author
+	story.AuthorFirstName = r.FormValue("author_first_name")
+	story.AuthorLastName = r.FormValue("author_last_name")
+	story.AuthorCountry = r.FormValue("author_country")
+	story.ImageURL = imageURL
+	story.Title = r.FormValue("title")
+	story.Content = r.FormValue("content")
+	story.CurrentCity = r.FormValue("current_city")
+	year, err := strconv.ParseUint(r.FormValue("year"), 10, 64)
+	if err != nil {
+		return rest.ErrInvalidRequest(api.logger, "Error parsing year field", err)
+	}
+	story.Year = uint(year)
+	story.Summary = r.FormValue("summary")
+	city := story.CurrentCity
+	coordinates, err := api.locationFinder.GetCityCenter(city)
+	if err != nil {
+		return rest.ErrInvalidRequest(api.logger, "Story has an invalid current city", err)
+	}
+	story.Latitude = randomCoords(coordinates.Latitude)
+	story.Longitude = randomCoords(coordinates.Longitude)
+
+	videoURL := r.FormValue("video_url")
+	if videoURL != "" {
+		convertedURL, err := convertYoutubeURL(videoURL)
+		if err != nil {
+			return rest.ErrInvalidRequest(api.logger, "Invalid Youtube Link", err)
+		}
+		story.VideoURL = convertedURL
+	}
+
+	if err := api.database.Save(&story).Error; err != nil {
+		return rest.ErrInternal(api.logger, err)
+	}
+
+	api.database.Where("story_id=?", story.ID).Delete(models.Tag{}) // delete existing tags
+
+	names := r.Form["tags"]
+	if len(names) != 0 {
+		err = api.AddTags(names, story)
+		if err != nil {
+			return rest.ErrInvalidRequest(api.logger, "Error Adding Tags", err)
+		}
+	}
+
+	return rest.MsgStatusOK("Story Updated successfully")
 }
 
 func (api api) CreateStories(w http.ResponseWriter, r *http.Request) render.Renderer {
