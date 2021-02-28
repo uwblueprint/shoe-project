@@ -32,9 +32,27 @@ func init() {
 	rand.Seed(time.Now().UTC().UnixNano())
 }
 
-func (api api) FetchAllStories(sort []string, order []string, tags []string, visibility bool) render.Renderer {
+func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var stories []models.Story
 	var storiesByTags []models.Tag
+
+	getVisibility := r.URL.Query()["visibility"]
+	visibility := true
+	if getVisibility != nil {
+		vb, err := strconv.ParseBool(getVisibility[0])
+		if err != nil {
+			return rest.ErrInternal(api.logger, err)
+		}
+		visibility = vb
+	}
+
+	err := r.ParseForm()
+	if err != nil {
+		return rest.ErrInternal(api.logger, err)
+	}
+	sort := r.Form["sort"]
+	order := r.Form["order"]
+	tags := r.Form["tags"]
 
 	sortString := ""
 	for i := 0; i < len(sort); i++ {
@@ -53,7 +71,7 @@ func (api api) FetchAllStories(sort []string, order []string, tags []string, vis
 	gormStories := api.database.Table("stories")
 	gormTags := api.database.Table("tags")
 
-	err := gormTags.Where("name IN ?", tags).Find(&storiesByTags).Error
+	err = gormTags.Where("name IN ?", tags).Find(&storiesByTags).Error
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
@@ -73,8 +91,6 @@ func (api api) FetchAllStories(sort []string, order []string, tags []string, vis
 		gormStories = gormStories.Order(sortString)
 		fmt.Printf("in sortString \n")
 	}
-	fmt.Printf("visibility %v\n", visibility)
-	fmt.Printf("GORM %v\n", gormStories)
 
 	err = gormStories.Where("is_visible = ?", visibility).Find(&stories).Error
 	if err != nil {
@@ -82,25 +98,6 @@ func (api api) FetchAllStories(sort []string, order []string, tags []string, vis
 	}
 
 	return rest.JSONStatusOK(stories)
-}
-
-func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.Renderer {
-	getVisibility := r.URL.Query()["visibility"]
-	visibility := true
-	if getVisibility != nil {
-		vb, err := strconv.ParseBool(getVisibility[0])
-		if err != nil {
-			return rest.ErrInternal(api.logger, err)
-		}
-		visibility = vb
-	}
-
-	r.ParseForm()
-	sort := r.Form["sort"]
-	order := r.Form["order"]
-	tags := r.Form["tags"]
-
-	return api.FetchAllStories(sort, order, tags, visibility)
 }
 
 func (api api) ReturnStoryByID(w http.ResponseWriter, r *http.Request) render.Renderer {

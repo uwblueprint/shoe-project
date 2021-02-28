@@ -139,13 +139,14 @@ func (suite *endpointTestSuite) TestReturnAllUniqueTags() {
 		Expect().
 		Status(http.StatusOK).JSON()
 
+	//TEST FAILS here b/c extra table value "IMMIGRATION" gets added in "TestGetVisibleStoriesWithTags" below
 	response.Object().Value("payload").Array().Length().Equal(2)
 	response.Object().Value("payload").Array().Element(0).Equal("EDUCATION")
 	response.Object().Value("payload").Array().Element(1).Equal("REFUGEE")
 }
 
-func (suite *endpointTestSuite) TestGetAllStories() {
-	jsonStory1 := []models.Story{
+func GetStoriesToTest() []models.Story {
+	jsonStories := []models.Story{
 		{
 			Title:           "The Little Prince",
 			Content:         "Children",
@@ -155,30 +156,92 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 			CurrentCity:     "Toronto",
 			ImageURL:        "https://exampleurl.com",
 			VideoURL:        "https://youtube.com",
-			AuthorFirstName: "Antoine",
-			AuthorLastName:  "dSE",
+			AuthorFirstName: "John",
+			AuthorLastName:  "Doe",
 			AuthorCountry:   "France",
 		},
-	}
-
-	jsonStory2 := []models.Story{
 		{
 			Title:           "Hitchhiker's Guide to the Galaxy",
 			Content:         "Fiction",
-			Year:            2012,
+			Year:            2017,
 			IsVisible:       true,
+			Summary:         "Summary2",
+			CurrentCity:     "Toronto",
+			ImageURL:        "https://exampleurl.com",
+			AuthorFirstName: "John",
+			AuthorLastName:  "Adams",
+			AuthorCountry:   "France",
+		},
+		{
+			Title:           "Batman Begins",
+			Content:         "Fiction",
+			Year:            2014,
+			IsVisible:       true,
+			Summary:         "Summary3",
+			CurrentCity:     "Vancouver",
+			ImageURL:        "https://bat.com",
+			AuthorFirstName: "Bruce",
+			AuthorLastName:  "Wayne",
+			AuthorCountry:   "USA",
+		},
+		{
+			Title:           "Pulp Fiction",
+			Content:         "Fiction",
+			Year:            1999,
+			IsVisible:       true,
+			Summary:         "Summary3",
+			CurrentCity:     "Edmonton",
+			ImageURL:        "https://bat.com",
+			AuthorFirstName: "Clark",
+			AuthorLastName:  "Kent",
+			AuthorCountry:   "Canada",
+		},
+		{
+			Title:           "Invisible Story",
+			Content:         "Fiction",
+			Year:            2012,
+			IsVisible:       false,
 			Summary:         "Summary2",
 			CurrentCity:     "Toronto",
 			ImageURL:        "https://exampleurl.com",
 			AuthorFirstName: "Douglas",
 			AuthorLastName:  "Adams",
-			AuthorCountry:   "UK"  ,
+			AuthorCountry:   "UK",
+		},
+		{
+			Title:           "Spiderman",
+			Content:         "Fiction",
+			Year:            2016,
+			IsVisible:       false,
+			Summary:         "Summary2",
+			CurrentCity:     "Toronto",
+			ImageURL:        "https://exampleurl.com",
+			AuthorFirstName: "Douglas",
+			AuthorLastName:  "Adams",
+			AuthorCountry:   "Canada",
+		},
+		{
+			Title:           "Casper The Ghost",
+			Content:         "Fiction",
+			Year:            2012,
+			IsVisible:       false,
+			Summary:         "Summary2",
+			CurrentCity:     "Toronto",
+			ImageURL:        "https://exampleurl.com",
+			AuthorFirstName: "Barry",
+			AuthorLastName:  "Allen",
+			AuthorCountry:   "UK",
 		},
 	}
+	return jsonStories
+}
+
+func (suite *endpointTestSuite) TestGetAllStories() {
+
+	jsonStories := GetStoriesToTest()
 
 	//Add to sqlite db
-	suite.db.Create(&jsonStory1)
-	suite.db.Create(&jsonStory2)
+	suite.db.Create(&jsonStories)
 
 	var response = suite.endpoint.GET("/stories").
 		Expect().
@@ -218,9 +281,10 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 
 	//Verify response matches
 	response.Schema(mock)
+	response.Object().Value("payload").Array().Length().Equal(4)
 
-	response.Object().Value("payload").Array().Element(0).Object().Value("author_first_name").Equal("Antoine")
-	response.Object().Value("payload").Array().Element(0).Object().Value("author_last_name").Equal("dSE")
+	response.Object().Value("payload").Array().Element(0).Object().Value("author_first_name").Equal("John")
+	response.Object().Value("payload").Array().Element(0).Object().Value("author_last_name").Equal("Doe")
 	response.Object().Value("payload").Array().Element(0).Object().Value("author_country").Equal("France")
 	response.Object().Value("payload").Array().Element(0).Object().Value("ID").Equal(1)
 	response.Object().Value("payload").Array().Element(0).Object().Value("content").Equal("Children")
@@ -232,17 +296,180 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 	response.Object().Value("payload").Array().Element(0).Object().Value("image_url").Equal("https://exampleurl.com")
 	response.Object().Value("payload").Array().Element(0).Object().Value("video_url").Equal("https://youtube.com")
 
-	response.Object().Value("payload").Array().Element(1).Object().Value("author_first_name").Equal("Douglas")
+	response.Object().Value("payload").Array().Element(1).Object().Value("author_first_name").Equal("John")
 	response.Object().Value("payload").Array().Element(1).Object().Value("author_last_name").Equal("Adams")
-	response.Object().Value("payload").Array().Element(1).Object().Value("author_country").Equal("UK")
+	response.Object().Value("payload").Array().Element(1).Object().Value("author_country").Equal("France")
 	response.Object().Value("payload").Array().Element(1).Object().Value("ID").Equal(2)
 	response.Object().Value("payload").Array().Element(1).Object().Value("content").Equal("Fiction")
 	response.Object().Value("payload").Array().Element(1).Object().Value("title").Equal("Hitchhiker's Guide to the Galaxy")
-	response.Object().Value("payload").Array().Element(1).Object().Value("year").Equal(2012)
+	response.Object().Value("payload").Array().Element(1).Object().Value("year").Equal(2017)
 	response.Object().Value("payload").Array().Element(0).Object().Value("is_visible").Equal(true)
 	response.Object().Value("payload").Array().Element(1).Object().Value("summary").Equal("Summary2")
 	response.Object().Value("payload").Array().Element(1).Object().Value("current_city").Equal("Toronto")
 	response.Object().Value("payload").Array().Element(0).Object().Value("image_url").Equal("https://exampleurl.com")
+}
+func (suite *endpointTestSuite) TestGetAllInvisibleStories() {
+
+	jsonStories := GetStoriesToTest()
+
+	//Add to sqlite db
+	suite.db.Create(&jsonStories)
+
+	var response = suite.endpoint.GET("/stories").WithQuery("visibility", false).
+		Expect().
+		Status(http.StatusOK).JSON()
+
+	response.Object().Value("payload").Array().Length().Equal(3)
+	response.Object().Value("payload").Array().Element(0).Object().Value("title").Equal("Invisible Story")
+	response.Object().Value("payload").Array().Element(1).Object().Value("title").Equal("Spiderman")
+	response.Object().Value("payload").Array().Element(2).Object().Value("title").Equal("Casper The Ghost")
+
+}
+
+func (suite *endpointTestSuite) TestMixedUpQueryParams() {
+
+	jsonStories := GetStoriesToTest()
+
+	//Add to sqlite db
+	suite.db.Create(&jsonStories)
+	var response = suite.endpoint.GET("/stories").
+		WithQuery("sort", "current_city").
+		WithQuery("order", "asc").
+		WithQuery("order", "desc").
+		WithQuery("sort", "year").
+		WithQuery("visibility", true).
+		Expect().
+		Status(http.StatusOK).JSON()
+
+	response.Object().Value("payload").Array().Length().Equal(4)
+	response.Object().Value("payload").Array().Element(0).Object().Value("title").Equal("Pulp Fiction")
+	response.Object().Value("payload").Array().Element(1).Object().Value("title").Equal("Hitchhiker's Guide to the Galaxy")
+	response.Object().Value("payload").Array().Element(2).Object().Value("title").Equal("The Little Prince")
+	response.Object().Value("payload").Array().Element(3).Object().Value("title").Equal("Batman Begins")
+
+}
+
+func (suite *endpointTestSuite) TestSortByAuthor() {
+
+	jsonStories := GetStoriesToTest()
+
+	//Add to sqlite db
+	suite.db.Create(&jsonStories)
+	var response = suite.endpoint.GET("/stories").
+		WithQuery("order", "desc").
+		WithQuery("order", "asc").
+		WithQuery("sort", "author_country").
+		WithQuery("sort", "author_name").
+		WithQuery("visibility", true).
+		Expect().
+		Status(http.StatusOK).JSON()
+
+	response.Object().Value("payload").Array().Length().Equal(4)
+	response.Object().Value("payload").Array().Element(0).Object().Value("title").Equal("Batman Begins")
+	response.Object().Value("payload").Array().Element(1).Object().Value("title").Equal("Hitchhiker's Guide to the Galaxy")
+	response.Object().Value("payload").Array().Element(2).Object().Value("title").Equal("The Little Prince")
+	response.Object().Value("payload").Array().Element(3).Object().Value("title").Equal("Pulp Fiction")
+}
+
+func GetTagsToTest() []models.Tag {
+	json := []models.Tag{
+		{
+			Name:    "EDUCATION",
+			StoryID: 1,
+		},
+		{
+			Name:    "REFUGEE",
+			StoryID: 2,
+		},
+		{
+			Name:    "EDUCATION",
+			StoryID: 2,
+		},
+		{
+			Name:    "REFUGEE",
+			StoryID: 4,
+		},
+		{
+			Name:    "EDUCATION",
+			StoryID: 4,
+		},
+		{
+			Name:    "IMMIGRATION",
+			StoryID: 4,
+		},
+		{
+			Name:    "EDUCATION",
+			StoryID: 5,
+		},
+		{
+			Name:    "REFUGEE",
+			StoryID: 6,
+		},
+		{
+			Name:    "EDUCATION",
+			StoryID: 6,
+		},
+		{
+			Name:    "REFUGEE",
+			StoryID: 7,
+		},
+		{
+			Name:    "EDUCATION",
+			StoryID: 7,
+		},
+		{
+			Name:    "IMMIGRATION",
+			StoryID: 7,
+		},
+	}
+
+	return json
+}
+
+func (suite *endpointTestSuite) TestGetVisibleStoriesWithTags() {
+
+	jsonStories := GetStoriesToTest()
+	jsonTags := GetTagsToTest()
+
+	//Add to sqlite db
+	suite.db.Create(&jsonStories)
+	suite.db.Create(&jsonTags)
+	var response = suite.endpoint.GET("/stories").
+		WithQuery("tags", "EDUCATION").
+		WithQuery("tags", "REFUGEE").
+		WithQuery("tags", "IMMIGRATION").
+		Expect().
+		Status(http.StatusOK).JSON()
+
+	//make sure that there are no duplicated values in return JSON:
+	response.Object().Value("payload").Array().Length().Equal(3)
+
+	response.Object().Value("payload").Array().Element(0).Object().Value("title").Equal("The Little Prince")
+	response.Object().Value("payload").Array().Element(1).Object().Value("title").Equal("Hitchhiker's Guide to the Galaxy")
+	response.Object().Value("payload").Array().Element(2).Object().Value("title").Equal("Pulp Fiction")
+}
+
+func (suite *endpointTestSuite) TestTagsWithSort() {
+
+	jsonStories := GetStoriesToTest()
+	jsonTags := GetTagsToTest()
+
+	//Add to sqlite db
+	suite.db.Create(&jsonStories)
+	suite.db.Create(&jsonTags)
+	//orderd query parameters randomly to make sure endpoint is robust
+	var response = suite.endpoint.GET("/stories").
+		WithQuery("order", "asc").
+		WithQuery("tags", "REFUGEE").
+		WithQuery("visibility", false).
+		WithQuery("sort", "year").
+		WithQuery("tags", "IMMIGRATION").
+		Expect().
+		Status(http.StatusOK).JSON()
+
+	response.Object().Value("payload").Array().Length().Equal(2)
+	response.Object().Value("payload").Array().Element(0).Object().Value("title").Equal("Casper The Ghost")
+	response.Object().Value("payload").Array().Element(1).Object().Value("title").Equal("Spiderman")
 }
 
 func (suite *endpointTestSuite) TestVisibleStories() {

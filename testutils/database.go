@@ -33,6 +33,9 @@ func DropTables(db *gorm.DB) error {
 	if err := db.Migrator().DropTable("users"); err != nil {
 		return err
 	}
+	if err := db.Migrator().DropTable("tags"); err != nil {
+		return err
+	}
 
 	return nil
 }
