@@ -6,8 +6,10 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Snackbar,
   TextField,
 } from "@material-ui/core/";
+import Alert from "@material-ui/lab/Alert";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
@@ -87,6 +89,12 @@ const StyledTags = styled(Autocomplete)`
   }
 `;
 
+const StyledButton = styled(Button)`
+  && {
+    width: 30vw;
+    margin-left: 24px;
+  }
+`;
 const StyledBackgroundColor = styled.div`
   background-color: ${colors.white};
   width: 40vw;
@@ -106,6 +114,7 @@ interface TagParameters {
 
 export const Upload: React.FC = () => {
   const [tagArray, setTagArrayValues] = useState([]);
+  const [open, setOpen] = useState(false);
 
   const { data: tagOptions, error } = useSWR<string[]>("/api/tags");
 
@@ -155,8 +164,16 @@ export const Upload: React.FC = () => {
     });
   };
 
+  const handleAlertClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpen(false);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
+    setOpen(true);
     const formData = new FormData();
     for (const key in formInput) {
       formData.append(key, formInput[key]);
@@ -172,7 +189,9 @@ export const Upload: React.FC = () => {
       redirect: "follow",
     })
       .then((response) => response.text())
-      .then((result) => console.log(result))
+      .then((result) => {
+        console.log(result);
+      })
       .catch((error) => console.log("Error: ", error));
   };
 
@@ -377,9 +396,19 @@ export const Upload: React.FC = () => {
               }}
             />
           </StyledBackgroundColor>
-          <Button color="primary" type="submit" variant="contained">
+
+          <StyledButton color="primary" type="submit" variant="contained">
             Submit Story
-          </Button>
+          </StyledButton>
+          <Snackbar
+            open={open}
+            autoHideDuration={5000}
+            onClose={handleAlertClose}
+          >
+            <Alert onClose={handleAlertClose} severity="success">
+              Story uploaded successfully!
+            </Alert>
+          </Snackbar>
         </FormControl>
       </form>
     </StyledGrid>
