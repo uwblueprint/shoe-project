@@ -2,20 +2,20 @@ import Paper from "@material-ui/core/Paper";
 import {
   createStyles,
   Theme,
-  WithStyles,
+  // WithStyles,
   withStyles,
 } from "@material-ui/core/styles";
-import Switch from "@material-ui/core/Switch";
-import TableCell from "@material-ui/core/TableCell";
-import clsx from "clsx";
+// import Switch from "@material-ui/core/Switch";
+// import TableCell from "@material-ui/core/TableCell";
+// import clsx from "clsx";
 import * as React from "react";
-import {
-  AutoSizer,
-  Column,
-  Table,
-  TableCellRenderer,
-  TableHeaderProps,
-} from "react-virtualized";
+// import {
+  // AutoSizer,
+  // Column,
+  // Table,
+  // TableCellRenderer,
+  // TableHeaderProps,
+// } from "react-virtualized";
 import useSWR from "swr";
 
 import { colors } from "../styles/colors";
@@ -60,135 +60,119 @@ const styles = (theme: Theme) =>
     },
   });
 
-interface ColumnData {
-  dataKey: string;
-  label: string;
-  numeric?: boolean;
-  toggle?: true;
-  width: number;
-}
+// interface ColumnData {
+//   dataKey: string;
+//   label: string;
+//   numeric?: boolean;
+//   toggle?: true;
+//   width: number;
+// }
 
-interface Row {
-  index: number;
-}
+// interface Row {
+//   index: number;
+// }
 
-interface MuiVirtualizedTableProps extends WithStyles<typeof styles> {
-  columns: ColumnData[];
-  headerHeight?: number;
-  onRowClick?: () => void;
-  rowCount: number;
-  rowGetter: (row: Row) => TableData;
-  rowHeight?: number;
-}
+// interface MuiVirtualizedTableProps extends WithStyles<typeof styles> {
+//   classes: Record<"flexContainer" | "table" | "tableRow" | "tableRowHover" | "tableCell" | "noClick", string>;
+//   columns: ColumnData[];
+//   headerHeight?: number;
+//   onRowClick?: () => void;
+//   rowCount: number;
+//   rowGetter: (row: Row) => TableData;
+//   rowHeight?: number;
+// }
 
-class MuiVirtualizedTable extends React.PureComponent<
-  MuiVirtualizedTableProps
-> {
-  static defaultProps = {
-    headerHeight: 48,
-    rowHeight: 70,
-  };
+// function MuiVirtualizedTable({classes, columns, headerHeight = 48, onRowClick, rowCount, rowGetter, rowHeight = 70}: MuiVirtualizedTableProps) {
 
-  getRowClassName = ({ index }: Row) => {
-    const { classes, onRowClick } = this.props;
+//   const getRowClassName = ({ index }: Row) => {
 
-    return clsx(classes.tableRow, classes.flexContainer, {
-      [classes.tableRowHover]: index !== -1 && onRowClick != null,
-    });
-  };
+//     return clsx(classes.tableRow, classes.flexContainer, {
+//       [classes.tableRowHover]: index !== -1 && onRowClick != null,
+//     });
+//   };
 
-  cellRenderer: TableCellRenderer = ({ cellData, columnIndex }) => {
-    const { columns, classes, rowHeight, onRowClick } = this.props;
-    return (
-      <TableCell
-        component="div"
-        className={clsx(classes.tableCell, classes.flexContainer, {
-          [classes.noClick]: onRowClick == null,
-        })}
-        variant="body"
-        style={{ height: rowHeight }}
-        align={
-          (columnIndex != null && columns[columnIndex].numeric) || false
-            ? "right"
-            : "left"
-        }
-      >
-        {columns[columnIndex].toggle && (
-          <Switch disabled inputProps={{ "aria-label": "disabled checkbox" }} />
-        )}
-        {cellData}
-      </TableCell>
-    );
-  };
+//   const TableCellRenderer = ({ cellData, columnIndex }) => {
+//     return (
+//       <TableCell
+//         component="div"
+//         className={clsx(classes.tableCell, classes.flexContainer, {
+//           [classes.noClick]: onRowClick == null,
+//         })}
+//         variant="body"
+//         style={{ height: rowHeight }}
+//         align={
+//           (columnIndex != null && columns[columnIndex].numeric) || false
+//             ? "right"
+//             : "left"
+//         }
+//       >
+//         {columns[columnIndex].toggle && (
+//           <Switch disabled inputProps={{ "aria-label": "disabled checkbox" }} />
+//         )}
+//         {cellData}
+//       </TableCell>
+//     );
+//   };
 
-  headerRenderer = ({
-    label,
-    columnIndex,
-  }: TableHeaderProps & { columnIndex: number }) => {
-    const { headerHeight, columns, classes } = this.props;
+//   const headerRenderer = ({
+//     label,
+//     columnIndex,
+//   }: TableHeaderProps & { columnIndex: number }) => {
 
-    return (
-      <TableCell
-        component="div"
-        className={clsx(
-          classes.tableCell,
-          classes.flexContainer,
-          classes.noClick
-        )}
-        variant="head"
-        style={{ height: headerHeight }}
-        align={columns[columnIndex].numeric || false ? "right" : "left"}
-      >
-        <span>{label}</span>
-      </TableCell>
-    );
-  };
+//     return (
+//       <TableCell
+//         component="div"
+//         className={clsx(
+//           classes.tableCell,
+//           classes.flexContainer,
+//           classes.noClick
+//         )}
+//         variant="head"
+//         style={{ height: headerHeight }}
+//         align={columns[columnIndex].numeric || false ? "right" : "left"}
+//       >
+//         <span>{label}</span>
+//       </TableCell>
+//     );
+//   };
 
-  render() {
-    const {
-      classes,
-      columns,
-      rowHeight,
-      headerHeight,
-      ...tableProps
-    } = this.props;
-    return (
-      <AutoSizer>
-        {({ height, width }) => (
-          <Table
-            height={height}
-            width={width}
-            rowHeight={rowHeight}
-            gridStyle={{
-              direction: "inherit",
-            }}
-            headerHeight={headerHeight}
-            className={classes.table}
-            {...tableProps}
-            rowClassName={this.getRowClassName}
-          >
-            {columns.map(({ dataKey, ...other }, index) => {
-              return (
-                <Column
-                  key={dataKey}
-                  headerRenderer={(headerProps) =>
-                    this.headerRenderer({
-                      ...headerProps,
-                      columnIndex: index,
-                    })
-                  }
-                  className={classes.flexContainer}
-                  cellRenderer={this.cellRenderer}
-                  dataKey={dataKey}
-                  {...other}
-                />
-              );
-            })}
-          </Table>
-        )}
-      </AutoSizer>
-    );
-  }
+//   const tableProps = { onRowClick, rowCount, rowGetter }
+//   return (
+//     <AutoSizer>
+//       {({ height, width }) => (
+//         <Table
+//           height={height}
+//           width={width}
+//           rowHeight={rowHeight}
+//           gridStyle={{
+//             direction: "inherit",
+//           }}
+//           headerHeight={headerHeight}
+//           className={classes.table}
+//           {...tableProps}
+//           rowClassName={getRowClassName}
+//         >
+//           {columns.map(({ dataKey, ...other }, index) => {
+//             return (
+//               <Column
+//                 key={dataKey}
+//                 headerRenderer={(headerProps) =>
+//                   headerRenderer({
+//                     ...headerProps,
+//                     columnIndex: index,
+//                   })
+//                 }
+//                 className={classes.flexContainer}
+//                 cellRenderer={TableCellRenderer}
+//                 dataKey={dataKey}
+//                 {...other}
+//               />
+//             );
+//           })}
+//         </Table>
+//       )}
+//     </AutoSizer>
+//   );
 }
 
 const VirtualizedTable = withStyles(styles)(MuiVirtualizedTable);
