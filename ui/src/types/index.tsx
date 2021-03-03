@@ -23,6 +23,7 @@ export interface Story extends Model {
   author_last_name: string;
   author_country: string;
   author: Author;
+  tags: string[];
 }
 
 export interface Author extends Model {

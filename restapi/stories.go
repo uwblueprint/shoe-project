@@ -56,8 +56,7 @@ func (api api) ReturnTaggedStory(story models.Story) TaggedStory {
 	for i, t := range tags {
 		names[i] = t.Name
 	}
-	TaggedStory := TaggedStory{story, names}
-	return TaggedStory
+	return TaggedStory{story, names}
 }
 
 func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.Renderer {
@@ -138,29 +137,33 @@ func (api api) EditStoryByID(w http.ResponseWriter, r *http.Request) render.Rend
 			return rest.ErrInternal(api.logger, errAuthor)
 		}
 	}
-	author.Bio = r.FormValue("bio")
+	if r.FormValue("bio") != "" {
+		author.Bio = r.FormValue("bio")
+	}
 	api.database.Save(&author)
-	story.Author = author
-	story.AuthorFirstName = r.FormValue("author_first_name")
-	story.AuthorLastName = r.FormValue("author_last_name")
-	story.AuthorCountry = r.FormValue("author_country")
-	story.ImageURL = imageURL
-	story.Title = r.FormValue("title")
-	story.Content = r.FormValue("content")
-	story.CurrentCity = r.FormValue("current_city")
 	year, err := strconv.ParseUint(r.FormValue("year"), 10, 64)
 	if err != nil {
 		return rest.ErrInvalidRequest(api.logger, "Error parsing year field", err)
 	}
-	story.Year = uint(year)
-	story.Summary = r.FormValue("summary")
 	city := story.CurrentCity
-	coordinates, err := api.locationFinder.GetCityCenter(city)
+	coordinates, err := api.locationFinder.GetCityCenter(city) // TODO: Has to be replaced by Megan's pin placement code
 	if err != nil {
 		return rest.ErrInvalidRequest(api.logger, "Story has an invalid current city", err)
 	}
-	story.Latitude = randomCoords(coordinates.Latitude)
-	story.Longitude = randomCoords(coordinates.Longitude)
+	story = models.Story{
+		Author:          author,
+		AuthorFirstName: r.FormValue("author_first_name"),
+		AuthorLastName:  r.FormValue("author_last_name"),
+		AuthorCountry:   r.FormValue("author_country"),
+		ImageURL:        imageURL,
+		Title:           r.FormValue("title"),
+		Content:         r.FormValue("content"),
+		CurrentCity:     r.FormValue("current_city"),
+		Year:            uint(year),
+		Summary:         r.FormValue("summary"),
+		Latitude:        randomCoords(coordinates.Latitude),
+		Longitude:       randomCoords(coordinates.Longitude),
+	}
 
 	videoURL := r.FormValue("video_url")
 	if videoURL != "" {
@@ -175,7 +178,9 @@ func (api api) EditStoryByID(w http.ResponseWriter, r *http.Request) render.Rend
 		return rest.ErrInternal(api.logger, err)
 	}
 
-	api.database.Where("story_id=?", story.ID).Delete(models.Tag{}) // delete existing tags
+	if err := api.database.Where("story_id=?", story.ID).Delete(models.Tag{}).Error; err != nil { // delete existing tags
+		return rest.ErrInternal(api.logger, err)
+	}
 
 	names := r.Form["tags"]
 	if len(names) != 0 {
