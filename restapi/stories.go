@@ -123,14 +123,14 @@ func (api api) EditStoryByID(w http.ResponseWriter, r *http.Request) render.Rend
 	author.LastName = r.FormValue("author_last_name")
 	author.OriginCountry = r.FormValue("author_country")
 
-	errAuthor := api.database.First(&author).Error
+	errAuthor := api.database.First(&author).Error // Checking if author exists or not. If it does not, a new author would be created
 	if errAuthor != nil {
 		if errAuthor == gorm.ErrRecordNotFound {
 			country := countries.ByName(author.OriginCountry)
 			if country == countries.Unknown {
 				return rest.ErrInvalidRequest(api.logger, "Unknown origin country", nil)
 			}
-			if err := api.database.Create(&author).Error; err != nil { //Adding author
+			if err := api.database.Create(&author).Error; err != nil { // This is where a new author is added if it did not already exist
 				return rest.ErrInternal(api.logger, errAuthor)
 			}
 		} else {
@@ -140,30 +140,29 @@ func (api api) EditStoryByID(w http.ResponseWriter, r *http.Request) render.Rend
 	if r.FormValue("bio") != "" {
 		author.Bio = r.FormValue("bio")
 	}
-	api.database.Save(&author)
+	api.database.Save(&author) // Saving author to reflect bio changes
 	year, err := strconv.ParseUint(r.FormValue("year"), 10, 64)
 	if err != nil {
 		return rest.ErrInvalidRequest(api.logger, "Error parsing year field", err)
 	}
-	city := story.CurrentCity
+	city := r.FormValue("current_city")
 	coordinates, err := api.locationFinder.GetCityCenter(city) // TODO: Has to be replaced by Megan's pin placement code
 	if err != nil {
 		return rest.ErrInvalidRequest(api.logger, "Story has an invalid current city", err)
 	}
-	story = models.Story{
-		Author:          author,
-		AuthorFirstName: r.FormValue("author_first_name"),
-		AuthorLastName:  r.FormValue("author_last_name"),
-		AuthorCountry:   r.FormValue("author_country"),
-		ImageURL:        imageURL,
-		Title:           r.FormValue("title"),
-		Content:         r.FormValue("content"),
-		CurrentCity:     r.FormValue("current_city"),
-		Year:            uint(year),
-		Summary:         r.FormValue("summary"),
-		Latitude:        randomCoords(coordinates.Latitude),
-		Longitude:       randomCoords(coordinates.Longitude),
-	}
+
+	story.Author = author
+	story.AuthorFirstName = r.FormValue("author_first_name")
+	story.AuthorLastName = r.FormValue("author_last_name")
+	story.AuthorCountry = r.FormValue("author_country")
+	story.ImageURL = imageURL
+	story.Title = r.FormValue("title")
+	story.Content = r.FormValue("content")
+	story.CurrentCity = city
+	story.Year = uint(year)
+	story.Summary = r.FormValue("summary")
+	story.Latitude = randomCoords(coordinates.Latitude)
+	story.Longitude = randomCoords(coordinates.Longitude)
 
 	videoURL := r.FormValue("video_url")
 	if videoURL != "" {
@@ -257,7 +256,7 @@ func (api api) DeleteImageInS3(name string) (string, error) {
 	s3Client := s3.New(newSession)
 	bucket := aws.String(os.Getenv("BUCKET_NAME"))
 
-	_, err = s3Client.DeleteObject(&s3.DeleteObjectInput{
+	_, err = s3Client.DeleteObject(&s3.DeleteObjectInput{ // To Do: Only friendly URL being deleted on Backblaze, not the image
 		Bucket: bucket,
 		Key:    aws.String(name),
 	})
@@ -318,23 +317,29 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 		}
 	}
 
-	story.ImageURL = imageURL
-	story.Title = r.FormValue("title")
-	story.Content = r.FormValue("content")
-	story.CurrentCity = r.FormValue("current_city")
 	year, err := strconv.ParseUint(r.FormValue("year"), 10, 64)
 	if err != nil {
 		return rest.ErrInvalidRequest(api.logger, "Error parsing year field", err)
 	}
-	story.Year = uint(year)
-	story.Summary = r.FormValue("summary")
-	city := story.CurrentCity
-	coordinates, err := api.locationFinder.GetCityCenter(city)
+	city := r.FormValue("current_city")
+	coordinates, err := api.locationFinder.GetCityCenter(city) // TODO: Has to be replaced by Megan's pin placement code
 	if err != nil {
 		return rest.ErrInvalidRequest(api.logger, "Story has an invalid current city", err)
 	}
-	story.Latitude = randomCoords(coordinates.Latitude)
-	story.Longitude = randomCoords(coordinates.Longitude)
+	story = models.Story{
+		Author:          author,
+		AuthorFirstName: r.FormValue("author_first_name"),
+		AuthorLastName:  r.FormValue("author_last_name"),
+		AuthorCountry:   r.FormValue("author_country"),
+		ImageURL:        imageURL,
+		Title:           r.FormValue("title"),
+		Content:         r.FormValue("content"),
+		CurrentCity:     city,
+		Year:            uint(year),
+		Summary:         r.FormValue("summary"),
+		Latitude:        randomCoords(coordinates.Latitude),
+		Longitude:       randomCoords(coordinates.Longitude),
+	}
 
 	videoURL := r.FormValue("video_url")
 	if videoURL != "" {
@@ -344,10 +349,6 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 		}
 		story.VideoURL = convertedURL
 	}
-
-	story.AuthorFirstName = r.FormValue("author_first_name")
-	story.AuthorLastName = r.FormValue("author_last_name")
-	story.AuthorCountry = r.FormValue("author_country")
 
 	if err := api.database.Create(&story).Error; err != nil {
 		return rest.ErrInternal(api.logger, err)
