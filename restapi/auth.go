@@ -75,25 +75,26 @@ func (api api) AuthCallback(w http.ResponseWriter, r *http.Request) render.Rende
 		http.Redirect(w, r, "/api/unauthorized", http.StatusTemporaryRedirect)
 	}
 
-	// if valid create jwt token
-	jwtToken, err := generateJWTToken(user.Email)
+	// if valid set jwt token in cookie
+	err = generateJWTToken(user.Email, w)
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
 
-	return rest.JSONStatusOK(jwtToken)
+	return rest.JSONStatusOK("Authenticated successfully")
 }
 
-func generateJWTToken(email string) (string, error) {
+func generateJWTToken(email string, w http.ResponseWriter) error {
 	jwtExpiry, err := config.GetTokenExpiryDuration()
 	if err != nil {
-		return "", err
+		return err
 	}
+	expiration := time.Now().Add(jwtExpiry)
 
 	claim := &models.Claims{
 		Email: email,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(jwtExpiry).Unix(),
+			ExpiresAt: expiration.Unix(),
 			Issuer:    config.GetTokenIssuer(),
 		},
 	}
@@ -101,8 +102,13 @@ func generateJWTToken(email string) (string, error) {
 	token := config.GetJWTKey()
 	_, signedToken, err := token.Encode(claim)
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	return signedToken, nil
+	secure := (config.GetMode() == config.MODE_PROD)
+
+	cookie := http.Cookie{Name: "jwt", Value: signedToken, Expires: expiration, HttpOnly: true, Secure: secure, Path: "/api"}
+	http.SetCookie(w, &cookie)
+
+	return nil
 }
