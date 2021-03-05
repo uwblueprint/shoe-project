@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/go-chi/jwtauth"
 	"github.com/go-chi/render"
 	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
@@ -72,7 +73,7 @@ func (api api) AuthCallback(w http.ResponseWriter, r *http.Request) render.Rende
 	// redirect if invalid user
 	err = api.database.FirstOrCreate(&user, models.User{Email: user.Email}).Error
 	if err != nil {
-		http.Redirect(w, r, "/api/unauthorized", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/unauthorized", http.StatusTemporaryRedirect)
 	}
 
 	// if valid set jwt token in cookie
@@ -111,4 +112,23 @@ func generateJWTToken(email string, w http.ResponseWriter) error {
 	http.SetCookie(w, &cookie)
 
 	return nil
+}
+
+func Authenticator(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		token, _, err := jwtauth.FromContext(r.Context())
+
+		if err != nil {
+			http.Redirect(w, r, "/unauthorized", http.StatusTemporaryRedirect)
+			return
+		}
+
+		if token == nil || !token.Valid {
+			http.Redirect(w, r, "/unauthorized", http.StatusTemporaryRedirect)
+			return
+		}
+
+		// Token is authenticated, pass it through
+		next.ServeHTTP(w, r)
+	})
 }
