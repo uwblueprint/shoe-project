@@ -64,7 +64,11 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 		rest.GetHandler(r, "/login", api.Login)
 		rest.GetHandler(r, "/auth/callback", api.AuthCallback)
 		rest.GetHandler(r, "/client_tokens", api.ReturnClientTokens)
+
+		// TODO: move back to protected endpoints
+		rest.PostHandler(r, "/stories", api.CreateStories)
 		rest.PostHandler(r, "/story", api.CreateStoriesFormData)
+		rest.PostHandler(r, "/authors", api.CreateAuthors)
 	})
 
 	// Private API
@@ -72,8 +76,9 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 		r.Use(jwtauth.Verifier(config.GetJWTKey()))
 		r.Use(Authenticator)
 
-		rest.PostHandler(r, "/stories", api.CreateStories)
-		rest.PostHandler(r, "/authors", api.CreateAuthors)
+		// rest.PostHandler(r, "/stories", api.CreateStories)
+		// rest.PostHandler(r, "/story", api.CreateStoriesFormData)
+		// rest.PostHandler(r, "/authors", api.CreateAuthors)
 	})
 	return r, nil
 }
