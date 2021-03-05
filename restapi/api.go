@@ -14,6 +14,8 @@ import (
 	"github.com/uwblueprint/shoe-project/restapi/rest"
 	"github.com/uwblueprint/shoe-project/server"
 	"go.uber.org/zap"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 	"gorm.io/gorm"
 )
 
@@ -23,6 +25,7 @@ type api struct {
 	logger         *zap.SugaredLogger
 	locationFinder location.LocationFinder
 	s3config       *aws.Config
+	oauthconfig    *oauth2.Config
 }
 
 // Router sets up the go-chi routes for the server
@@ -40,6 +43,16 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 		},
 	}
 
+	api.oauthconfig = &oauth2.Config{
+		ClientID:     config.GetGoogleClientId(),
+		ClientSecret: config.GetGoogleClientSecret(),
+		RedirectURL:  "http://localhost:8900/api/auth/callback",
+		Scopes: []string{
+			"https://www.googleapis.com/auth/userinfo.email",
+		},
+		Endpoint: google.Endpoint,
+	}
+
 	// Public API
 	r.Group(func(r chi.Router) {
 		rest.GetHandler(r, "/health", api.health)
@@ -48,22 +61,33 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 		rest.GetHandler(r, "/story/{storyID}", api.ReturnStoryByID)
 		rest.GetHandler(r, "/authors/origin_countries", api.ReturnAllCountries)
 		rest.GetHandler(r, "/tags", api.ReturnAllUniqueTags)
-		rest.PostHandler(r, "/login", api.Login)
+		rest.GetHandler(r, "/login", api.Login)
 		rest.PostHandler(r, "/story", api.CreateStoriesFormData)
 
+		rest.GetHandler(r, "/auth/callback", api.AuthCallback)
 		rest.GetHandler(r, "/client_tokens", api.ReturnClientTokens)
+		rest.GetHandler(r, "/unauthorized", api.UnauthorizedPage)
+
+		// TODO: move these back to private api once https://github.com/uwblueprint/shoe-project/issues/204 is closed
+		rest.PostHandler(r, "/stories", api.CreateStories)
+		rest.PostHandler(r, "/authors", api.CreateAuthors)
 	})
 
 	// Private API
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(config.GetJWTKey()))
 		r.Use(jwtauth.Authenticator)
-		rest.PostHandler(r, "/stories", api.CreateStories)
-		rest.PostHandler(r, "/authors", api.CreateAuthors)
+
+		// dummy call to check auth flow
+		rest.GetHandler(r, "/checkauth", api.checkAuthDummy)
 	})
 	return r, nil
 }
 
 func (api api) health(w http.ResponseWriter, r *http.Request) render.Renderer {
 	return rest.MsgStatusOK("Hello World")
+}
+
+func (api api) checkAuthDummy(w http.ResponseWriter, r *http.Request) render.Renderer {
+	return rest.MsgStatusOK("Working!")
 }

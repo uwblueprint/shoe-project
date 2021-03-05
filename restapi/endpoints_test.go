@@ -33,8 +33,6 @@ func (suite *endpointTestSuite) SetupSuite() {
 	viper.SetDefault("auth.jwt_key", "random")
 	viper.SetDefault("auth.jwt_expiry", "5m")
 	viper.SetDefault("auth.jwt_issuer", "endpoint_tests")
-	viper.SetDefault("auth.superuser_username", "admin")
-	viper.SetDefault("auth.superuser_password", "root")
 
 	router, err := Router(db, testutils.MockLocationFinder{})
 	if err != nil {
@@ -49,17 +47,6 @@ func (suite *endpointTestSuite) SetupTest() {
 	if err := migrations.CreateTables(suite.db); err != nil {
 		suite.Fail("error while creating tables", err)
 	}
-	if err := migrations.CreateSuperUser(suite.db); err != nil {
-		suite.Fail("error creating super user", err)
-	}
-
-	suite.token = suite.endpoint.POST("/login").
-		WithJSON(map[string]string{
-			"username": "admin",
-			"password": "root",
-		}).
-		Expect().
-		Status(http.StatusOK).JSON().Object().Value("payload").String().Raw()
 }
 
 func (suite *endpointTestSuite) TearDownTest() {
@@ -316,7 +303,7 @@ func (suite *endpointTestSuite) TestCreateAuthorFailsWithUnknownCountry() {
 		},
 	}
 
-	response := suite.endpoint.POST("/authors").WithHeader("Authorization", fmt.Sprintf("Bearer %s", suite.token)).
+	response := suite.endpoint.POST("/authors").
 		WithJSON(json).
 		Expect().
 		Status(http.StatusBadRequest).JSON()
@@ -340,7 +327,7 @@ func (suite *endpointTestSuite) TestCreateStory() {
 		},
 	}
 
-	suite.endpoint.POST("/stories").WithHeader("Authorization", "Bearer "+suite.token).
+	suite.endpoint.POST("/stories").
 		WithJSON(json).
 		Expect().
 		Status(http.StatusOK)

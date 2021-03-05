@@ -5,10 +5,8 @@ import (
 	"io/ioutil"
 	"math/rand"
 
-	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
 	"github.com/uwblueprint/shoe-project/internal/location"
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -34,18 +32,6 @@ func DropAllTables(db *gorm.DB) error {
 		return err
 	}
 	return db.Migrator().DropTable(&models.Author{})
-}
-
-func CreateSuperUser(db *gorm.DB) error {
-	// Clear current superuser if any
-	db.Where("username = ?", config.GetSuperUserUsername()).Delete(models.User{})
-
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(config.GetSuperUserPassword()), 10)
-	superUser := models.User{
-		Username: config.GetSuperUserUsername(),
-		Password: string(hashedPassword),
-	}
-	return db.Create(&superUser).Error
 }
 
 func parseJson(filename string, obj interface{}) error {
