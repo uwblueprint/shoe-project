@@ -46,7 +46,7 @@ interface TableData {
   id: number;
   title: string;
   city: string;
-  year: string;
+  year: number;
   author: string;
   country: string;
   is_visible: boolean;
@@ -56,7 +56,7 @@ function createData(
   id: number,
   title: string,
   city: string,
-  year: string,
+  year: number,
   author: string,
   country: string,
   is_visible: boolean
@@ -69,7 +69,7 @@ export const AllStories: React.FC = () => {
 
   if (allStories) {
     const rows: TableData[] = [];
-    for (let i = 0; i < 33; i += 1) {
+    for (let i = 0; i < allStories.length; i += 1) {
       rows.push(
         createData(
           i,

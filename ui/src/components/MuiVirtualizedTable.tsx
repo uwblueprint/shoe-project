@@ -3,12 +3,7 @@ import Switch from "@material-ui/core/Switch";
 import TableCell from "@material-ui/core/TableCell";
 import clsx from "clsx";
 import * as React from "react";
-import {
-  AutoSizer,
-  Column,
-  Table,
-  TableHeaderProps,
-} from "react-virtualized";
+import { AutoSizer, Column, Table, TableHeaderProps } from "react-virtualized";
 
 import { colors } from "../styles/colors";
 
@@ -61,7 +56,7 @@ interface TableData {
   id: number;
   title: string;
   city: string;
-  year: string;
+  year: number;
   author: string;
   country: string;
   is_visible: boolean;
