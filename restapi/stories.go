@@ -59,14 +59,7 @@ func (api api) ReturnTaggedStory(story models.Story) TaggedStory {
 	return TaggedStory{story, names}
 }
 
-func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.Renderer {
-	var stories []models.Story
-
-	err := api.database.Where("is_visible = true").Find(&stories).Error
-	if err != nil {
-		return rest.ErrInternal(api.logger, err)
-	}
-
+func (api api) AddAuthorToStories(stories []models.Story) ([]models.Story, error) {
 	for i, story := range stories {
 		var author = models.Author{
 			FirstName:     story.AuthorFirstName,
@@ -75,9 +68,24 @@ func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.R
 		}
 		err := api.database.First(&author).Error
 		if err != nil {
-			return rest.ErrInternal(api.logger, err)
+			return stories, err
 		}
 		stories[i].Author = author
+	}
+	return stories, nil
+}
+
+func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.Renderer {
+	var stories []models.Story
+
+	err := api.database.Where("is_visible = true").Find(&stories).Error
+	if err != nil {
+		return rest.ErrInternal(api.logger, err)
+	}
+
+	stories, err = api.AddAuthorToStories(stories)
+	if err != nil {
+		return rest.ErrInternal(api.logger, err)
 	}
 
 	return rest.JSONStatusOK(api.ReturnTaggedStories(stories))
