@@ -42,55 +42,48 @@ const styles = (theme: Theme) =>
 
 const VirtualizedTable = withStyles(styles)(MuiVirtualizedTable);
 
-interface TableData {
-  id: number;
-  title: string;
-  city: string;
-  year: number;
-  author: string;
-  country: string;
-  is_visible: boolean;
-}
-
 function createData(
   id: number,
   title: string,
-  city: string,
+  current_city: string,
   year: number,
-  author: string,
-  country: string,
-  is_visible: boolean
-): TableData {
-  return { id, title, city, year, author, country, is_visible };
+  is_visible: boolean,
+  author_first_name: string,
+  author_country: string
+) {
+  return {
+    id,
+    title,
+    current_city,
+    year,
+    author_first_name,
+    author_country,
+    is_visible,
+  };
 }
 
 export const AllStories: React.FC = () => {
   const { data: allStories, error } = useSWR<Story[]>("/api/stories");
-
+  let rows = [];
   if (allStories) {
-    const rows: TableData[] = [];
-    for (let i = 0; i < allStories.length; i += 1) {
-      rows.push(
-        createData(
-          i,
-          allStories[i].title,
-          allStories[i].current_city,
-          allStories[i].year,
-          allStories[i].author_first_name,
-          allStories[i].author_country,
-          allStories[i].is_visible
-        )
-      );
-    }
+    rows = allStories.map((story, i) =>
+      createData(
+        i,
+        story.title,
+        story.current_city,
+        story.year,
+        story.is_visible,
+        story.author_first_name,
+        story.author_country
+      )
+    );
   }
-
   if (error) return <div>Error returning stories data!</div>;
   if (!allStories) return <div>Loading all stories table..</div>;
 
   return (
     <Paper style={{ height: 1500, width: "100%" }}>
       <VirtualizedTable
-        // classes = MuiVirtualizedTableProps.
         rowCount={rows.length}
         rowGetter={({ index }) => rows[index]}
         columns={[
@@ -108,7 +101,7 @@ export const AllStories: React.FC = () => {
           {
             width: 120,
             label: "Current City",
-            dataKey: "city",
+            dataKey: "current_city",
           },
           {
             width: 100,
@@ -118,12 +111,12 @@ export const AllStories: React.FC = () => {
           {
             width: 300,
             label: "Author Name",
-            dataKey: "author",
+            dataKey: "author_first_name",
           },
           {
             width: 250,
             label: "Country of Origin",
-            dataKey: "country",
+            dataKey: "author_country",
           },
           {
             width: 150,

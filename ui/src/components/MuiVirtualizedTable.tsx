@@ -6,6 +6,7 @@ import * as React from "react";
 import { AutoSizer, Column, Table, TableHeaderProps } from "react-virtualized";
 
 import { colors } from "../styles/colors";
+import { Story } from "../types/index";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -52,16 +53,6 @@ interface Row {
   index: number;
 }
 
-interface TableData {
-  id: number;
-  title: string;
-  city: string;
-  year: number;
-  author: string;
-  country: string;
-  is_visible: boolean;
-}
-
 export interface MuiVirtualizedTableProps extends WithStyles<typeof styles> {
   classes: Record<
     | "flexContainer"
@@ -76,14 +67,14 @@ export interface MuiVirtualizedTableProps extends WithStyles<typeof styles> {
   headerHeight?: number;
   onRowClick?: () => void;
   rowCount: number;
-  rowGetter: (row: Row) => TableData;
+  rowGetter: (row: Row) => Story;
   rowHeight?: number;
 }
 
 export function MuiVirtualizedTable({
   classes,
   columns,
-  headerHeight = 48,
+  headerHeight = 75,
   onRowClick,
   rowCount,
   rowGetter,

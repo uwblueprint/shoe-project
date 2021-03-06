@@ -13,3 +13,9 @@ declare module "*.png" {
 declare const process: {
   env: Record<string, string>
 }
+
+declare module "@material-ui/core/styles/withStyles" {
+  interface BaseCSSProperties {
+    flip?: boolean;
+  }
+}
