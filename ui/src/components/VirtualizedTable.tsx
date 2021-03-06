@@ -1,5 +1,3 @@
-import "../styles/styling.css";
-
 import { makeStyles } from "@material-ui/core/styles";
 import MuiTable from "mui-virtualized-table";
 import * as React from "react";
@@ -11,6 +9,7 @@ const useVirtualizedTableStyles = makeStyles({
   root: {
     "& .MuiTableCell-root": {
       backgroundColor: colors.white,
+      fontFamily: "Poppins",
     },
     "& .topLeftGrid, & .topRightGrid": {
       border: "none",
@@ -32,8 +31,8 @@ const useVirtualizedTableStyles = makeStyles({
 interface VirtualizedTableProps {
   data: [];
   columns: [];
-  order: null;
-  orderBy: null;
+  order: "desc" | "asc";
+  orderBy: string;
 }
 
 export function VirtualizedTable({
@@ -43,7 +42,6 @@ export function VirtualizedTable({
   orderBy,
 }: VirtualizedTableProps): JSX.Element {
   const classes = useVirtualizedTableStyles();
-
   return (
     <div className={classes.root} style={{ height: "calc(100vh)" }}>
       <AutoSizer>

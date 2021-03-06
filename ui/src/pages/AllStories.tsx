@@ -1,5 +1,3 @@
-import "../styles/styling.css";
-
 import Checkbox from "@material-ui/core/Checkbox";
 import Switch from "@material-ui/core/Switch";
 import { useState } from "react";
@@ -16,14 +14,16 @@ function createData(
   year: number,
   is_visible: boolean,
   author_first_name: string,
+  author_last_name: string,
   author_country: string
 ) {
+  const author_name = author_first_name + " " + author_last_name;
   return {
     id,
     title,
     current_city,
     year,
-    author_first_name,
+    author_name,
     author_country,
     is_visible,
   };
@@ -41,25 +41,25 @@ export const AllStories: React.FC = () => {
         story.year,
         story.is_visible,
         story.author_first_name,
+        story.author_last_name,
         story.author_country
       )
     );
   }
 
-  const [state, setState] = React.useState([]);
-
-  const handleChange = (e, d) => {
-    if (e.target.checked) {
-      setState((prevState) => [...prevState, d.id]);
-    } else {
-      setState((prevState) => prevState.filter((e) => e !== d.id));
-    }
-  };
-
+  const [visibleState, setVisibleState] = React.useState([]);
   const [tableData, setTableData] = useState(rows);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState("age");
+
+  const handleChange = (e, d) => {
+    if (e.target.checked) {
+      setVisibleState((prevState) => [...prevState, d.id]);
+    } else {
+      setVisibleState((prevState) => prevState.filter((e) => e !== d.id));
+    }
+  };
 
   const handleCheckedAll = () => {
     setSelectedRowIds((prevState) =>
@@ -125,7 +125,7 @@ export const AllStories: React.FC = () => {
           name: "id",
           width: 100,
           onHeaderClick() {
-            handleRequestSort("name");
+            handleRequestSort("id");
           },
           header: (
             <div>
@@ -137,20 +137,20 @@ export const AllStories: React.FC = () => {
               ID
             </div>
           ),
-          render: function cell(d) {
+          cell: (d) => (
             <div>
               <Checkbox
                 onChange={(e) => handleChecked(e, d)}
                 checked={selectedRowIds.includes(d.id)}
               />
-              {d.name}
-            </div>;
-          },
+              {d.id}
+            </div>
+          ),
         },
 
         {
           name: "title",
-          header: "Story",
+          header: "Story Name",
           width: 200,
           onHeaderClick() {
             handleRequestSort("title");
@@ -158,7 +158,7 @@ export const AllStories: React.FC = () => {
         },
         {
           name: "current_city",
-          header: "City",
+          header: "Current City",
           width: 200,
           onHeaderClick() {
             handleRequestSort("current_city");
@@ -173,9 +173,9 @@ export const AllStories: React.FC = () => {
           },
         },
         {
-          name: "author_first_name",
-          header: "First name",
-          width: 150,
+          name: "author_name",
+          header: "Author name",
+          width: 250,
           onHeaderClick() {
             handleRequestSort("author_first_name");
           },
@@ -183,7 +183,7 @@ export const AllStories: React.FC = () => {
         {
           name: "author_country",
           header: "Country",
-          width: 200,
+          width: 300,
           onHeaderClick() {
             handleRequestSort("author_country");
           },
@@ -195,14 +195,14 @@ export const AllStories: React.FC = () => {
           onHeaderClick() {
             handleRequestSort("jobType");
           },
-          render: function cell(d) {
+          cell: (d) => (
             <Switch
-              checked={state.includes(d.id)}
+              checked={visibleState.includes(d.id)}
               onChange={(e) => handleChange(e, d)}
-              name="checkedB"
+              name="checked"
               color="primary"
-            />;
-          },
+            />
+          ),
         },
       ]}
     />
