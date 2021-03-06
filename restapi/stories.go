@@ -62,9 +62,25 @@ func (api api) ReturnTaggedStory(story models.Story) TaggedStory {
 func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var stories []models.Story
 
-	err := api.database.Preload("Author").Where("is_visible = true").Find(&stories).Error
+	err := api.database.Where("is_visible = true").Find(&stories).Error
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
+	}
+
+	for i, story := range stories {
+		var author = models.Author{
+			FirstName:     story.AuthorFirstName,
+			LastName:      story.AuthorLastName,
+			OriginCountry: story.AuthorCountry,
+		}
+		err := api.database.First(&author).Error
+		if err != nil {
+			if err == gorm.ErrRecordNotFound {
+				return rest.ErrNotFound(fmt.Sprintf("Could not find author"))
+			}
+			return rest.ErrInternal(api.logger, err)
+		}
+		stories[i].Author = author
 	}
 
 	return rest.JSONStatusOK(api.ReturnTaggedStories(stories))

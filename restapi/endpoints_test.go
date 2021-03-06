@@ -145,7 +145,28 @@ func (suite *endpointTestSuite) TestReturnAllUniqueTags() {
 }
 
 func (suite *endpointTestSuite) TestGetAllStories() {
-	jsonStory1 := []models.Story{
+
+	json := []models.Author{
+		{
+			FirstName:     "Antoine",
+			LastName:      "dSE",
+			OriginCountry: "France",
+			Bio:           "bio",
+		},
+		{
+			FirstName:     "Douglas",
+			LastName:      "Adams",
+			OriginCountry: "UK",
+			Bio:           "bio",
+		},
+	}
+
+	suite.endpoint.POST("/authors").WithHeader("Authorization", fmt.Sprintf("Bearer %s", suite.token)).
+		WithJSON(json).
+		Expect().
+		Status(http.StatusOK)
+
+	jsonStories := []models.Story{
 		{
 			Title:           "The Little Prince",
 			Content:         "Children",
@@ -159,9 +180,6 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 			AuthorLastName:  "dSE",
 			AuthorCountry:   "France",
 		},
-	}
-
-	jsonStory2 := []models.Story{
 		{
 			Title:           "Hitchhiker's Guide to the Galaxy",
 			Content:         "Fiction",
@@ -176,9 +194,7 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 		},
 	}
 
-	//Add to sqlite db
-	suite.db.Create(&jsonStory1)
-	suite.db.Create(&jsonStory2)
+	suite.db.Create(&jsonStories)
 
 	var response = suite.endpoint.GET("/stories").
 		Expect().
@@ -246,6 +262,26 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 }
 
 func (suite *endpointTestSuite) TestVisibleStories() {
+	json := []models.Author{
+		{
+			FirstName:     "Antoine",
+			LastName:      "dSE",
+			OriginCountry: "France",
+			Bio:           "bio",
+		},
+		{
+			FirstName:     "Douglas",
+			LastName:      "Adams",
+			OriginCountry: "UK",
+			Bio:           "bio",
+		},
+	}
+
+	suite.endpoint.POST("/authors").WithHeader("Authorization", fmt.Sprintf("Bearer %s", suite.token)).
+		WithJSON(json).
+		Expect().
+		Status(http.StatusOK)
+
 	invisibleStory := []models.Story{
 		{
 			Title:           "The Little Prince",
