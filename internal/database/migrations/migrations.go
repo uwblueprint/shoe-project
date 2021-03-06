@@ -3,16 +3,19 @@ package migrations
 import (
 	"encoding/json"
 	"io/ioutil"
+	"math/rand"
 
-	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
 	"github.com/uwblueprint/shoe-project/internal/location"
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
+func RunMigration(db *gorm.DB) error {
+	return db.AutoMigrate(&models.Author{}, &models.Story{}, &models.User{}, &models.Tag{})
+}
+
 func CreateTables(db *gorm.DB) error {
-	return db.AutoMigrate(&models.Author{}, &models.Story{}, &models.User{})
+	return RunMigration(db)
 }
 
 func DropAllTables(db *gorm.DB) error {
@@ -24,19 +27,11 @@ func DropAllTables(db *gorm.DB) error {
 	if err != nil {
 		return err
 	}
-	return db.Migrator().DropTable(&models.Author{})
-}
-
-func CreateSuperUser(db *gorm.DB) error {
-	// Clear current superuser if any
-	db.Where("username = ?", config.GetSuperUserUsername()).Delete(models.User{})
-
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(config.GetSuperUserPassword()), 10)
-	superUser := models.User{
-		Username: config.GetSuperUserUsername(),
-		Password: string(hashedPassword),
+	err = db.Migrator().DropTable(&models.Tag{})
+	if err != nil {
+		return err
 	}
-	return db.Create(&superUser).Error
+	return db.Migrator().DropTable(&models.Author{})
 }
 
 func parseJson(filename string, obj interface{}) error {
@@ -49,6 +44,13 @@ func parseJson(filename string, obj interface{}) error {
 		return err
 	}
 	return nil
+}
+
+func ChooseRandomTag() string {
+	tagChoice := []string{"EDUCATION", "REFUGEE", "IMMIGRATION"}
+	randomIndex := rand.Intn(len(tagChoice))
+	pick := tagChoice[randomIndex]
+	return pick
 }
 
 func Seed(db *gorm.DB, locationFinder location.LocationFinder) error {
@@ -73,16 +75,26 @@ func Seed(db *gorm.DB, locationFinder location.LocationFinder) error {
 	}
 
 	// set lat long for coordinates
-	for i, story := range stories {
+	for _, story := range stories {
 		coordinates, err := locationFinder.GetCityCenter(story.CurrentCity)
 		if err != nil {
 			return err
 		}
-		stories[i].Latitude = coordinates.Latitude
-		stories[i].Longitude = coordinates.Longitude
-		// Make sure all stories are public for initially seeded stories
-		stories[i].IsVisible = true
+		story.Latitude = coordinates.Latitude
+		story.Longitude = coordinates.Longitude
+		story.IsVisible = true
+		err = db.Create(&story).Error
+		if err != nil {
+			return err
+		}
+		tag := models.Tag{
+			Name:    ChooseRandomTag(),
+			StoryID: story.ID,
+		}
+		err = db.Create(&tag).Error
+		if err != nil {
+			return err
+		}
 	}
-
-	return db.Create(&stories).Error
+	return nil
 }

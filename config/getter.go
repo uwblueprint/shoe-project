@@ -165,14 +165,6 @@ func GetJWTKey() *jwtauth.JWTAuth {
 	return jwtauth.New("HS256", []byte(viper.GetString("auth.jwt_key")), nil)
 }
 
-func GetSuperUserUsername() string {
-	return viper.GetString("auth.superuser_username")
-}
-
-func GetSuperUserPassword() string {
-	return viper.GetString("auth.superuser_password")
-}
-
 func GetTokenExpiryDuration() (time.Duration, error) {
 	timeProvider := viper.GetString("auth.jwt_expiry")
 
@@ -181,6 +173,14 @@ func GetTokenExpiryDuration() (time.Duration, error) {
 
 func GetTokenIssuer() string {
 	return viper.GetString("auth.jwt_issuer")
+}
+
+func GetGoogleClientId() string {
+	return viper.GetString("google.client_id")
+}
+
+func GetGoogleClientSecret() string {
+	return viper.GetString("google.client_secret")
 }
 
 func GetMapBoxToken() string {

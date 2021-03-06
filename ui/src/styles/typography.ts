@@ -45,8 +45,10 @@ export const CardTitleText = styled.p`
   color: ${colors.black};
   margin: 16px 0px 8px 0px;
 
-  @media ${device.mobileS} {
-    font-size: ${fontSize.h3Text};
+  @media ${device.mobile} {
+    font-size: 4em;
+    line-height: normal;
+    font-weight: 600;
   }
 `;
 
@@ -59,8 +61,27 @@ export const CardDescriptionText = styled.p`
   opacity: 0.7;
   margin: 0;
 
-  @media ${device.mobileS} {
-    font-size: ${fontSize.body2};
+  @media ${device.mobile} {
+    font-size: 3em;
+    line-height: 1.5em;
+    height: 4.5em;
+    position: relative;
+    overflow: hidden;
+
+    &:after {
+      content: "";
+      text-align: right;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 70%;
+      height: 1.5em;
+      background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0),
+        rgba(255, 255, 255, 1) 50%
+      );
+    }
   }
 `;
 
@@ -132,8 +153,9 @@ export const CardDetailText = styled.p`
   color: ${colors.black};
   margin: 16px 0px 0px 0px !important;
 
-  @media ${device.mobileS} {
-    font-size: ${fontSize.mobile};
+  @media ${device.mobile} {
+    font-size: 2.5em;
+    line-height: normal;
   }
 `;
 
@@ -146,8 +168,10 @@ export const CardTagText = styled.span`
   color: ${colors.black};
   opacity: 0.7;
 
-  @media ${device.mobileS} {
-    font-size: ${fontSize.mobile};
+  @media ${device.mobile} {
+    font-size: 3em;
+    line-height: normal;
+    font-weight: 600;
   }
 `;
 
@@ -264,4 +288,26 @@ export const LoginTitleText = styled.p`
 export const LoginMessageText = styled.p`
   font-size: ${fontSize.body2};
   text-align: center;
+`;
+
+export const UploadStoriesHeading = styled.div`
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500;
+  font-size: ${fontSize.h3Text};
+  line-height: 150%;
+  color: ${colors.black};
+  margin: 24px 0px 24px 0px;
+`;
+
+export const UploadLabelsText = styled.div`
+  position: relative;
+  margin-bottom: 2px;
+  margin-top: 24px;
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 500;
+  font-size: ${fontSize.subtitle};
+  line-height: 120%;
+  color: ${colors.black};
 `;

@@ -114,8 +114,8 @@ You can check locally to make sure none of these issues show up by:
 ```bash
 make backend-check
 ```
-
-## Authentication
+<!-- TOOD: add auth docs -->
+<!-- ## Authentication
 All the `create` endpoints are protected, which means you have to login before you can make POST requests to these endpoints.
 
 1. Make sure that you have the latest `.env` file (pinned on Slack channel) in the *root* of your `shoe-project` directory.
@@ -145,7 +145,7 @@ $ TOKEN=<JWT-Token>
 $ curl -H 'Accept: application/json' -H "Authorization: Bearer ${TOKEN}" http://localhost:8900/api/<protected-endpoint>
 ```
 
-Note that the key `Authorization: Bearer` is fixed, so don't change this.
+Note that the key `Authorization: Bearer` is fixed, so don't change this. -->
 
 ## Running Script
 

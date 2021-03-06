@@ -39,5 +39,5 @@ export interface Tokens {
 }
 
 export interface User extends Partial<Model> {
-  username: string;
+  email: string;
 }

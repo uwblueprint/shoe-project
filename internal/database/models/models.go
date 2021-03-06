@@ -36,3 +36,10 @@ type Story struct {
 	AuthorCountry   string  `json:"author_country"`
 	Author          Author  `gorm:"foreignKey:AuthorFirstName,AuthorLastName,AuthorCountry;references:FirstName,LastName,OriginCountry" json:"author"`
 }
+
+type Tag struct {
+	gorm.Model
+	Name    string `gorm:"primaryKey;not null" json:"name"`
+	StoryID uint   `gorm:"primaryKey;not null" json:"story_id"`
+	Story   Story  `gorm:"foreignKey:StoryID" json:"story"`
+}
