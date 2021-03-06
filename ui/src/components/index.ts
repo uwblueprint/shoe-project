@@ -1,6 +1,7 @@
 export { Filter } from "./Filter";
 export { HelpAccordion } from "./HelpAccordion";
 export { HelpDrawer, HelpDrawerState } from "./HelpDrawer";
+export { MuiVirtualizedTable } from "./MuiVirtualizedTable";
 export { Pin } from "./Pin";
 export { PinCluster } from "./PinCluster";
 export { PinPreview } from "./PinPreview";
