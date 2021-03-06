@@ -109,16 +109,18 @@ func (api api) EditStoryByID(w http.ResponseWriter, r *http.Request) render.Rend
 		return rest.ErrInternal(api.logger, err)
 	}
 
-	imageKey, err := convertImageURLToKeyName(story.ImageURL)
+	// TODO: Right now, all images with same name gets deleted. Figure out how to properly delete images from S3
+	/*
+		imageKey, err := convertImageURLToKeyName(story.ImageURL)
 
-	if err != nil {
-		return rest.ErrInvalidRequest(api.logger, "ImageUrl of existing image is not valid", err)
-	}
+		if err != nil {
+			return rest.ErrInvalidRequest(api.logger, "ImageUrl of existing image is not valid", err)
+		}
 
-	msg, err := api.DeleteImageInS3(imageKey) //delete existing image
-	if err != nil {
-		return rest.ErrInvalidRequest(api.logger, msg, err)
-	}
+		msg, err := api.DeleteImageInS3(imageKey) //delete existing image
+		if err != nil {
+			return rest.ErrInvalidRequest(api.logger, msg, err)
+		}*/
 
 	file, h, err := r.FormFile("image")
 
