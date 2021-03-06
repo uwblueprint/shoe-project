@@ -270,6 +270,8 @@ func (api api) uploadImageTos3(file multipart.File, size int64, name string) (st
 	return fmt.Sprintf("https://%s.s3.us-west-000.backblazeb2.com/%s", os.Getenv("BUCKET_NAME"), name), nil
 }
 
+// Not using these functions currently since not doing image deletion for now
+/*
 func (api api) DeleteImageInS3(name string) (string, error) {
 	newSession, err := session.NewSession(api.s3config)
 	if err != nil {
@@ -289,14 +291,6 @@ func (api api) DeleteImageInS3(name string) (string, error) {
 	return "Image Successfully Deleted", nil
 }
 
-func convertYoutubeURL(originalURL string) (string, error) {
-	re := regexp.MustCompile(youtubeRegex)
-	match := re.FindAllStringSubmatch(originalURL, 2)
-	if len(match) == 0 {
-		return "", fmt.Errorf("Invalid Youtube Link")
-	}
-	return fmt.Sprintf("%s%s", youtubeEmbedURL, match[0][1]), nil
-}
 
 func convertImageURLToKeyName(originalURL string) (string, error) {
 	re := regexp.MustCompile(s3KeyNameRegex)
@@ -305,6 +299,15 @@ func convertImageURLToKeyName(originalURL string) (string, error) {
 		return "", fmt.Errorf("Invalid Image Link")
 	}
 	return match[0][1], nil
+} */
+
+func convertYoutubeURL(originalURL string) (string, error) {
+	re := regexp.MustCompile(youtubeRegex)
+	match := re.FindAllStringSubmatch(originalURL, 2)
+	if len(match) == 0 {
+		return "", fmt.Errorf("Invalid Youtube Link")
+	}
+	return fmt.Sprintf("%s%s", youtubeEmbedURL, match[0][1]), nil
 }
 
 func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) render.Renderer {
