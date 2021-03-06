@@ -10,5 +10,5 @@ type Coordinates struct {
 type LocationFinder interface {
 	// GetCityCenter finds center coordinates based on a city provided
 	GetCityCenter(city string) (Coordinates, error)
-	GetLatitudeAndLongitude(city string, limit int64) (float64, float64, error)
+	GetPostalLatitudeAndLongitude(city string, limit int64) (float64, float64, error)
 }

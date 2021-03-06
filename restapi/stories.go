@@ -60,6 +60,7 @@ func (api api) ReturnStoryByID(w http.ResponseWriter, r *http.Request) render.Re
 func (api api) CreateStories(w http.ResponseWriter, r *http.Request) render.Renderer {
 	// Declare a new Story struct.
 	var stories []models.Story
+	var cityToCount map[string]int64
 	// respond to the client with the error message and a 400 status code.
 	if err := json.NewDecoder(r.Body).Decode(&stories); err != nil {
 		return rest.ErrInvalidRequest(api.logger, "Invalid payload", err)
@@ -67,13 +68,21 @@ func (api api) CreateStories(w http.ResponseWriter, r *http.Request) render.Rend
 
 	for i := 0; i < len(stories); i++ {
 		stories[i].CurrentCity = strings.Title(strings.ToLower(stories[i].CurrentCity))
+		city := stories[i].CurrentCity
 
 		// get number of stories with current city in db
 		var prevStories []models.Story
 		var numStoriesInCity int64
 		var err error
-		api.database.Where("current_city=?", stories[i].CurrentCity).Model(&prevStories).Count(&numStoriesInCity)
-		stories[i].Latitude, stories[i].Longitude, err = api.locationFinder.GetLatitudeAndLongitude(stories[i].CurrentCity, numStoriesInCity)
+		if cityToCount[city] == 0 {
+			api.database.Where("current_city=?", stories[i].CurrentCity).Model(&prevStories).Count(&numStoriesInCity)
+			cityToCount[city] = numStoriesInCity + 1
+		} else {
+			cityToCount[city] = cityToCount[city] + 1
+			numStoriesInCity = cityToCount[city]
+		}
+
+		stories[i].Latitude, stories[i].Longitude, err = api.locationFinder.GetPostalLatitudeAndLongitude(stories[i].CurrentCity, numStoriesInCity)
 		if err != nil {
 			return rest.ErrInvalidRequest(api.logger, fmt.Sprintf("Story %d has an invalid current city", i), err)
 		}
@@ -173,7 +182,7 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 	var prevStories []models.Story
 	var numStoriesInCity int64
 	api.database.Where("current_city=?", city).Model(&prevStories).Count(&numStoriesInCity)
-	story.Latitude, story.Longitude, err = api.locationFinder.GetLatitudeAndLongitude(city, numStoriesInCity)
+	story.Latitude, story.Longitude, err = api.locationFinder.GetPostalLatitudeAndLongitude(city, numStoriesInCity)
 	if err != nil {
 		return rest.ErrInvalidRequest(api.logger, "Story has an invalid current city", err)
 	}

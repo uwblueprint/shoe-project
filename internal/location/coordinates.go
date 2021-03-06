@@ -8,14 +8,14 @@ import (
 	"math"
 	"math/rand"
 	"net/http"
-	"os"
+
+	"go.uber.org/zap"
 
 	mapbox "github.com/ryankurte/go-mapbox/lib"
 	"github.com/ryankurte/go-mapbox/lib/geocode"
 )
 
 const geocodeRequestLimit = 1
-const zipCodeTokenKey = "ZIP_CODE_TOKEN"
 const zipCodeURL = "https://app.zipcodebase.com/api/v1/code/city?apikey=%s&city=%s&country=ca&limit=%d"
 
 type zipcodeResponse struct {
@@ -26,10 +26,11 @@ type coordinatesFinder struct {
 	mapbox       *mapbox.Mapbox
 	forwardOpts  geocode.ForwardRequestOpts
 	zipCodeToken string
+	logger       *zap.SugaredLogger
 }
 
-func NewCoordinatesFinder(token string, country string) (LocationFinder, error) {
-	mapbox, err := mapbox.NewMapbox(token)
+func NewCoordinatesFinder(mapboxToken string, zipcodeToken string, country string) (LocationFinder, error) {
+	mapbox, err := mapbox.NewMapbox(mapboxToken)
 	if err != nil {
 		return nil, err
 	}
@@ -39,12 +40,11 @@ func NewCoordinatesFinder(token string, country string) (LocationFinder, error) 
 		Country: country,
 	}
 
-	zipCodeToken := os.Getenv(zipCodeTokenKey)
-
 	return coordinatesFinder{
 		mapbox:       mapbox,
 		forwardOpts:  forwardOpts,
-		zipCodeToken: zipCodeToken,
+		zipCodeToken: zipcodeToken,
+		logger:       zap.S(),
 	}, err
 }
 
@@ -75,6 +75,7 @@ func randomCoords(coordinate float64) float64 {
 func (finder coordinatesFinder) randomizePinLocation(city string) (latitude float64, longitude float64, err error) {
 	coordinates, err := finder.GetCityCenter(city)
 	if err != nil {
+		finder.logger.Fatalw("Error while defaulting to randomized coordinates")
 		return 0, 0, err
 	}
 	latitude = randomCoords(coordinates.Latitude)
@@ -82,23 +83,26 @@ func (finder coordinatesFinder) randomizePinLocation(city string) (latitude floa
 	return latitude, longitude, nil
 }
 
-func (finder coordinatesFinder) GetLatitudeAndLongitude(city string, limit int64) (float64, float64, error) {
+func (finder coordinatesFinder) GetPostalLatitudeAndLongitude(city string, limit int64) (float64, float64, error) {
 	// query zipcode with numStoriesInCity + 1 results and take the last one
 	resp, err := http.Get(fmt.Sprintf(zipCodeURL, finder.zipCodeToken, city, limit+1))
 	if err != nil || resp.StatusCode != 200 {
 		// default to randomizing if there is an error
+		finder.logger.Fatalw("Error requesting postal codes from the ZipCode API")
 		return finder.randomizePinLocation(city)
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		// default to randomizing if there is an error
+		finder.logger.Fatalw("Error accessing ZipCode response body")
 		return finder.randomizePinLocation(city)
 	}
 	var zipcodeResp zipcodeResponse
 	err = json.Unmarshal(body, &zipcodeResp)
 	if err != nil || zipcodeResp.Results == nil || len(zipcodeResp.Results) == 0 {
 		// default to randomizing if there is an error
+		finder.logger.Fatalw("Error deserializing ZipCode response")
 		return finder.randomizePinLocation(city)
 	}
 
@@ -106,6 +110,7 @@ func (finder coordinatesFinder) GetLatitudeAndLongitude(city string, limit int64
 	coordinates, err := finder.GetCityCenter(postalCode)
 	if err != nil {
 		// default to randomizing if there is an error
+		finder.logger.Fatalw("Error getting the coordinates fro the postal code from Mapbox")
 		return finder.randomizePinLocation(city)
 	}
 	return coordinates.Latitude, coordinates.Longitude, nil
