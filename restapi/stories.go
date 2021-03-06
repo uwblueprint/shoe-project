@@ -75,9 +75,6 @@ func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.R
 		}
 		err := api.database.First(&author).Error
 		if err != nil {
-			if err == gorm.ErrRecordNotFound {
-				return rest.ErrNotFound(fmt.Sprintf("Could not find author"))
-			}
 			return rest.ErrInternal(api.logger, err)
 		}
 		stories[i].Author = author
