@@ -51,7 +51,7 @@ export const AllStories: React.FC = () => {
   const [tableData, setTableData] = useState(rows);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [order, setOrder] = useState("desc");
-  const [orderBy, setOrderBy] = useState("age");
+  const [orderBy, setOrderBy] = useState("id");
 
   const handleChange = (e, d) => {
     if (e.target.checked) {
