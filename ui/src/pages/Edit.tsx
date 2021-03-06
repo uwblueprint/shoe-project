@@ -21,13 +21,18 @@ import useSWR from "swr";
 
 export const Edit: React.FC = () => {
   const { id } = useParams();
-  const { data: storyDetails, error } = useSWR<Story>(`/api/story/${id}`);
+  const { data: story, error } = useSWR<Story>(`/api/story/${id}`);
 
   if (error) return <div>Error fetching story!</div>;
+  if (story) {
+    console.log("HERE");
+    console.log(story.author.bio);
+  }
   return (
     <div>
-      <p>{id}</p>
-      <UploadStory story={storyDetails}></UploadStory>
+      {story && !error && (
+        <UploadStory story={story} bio={story.author.bio}></UploadStory>
+      )}
     </div>
   );
 };

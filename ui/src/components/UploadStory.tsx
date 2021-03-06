@@ -106,23 +106,32 @@ interface TagParameters {
 }
 
 interface StoryProps {
-  title: string;
-  content: string;
-  current_city: string;
-  year: number;
-  is_visible: boolean;
-  summary: string;
-  latitude: number;
-  longitude: number;
-  image: File;
-  video_url: string;
-  author_first_name: string;
-  author_last_name: string;
-  author_country: string;
+  story: Story;
+  bio: string;
 }
 
-export const UploadStory: React.FC<StoryProps> = (props?: StoryProps) => {
+export const UploadStory: React.FC<StoryProps> = ({
+  story,
+  bio,
+}: StoryProps) => {
   const [tagArray, setTagArrayValues] = useState([]);
+  var image: File = null;
+
+  if (story.image_url != "") {
+    fetch(myRequest)
+      .then((response) => response.blob())
+      .then(function (myBlob) {
+        image = new File([myBlob], "default_image");
+        console.log(myBlob);
+      });
+  }
+
+  var myHeaders = new Headers();
+  myHeaders.append("Content-Type", "image/jpeg");
+
+  var myInit = { method: "GET", headers: myHeaders };
+
+  var myRequest = new Request(story.image_url, myInit);
 
   const { data: tagOptions, error } = useSWR<string[]>("/api/tags");
 
@@ -130,16 +139,16 @@ export const UploadStory: React.FC<StoryProps> = (props?: StoryProps) => {
     (state, newState) => ({ ...state, ...newState }),
     {
       image: new File([""], "filename"),
-      video_url: "",
-      title: "",
-      content: "",
-      summary: "",
-      author_first_name: "",
-      author_last_name: "",
-      author_country: "",
-      year: "",
-      current_city: "",
-      bio: "",
+      video_url: story.video_url,
+      title: story.title,
+      content: story.content,
+      summary: story.summary,
+      author_first_name: story.author_first_name,
+      author_last_name: story.author_last_name,
+      author_country: story.author_country,
+      year: story.year,
+      current_city: story.current_city,
+      bio: bio,
     }
   );
 
@@ -210,6 +219,7 @@ export const UploadStory: React.FC<StoryProps> = (props?: StoryProps) => {
               name="title"
               label="Enter story title"
               placeholder="Lorem ipsum"
+              defaultValue={formInput.title}
             />
             <UploadLabelsText>Summary</UploadLabelsText>
             <StyledTextField
@@ -221,12 +231,14 @@ export const UploadStory: React.FC<StoryProps> = (props?: StoryProps) => {
               id="story-summary"
               name="summary"
               label="Enter story summary"
+              defaultValue={formInput.summary}
             />
             <UploadLabelsText>Story</UploadLabelsText>
             <StyledTextField
               onChange={handleChange}
               multiline
               variant="outlined"
+              defaultValue={formInput.content}
               placeholder="Lorem ipsum dolor sit amet, consectet ui i iadipiscing elit"
               rows={8}
               required
@@ -248,6 +260,7 @@ export const UploadStory: React.FC<StoryProps> = (props?: StoryProps) => {
               name="author_first_name"
               label="Enter author's first name"
               placeholder="Lorem ipsum"
+              defaultValue={formInput.author_first_name}
             />
             <UploadLabelsText>Last Name</UploadLabelsText>
             <StyledTextField
@@ -258,6 +271,7 @@ export const UploadStory: React.FC<StoryProps> = (props?: StoryProps) => {
               name="author_last_name"
               label="Enter author's last name"
               placeholder="Lorem ipsum"
+              defaultValue={formInput.author_last_name}
             />
             <UploadLabelsText>Biography</UploadLabelsText>
             <StyledTextField
@@ -269,6 +283,7 @@ export const UploadStory: React.FC<StoryProps> = (props?: StoryProps) => {
               id="author-bio"
               name="bio"
               label="Enter author biography"
+              defaultValue={formInput.bio}
             />
           </StyledBackgroundColor>
 
@@ -371,15 +386,28 @@ export const UploadStory: React.FC<StoryProps> = (props?: StoryProps) => {
             <UploadStoriesHeading>Multimedia</UploadStoriesHeading>
             <ImageContainer>
               <UploadLabelsText>Add Image</UploadLabelsText>
-              <StyledDropzoneArea
-                showFileNames
-                acceptedFiles={["image/*"]}
-                filesLimit={1}
-                dropzoneText={"Drag image here or select from device"}
-                onChange={(files) => {
-                  setImage(files);
-                }}
-              />
+              {image ? (
+                <StyledDropzoneArea
+                  showFileNames
+                  acceptedFiles={["image/*"]}
+                  filesLimit={1}
+                  dropzoneText={"Drag image here or select from device"}
+                  onChange={(files) => {
+                    setImage(files);
+                  }}
+                  initialFiles={[image]}
+                />
+              ) : (
+                <StyledDropzoneArea
+                  showFileNames
+                  acceptedFiles={["image/*"]}
+                  filesLimit={1}
+                  dropzoneText={"Drag image here or select from device"}
+                  onChange={(files) => {
+                    setImage(files);
+                  }}
+                />
+              )}
             </ImageContainer>
             <UploadLabelsText>Video Link</UploadLabelsText>
             <StyledTextField
@@ -392,6 +420,7 @@ export const UploadStory: React.FC<StoryProps> = (props?: StoryProps) => {
                 name: "video_url",
                 id: "input-video-link",
               }}
+              defaultValue={formInput.video_url}
             />
           </StyledBackgroundColor>
           <Button color="primary" type="submit" variant="contained">
