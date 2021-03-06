@@ -62,32 +62,27 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 		rest.GetHandler(r, "/authors/origin_countries", api.ReturnAllCountries)
 		rest.GetHandler(r, "/tags", api.ReturnAllUniqueTags)
 		rest.GetHandler(r, "/login", api.Login)
-		rest.PostHandler(r, "/story", api.CreateStoriesFormData)
-
 		rest.GetHandler(r, "/auth/callback", api.AuthCallback)
 		rest.GetHandler(r, "/client_tokens", api.ReturnClientTokens)
-		rest.GetHandler(r, "/unauthorized", api.UnauthorizedPage)
 
-		// TODO: move these back to private api once https://github.com/uwblueprint/shoe-project/issues/204 is closed
+		// TODO: move back to protected endpoints
 		rest.PostHandler(r, "/stories", api.CreateStories)
+		rest.PostHandler(r, "/story", api.CreateStoriesFormData)
 		rest.PostHandler(r, "/authors", api.CreateAuthors)
 	})
 
 	// Private API
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(config.GetJWTKey()))
-		r.Use(jwtauth.Authenticator)
+		r.Use(Authenticator)
 
-		// dummy call to check auth flow
-		rest.GetHandler(r, "/checkauth", api.checkAuthDummy)
+		// rest.PostHandler(r, "/stories", api.CreateStories)
+		// rest.PostHandler(r, "/story", api.CreateStoriesFormData)
+		// rest.PostHandler(r, "/authors", api.CreateAuthors)
 	})
 	return r, nil
 }
 
 func (api api) health(w http.ResponseWriter, r *http.Request) render.Renderer {
 	return rest.MsgStatusOK("Hello World")
-}
-
-func (api api) checkAuthDummy(w http.ResponseWriter, r *http.Request) render.Renderer {
-	return rest.MsgStatusOK("Working!")
 }
