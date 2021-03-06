@@ -27,7 +27,8 @@ import (
 
 const youtubeRegex = `(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})`
 const youtubeEmbedURL = "https://www.youtube.com/embed/"
-const s3KeyNameRegex = `^https://shoeproject.s3.us-west-000.backblazeb2.com/(.*)`
+
+//const s3KeyNameRegex = `^https://shoeproject.s3.us-west-000.backblazeb2.com/(.*)`
 
 func init() {
 	rand.Seed(time.Now().UTC().UnixNano())
