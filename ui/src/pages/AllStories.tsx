@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import AppBar from "@material-ui/core/AppBar";
 import Checkbox from "@material-ui/core/Checkbox";
 import Switch from "@material-ui/core/Switch";
@@ -10,16 +9,6 @@ import styled from "styled-components";
 import useSWR from "swr";
 
 import { a11yProps, AllStoriesTabs } from "../components/AllStoriesTabs";
-=======
-import "../styles/styling.css";
-
-import Checkbox from "@material-ui/core/Checkbox";
-import Switch from "@material-ui/core/Switch";
-import { useState } from "react";
-import * as React from "react";
-import useSWR from "swr";
-
->>>>>>> 43a6d43 (feat: virtualized table with sorting)
 import VirtualizedTable from "../components/VirtualizedTable";
 import { Story } from "../types/index";
 
