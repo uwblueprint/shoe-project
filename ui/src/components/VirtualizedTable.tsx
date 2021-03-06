@@ -56,7 +56,7 @@ export function VirtualizedTable({
               if (data.indexOf(row) > 0 && data.indexOf(row) % 2 !== 0) {
                 return {
                   style: {
-                    "background-color": "#eee",
+                    "background-color": colors.primaryLight6,
                   },
                 };
               }
@@ -73,7 +73,7 @@ export function VirtualizedTable({
             maxHeight={800}
             fixedRowCount={1}
             fixedColumnCount={1}
-            style={{ tableLayout: "fixed", backgroundColor: "white" }}
+            style={{ tableLayout: "fixed", backgroundColor: colors.white }}
           />
         )}
       </AutoSizer>
