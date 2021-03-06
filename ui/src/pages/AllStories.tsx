@@ -42,6 +42,7 @@ const styles = (theme: Theme) =>
 
 const VirtualizedTable = withStyles(styles)(MuiVirtualizedTable);
 
+//Data types that are included in All Stories table
 function createData(
   id: number,
   title: string,

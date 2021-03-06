@@ -1,45 +1,10 @@
-import { createStyles, Theme, WithStyles } from "@material-ui/core/styles";
 import Switch from "@material-ui/core/Switch";
 import TableCell from "@material-ui/core/TableCell";
 import clsx from "clsx";
 import * as React from "react";
 import { AutoSizer, Column, Table, TableHeaderProps } from "react-virtualized";
 
-import { colors } from "../styles/colors";
 import { Story } from "../types/index";
-
-const styles = (theme: Theme) =>
-  createStyles({
-    flexContainer: {
-      display: "flex",
-      alignItems: "left",
-      boxSizing: "border-box",
-    },
-    table: {
-      "& .ReactVirtualized__Table__headerRow": {
-        flip: false,
-        paddingRight: theme.direction === "rtl" ? "0 !important" : undefined,
-        backgroundColor: colors.primaryLight4,
-        fontWeight: 800,
-      },
-      "& .ReactVirtualized__Grid ReactVirtualized__Table__Grid": {},
-    },
-    tableRow: {
-      cursor: "pointer",
-      color: colors.grey,
-    },
-    tableRowHover: {
-      "&:hover": {
-        backgroundColor: colors.black,
-      },
-    },
-    tableCell: {
-      flex: 2,
-    },
-    noClick: {
-      cursor: "initial",
-    },
-  });
 
 interface ColumnData {
   dataKey: string;
@@ -53,7 +18,7 @@ interface Row {
   index: number;
 }
 
-export interface MuiVirtualizedTableProps extends WithStyles<typeof styles> {
+export interface MuiVirtualizedTableProps {
   classes: Record<
     | "flexContainer"
     | "table"
