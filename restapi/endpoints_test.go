@@ -147,7 +147,9 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 		},
 	}
 
-	suite.endpoint.POST("/authors").WithHeader("Authorization", fmt.Sprintf("Bearer %s", suite.token)).
+	token, _ := testutils.ValidToken()
+
+	suite.endpoint.POST("/authors").WithHeader("Authorization", fmt.Sprintf("Bearer %s", token)).
 		WithJSON(json).
 		Expect().
 		Status(http.StatusOK)
@@ -263,7 +265,9 @@ func (suite *endpointTestSuite) TestVisibleStories() {
 		},
 	}
 
-	suite.endpoint.POST("/authors").WithHeader("Authorization", fmt.Sprintf("Bearer %s", suite.token)).
+	token, _ := testutils.ValidToken()
+
+	suite.endpoint.POST("/authors").WithHeader("Authorization", fmt.Sprintf("Bearer %s", token)).
 		WithJSON(json).
 		Expect().
 		Status(http.StatusOK)
