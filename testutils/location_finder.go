@@ -10,3 +10,7 @@ func (finder MockLocationFinder) GetCityCenter(city string) (location.Coordinate
 		Longitude: 1,
 	}, nil
 }
+
+func (finder MockLocationFinder) GetPostalLatitudeAndLongitude(city string, limit int64) (float64, float64, error) {
+	return 0, 0, nil
+}

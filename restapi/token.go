@@ -10,11 +10,13 @@ import (
 
 func (api api) ReturnClientTokens(w http.ResponseWriter, r *http.Request) render.Renderer {
 	type Tokens struct {
-		Mapbox string `json:"mapbox"`
+		Mapbox  string `json:"mapbox"`
+		Zipcode string `json:"zipcode"`
 	}
 
 	tokens := Tokens{
-		Mapbox: config.GetMapBoxToken(),
+		Mapbox:  config.GetMapBoxToken(),
+		Zipcode: config.GetZipCodeToken(),
 	}
 
 	return rest.JSONStatusOK(tokens)

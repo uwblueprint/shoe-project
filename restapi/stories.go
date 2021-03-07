@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"math"
 	"math/rand"
 	"mime/multipart"
 	"net/http"
@@ -219,19 +218,32 @@ func (api api) EditStoryByID(w http.ResponseWriter, r *http.Request) render.Rend
 func (api api) CreateStories(w http.ResponseWriter, r *http.Request) render.Renderer {
 	// Declare a new Story struct.
 	var stories []models.Story
+	cityToCount := make(map[string]int64)
 	// respond to the client with the error message and a 400 status code.
 	if err := json.NewDecoder(r.Body).Decode(&stories); err != nil {
 		return rest.ErrInvalidRequest(api.logger, "Invalid payload", err)
 	}
 
 	for i := 0; i < len(stories); i++ {
+		stories[i].CurrentCity = strings.Title(strings.ToLower(stories[i].CurrentCity))
 		city := stories[i].CurrentCity
-		coordinates, err := api.locationFinder.GetCityCenter(city)
+
+		// get number of stories with current city in db
+		var prevStories []models.Story
+		var numStoriesInCity int64
+		var err error
+		if cityToCount[city] == 0 {
+			api.database.Where("current_city=?", stories[i].CurrentCity).Model(&prevStories).Count(&numStoriesInCity)
+			cityToCount[city] = numStoriesInCity + 1
+		} else {
+			cityToCount[city] = cityToCount[city] + 1
+			numStoriesInCity = cityToCount[city]
+		}
+
+		stories[i].Latitude, stories[i].Longitude, err = api.locationFinder.GetPostalLatitudeAndLongitude(stories[i].CurrentCity, numStoriesInCity)
 		if err != nil {
 			return rest.ErrInvalidRequest(api.logger, fmt.Sprintf("Story %d has an invalid current city", i), err)
 		}
-		stories[i].Latitude = randomCoords(coordinates.Latitude)
-		stories[i].Longitude = randomCoords(coordinates.Longitude)
 	}
 
 	if err := api.database.Create(&stories).Error; err != nil {
@@ -348,8 +360,12 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 	if err != nil {
 		return rest.ErrInvalidRequest(api.logger, "Error parsing year field", err)
 	}
-	city := r.FormValue("current_city")
-	coordinates, err := api.locationFinder.GetCityCenter(city) // TODO: Has to be replaced by Megan's pin placement code
+	city := strings.Title(strings.ToLower(r.FormValue("current_city")))
+	// get number of stories with current city in db
+	var prevStories []models.Story
+	var numStoriesInCity int64
+	api.database.Where("current_city=?", city).Model(&prevStories).Count(&numStoriesInCity)
+	Latitude, Longitude, err := api.locationFinder.GetPostalLatitudeAndLongitude(city, numStoriesInCity)
 	if err != nil {
 		return rest.ErrInvalidRequest(api.logger, "Story has an invalid current city", err)
 	}
@@ -364,8 +380,8 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 		CurrentCity:     city,
 		Year:            uint(year),
 		Summary:         r.FormValue("summary"),
-		Latitude:        randomCoords(coordinates.Latitude),
-		Longitude:       randomCoords(coordinates.Longitude),
+		Latitude:        Latitude,
+		Longitude:       Longitude,
 	}
 
 	videoURL := r.FormValue("video_url")
@@ -413,13 +429,4 @@ func (api api) ReturnStoriesByCountries(w http.ResponseWriter, r *http.Request) 
 	}
 
 	return rest.JSONStatusOK(stories)
-}
-
-func randomCoords(coordinate float64) float64 {
-	num := math.Floor(rand.Float64()*99) + 1
-	if math.Round(rand.Float64()) == 1 {
-		num *= 1
-	}
-
-	return coordinate + 0.003*num
 }
