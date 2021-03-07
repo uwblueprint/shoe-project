@@ -58,6 +58,42 @@ func (api api) ReturnStoryByID(w http.ResponseWriter, r *http.Request) render.Re
 	return rest.JSONStatusOK(story)
 }
 
+func (api api) DeleteStoryByID(w http.ResponseWriter, r *http.Request) render.Renderer {
+	// TODO: Delete the image from S3 properly
+	var story models.Story
+	id := chi.URLParam(r, "storyID")
+
+	err := api.database.Preload("Author").Where("id=?", id).First(&story).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return rest.ErrNotFound(fmt.Sprintf("Could not find story with ID %s", id))
+		}
+		return rest.ErrInternal(api.logger, err)
+	}
+
+	var stories []models.Story
+	err = api.database.Where("author_first_name=?", story.AuthorFirstName).Where("author_last_name=?", story.AuthorLastName).Where("author_country=?", story.AuthorCountry).Find(&stories).Error
+	if err != nil {
+		return rest.ErrInternal(api.logger, err)
+	}
+
+	if len(stories) == 1 { // This would mean the author has only 1 story which is being deleted, so author needs to be deleted as well
+		if err := api.database.Delete(story.Author).Error; err != nil { // delete existing tags
+			return rest.ErrInternal(api.logger, err)
+		}
+	}
+
+	if err := api.database.Delete(story).Error; err != nil { // delete existing tags
+		return rest.ErrInternal(api.logger, err)
+	}
+
+	if err := api.database.Where("story_id=?", id).Delete(models.Tag{}).Error; err != nil { // delete existing tags
+		return rest.ErrInternal(api.logger, err)
+	}
+
+	return rest.MsgStatusOK("Story Deleted Successfully")
+}
+
 func (api api) CreateStories(w http.ResponseWriter, r *http.Request) render.Renderer {
 	// Declare a new Story struct.
 	var stories []models.Story
