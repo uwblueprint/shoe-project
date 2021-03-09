@@ -35,7 +35,7 @@ func init() {
 func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var stories []models.Story
 
-	err := api.database.Find(&stories).Error
+	err := api.database.Where("is_visible = true").Find(&stories).Error
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
