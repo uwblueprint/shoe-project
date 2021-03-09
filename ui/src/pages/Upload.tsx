@@ -1,15 +1,19 @@
 import {
   Button,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   Grid,
   InputLabel,
   MenuItem,
   Select,
-  Snackbar,
   TextField,
 } from "@material-ui/core/";
-import Alert from "@material-ui/lab/Alert";
+// import CircularProgress from "@material-ui/core/CircularProgress";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
@@ -114,7 +118,7 @@ interface TagParameters {
 
 export const Upload: React.FC = () => {
   const [tagArray, setTagArrayValues] = useState([]);
-  const [open, setOpen] = useState(false);
+  const [dialogOpenState, setDialogOpenState] = useState(false);
 
   const { data: tagOptions, error } = useSWR<string[]>("/api/tags");
 
@@ -164,16 +168,28 @@ export const Upload: React.FC = () => {
     });
   };
 
-  const handleAlertClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setOpen(false);
+  const handleDialogClose = () => {
+    setDialogOpenState(false);
   };
 
+  const handleDialogAgree = () => {
+    handleDialogClose();
+  };
+
+  const handleDialogDisagree = () => {
+    handleDialogClose();
+  };
+
+  function storySubmitDialog(result) {
+    const resultMessage = JSON.parse(result).message;
+    if (resultMessage === "Story Added Successfully") {
+      setDialogOpenState(true);
+    } else {
+      return <div>ERROR ADDING STORY</div>;
+    }
+  }
   const handleSubmit = (event) => {
     event.preventDefault();
-    setOpen(true);
     const formData = new FormData();
     for (const key in formInput) {
       formData.append(key, formInput[key]);
@@ -190,7 +206,7 @@ export const Upload: React.FC = () => {
     })
       .then((response) => response.text())
       .then((result) => {
-        console.log(result);
+        storySubmitDialog(result);
       })
       .catch((error) => console.log("Error: ", error));
   };
@@ -400,15 +416,29 @@ export const Upload: React.FC = () => {
           <StyledButton color="primary" type="submit" variant="contained">
             Submit Story
           </StyledButton>
-          <Snackbar
-            open={open}
-            autoHideDuration={5000}
-            onClose={handleAlertClose}
+          <Dialog
+            open={dialogOpenState}
+            onClose={handleDialogClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
           >
-            <Alert onClose={handleAlertClose} severity="success">
-              Story uploaded successfully!
-            </Alert>
-          </Snackbar>
+            <DialogTitle id="alert-dialog-title">
+              {"Story Upload Success!"}
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Your story is now available on the All Stories Dashboard!
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleDialogDisagree} color="primary">
+                Return to Dashboard
+              </Button>
+              <Button onClick={handleDialogAgree} color="primary">
+                Continue Uploading
+              </Button>
+            </DialogActions>
+          </Dialog>
         </FormControl>
       </form>
     </StyledGrid>
