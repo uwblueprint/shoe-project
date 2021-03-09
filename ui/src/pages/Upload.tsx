@@ -9,12 +9,12 @@ import {
   FormControl,
   Grid,
   InputLabel,
+  LinearProgress,
   MenuItem,
   Select,
   Snackbar,
   TextField,
 } from "@material-ui/core/";
-import LinearProgress from "@material-ui/core/LinearProgress";
 import Alert from "@material-ui/lab/Alert";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DropzoneArea } from "material-ui-dropzone";
@@ -111,6 +111,7 @@ const StyledBackgroundColor = styled.div`
 const StyledLinearProgress = styled(LinearProgress)`
   margin-top: 24px;
 `;
+
 interface InputProps {
   onKeyDown: (
     event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -122,11 +123,12 @@ interface TagParameters {
 }
 
 export const Upload: React.FC = () => {
+  const { data: tagOptions, error } = useSWR<string[]>("/api/tags");
   const [tagArray, setTagArrayValues] = useState([]);
+  //handleSubmit component states
   const [dialogOpenState, setDialogOpenState] = useState(false);
   const [uploadErrorState, setErrorOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { data: tagOptions, error } = useSWR<string[]>("/api/tags");
 
   const [formInput, setFormInput] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
@@ -194,7 +196,7 @@ export const Upload: React.FC = () => {
     handleDialogClose();
   };
 
-  function storySubmitDialog(result) {
+  const storySubmitDialog = (result) => {
     setLoading(false);
     const resultMessage = JSON.parse(result).message;
     if (resultMessage === "Story Added Successfully") {
@@ -202,7 +204,7 @@ export const Upload: React.FC = () => {
     } else {
       setErrorOpen(true);
     }
-  }
+  };
   const handleSubmit = (event) => {
     event.preventDefault();
     setLoading(true);
