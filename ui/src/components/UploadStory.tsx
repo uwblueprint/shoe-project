@@ -95,6 +95,10 @@ const StyledBackgroundColor = styled.div`
   margin-bottom: 24px;
 `;
 
+const StyledImage = styled.img`
+  width: 30vw;
+`;
+
 interface InputProps {
   onKeyDown: (
     event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -115,23 +119,18 @@ export const UploadStory: React.FC<StoryProps> = ({
   bio,
 }: StoryProps) => {
   const [tagArray, setTagArrayValues] = useState([]);
-  var image: File = null;
+  const [newImage, setNewImage] = useState(story.image_url);
 
-  if (story.image_url != "") {
-    fetch(myRequest)
-      .then((response) => response.blob())
-      .then(function (myBlob) {
-        image = new File([myBlob], "default_image");
-        console.log(myBlob);
-      });
+  const addNewImageButton = () => {
+    setNewImage("");
+  };
+
+  const yearArray = [];
+  let year: number = new Date().getFullYear();
+  for (let i = 30; i > 0; i--) {
+    yearArray.push(year);
+    year -= 1;
   }
-
-  var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "image/jpeg");
-
-  var myInit = { method: "GET", headers: myHeaders };
-
-  var myRequest = new Request(story.image_url, myInit);
 
   const { data: tagOptions, error } = useSWR<string[]>("/api/tags");
 
@@ -341,9 +340,11 @@ export const UploadStory: React.FC<StoryProps> = ({
                   id: "select-label-year",
                 }}
               >
-                <StyledMenuItem value={"2021"}>2021</StyledMenuItem>
-                <StyledMenuItem value={"2020"}>2020</StyledMenuItem>
-                <StyledMenuItem value={"2019"}>2019</StyledMenuItem>
+                {yearArray.map((year) => (
+                  <StyledMenuItem key={year} value={year}>
+                    {year}
+                  </StyledMenuItem>
+                ))}
               </StyledSelect>
             </FormControl>
             <FormControl>
@@ -385,28 +386,33 @@ export const UploadStory: React.FC<StoryProps> = ({
           <StyledBackgroundColor>
             <UploadStoriesHeading>Multimedia</UploadStoriesHeading>
             <ImageContainer>
-              <UploadLabelsText>Add Image</UploadLabelsText>
-              {image ? (
-                <StyledDropzoneArea
-                  showFileNames
-                  acceptedFiles={["image/*"]}
-                  filesLimit={1}
-                  dropzoneText={"Drag image here or select from device"}
-                  onChange={(files) => {
-                    setImage(files);
-                  }}
-                  initialFiles={[image]}
-                />
+              {/* <img src={story.image_url} /> */}
+              {newImage == "" ? (
+                <div>
+                  <UploadLabelsText>Add Image</UploadLabelsText>
+                  <StyledDropzoneArea
+                    showFileNames
+                    acceptedFiles={["image/*"]}
+                    filesLimit={1}
+                    dropzoneText={"Drag image here or select from device"}
+                    onChange={(files) => {
+                      setImage(files);
+                    }}
+                  />
+                </div>
               ) : (
-                <StyledDropzoneArea
-                  showFileNames
-                  acceptedFiles={["image/*"]}
-                  filesLimit={1}
-                  dropzoneText={"Drag image here or select from device"}
-                  onChange={(files) => {
-                    setImage(files);
-                  }}
-                />
+                <div>
+                  <UploadLabelsText>Current Image:</UploadLabelsText>
+                  <br />
+                  <StyledImage src={story.image_url} />
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    onClick={addNewImageButton}
+                  >
+                    Change Image
+                  </Button>
+                </div>
               )}
             </ImageContainer>
             <UploadLabelsText>Video Link</UploadLabelsText>

@@ -24,10 +24,6 @@ export const Edit: React.FC = () => {
   const { data: story, error } = useSWR<Story>(`/api/story/${id}`);
 
   if (error) return <div>Error fetching story!</div>;
-  if (story) {
-    console.log("HERE");
-    console.log(story.author.bio);
-  }
   return (
     <div>
       {story && !error && (
