@@ -31,7 +31,6 @@ function createData(
 
 export const AllStories: React.FC = () => {
   const { data: allStories, error } = useSWR<Story[]>("/api/stories");
-
   const rows = allStories.map((story, i) =>
     createData(
       i,
@@ -50,6 +49,8 @@ export const AllStories: React.FC = () => {
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState("id");
+
+  if (allStories === undefined) return;
 
   const handleChange = (e, d) => {
     if (e.target.checked) {
