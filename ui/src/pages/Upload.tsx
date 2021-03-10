@@ -125,6 +125,7 @@ interface TagParameters {
 export const Upload: React.FC = () => {
   const { data: tagOptions, error } = useSWR<string[]>("/api/tags");
   const [tagArray, setTagArrayValues] = useState([]);
+  const [disabled, setDisabled] = useState(false);
   //handleSubmit component states
   const [dialogOpenState, setDialogOpenState] = useState(false);
   const [uploadErrorState, setErrorOpen] = useState(false);
@@ -198,6 +199,7 @@ export const Upload: React.FC = () => {
 
   const storySubmitDialog = (result) => {
     setLoading(false);
+    setDisabled(false);
     const resultMessage = JSON.parse(result).message;
     if (resultMessage === "Story Added Successfully") {
       setDialogOpenState(true);
@@ -208,6 +210,7 @@ export const Upload: React.FC = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     setLoading(true);
+    setDisabled(true);
     const formData = new FormData();
     for (const key in formInput) {
       formData.append(key, formInput[key]);
@@ -436,7 +439,12 @@ export const Upload: React.FC = () => {
               />
             </StyledBackgroundColor>
 
-            <StyledButton color="primary" type="submit" variant="contained">
+            <StyledButton
+              disabled={disabled}
+              color="primary"
+              type="submit"
+              variant="contained"
+            >
               Submit Story
             </StyledButton>
             <Snackbar
@@ -452,7 +460,7 @@ export const Upload: React.FC = () => {
               open={dialogOpenState}
               onClose={handleDialogClose}
               aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
+              aria-describedby="alert-dialogd-description"
             >
               <DialogTitle id="alert-dialog-title">
                 {"Story Upload Success!"}
