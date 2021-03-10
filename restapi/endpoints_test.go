@@ -19,7 +19,6 @@ type endpointTestSuite struct {
 	suite.Suite
 	endpoint *httpexpect.Expect
 	db       *gorm.DB
-	token    string
 }
 
 func (suite *endpointTestSuite) SetupSuite() {
@@ -30,9 +29,9 @@ func (suite *endpointTestSuite) SetupSuite() {
 	suite.db = db
 
 	// setup required for jwt authentication
-	viper.SetDefault("auth.jwt_key", "random")
-	viper.SetDefault("auth.jwt_expiry", "5m")
-	viper.SetDefault("auth.jwt_issuer", "endpoint_tests")
+	viper.SetDefault("auth.jwt_key", testutils.JWTKey)
+	viper.SetDefault("auth.jwt_expiry", testutils.JWTExpiry)
+	viper.SetDefault("auth.jwt_issuer", testutils.JWTIssuer)
 
 	router, err := Router(db, testutils.MockLocationFinder{})
 	if err != nil {
@@ -283,7 +282,10 @@ func (suite *endpointTestSuite) TestCreateAuthor() {
 		},
 	}
 
-	suite.endpoint.POST("/authors").WithHeader("Authorization", fmt.Sprintf("Bearer %s", suite.token)).
+	token, _ := testutils.ValidToken()
+
+	suite.endpoint.POST("/authors").
+		WithHeader("Authorization", fmt.Sprintf("BEARER %s", token)).
 		WithJSON(json).
 		Expect().
 		Status(http.StatusOK)
@@ -303,7 +305,10 @@ func (suite *endpointTestSuite) TestCreateAuthorFailsWithUnknownCountry() {
 		},
 	}
 
+	token, _ := testutils.ValidToken()
+
 	response := suite.endpoint.POST("/authors").
+		WithHeader("Authorization", fmt.Sprintf("BEARER %s", token)).
 		WithJSON(json).
 		Expect().
 		Status(http.StatusBadRequest).JSON()
@@ -327,7 +332,10 @@ func (suite *endpointTestSuite) TestCreateStory() {
 		},
 	}
 
+	token, _ := testutils.ValidToken()
+
 	suite.endpoint.POST("/stories").
+		WithHeader("Authorization", fmt.Sprintf("BEARER %s", token)).
 		WithJSON(json).
 		Expect().
 		Status(http.StatusOK)

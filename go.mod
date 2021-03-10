@@ -33,7 +33,7 @@ require (
 	go.uber.org/zap v1.10.0
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45
-	golang.org/x/tools v0.0.0-20210104081019-d8d6ddbec6ee // indirect
+	golang.org/x/tools v0.1.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 	gorm.io/driver/postgres v1.0.2
 	gorm.io/driver/sqlite v1.1.3

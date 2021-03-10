@@ -186,3 +186,7 @@ func GetGoogleClientSecret() string {
 func GetMapBoxToken() string {
 	return viper.GetString("mapbox.token")
 }
+
+func GetZipCodeToken() string {
+	return viper.GetString("zipcode.token")
+}

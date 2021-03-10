@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/go-chi/jwtauth"
 	"github.com/go-chi/render"
 	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
@@ -72,28 +73,29 @@ func (api api) AuthCallback(w http.ResponseWriter, r *http.Request) render.Rende
 	// redirect if invalid user
 	err = api.database.FirstOrCreate(&user, models.User{Email: user.Email}).Error
 	if err != nil {
-		http.Redirect(w, r, "/api/unauthorized", http.StatusTemporaryRedirect)
+		http.Redirect(w, r, "/unauthorized", http.StatusTemporaryRedirect)
 	}
 
-	// if valid create jwt token
-	jwtToken, err := generateJWTToken(user.Email)
+	// if valid set jwt token in cookie
+	err = generateJWTToken(user.Email, w)
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
 
-	return rest.JSONStatusOK(jwtToken)
+	return rest.JSONStatusOK("Authenticated successfully")
 }
 
-func generateJWTToken(email string) (string, error) {
+func generateJWTToken(email string, w http.ResponseWriter) error {
 	jwtExpiry, err := config.GetTokenExpiryDuration()
 	if err != nil {
-		return "", err
+		return err
 	}
+	expiration := time.Now().Add(jwtExpiry)
 
 	claim := &models.Claims{
 		Email: email,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(jwtExpiry).Unix(),
+			ExpiresAt: expiration.Unix(),
 			Issuer:    config.GetTokenIssuer(),
 		},
 	}
@@ -101,8 +103,32 @@ func generateJWTToken(email string) (string, error) {
 	token := config.GetJWTKey()
 	_, signedToken, err := token.Encode(claim)
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	return signedToken, nil
+	secure := (config.GetMode() == config.MODE_PROD)
+
+	cookie := http.Cookie{Name: "jwt", Value: signedToken, Expires: expiration, HttpOnly: true, Secure: secure, Path: "/api"}
+	http.SetCookie(w, &cookie)
+
+	return nil
+}
+
+func Authenticator(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		token, _, err := jwtauth.FromContext(r.Context())
+
+		if err != nil {
+			http.Redirect(w, r, "/unauthorized", http.StatusTemporaryRedirect)
+			return
+		}
+
+		if token == nil || !token.Valid {
+			http.Redirect(w, r, "/unauthorized", http.StatusTemporaryRedirect)
+			return
+		}
+
+		// Token is authenticated, pass it through
+		next.ServeHTTP(w, r)
+	})
 }

@@ -38,9 +38,9 @@ var (
 				logger.Fatalw("Database table creation failed", "Err", err)
 			}
 
-			locationFinder, err := location.NewMapboxFinder(config.GetMapBoxToken(), "CA")
+			locationFinder, err := location.NewCoordinatesFinder(config.GetMapBoxToken(), config.GetZipCodeToken(), "CA")
 			if err != nil {
-				logger.Fatalw("Failed to initialize Mapbox location finder service")
+				logger.Fatalw("Failed to initialize location finder service")
 			}
 
 			if err := migrations.Seed(db, locationFinder); err != nil {
