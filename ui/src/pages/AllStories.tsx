@@ -17,7 +17,7 @@ function createData(
   author_last_name: string,
   author_country: string
 ) {
-  const author_name = author_first_name + " " + author_last_name;
+  const author_name = `${author_first_name} ${author_last_name}`;
   return {
     id,
     title,
@@ -31,21 +31,21 @@ function createData(
 
 export const AllStories: React.FC = () => {
   const { data: allStories, error } = useSWR<Story[]>("/api/stories");
-  let rows = [];
-  if (allStories) {
-    rows = allStories.map((story, i) =>
-      createData(
-        i,
-        story.title,
-        story.current_city,
-        story.year,
-        story.is_visible,
-        story.author_first_name,
-        story.author_last_name,
-        story.author_country
-      )
-    );
-  }
+  
+  if (allStories === undefined) return;
+  
+  const rows = allStories.map((story, i) =>
+    createData(
+      i,
+      story.title,
+      story.current_city,
+      story.year,
+      story.is_visible,
+      story.author_first_name,
+      story.author_last_name,
+      story.author_country
+    )
+  );
 
   const [visibleState, setVisibleState] = React.useState([]);
   const [tableData, setTableData] = useState(rows);

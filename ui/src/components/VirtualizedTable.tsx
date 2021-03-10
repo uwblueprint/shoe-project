@@ -53,10 +53,11 @@ export function VirtualizedTable({
             orderDirection={order}
             includeHeaders
             cellProps={(column, row) => {
+              /* alternate the background colour of rows between colors.white and colors.primaryLight6 */
               if (data.indexOf(row) > 0 && data.indexOf(row) % 2 !== 0) {
                 return {
                   style: {
-                    "background-color": colors.primaryLight6,
+                    "backgroundColor": colors.primaryLight6,
                   },
                 };
               }
