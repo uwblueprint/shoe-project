@@ -31,9 +31,7 @@ function createData(
 
 export const AllStories: React.FC = () => {
   const { data: allStories, error } = useSWR<Story[]>("/api/stories");
-  
-  if (allStories === undefined) return;
-  
+
   const rows = allStories.map((story, i) =>
     createData(
       i,
