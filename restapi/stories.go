@@ -168,8 +168,12 @@ func (api api) EditStoryByID(w http.ResponseWriter, r *http.Request) render.Rend
 	if err != nil {
 		return rest.ErrInvalidRequest(api.logger, "Error parsing year field", err)
 	}
-	city := r.FormValue("current_city")
-	coordinates, err := api.locationFinder.GetCityCenter(city) // TODO: Has to be replaced by Megan's pin placement code
+	city := strings.Title(strings.ToLower(r.FormValue("current_city")))
+	// get number of stories with current city in db
+	var prevStories []models.Story
+	var numStoriesInCity int64
+	api.database.Where("current_city=?", city).Model(&prevStories).Count(&numStoriesInCity)
+	Latitude, Longitude, err := api.locationFinder.GetPostalLatitudeAndLongitude(city, numStoriesInCity)
 	if err != nil {
 		return rest.ErrInvalidRequest(api.logger, "Story has an invalid current city", err)
 	}
@@ -184,8 +188,8 @@ func (api api) EditStoryByID(w http.ResponseWriter, r *http.Request) render.Rend
 	story.CurrentCity = city
 	story.Year = uint(year)
 	story.Summary = r.FormValue("summary")
-	story.Latitude = randomCoords(coordinates.Latitude)
-	story.Longitude = randomCoords(coordinates.Longitude)
+	story.Latitude = Latitude
+	story.Longitude = Longitude
 
 	videoURL := r.FormValue("video_url")
 	if videoURL != "" {
