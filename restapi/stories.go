@@ -58,22 +58,6 @@ func (api api) ReturnStoryByID(w http.ResponseWriter, r *http.Request) render.Re
 	return rest.JSONStatusOK(story)
 }
 
-func (api api) AddAuthorToStories(stories []models.Story) ([]models.Story, error) {
-	for i, story := range stories {
-		var author = models.Author{
-			FirstName:     story.AuthorFirstName,
-			LastName:      story.AuthorLastName,
-			OriginCountry: story.AuthorCountry,
-		}
-		err := api.database.First(&author).Error
-		if err != nil {
-			return stories, err
-		}
-		stories[i].Author = author
-	}
-	return stories, nil
-}
-
 func (api api) DeleteStoryByID(w http.ResponseWriter, r *http.Request) render.Renderer {
 	// TODO: Delete the image from S3 properly
 	var story models.Story
