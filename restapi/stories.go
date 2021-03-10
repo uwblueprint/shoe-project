@@ -75,10 +75,8 @@ func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.R
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
-	fmt.Printf("storiesBytags: %v\n", storiesByTags)
 
 	if len(storiesByTags) != 0 {
-		fmt.Printf("in storiesByTags \n")
 
 		storyIDs := make([]string, len(storiesByTags))
 		for i := 0; i < len(storiesByTags); i++ {
@@ -87,15 +85,16 @@ func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.R
 		gormStories = gormStories.Where("id IN ?", storyIDs)
 	}
 
-	if len(sortString) != 0 {
-		gormStories = gormStories.Order(sortString)
-		fmt.Printf("in sortString \n")
-	}
-
 	err = gormStories.Where("is_visible = ?", visibility).Find(&stories).Error
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
+
+	if len(sortString) != 0 {
+		gormStories = gormStories.Order(sortString)
+	}
+
+	// TODO use ReturnTaggedStories(stories) before returning stories 
 
 	return rest.JSONStatusOK(stories)
 }
