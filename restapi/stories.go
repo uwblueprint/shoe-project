@@ -58,12 +58,28 @@ func (api api) ReturnStoryByID(w http.ResponseWriter, r *http.Request) render.Re
 	return rest.JSONStatusOK(story)
 }
 
+func (api api) AddAuthorToStories(stories []models.Story) ([]models.Story, error) {
+	for i, story := range stories {
+		var author = models.Author{
+			FirstName:     story.AuthorFirstName,
+			LastName:      story.AuthorLastName,
+			OriginCountry: story.AuthorCountry,
+		}
+		err := api.database.First(&author).Error
+		if err != nil {
+			return stories, err
+		}
+		stories[i].Author = author
+	}
+	return stories, nil
+}
+
 func (api api) DeleteStoryByID(w http.ResponseWriter, r *http.Request) render.Renderer {
 	// TODO: Delete the image from S3 properly
 	var story models.Story
 	id := chi.URLParam(r, "storyID")
 
-	err := api.database.Preload("Author").Where("id=?", id).First(&story).Error
+	err := api.database.Where("id=?", id).First(&story).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return rest.ErrNotFound(fmt.Sprintf("Could not find story with ID %s", id))
@@ -71,23 +87,35 @@ func (api api) DeleteStoryByID(w http.ResponseWriter, r *http.Request) render.Re
 		return rest.ErrInternal(api.logger, err)
 	}
 
+	var author = models.Author{
+		FirstName:     story.AuthorFirstName,
+		LastName:      story.AuthorLastName,
+		OriginCountry: story.AuthorCountry,
+	}
+	err = api.database.First(&author).Error
+	if err != nil {
+		return rest.ErrInternal(api.logger, err)
+	}
+	story.Author = author
+
 	var stories []models.Story
-	err = api.database.Where("author_first_name=?", story.AuthorFirstName).Where("author_last_name=?", story.AuthorLastName).Where("author_country=?", story.AuthorCountry).Find(&stories).Error
+	var numStories int64
+	err = api.database.Where("author_first_name=?", story.AuthorFirstName).Where("author_last_name=?", story.AuthorLastName).Where("author_country=?", story.AuthorCountry).Find(&stories).Count(&numStories).Error
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
 
-	if len(stories) == 1 { // This would mean the author has only 1 story which is being deleted, so author needs to be deleted as well
+	if numStories == 1 { // This would mean the author has only 1 story which is being deleted, so author needs to be deleted as well
 		if err := api.database.Delete(story.Author).Error; err != nil { // delete existing tags
 			return rest.ErrInternal(api.logger, err)
 		}
 	}
 
-	if err := api.database.Delete(story).Error; err != nil { // delete existing tags
+	if err := api.database.Where("story_id=?", id).Delete(models.Tag{}).Error; err != nil { // delete existing tags
 		return rest.ErrInternal(api.logger, err)
 	}
 
-	if err := api.database.Where("story_id=?", id).Delete(models.Tag{}).Error; err != nil { // delete existing tags
+	if err := api.database.Delete(story).Error; err != nil { // delete existing tags
 		return rest.ErrInternal(api.logger, err)
 	}
 
