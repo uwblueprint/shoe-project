@@ -222,10 +222,60 @@ func GetStoriesToTest() []models.Story {
 	return jsonStories
 }
 
+func GetAuthorsToTest() []models.Author {
+	jsonAuthors := []models.Author{
+		{
+			FirstName:     "John",
+			LastName:      "Doe",
+			OriginCountry: "France",
+			Bio:           "bio1",
+		},
+		{
+			FirstName:     "John",
+			LastName:      "Adams",
+			OriginCountry: "France",
+			Bio:           "bio2",
+		},
+		{
+			FirstName:     "Bruce",
+			LastName:      "Wayne",
+			OriginCountry: "USA",
+			Bio:           "bio3",
+		},
+		{
+			FirstName:     "Clark",
+			LastName:      "Kent",
+			OriginCountry: "Canada",
+			Bio:           "bio4",
+		},
+		{
+			FirstName:     "Douglas",
+			LastName:      "Adams",
+			OriginCountry: "UK",
+			Bio:           "bio5",
+		},
+		{
+			FirstName:     "Douglas",
+			LastName:      "Adams",
+			OriginCountry: "Canada",
+			Bio:           "bio6",
+		},
+		{
+			FirstName:     "Barry",
+			LastName:      "Allen",
+			OriginCountry: "UK",
+			Bio:           "bio7",
+		},
+	}
+	return jsonAuthors
+}
+
 func (suite *endpointTestSuite) TestGetAllStories() {
 
 	jsonStories := GetStoriesToTest()
+	jsonAuthors := GetAuthorsToTest()
 
+	suite.db.Create(&jsonAuthors)
 	suite.db.Create(&jsonStories)
 
 	var response = suite.endpoint.GET("/stories").
@@ -245,7 +295,8 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 			"summary": "Summary1",
 			"current_city": "Toronto",
 			"image_url" : "https://exampleurl.com",
-			"video_url":"https://youtube.com"
+			"video_url":"https://youtube.com",
+			"tags": []
 		},
 		{
 			"author_first_name": "Douglas",
@@ -258,7 +309,8 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 			"summary": "Summary2",
 			"current_city": "Toronto",
 			"image_url" : "https://exampleurl.com",
-			"video_url": ""
+			"video_url": "",
+			"tags": []
 		}
 		],
 		"status": "OK"
@@ -280,6 +332,7 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 	response.Object().Value("payload").Array().Element(0).Object().Value("current_city").Equal("Toronto")
 	response.Object().Value("payload").Array().Element(0).Object().Value("image_url").Equal("https://exampleurl.com")
 	response.Object().Value("payload").Array().Element(0).Object().Value("video_url").Equal("https://youtube.com")
+	response.Object().Value("payload").Array().Element(0).Object().Value("tags").Array().Empty()
 
 	response.Object().Value("payload").Array().Element(1).Object().Value("author_first_name").Equal("John")
 	response.Object().Value("payload").Array().Element(1).Object().Value("author_last_name").Equal("Adams")
@@ -291,13 +344,15 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 	response.Object().Value("payload").Array().Element(0).Object().Value("is_visible").Equal(true)
 	response.Object().Value("payload").Array().Element(1).Object().Value("summary").Equal("Summary2")
 	response.Object().Value("payload").Array().Element(1).Object().Value("current_city").Equal("Toronto")
-	response.Object().Value("payload").Array().Element(0).Object().Value("image_url").Equal("https://exampleurl.com")
+	response.Object().Value("payload").Array().Element(1).Object().Value("tags").Array().Empty()
 }
 func (suite *endpointTestSuite) TestGetAllInvisibleStories() {
 
 	jsonStories := GetStoriesToTest()
+	jsonAuthors := GetAuthorsToTest()
 
 	//Add to sqlite db
+	suite.db.Create(&jsonAuthors)
 	suite.db.Create(&jsonStories)
 
 	var response = suite.endpoint.GET("/stories").WithQuery("visibility", false).
@@ -314,9 +369,12 @@ func (suite *endpointTestSuite) TestGetAllInvisibleStories() {
 func (suite *endpointTestSuite) TestMixedUpQueryParams() {
 
 	jsonStories := GetStoriesToTest()
+	jsonAuthors := GetAuthorsToTest()
 
 	//Add to sqlite db
+	suite.db.Create(&jsonAuthors)
 	suite.db.Create(&jsonStories)
+	
 	var response = suite.endpoint.GET("/stories").
 		WithQuery("sort", "current_city").
 		WithQuery("order", "asc").
@@ -325,7 +383,7 @@ func (suite *endpointTestSuite) TestMixedUpQueryParams() {
 		WithQuery("visibility", true).
 		Expect().
 		Status(http.StatusOK).JSON()
-
+	
 	response.Object().Value("payload").Array().Length().Equal(4)
 	response.Object().Value("payload").Array().Element(0).Object().Value("title").Equal("Pulp Fiction")
 	response.Object().Value("payload").Array().Element(1).Object().Value("title").Equal("Hitchhiker's Guide to the Galaxy")
@@ -337,9 +395,12 @@ func (suite *endpointTestSuite) TestMixedUpQueryParams() {
 func (suite *endpointTestSuite) TestSortByAuthor() {
 
 	jsonStories := GetStoriesToTest()
+	jsonAuthors := GetAuthorsToTest()
 
 	//Add to sqlite db
+	suite.db.Create(&jsonAuthors)
 	suite.db.Create(&jsonStories)
+
 	var response = suite.endpoint.GET("/stories").
 		WithQuery("order", "desc").
 		WithQuery("order", "asc").
@@ -375,11 +436,11 @@ func GetTagsToTest() []models.Tag {
 			StoryID: 4,
 		},
 		{
-			Name:    "EDUCATION",
+			Name:    "IMMIGRATION",
 			StoryID: 4,
 		},
 		{
-			Name:    "IMMIGRATION",
+			Name:    "EDUCATION",
 			StoryID: 4,
 		},
 		{
@@ -414,9 +475,11 @@ func GetTagsToTest() []models.Tag {
 func (suite *endpointTestSuite) TestGetVisibleStoriesWithTags() {
 
 	jsonStories := GetStoriesToTest()
+	jsonAuthors := GetAuthorsToTest()
 	jsonTags := GetTagsToTest()
 
 	//Add to sqlite db
+	suite.db.Create(&jsonAuthors)
 	suite.db.Create(&jsonStories)
 	suite.db.Create(&jsonTags)
 	var response = suite.endpoint.GET("/stories").
@@ -430,19 +493,33 @@ func (suite *endpointTestSuite) TestGetVisibleStoriesWithTags() {
 	response.Object().Value("payload").Array().Length().Equal(3)
 
 	response.Object().Value("payload").Array().Element(0).Object().Value("title").Equal("The Little Prince")
+	response.Object().Value("payload").Array().Element(0).Object().Value("tags").Array().Length().Equal(1)
+	response.Object().Value("payload").Array().Element(0).Object().Value("tags").Array().Element(0).Equal("EDUCATION")
+
 	response.Object().Value("payload").Array().Element(1).Object().Value("title").Equal("Hitchhiker's Guide to the Galaxy")
+	response.Object().Value("payload").Array().Element(1).Object().Value("tags").Array().Length().Equal(2)
+	response.Object().Value("payload").Array().Element(1).Object().Value("tags").Array().Element(0).Equal("REFUGEE")
+	response.Object().Value("payload").Array().Element(1).Object().Value("tags").Array().Element(1).Equal("EDUCATION")
+
 	response.Object().Value("payload").Array().Element(2).Object().Value("title").Equal("Pulp Fiction")
+	response.Object().Value("payload").Array().Element(2).Object().Value("tags").Array().Length().Equal(3)
+	response.Object().Value("payload").Array().Element(2).Object().Value("tags").Array().Element(0).Equal("REFUGEE")
+	response.Object().Value("payload").Array().Element(2).Object().Value("tags").Array().Element(1).Equal("IMMIGRATION")
+	response.Object().Value("payload").Array().Element(2).Object().Value("tags").Array().Element(2).Equal("EDUCATION")
 }
 
 func (suite *endpointTestSuite) TestTagsWithSort() {
 
 	jsonStories := GetStoriesToTest()
+	jsonAuthors := GetAuthorsToTest()
 	jsonTags := GetTagsToTest()
 
 	//Add to sqlite db
+	suite.db.Create(&jsonAuthors)
 	suite.db.Create(&jsonStories)
 	suite.db.Create(&jsonTags)
-	//orderd query parameters randomly to make sure endpoint is robust
+
+	//ordered query parameters randomly to make sure endpoint is robust
 	var response = suite.endpoint.GET("/stories").
 		WithQuery("order", "asc").
 		WithQuery("tags", "REFUGEE").
@@ -454,7 +531,16 @@ func (suite *endpointTestSuite) TestTagsWithSort() {
 
 	response.Object().Value("payload").Array().Length().Equal(2)
 	response.Object().Value("payload").Array().Element(0).Object().Value("title").Equal("Casper The Ghost")
+	response.Object().Value("payload").Array().Element(0).Object().Value("tags").Array().Length().Equal(3)
+	response.Object().Value("payload").Array().Element(0).Object().Value("tags").Array().Element(0).Equal("REFUGEE")
+	response.Object().Value("payload").Array().Element(0).Object().Value("tags").Array().Element(1).Equal("EDUCATION")
+	response.Object().Value("payload").Array().Element(0).Object().Value("tags").Array().Element(2).Equal("IMMIGRATION")
+
 	response.Object().Value("payload").Array().Element(1).Object().Value("title").Equal("Spiderman")
+	response.Object().Value("payload").Array().Element(1).Object().Value("tags").Array().Length().Equal(2)
+	response.Object().Value("payload").Array().Element(1).Object().Value("tags").Array().Element(0).Equal("REFUGEE")
+	response.Object().Value("payload").Array().Element(1).Object().Value("tags").Array().Element(1).Equal("EDUCATION")
+	
 }
 
 func (suite *endpointTestSuite) TestVisibleStories() {

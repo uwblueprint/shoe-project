@@ -88,7 +88,6 @@ func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.R
 		}
 		visibility = vb
 	}
-
 	err := r.ParseForm()
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
@@ -110,10 +109,10 @@ func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.R
 			sortString += ", "
 		}
 	}
-
+	
 	gormStories := api.database.Table("stories")
 	gormTags := api.database.Table("tags")
-
+	
 	err = gormTags.Where("name IN ?", tags).Find(&storiesByTags).Error
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
@@ -128,16 +127,14 @@ func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.R
 		gormStories = gormStories.Where("id IN ?", storyIDs)
 	}
 
-	err = gormStories.Where("is_visible = ?", visibility).Find(&stories).Error
-	if err != nil {
-		return rest.ErrInternal(api.logger, err)
-	}
-
 	if len(sortString) != 0 {
 		gormStories = gormStories.Order(sortString)
 	}
 
-	// TODO use ReturnTaggedStories(stories) before returning stories 
+	err = gormStories.Where("is_visible = ?", visibility).Find(&stories).Error
+	if err != nil {
+		return rest.ErrInternal(api.logger, err)
+	}
 
 	stories, err = api.AddAuthorToStories(stories)
 	if err != nil {
