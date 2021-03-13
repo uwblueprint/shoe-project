@@ -65,8 +65,6 @@ export const AllStories: React.FC = () => {
   const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState("id");
 
-  if (allStories === undefined) return;
-
   const handleChange = (e, d) => {
     if (e.target.checked) {
       setVisibleState((prevState) => [...prevState, d.id]);
