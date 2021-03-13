@@ -129,16 +129,18 @@ interface TagParameters {
 }
 
 interface StoryProps {
+  id: number;
   story: Story;
   bio: string;
 }
 
 export const UploadStory: React.FC<StoryProps> = ({
+  id,
   story,
   bio,
 }: StoryProps) => {
   const { data: tagOptions, error } = useSWR<string[]>("/api/tags");
-  const [tagArray, setTagArrayValues] = useState([]);
+  const [tagArray, setTagArrayValues] = useState(story.tags);
   const [newImage, setNewImage] = useState(story.image_url);
   const [disabled, setDisabled] = useState(false);
   //handleSubmit component states
@@ -227,7 +229,10 @@ export const UploadStory: React.FC<StoryProps> = ({
     setLoading(false);
     setDisabled(false);
     const resultMessage = JSON.parse(result).message;
-    if (resultMessage === "Story Added Successfully") {
+    if (
+      resultMessage === "Story Added Successfully" ||
+      resultMessage === "Story Updated successfully"
+    ) {
       setDialogOpenState(true);
     } else {
       setErrorOpen(true);
@@ -246,9 +251,16 @@ export const UploadStory: React.FC<StoryProps> = ({
     for (const index in tagArray) {
       formData.append("tags", tagArray[index]);
     }
+    let fetchString = "/api/story";
+    let method = "POST";
 
-    fetch("/api/story", {
-      method: "POST",
+    if (id) {
+      fetchString = `/api/story/${id}`;
+      method = "PUT";
+    }
+
+    fetch(fetchString, {
+      method: method,
       body: formData,
       redirect: "follow",
     })
@@ -258,6 +270,8 @@ export const UploadStory: React.FC<StoryProps> = ({
       })
       .catch((error) => console.log("Error: ", error));
   };
+
+  const successMessage = id ? "Story Edit Success!" : "Story Upload Success!";
 
   if (error) return <div>Error fetching tags!</div>;
 
@@ -515,7 +529,7 @@ export const UploadStory: React.FC<StoryProps> = ({
               aria-describedby="alert-dialogd-description"
             >
               <DialogTitle id="alert-dialog-title">
-                {"Story Upload Success!"}
+                {successMessage}
               </DialogTitle>
               <DialogContent>
                 <DialogContentText id="alert-dialog-description">

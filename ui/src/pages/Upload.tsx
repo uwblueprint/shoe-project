@@ -25,5 +25,5 @@ export const Upload: React.FC = () => {
     DeletedAt: null,
   };
 
-  return <UploadStory story={story} bio={""}></UploadStory>;
+  return <UploadStory id={null} story={story} bio={""}></UploadStory>;
 };
