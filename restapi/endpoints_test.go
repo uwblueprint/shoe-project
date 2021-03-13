@@ -439,6 +439,66 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 	response.Object().Value("payload").Object().Value("video_url").Equal("https://youtube.com")
 }
 
+func (suite *endpointTestSuite) TestDeleteStoryByID() {
+	json := []models.Author{
+		{
+			FirstName:     "Chimamanda",
+			LastName:      "Ngozi Adieche",
+			OriginCountry: "Nigeria",
+			Bio:           "bio",
+		},
+	}
+
+	token, _ := testutils.ValidToken()
+
+	suite.endpoint.POST("/authors").WithHeader("Authorization", fmt.Sprintf("Bearer %s", token)).
+		WithJSON(json).
+		Expect().
+		Status(http.StatusOK)
+	suite.db.Create(&json)
+
+	json_stories := []models.Story{
+		{
+			Title:           "Half of a Yellow Sun",
+			Content:         "Fiction",
+			Year:            2019,
+			IsVisible:       true,
+			Summary:         "Summary1",
+			CurrentCity:     "Toronto",
+			ImageURL:        "https://exampleurl.com",
+			VideoURL:        "https://youtube.com",
+			AuthorFirstName: "Chimamanda",
+			AuthorLastName:  "Ngozi Adieche",
+			AuthorCountry:   "Nigeria",
+		},
+	}
+
+	suite.db.Create(&json_stories)
+
+	var response = suite.endpoint.DELETE("/story/1").
+		Expect().
+		Status(http.StatusOK).JSON()
+	mock := `{
+				"message" : "Story Deleted Successfully"
+			}`
+	//Verify they are the same
+	response.Schema(mock)
+	response.Object().Value("message").Equal("Story Deleted Successfully")
+
+	response = suite.endpoint.GET("/stories").
+		Expect().
+		Status(http.StatusOK).JSON()
+
+	mock = `{
+		"payload": [],
+		"status": "OK"
+	}`
+
+	response.Schema(mock)
+	response.Object().Value("payload").Array().Length().Equal(0)
+
+}
+
 func (suite *endpointTestSuite) TearDownSuite() {
 	if err := testutils.CloseDatabase(suite.db); err != nil {
 		suite.Fail("error while closing database", err)
