@@ -7,6 +7,7 @@ import * as React from "react";
 import styled from "styled-components";
 
 import { colors } from "../styles/colors";
+import { device } from "../styles/device";
 import {
   CardDescriptionText,
   CardDetailText,
@@ -24,12 +25,23 @@ const StyledButton = styled(Button)`
     &:hover {
       background-color: ${colors.primaryLight3};
     }
+
+    @media ${device.mobile} {
+      margin: 1.5vh 0;
+      font-size: 3em;
+      font-weight: 600;
+      height: 5vh;
+    }
   }
 `;
 
 const StyledMedia = styled(CardMedia)`
   height: 211px;
   background: ${colors.neutralLight};
+  @media ${device.mobile} {
+    height: 0;
+    padding-top: 25vh;
+  }
 `;
 
 const LoadingCardContent = styled(CardContent)`
@@ -42,11 +54,19 @@ const LoadingCardContent = styled(CardContent)`
 const StyledCardContent = styled(CardContent)`
   border-radius: 10px;
   overflow: hidden;
+  @media ${device.mobile} {
+    padding: 3em !important;
+  }
 `;
 
 const StyledCard = styled(Card)`
   .MuiPaper-rounded {
     border-radius: 10px;
+  }
+  @media ${device.mobile} {
+    width: 90vw;
+    height: fit-content;
+    border-radius: 1.5em !important;
   }
 `;
 
@@ -91,6 +111,9 @@ export function PinPreview({
         <CardTagText>{country}</CardTagText>
         <CardTitleText>{title}</CardTitleText>
         <CardDescriptionText>{description}</CardDescriptionText>
+        <CardDetailText>
+          {author} • {date}
+        </CardDetailText>
         <StyledButton
           variant="contained"
           color="primary"
@@ -99,9 +122,6 @@ export function PinPreview({
         >
           Read Full Story
         </StyledButton>
-        <CardDetailText>
-          {author} • {date}
-        </CardDetailText>
       </StyledCardContent>
     </StyledCard>
   );
