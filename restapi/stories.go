@@ -130,16 +130,16 @@ func (api api) EditStoryByID(w http.ResponseWriter, r *http.Request) render.Rend
 			return rest.ErrInvalidRequest(api.logger, msg, err)
 		}*/
 
+	imageURL := story.ImageURL
+
 	file, h, err := r.FormFile("image")
 
-	if err != nil {
-		return rest.ErrInvalidRequest(api.logger, "Error getting the image.", err)
+	if err == nil {
+		imageURL, err = api.uploadImageTos3(file, h.Size, h.Filename)
+		if err != nil {
+			return rest.ErrInvalidRequest(api.logger, "Error uploading the image to s3.", err)
+		}
 	}
-	imageURL, err := api.uploadImageTos3(file, h.Size, h.Filename)
-	if err != nil {
-		return rest.ErrInvalidRequest(api.logger, "Error uploading the image to s3.", err)
-	}
-	defer file.Close()
 
 	var author models.Author
 	author.FirstName = r.FormValue("author_first_name")
@@ -337,7 +337,6 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 	if err != nil {
 		return rest.ErrInvalidRequest(api.logger, "Error uploading the image to s3.", err)
 	}
-	defer file.Close()
 	var story models.Story
 	var author models.Author
 	author.FirstName = r.FormValue("author_first_name")
