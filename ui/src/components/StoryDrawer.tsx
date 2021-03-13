@@ -5,6 +5,7 @@ import Grid from "@material-ui/core/Grid";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import * as React from "react";
 import styled from "styled-components";
+import CreateIcon from '@material-ui/icons/Create';
 
 import { colors } from "../styles/colors";
 import { device } from "../styles/device";
@@ -39,6 +40,12 @@ const StyledIconButton = styled(Button)`
       background-color: ${colors.secondaryDark1};
     }
   }
+`;
+
+const EditStoryButton = styled(Button)`
+  text-transform: none;
+  margin: 5px;
+  width: 100%;
 `;
 
 const StyledImage = styled.img`
@@ -91,9 +98,10 @@ const StyledVideo = styled.iframe`
 interface StoryDrawerProps {
   story?: Story;
   onClose: () => void;
+  onClickEditStory?: () => void;
 }
 
-export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
+export function StoryDrawer({ story, onClose, onClickEditStory }: StoryDrawerProps): JSX.Element {
   const [imageURL, setImageURL] = React.useState("");
   if (story === undefined) {
     return null;
@@ -128,9 +136,17 @@ export function StoryDrawer({ story, onClose }: StoryDrawerProps): JSX.Element {
       </StyledIconButton>
       <StyledRoot>
         <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12}>
+          <Grid item xs={onClickEditStory ? 9 : 12}>
             <StoryDrawerTitleText>{title}</StoryDrawerTitleText>
           </Grid>
+          {onClickEditStory && 
+            <Grid item xs={3}>
+              <EditStoryButton variant="contained" color="primary">
+                <CreateIcon/>
+                {" Edit Story"}
+              </EditStoryButton>
+            </Grid>
+          }
           <Grid item xs={12}>
             <StoryDrawerCountryText>
               Origin: {author_country}

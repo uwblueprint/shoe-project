@@ -1,4 +1,5 @@
 import {
+  AppBar,
   Button,
   Chip,
   Dialog,
@@ -22,11 +23,13 @@ import * as React from "react";
 import { KeyboardEvent, useReducer, useState } from "react";
 import styled from "styled-components";
 import useSWR from "swr";
+import { StoryDrawer } from "../components";
 
 import countriesList from "../data/countries.json";
 import { colors } from "../styles/colors";
 import { device } from "../styles/device";
 import { UploadLabelsText, UploadStoriesHeading } from "../styles/typography";
+import { Story, Author } from "../types";
 
 const StyledGrid = styled(Grid)`
   background-color: ${colors.primaryLight6};
@@ -95,12 +98,6 @@ const StyledTags = styled(Autocomplete)`
   }
 `;
 
-const StyledButton = styled(Button)`
-  && {
-    width: 30vw;
-    margin-left: 24px;
-  }
-`;
 const StyledBackgroundColor = styled.div`
   background-color: ${colors.white};
   width: 40vw;
@@ -110,6 +107,11 @@ const StyledBackgroundColor = styled.div`
 
 const StyledLinearProgress = styled(LinearProgress)`
   margin-top: 24px;
+`;
+
+const StyledButton = styled(Button)`
+  text-transform: none;
+  margin: 5px;
 `;
 
 interface InputProps {
@@ -130,6 +132,7 @@ export const Upload: React.FC = () => {
   const [dialogOpenState, setDialogOpenState] = useState(false);
   const [uploadErrorState, setErrorOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const [formInput, setFormInput] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
@@ -147,6 +150,56 @@ export const Upload: React.FC = () => {
       bio: "",
     }
   );
+
+  const story = React.useMemo(()=> {
+    if(isDrawerOpen){
+      const storyFromData : Story ={
+        image_url: URL.createObjectURL(formInput.image),
+        video_url: formInput.video_url as string,
+        title: formInput.title as string,
+        content: formInput.content as string,
+        summary: formInput.summary as string,
+        author_first_name: formInput.author_first_name as string,
+        author_last_name: formInput.author_last_name as string,
+        author_country: formInput.authour_country as string,
+        year: formInput.year as number,
+        current_city: formInput.current_city as string,
+        author: {
+          ID: 0,
+          CreatedAt: "",
+          UpdatedAt: "",
+          DeletedAt: {
+            Time: "",
+            Valid: true,
+          },
+          firstName: formInput.author_last_name as string,
+          currentCity: formInput.current_city as string,
+          bio: formInput.bio as string,
+        } as Author,
+        tags: [],
+        is_visible: true,
+        latitude: 0,
+        longitude: 0,
+        ID: 0,
+        CreatedAt: "",
+        UpdatedAt: "",
+        DeletedAt: {
+          Time: "",
+          Valid: true,
+        },
+      }
+      console.log(storyFromData)
+      return storyFromData;
+
+    }
+    return undefined;
+  }, [isDrawerOpen, formInput]);
+
+  const hasAllRequiredFields = React.useMemo(() => {
+    return formInput.image && formInput.title && formInput.content && formInput.summary
+    && formInput.author_first_name && formInput.author_last_name && formInput.year 
+    && formInput.current_city && formInput.author_country;
+  }, [formInput]);
 
   const setImage = (files: File[]) => {
     setFormInput({
@@ -236,11 +289,21 @@ export const Upload: React.FC = () => {
 
   return (
     <>
+    <AppBar color="default" position="sticky">
+      <Grid container direction="row">
+        <Grid item xs={6}>
+          <UploadStoriesHeading>Upload New Story</UploadStoriesHeading>
+        </Grid>
+        <Grid container item xs={6} direction="row" alignContent="center" justify="flex-end">
+          <StyledButton disabled={!hasAllRequiredFields} onClick={() => setIsDrawerOpen(true)} color="primary" variant="outlined">Preview</StyledButton>
+          <StyledButton disabled={disabled || !hasAllRequiredFields} variant="contained" color="primary">Upload</StyledButton>
+        </Grid>
+      </Grid>
+    </AppBar>
       <StyledGrid container justify="center" alignContent="center">
         <form onSubmit={handleSubmit}>
           <FormControl>
             <StyledBackgroundColor>
-              <UploadStoriesHeading>Story Information</UploadStoriesHeading>
               <UploadLabelsText>Title</UploadLabelsText>
               <StyledTextField
                 onChange={handleChange}
@@ -438,15 +501,6 @@ export const Upload: React.FC = () => {
                 }}
               />
             </StyledBackgroundColor>
-
-            <StyledButton
-              disabled={disabled}
-              color="primary"
-              type="submit"
-              variant="contained"
-            >
-              Submit Story
-            </StyledButton>
             <Snackbar
               open={uploadErrorState}
               autoHideDuration={5000}
@@ -482,6 +536,7 @@ export const Upload: React.FC = () => {
           </FormControl>
         </form>
       </StyledGrid>
+      <StoryDrawer story={story} onClose={()=> setIsDrawerOpen(false)} />
       {loading ? <StyledLinearProgress /> : null}
     </>
   );

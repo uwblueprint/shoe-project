@@ -297,7 +297,7 @@ export const UploadStoriesHeading = styled.div`
   font-size: ${fontSize.h3Text};
   line-height: 150%;
   color: ${colors.black};
-  margin: 24px 0px 24px 0px;
+  margin: 24px 0px 24px 5px;
 `;
 
 export const UploadLabelsText = styled.div`
