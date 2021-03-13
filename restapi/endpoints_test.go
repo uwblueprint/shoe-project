@@ -125,7 +125,6 @@ func (suite *endpointTestSuite) TestReturnAllUniqueTags() {
 		Expect().
 		Status(http.StatusOK).JSON()
 
-	//TEST FAILS here b/c extra table value "IMMIGRATION" gets added in "TestGetVisibleStoriesWithTags" below
 	response.Object().Value("payload").Array().Length().Equal(2)
 	response.Object().Value("payload").Array().Element(0).Equal("EDUCATION")
 	response.Object().Value("payload").Array().Element(1).Equal("REFUGEE")
