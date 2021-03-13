@@ -35,7 +35,7 @@ function App(): JSX.Element {
             <Route path="/upload">
               <Upload />
             </Route>
-            <Route path="/stories">
+            <Route path="/allstories">
               <AllStories />
             </Route>
             <PrivateRoute path="/admin">
