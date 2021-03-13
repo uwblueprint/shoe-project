@@ -87,8 +87,8 @@ export const AllStories: React.FC = () => {
   };
 
   const handleRequestSort = (property) => {
-    const isDesc = orderBy === property && order === "desc";
-    const newOrder = isDesc ? "asc" : "desc";
+    const isDesc = orderBy === property && order === "asc";
+    const newOrder = isDesc ? "desc" : "asc";
     setOrder(newOrder);
     setOrderBy(property);
 
@@ -115,8 +115,7 @@ export const AllStories: React.FC = () => {
   const descendingComparator = (a, b, orderBy) => {
     if (b[orderBy] < a[orderBy]) {
       return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
+    } else if (b[orderBy] > a[orderBy]) {
       return 1;
     }
     return 0;
