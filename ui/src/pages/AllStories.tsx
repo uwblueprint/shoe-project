@@ -209,7 +209,7 @@ export const AllStories: React.FC = () => {
               header: "Author name",
               width: 250,
               onHeaderClick() {
-                handleRequestSort("author_first_name");
+                handleRequestSort("author_name");
               },
             },
             {
