@@ -5,9 +5,10 @@ import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import { useState } from "react";
 import * as React from "react";
+import styled from "styled-components";
 import useSWR from "swr";
 
-import { AllStoriesTabs } from "../components/AllStoriesTabs";
+import { a11yProps, AllStoriesTabs } from "../components/AllStoriesTabs";
 import VirtualizedTable from "../components/VirtualizedTable";
 import { Story } from "../types/index";
 
@@ -33,12 +34,9 @@ function createData(
   };
 }
 
-function a11yProps(index: any) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
+const StyledAppBar = styled(AppBar)`
+  //styling
+`;
 
 export const AllStories: React.FC = () => {
   const { data: allStories, error } = useSWR<Story[]>("/api/stories");
@@ -60,7 +58,7 @@ export const AllStories: React.FC = () => {
     );
   }
 
-  const [value, setValue] = React.useState(0);
+  const [tabValue, setTabValue] = React.useState(0);
   const [visibleState, setVisibleState] = React.useState([]);
   const [tableData, setTableData] = useState(rows);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
@@ -134,22 +132,22 @@ export const AllStories: React.FC = () => {
     event: React.ChangeEvent<Record<string, unknown>>,
     newValue: number
   ) => {
-    setValue(newValue);
+    setTabValue(newValue);
   };
   return (
     <>
-      <AppBar>
+      <StyledAppBar position="relative">
         <Tabs
-          value={value}
+          value={tabValue}
           onChange={handleTabChange}
-          aria-label="simple tabs example"
+          aria-label="all stories tabs"
         >
           <Tab label="ALL STORIES" {...a11yProps(0)} />
           <Tab label="VISIBLE CHANGES" {...a11yProps(1)} />
           <Tab label="PENDING MAP CHANGES" {...a11yProps(2)} />
         </Tabs>
-      </AppBar>
-      <AllStoriesTabs value={value} index={0}>
+      </StyledAppBar>
+      <AllStoriesTabs value={tabValue} index={0}>
         <VirtualizedTable
           data={stableSort(tableData, getComparator(order, orderBy))}
           order={order}
@@ -241,11 +239,11 @@ export const AllStories: React.FC = () => {
           ]}
         />
       </AllStoriesTabs>
-      <AllStoriesTabs value={value} index={1}>
-        Visible Stories
+      <AllStoriesTabs value={tabValue} index={1}>
+        Visible Changes
       </AllStoriesTabs>
-      <AllStoriesTabs value={value} index={2}>
-        Pending Map Changes
+      <AllStoriesTabs value={tabValue} index={2}>
+        Pending Changes
       </AllStoriesTabs>
     </>
   );
