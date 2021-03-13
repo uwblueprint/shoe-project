@@ -75,7 +75,7 @@ func randomCoords(coordinate float64) float64 {
 func (finder coordinatesFinder) randomizePinLocation(city string) (latitude float64, longitude float64, err error) {
 	coordinates, err := finder.GetCityCenter(city)
 	if err != nil {
-		finder.logger.Fatalw("Error while defaulting to randomized coordinates")
+		finder.logger.Info("Error while defaulting to randomized coordinates")
 		return 0, 0, err
 	}
 	latitude = randomCoords(coordinates.Latitude)
@@ -88,29 +88,30 @@ func (finder coordinatesFinder) GetPostalLatitudeAndLongitude(city string, limit
 	resp, err := http.Get(fmt.Sprintf(zipCodeURL, finder.zipCodeToken, city, limit+1))
 	if err != nil || resp.StatusCode != 200 {
 		// default to randomizing if there is an error
-		finder.logger.Fatalw("Error requesting postal codes from the ZipCode API")
+		finder.logger.Info("Error requesting postal codes from the ZipCode API")
 		return finder.randomizePinLocation(city)
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		// default to randomizing if there is an error
-		finder.logger.Fatalw("Error accessing ZipCode response body")
+		finder.logger.Info("Error accessing ZipCode response body")
 		return finder.randomizePinLocation(city)
 	}
 	var zipcodeResp zipcodeResponse
 	err = json.Unmarshal(body, &zipcodeResp)
 	if err != nil || zipcodeResp.Results == nil || len(zipcodeResp.Results) == 0 {
 		// default to randomizing if there is an error
-		finder.logger.Fatalw("Error deserializing ZipCode response")
+		finder.logger.Info("Error deserializing ZipCode response")
 		return finder.randomizePinLocation(city)
 	}
 
 	postalCode := zipcodeResp.Results[len(zipcodeResp.Results)-1]
+	fmt.Printf("%v", zipcodeResp)
 	coordinates, err := finder.GetCityCenter(postalCode)
 	if err != nil {
 		// default to randomizing if there is an error
-		finder.logger.Fatalw("Error getting the coordinates fro the postal code from Mapbox")
+		finder.logger.Info("Error getting the coordinates fro the postal code from Mapbox")
 		return finder.randomizePinLocation(city)
 	}
 	return coordinates.Latitude, coordinates.Longitude, nil
