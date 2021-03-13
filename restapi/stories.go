@@ -250,18 +250,18 @@ func (api api) DeleteStoryByID(w http.ResponseWriter, r *http.Request) render.Re
 		return rest.ErrInternal(api.logger, err)
 	}
 
+	if err := api.database.Where("story_id=?", id).Unscoped().Delete(models.Tag{}).Error; err != nil { // delete existing tags
+		return rest.ErrInternal(api.logger, err)
+	}
+
+	if err := api.database.Unscoped().Delete(story).Error; err != nil { // delete existing story
+		return rest.ErrInternal(api.logger, err)
+	}
+
 	if numStories == 1 { // This would mean the author has only 1 story which is being deleted, so author needs to be deleted as well
-		if err := api.database.Delete(story.Author).Error; err != nil { // delete existing tags
+		if err := api.database.Unscoped().Delete(author).Error; err != nil { // delete existing author
 			return rest.ErrInternal(api.logger, err)
 		}
-	}
-
-	if err := api.database.Where("story_id=?", id).Delete(models.Tag{}).Error; err != nil { // delete existing tags
-		return rest.ErrInternal(api.logger, err)
-	}
-
-	if err := api.database.Delete(story).Error; err != nil { // delete existing tags
-		return rest.ErrInternal(api.logger, err)
 	}
 
 	return rest.MsgStatusOK("Story Deleted Successfully")
