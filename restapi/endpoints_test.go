@@ -449,12 +449,6 @@ func (suite *endpointTestSuite) TestDeleteStoryByID() {
 		},
 	}
 
-	token, _ := testutils.ValidToken()
-
-	suite.endpoint.POST("/authors").WithHeader("Authorization", fmt.Sprintf("Bearer %s", token)).
-		WithJSON(json).
-		Expect().
-		Status(http.StatusOK)
 	suite.db.Create(&json)
 
 	json_stories := []models.Story{
@@ -475,6 +469,15 @@ func (suite *endpointTestSuite) TestDeleteStoryByID() {
 
 	suite.db.Create(&json_stories)
 
+	json_tags := []models.Tag{
+		{
+			Name:    "EDUCATION",
+			StoryID: 1,
+		},
+	}
+
+	suite.db.Create(&json_tags)
+
 	var response = suite.endpoint.DELETE("/story/1").
 		Expect().
 		Status(http.StatusOK).JSON()
@@ -484,6 +487,16 @@ func (suite *endpointTestSuite) TestDeleteStoryByID() {
 	//Verify they are the same
 	response.Schema(mock)
 	response.Object().Value("message").Equal("Story Deleted Successfully")
+
+	var authors []models.Author
+	var authorCount int64
+	suite.db.Find(&authors).Count(&authorCount)
+	suite.Equal(0, int(authorCount))
+
+	var tags []models.Tag
+	var tagCount int64
+	suite.db.Find(&tags).Count(&tagCount)
+	suite.Equal(0, int(tagCount))
 
 	response = suite.endpoint.GET("/stories").
 		Expect().
