@@ -30,8 +30,8 @@ const useVirtualizedTableStyles = makeStyles({
 
 interface VirtualizedTableProps {
   data: [];
-  columns: [];
-  order: "desc" | "asc";
+  columns: any;
+  order: string;
   orderBy: string;
 }
 
