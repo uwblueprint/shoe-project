@@ -65,11 +65,6 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 		rest.GetHandler(r, "/login", api.Login)
 		rest.GetHandler(r, "/auth/callback", api.AuthCallback)
 		rest.GetHandler(r, "/client_tokens", api.ReturnClientTokens)
-
-		// TODO: move back to protected endpoints
-		rest.PostHandler(r, "/stories", api.CreateStories)
-		rest.PostHandler(r, "/story", api.CreateStoriesFormData)
-		rest.PostHandler(r, "/authors", api.CreateAuthors)
 	})
 
 	// Private API
@@ -77,13 +72,18 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 		r.Use(jwtauth.Verifier(config.GetJWTKey()))
 		r.Use(Authenticator)
 
-		// rest.PostHandler(r, "/stories", api.CreateStories)
-		// rest.PostHandler(r, "/story", api.CreateStoriesFormData)
-		// rest.PostHandler(r, "/authors", api.CreateAuthors)
+		rest.GetHandler(r, "/check_auth", api.checkAuth)
+		rest.PostHandler(r, "/stories", api.CreateStories)
+		rest.PostHandler(r, "/story", api.CreateStoriesFormData)
+		rest.PostHandler(r, "/authors", api.CreateAuthors)
 	})
 	return r, nil
 }
 
 func (api api) health(w http.ResponseWriter, r *http.Request) render.Renderer {
 	return rest.MsgStatusOK("Hello World")
+}
+
+func (api api) checkAuth(w http.ResponseWriter, r *http.Request) render.Renderer {
+	return rest.MsgStatusOK("Auth is valid")
 }

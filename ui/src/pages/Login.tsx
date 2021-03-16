@@ -1,11 +1,11 @@
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import * as React from "react";
-import { Redirect } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 
-import { useAuth } from "../hooks/auth";
 import { LoginMessageText, LoginTitleText } from "../styles/typography";
 
 const CardDiv = styled.div`
@@ -32,7 +32,26 @@ interface LoginProps {
 }
 
 export const Login: React.FC<LoginProps> = (props: LoginProps) => {
-  const auth = useAuth();
+  const [loading, setLoading] = React.useState(true);
+  const history = useHistory();
+  React.useLayoutEffect(() => {
+    fetch("/api/check_auth")
+      .then((res) => {
+        console.log(res);
+        if (!res.redirected) {
+          history.replace("/admin")
+        } else {
+          setLoading(false);
+        }
+      })
+      .catch((_) => {
+        setLoading(false);
+      });
+  }, [setLoading, history])
+
+  if (loading) {
+    return <CircularProgress />;
+  }
 
   const title = props.login
     ? "Welcome to the Shoe Project Admin Portal"
@@ -40,10 +59,6 @@ export const Login: React.FC<LoginProps> = (props: LoginProps) => {
   const description = props.login
     ? "Please Sign In using your Shoe Project Email"
     : "Make sure you are using a Shoe Project Organization Email";
-
-  if (auth.user) {
-    return <Redirect to="/admin" />;
-  }
 
   return (
     <CardDiv>
@@ -57,7 +72,9 @@ export const Login: React.FC<LoginProps> = (props: LoginProps) => {
             size="small"
             color="primary"
             variant="contained"
-            onClick={auth.signin}
+            onClick={() => {
+              window.location.href = "http://localhost:8900/api/login"
+            }}
           >
             Sign In with Google
           </Button>

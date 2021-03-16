@@ -82,6 +82,7 @@ func (api api) AuthCallback(w http.ResponseWriter, r *http.Request) render.Rende
 		return rest.ErrInternal(api.logger, err)
 	}
 
+	http.Redirect(w, r, "/admin", http.StatusTemporaryRedirect)
 	return rest.JSONStatusOK("Authenticated successfully")
 }
 

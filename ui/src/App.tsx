@@ -2,16 +2,22 @@ import * as React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { SWRConfig } from "swr";
 
-import { AuthProvider, PrivateRoute } from "./hooks/auth";
-import { Admin, AllStories, Login, ShoeMap, Upload } from "./pages";
+import { Admin, Login, ShoeMap } from "./pages";
 
 const defaultFetcher = (
   input: RequestInfo,
   init?: RequestInit
 ): Promise<unknown> =>
   fetch(input, init)
-    .then((res) => res.json())
-    .then(({ payload }) => payload);
+    .then((res) => {
+      console.log(res);
+      if (res.redirected) {
+        return { payload: "error: redirect" };
+      }
+      return res.json();
+    })
+    .then(({ payload }) => payload)
+    .catch((err) => err);
 
 function App(): JSX.Element {
   return (
@@ -20,7 +26,6 @@ function App(): JSX.Element {
         fetcher: defaultFetcher,
       }}
     >
-      <AuthProvider>
         <Router>
           <Switch>
             <Route exact path="/">
@@ -32,18 +37,11 @@ function App(): JSX.Element {
             <Route exact path="/unauthorized">
               <Login login={false} />
             </Route>
-            <Route path="/upload">
-              <Upload />
-            </Route>
-            <Route path="/allstories">
-              <AllStories />
-            </Route>
-            <PrivateRoute path="/admin">
+            <Route path="/admin">
               <Admin />
-            </PrivateRoute>
+            </Route>
           </Switch>
         </Router>
-      </AuthProvider>
     </SWRConfig>
   );
 }
