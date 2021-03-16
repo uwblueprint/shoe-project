@@ -36,6 +36,8 @@ export interface Author extends Model {
 
 export interface Tokens {
   mapbox: string;
+  zipcode: string;
+  google_client_id: string;
 }
 
 export interface User extends Partial<Model> {

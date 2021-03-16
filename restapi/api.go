@@ -76,6 +76,8 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 		r.Use(jwtauth.Verifier(config.GetJWTKey()))
 		r.Use(Authenticator)
 
+		rest.GetHandler(r, "/check_auth", api.checkAuth)
+
 		// rest.PostHandler(r, "/stories", api.CreateStories)
 		// rest.PostHandler(r, "/story", api.CreateStoriesFormData)
 		// rest.PostHandler(r, "/authors", api.CreateAuthors)
@@ -84,5 +86,9 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 }
 
 func (api api) health(w http.ResponseWriter, r *http.Request) render.Renderer {
+	return rest.MsgStatusOK("Hello World")
+}
+
+func (api api) checkAuth(w http.ResponseWriter, r *http.Request) render.Renderer {
 	return rest.MsgStatusOK("Hello World")
 }

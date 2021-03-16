@@ -2,7 +2,7 @@ import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import * as React from "react";
-import { Redirect } from "react-router-dom";
+import { Redirect, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 import { useAuth } from "../hooks/auth";
@@ -27,19 +27,10 @@ const GoogleButton = styled.div`
   margin-bottom: 5vh;
 `;
 
-interface LoginProps {
-  login: boolean;
-}
-
-export const Login: React.FC<LoginProps> = (props: LoginProps) => {
+export const Login: React.FC = () => {
   const auth = useAuth();
-
-  const title = props.login
-    ? "Welcome to the Shoe Project Admin Portal"
-    : "Sorry, that is not a valid email";
-  const description = props.login
-    ? "Please Sign In using your Shoe Project Email"
-    : "Make sure you are using a Shoe Project Organization Email";
+  const location = useLocation();
+  console.log(location);
 
   if (auth.user) {
     return <Redirect to="/admin" />;
@@ -49,8 +40,12 @@ export const Login: React.FC<LoginProps> = (props: LoginProps) => {
     <CardDiv>
       <StyledCard variant="outlined">
         <CardContent>
-          <LoginTitleText>{title}</LoginTitleText>
-          <LoginMessageText>{description}</LoginMessageText>
+          <LoginTitleText>
+            Welcome to the Shoe Project Admin Portal
+          </LoginTitleText>
+          <LoginMessageText>
+            Please Sign In using your Shoe Project Email
+          </LoginMessageText>
         </CardContent>
         <GoogleButton>
           <Button

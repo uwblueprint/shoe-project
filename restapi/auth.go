@@ -82,6 +82,7 @@ func (api api) AuthCallback(w http.ResponseWriter, r *http.Request) render.Rende
 		return rest.ErrInternal(api.logger, err)
 	}
 
+	http.Redirect(w, r, "/admin", http.StatusTemporaryRedirect)
 	return rest.JSONStatusOK("Authenticated successfully")
 }
 
@@ -114,6 +115,7 @@ func generateJWTToken(email string, w http.ResponseWriter) error {
 	return nil
 }
 
+// Authenticator checks requests
 func Authenticator(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token, _, err := jwtauth.FromContext(r.Context())

@@ -15,10 +15,10 @@ import { KeyboardEvent, useReducer, useState } from "react";
 import styled from "styled-components";
 import useSWR from "swr";
 
-import countriesList from "../data/countries.json";
-import { colors } from "../styles/colors";
-import { device } from "../styles/device";
-import { UploadLabelsText, UploadStoriesHeading } from "../styles/typography";
+import countriesList from "../../data/countries.json";
+import { colors } from "../../styles/colors";
+import { device } from "../../styles/device";
+import { UploadLabelsText, UploadStoriesHeading } from "../../styles/typography";
 
 const StyledGrid = styled(Grid)`
   background-color: ${colors.primaryLight6};

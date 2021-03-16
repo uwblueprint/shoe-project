@@ -1,10 +1,8 @@
 import * as React from "react";
-import { Redirect, Route, RouteProps } from "react-router-dom";
-
-import { User } from "../types";
+import { Redirect, Route, RouteProps, useHistory, useLocation } from "react-router-dom";
 
 interface AuthContextType {
-  user: User | null;
+  user: boolean;
   signin: () => void;
   signout: () => void;
 }
@@ -17,16 +15,20 @@ export function useAuth(): AuthContextType {
 }
 
 export function useProvideAuth(): AuthContextType {
-  const [user, setUser] = React.useState<User | null>(null);
+  const [user, setUser] = React.useState<boolean>(false);
+  const history = useHistory();
 
-  // TODO: Write signin function
   const signin = () => {
-    setUser({ email: "abhijeet@uwblueprint.org" });
+    console.log(location);
+    setUser(true);
+    console.log(document.cookie);
+    // window.location.href = `${location.origin}/api/login`;
   };
 
-  // TODO: Write signout function
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  const signout = () => {};
+  const signout = (redirect = "/login", state?: Record<string, string>) => {
+    setUser(false);
+    history.replace(redirect, state);
+  };
 
   return {
     user,
@@ -34,30 +36,6 @@ export function useProvideAuth(): AuthContextType {
     signout,
   };
 }
-
-// A wrapper for <Route> that redirects to the login
-// screen if you're not yet authenticated.
-// eslint-disable-next-line react/prop-types
-export const PrivateRoute: React.FC<RouteProps> = ({ children, ...rest }) => {
-  const auth = useAuth();
-  return (
-    <Route
-      {...rest}
-      render={({ location }) =>
-        auth.user ? (
-          children
-        ) : (
-          <Redirect
-            to={{
-              pathname: "/login",
-              state: { from: location },
-            }}
-          />
-        )
-      }
-    />
-  );
-};
 
 // eslint-disable-next-line react/prop-types
 export const AuthProvider: React.FC = ({ children }) => {

@@ -8,15 +8,17 @@ import (
 	"github.com/uwblueprint/shoe-project/restapi/rest"
 )
 
-func (api api) ReturnClientTokens(w http.ResponseWriter, r *http.Request) render.Renderer {
-	type Tokens struct {
-		Mapbox  string `json:"mapbox"`
-		Zipcode string `json:"zipcode"`
-	}
+type tokens struct {
+	Mapbox         string `json:"mapbox"`
+	Zipcode        string `json:"zipcode"`
+	GoogleClientID string `json:"google_client_id"`
+}
 
-	tokens := Tokens{
-		Mapbox:  config.GetMapBoxToken(),
-		Zipcode: config.GetZipCodeToken(),
+func (api api) ReturnClientTokens(w http.ResponseWriter, r *http.Request) render.Renderer {
+	tokens := tokens{
+		Mapbox:         config.GetMapBoxToken(),
+		Zipcode:        config.GetZipCodeToken(),
+		GoogleClientID: config.GetGoogleClientId(),
 	}
 
 	return rest.JSONStatusOK(tokens)
