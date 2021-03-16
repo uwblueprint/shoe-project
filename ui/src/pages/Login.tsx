@@ -38,7 +38,7 @@ export const Login: React.FC<LoginProps> = (props: LoginProps) => {
     fetch("/api/check_auth")
       .then((res) => {
         if (!res.redirected) {
-          history.replace("/admin")
+          history.replace("/admin");
         } else {
           setLoading(false);
         }
@@ -46,7 +46,7 @@ export const Login: React.FC<LoginProps> = (props: LoginProps) => {
       .catch((_) => {
         setLoading(false);
       });
-  }, [setLoading, history])
+  }, [setLoading, history]);
 
   if (loading) {
     return <CircularProgress />;

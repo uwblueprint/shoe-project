@@ -12,7 +12,7 @@ export const Admin: React.FC = () => {
     fetch("/api/check_auth")
       .then((res) => {
         if (res.redirected) {
-          history.replace("/login")
+          history.replace("/login");
         } else {
           setLoading(false);
         }
@@ -20,7 +20,7 @@ export const Admin: React.FC = () => {
       .catch((_) => {
         setLoading(false);
       });
-  }, [setLoading, history])
+  }, [setLoading, history]);
 
   if (loading) {
     return <CircularProgress />;
@@ -39,4 +39,4 @@ export const Admin: React.FC = () => {
       </Route>
     </Switch>
   );
-}
+};

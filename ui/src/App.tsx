@@ -26,22 +26,22 @@ function App(): JSX.Element {
         fetcher: defaultFetcher,
       }}
     >
-        <Router>
-          <Switch>
-            <Route exact path="/">
-              <ShoeMap />
-            </Route>
-            <Route exact path="/login">
-              <Login login />
-            </Route>
-            <Route exact path="/unauthorized">
-              <Login login={false} />
-            </Route>
-            <Route path="/admin">
-              <Admin />
-            </Route>
-          </Switch>
-        </Router>
+      <Router>
+        <Switch>
+          <Route exact path="/">
+            <ShoeMap />
+          </Route>
+          <Route exact path="/login">
+            <Login login />
+          </Route>
+          <Route exact path="/unauthorized">
+            <Login login={false} />
+          </Route>
+          <Route path="/admin">
+            <Admin />
+          </Route>
+        </Switch>
+      </Router>
     </SWRConfig>
   );
 }
