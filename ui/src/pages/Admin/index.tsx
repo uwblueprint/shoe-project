@@ -11,7 +11,6 @@ export const Admin: React.FC = () => {
   React.useLayoutEffect(() => {
     fetch("/api/check_auth")
       .then((res) => {
-        console.log(res);
         if (res.redirected) {
           history.replace("/login")
         } else {

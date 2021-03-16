@@ -37,7 +37,6 @@ export const Login: React.FC<LoginProps> = (props: LoginProps) => {
   React.useLayoutEffect(() => {
     fetch("/api/check_auth")
       .then((res) => {
-        console.log(res);
         if (!res.redirected) {
           history.replace("/admin")
         } else {
@@ -51,6 +50,10 @@ export const Login: React.FC<LoginProps> = (props: LoginProps) => {
 
   if (loading) {
     return <CircularProgress />;
+  }
+
+  function handleOnClick() {
+    window.location.href = `${window.location.origin}/api/login`;
   }
 
   const title = props.login
@@ -72,9 +75,7 @@ export const Login: React.FC<LoginProps> = (props: LoginProps) => {
             size="small"
             color="primary"
             variant="contained"
-            onClick={() => {
-              window.location.href = "http://localhost:8900/api/login"
-            }}
+            onClick={handleOnClick}
           >
             Sign In with Google
           </Button>
