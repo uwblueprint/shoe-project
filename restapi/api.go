@@ -63,9 +63,8 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 		rest.PutHandler(r, "/story/{storyID}", api.EditStoryByID)
 		rest.GetHandler(r, "/authors/origin_countries", api.ReturnAllCountries)
 		rest.GetHandler(r, "/tags", api.ReturnAllUniqueTags)
-		rest.GetHandler(r, "/login", api.Login)
-		rest.GetHandler(r, "/auth/callback", api.AuthCallback)
 		rest.GetHandler(r, "/client_tokens", api.ReturnClientTokens)
+		rest.PostHandler(r, "/login", api.Login)
 
 		// TODO: move back to protected endpoints
 		rest.PostHandler(r, "/stories", api.CreateStories)

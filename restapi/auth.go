@@ -1,9 +1,7 @@
 package restapi
 
 import (
-	"context"
 	"encoding/base64"
-	"encoding/json"
 	"math/rand"
 	"net/http"
 	"time"
@@ -14,6 +12,9 @@ import (
 	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
 	"github.com/uwblueprint/shoe-project/restapi/rest"
+	"google.golang.org/api/idtoken"
+	"golang.org/x/oauth2"
+	"github.com/mitchellh/mapstructure"
 )
 
 func generateStateOauthCookie(w http.ResponseWriter) (string, error) {
@@ -33,47 +34,29 @@ func generateStateOauthCookie(w http.ResponseWriter) (string, error) {
 	return state, nil
 }
 
-func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
-	state, err := generateStateOauthCookie(w)
-	if err != nil {
-		return rest.ErrInternal(api.logger, err)
-	}
-
-	url := api.oauthconfig.AuthCodeURL(state)
-	http.Redirect(w, r, url, http.StatusTemporaryRedirect)
-
-	return rest.JSONStatusOK(url)
+type GoogleClaims struct {
+	Email string `mapstructure:"email"`
+	Hd    string `mapstructure:"hd"`
 }
 
-func (api api) AuthCallback(w http.ResponseWriter, r *http.Request) render.Renderer {
-	expectedState, _ := r.Cookie("oauthstate")
-	if expectedState.Value != r.FormValue("state") {
-		return rest.ErrUnauthorized("Invalid oauth state")
-	}
+func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
 
-	// exchange received authorization code for an access token
-	token, err := api.oauthconfig.Exchange(context.Background(), r.FormValue("code"))
-	if err != nil {
-		return rest.ErrUnauthorized("Invalid authorization code")
-	}
-
-	// use access token to create a client which we use to access user info
-	user := models.User{}
-	client := api.oauthconfig.Client(context.Background(), token)
-	response, err := client.Get("https://www.googleapis.com/oauth2/v3/userinfo")
-	if err != nil {
-		return rest.JSONStatusOK("Invalid access token")
-	}
-	defer response.Body.Close()
-	err = json.NewDecoder(response.Body).Decode(&user)
+	payload, err := idtoken.Validate(oauth2.NoContext, r.Header.Get("Authorization"), config.GetGoogleClientId())
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
 
-	// redirect if invalid user
+	googleClaims := GoogleClaims{}
+	mapstructure.Decode(payload.Claims, &googleClaims)
+	user := models.User{
+		Email: googleClaims.Email,
+		Hd: googleClaims.Hd,
+	}
+
+	// create user in database if valid
 	err = api.database.FirstOrCreate(&user, models.User{Email: user.Email}).Error
 	if err != nil {
-		http.Redirect(w, r, "/unauthorized", http.StatusTemporaryRedirect)
+		return rest.ErrInternal(api.logger, err)
 	}
 
 	// if valid set jwt token in cookie
@@ -82,7 +65,7 @@ func (api api) AuthCallback(w http.ResponseWriter, r *http.Request) render.Rende
 		return rest.ErrInternal(api.logger, err)
 	}
 
-	return rest.JSONStatusOK("Authenticated successfully")
+	return rest.JSONStatusOK("Authenticated Successfully")
 }
 
 func generateJWTToken(email string, w http.ResponseWriter) error {
@@ -119,12 +102,12 @@ func Authenticator(next http.Handler) http.Handler {
 		token, _, err := jwtauth.FromContext(r.Context())
 
 		if err != nil {
-			http.Redirect(w, r, "/unauthorized", http.StatusTemporaryRedirect)
+			http.Error(w, "Could not find JWT token", http.StatusBadRequest)
 			return
 		}
 
 		if token == nil || !token.Valid {
-			http.Redirect(w, r, "/unauthorized", http.StatusTemporaryRedirect)
+			http.Error(w, "Invalid JWT token", http.StatusBadRequest)
 			return
 		}
 
