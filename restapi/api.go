@@ -46,7 +46,7 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 	api.oauthconfig = &oauth2.Config{
 		ClientID:     config.GetGoogleClientId(),
 		ClientSecret: config.GetGoogleClientSecret(),
-		RedirectURL:  os.Getenv("AUTH_REDIRECT_URL"),
+		RedirectURL:  config.GetAuthRedirectURL(),
 		Scopes: []string{
 			"https://www.googleapis.com/auth/userinfo.email",
 		},

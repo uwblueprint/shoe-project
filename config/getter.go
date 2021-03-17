@@ -190,3 +190,8 @@ func GetMapBoxToken() string {
 func GetZipCodeToken() string {
 	return viper.GetString("zipcode.token")
 }
+
+func GetAuthRedirectURL() string {
+	return viper.GetString("auth.redirect.url")
+}
+
