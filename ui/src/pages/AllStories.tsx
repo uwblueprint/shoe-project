@@ -7,10 +7,13 @@ import { useState } from "react";
 import * as React from "react";
 import styled from "styled-components";
 import useSWR from "swr";
-
+  
 import { a11yProps, AllStoriesTabs } from "../components/AllStoriesTabs";
 import VirtualizedTable from "../components/VirtualizedTable";
 import { Story } from "../types/index";
+
+import AddIcon from '@material-ui/icons/Add';
+import RemoveIcon from '@material-ui/icons/Remove';
 
 function createData(
   id: number,
@@ -72,6 +75,8 @@ export const AllStories: React.FC = () => {
     } else {
       setVisibleState((prevState) => prevState.filter((e) => e !== d.id));
     }
+
+    console.log(visibleState);
   };
 
   const handleCheckedAll = () => {
@@ -137,6 +142,15 @@ export const AllStories: React.FC = () => {
   ) => {
     setTabValue(newValue);
   };
+
+  // const setVisibleChangesIcon = (id) => {
+  //   if (visibleState.includes(id)) {
+  //     <AddIcon />
+  //   } else {
+  //     <RemoveIcon />
+  //   }
+  // }
+
   return (
     <>
       <StyledAppBar position="relative">
@@ -243,7 +257,86 @@ export const AllStories: React.FC = () => {
         />
       </AllStoriesTabs>
       <AllStoriesTabs value={tabValue} index={1}>
-        Visible Changes
+        {/* Visible Changes */}
+        <VirtualizedTable
+          data={stableSort(tableData, getComparator(order, orderBy))}
+          order={order}
+          orderBy={orderBy}
+          columns={[
+            {
+              name: "pending-map-changes-changes",
+              width: 200,
+              header: (
+                <div>
+                  Changes
+                </div>
+              ),
+              cell: (d) => (
+                <div>
+                  {/* <AddIcon /> */}
+                  {(visibleState.includes(d.id)) ? <AddIcon /> : <RemoveIcon />}
+                </div>
+              ),
+            },
+
+            {
+              name: "title",
+              header: "Story Name",
+              width: 200,
+              onHeaderClick() {
+                handleRequestSort("title");
+              },
+            },
+            {
+              name: "current_city",
+              header: "Current City",
+              width: 200,
+              onHeaderClick() {
+                handleRequestSort("current_city");
+              },
+            },
+            {
+              name: "year",
+              header: "Year",
+              width: 100,
+              onHeaderClick() {
+                handleRequestSort("year");
+              },
+            },
+            {
+              name: "author_name",
+              header: "Author name",
+              width: 250,
+              onHeaderClick() {
+                handleRequestSort("author_name");
+              },
+            },
+            {
+              name: "author_country",
+              header: "Country",
+              width: 300,
+              onHeaderClick() {
+                handleRequestSort("author_country");
+              },
+            },
+            {
+              name: "is_visible",
+              header: "Show on Map",
+              width: 150,
+              onHeaderClick() {
+                handleRequestSort("jobType");
+              },
+              cell: (d) => (
+                <Switch
+                  checked={visibleState.includes(d.id)}
+                  onChange={(e) => handleChange(e, d)}
+                  name="checked"
+                  color="primary"
+                />
+              ),
+            },
+          ]}
+        />
       </AllStoriesTabs>
       <AllStoriesTabs value={tabValue} index={2}>
         Pending Changes
