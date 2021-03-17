@@ -24,12 +24,12 @@ import (
 	"gorm.io/gorm"
 )
 
-const youtubeRegex = `(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})`
-const youtubeEmbedURL = "https://www.youtube.com/embed/"
+var youtubeRegex = regexp.MustCompile(`(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})`)
+var youtubeEmbedURL = regexp.MustCompile("https://www.youtube.com/embed/")
 
-const s3KeyNameRegex = `^https:\/\/shoeproject.s3.us-west-000.backblazeb2.com\/(.*)\?versionId`
-const s3KeyNameRegexAlternate = `^https:\/\/shoeproject.s3.us-west-000.backblazeb2.com\/(.*)`
-const s3VersionIdRegex = `\?versionId=(.*)`
+var s3KeyNameRegex = regexp.MustCompile(`^https:\/\/shoeproject.s3.us-west-000.backblazeb2.com\/(.*)\?versionId`)
+var s3KeyNameRegexAlternate = regexp.MustCompile(`^https:\/\/shoeproject.s3.us-west-000.backblazeb2.com\/(.*)`)
+var s3VersionIdRegex = regexp.MustCompile(`\?versionId=(.*)`)
 
 func init() {
 	rand.Seed(time.Now().UTC().UnixNano())
@@ -119,27 +119,26 @@ func (api api) EditStoryByID(w http.ResponseWriter, r *http.Request) render.Rend
 		return rest.ErrInternal(api.logger, err)
 	}
 
-	imageKey, err := convertImageURLToKeyName(story.ImageURL)
-
-	if err != nil {
-		return rest.ErrInvalidRequest(api.logger, "ImageUrl of existing image is not valid", err)
-	}
-
-	versionId, err := convertImageURLToVersionId(story.ImageURL)
-
-	if err != nil {
-		return rest.ErrInvalidRequest(api.logger, "ImageUrl of existing image is not valid", err)
-	}
-	msg, err := api.DeleteImageInS3(imageKey, versionId) //delete existing image
-	if err != nil {
-		return rest.ErrInvalidRequest(api.logger, msg, err)
-	}
-
 	imageURL := story.ImageURL
 
 	file, h, err := r.FormFile("image")
 
-	if err == nil {
+	if err == nil { // If image is passed in
+		imageKey, err := convertImageURLToKeyName(story.ImageURL)
+
+		if err != nil {
+			return rest.ErrInvalidRequest(api.logger, "ImageUrl of existing image is not valid", err)
+		}
+
+		versionId, err := convertImageURLToVersionId(story.ImageURL)
+
+		if err != nil {
+			return rest.ErrInvalidRequest(api.logger, "ImageUrl of existing image is not valid", err)
+		}
+		msg, err := api.DeleteImageInS3(imageKey, versionId) //delete existing image
+		if err != nil {
+			return rest.ErrInvalidRequest(api.logger, msg, err)
+		}
 		imageURL, err = api.uploadImageTos3(file, h.Size, h.Filename)
 		if err != nil {
 			return rest.ErrInvalidRequest(api.logger, "Error uploading the image to s3.", err)
@@ -377,11 +376,9 @@ func (api api) DeleteImageInS3(name string, versionId string) (string, error) {
 }
 
 func convertImageURLToKeyName(originalURL string) (string, error) {
-	re := regexp.MustCompile(s3KeyNameRegex)
-	match := re.FindAllStringSubmatch(originalURL, 2)
+	match := s3KeyNameRegex.FindAllStringSubmatch(originalURL, 2)
 	if len(match) == 0 {
-		re := regexp.MustCompile(s3KeyNameRegexAlternate)
-		match = re.FindAllStringSubmatch(originalURL, 2)
+		match = s3KeyNameRegexAlternate.FindAllStringSubmatch(originalURL, 2)
 		if len(match) == 0 {
 			return "", fmt.Errorf("Invalid Image Link - Image Key")
 		}
@@ -390,8 +387,7 @@ func convertImageURLToKeyName(originalURL string) (string, error) {
 }
 
 func convertImageURLToVersionId(originalURL string) (string, error) {
-	re := regexp.MustCompile(s3VersionIdRegex)
-	match := re.FindAllStringSubmatch(originalURL, 2)
+	match := s3VersionIdRegex.FindAllStringSubmatch(originalURL, 2)
 	if len(match) == 0 {
 		return "", nil
 	}
@@ -399,8 +395,7 @@ func convertImageURLToVersionId(originalURL string) (string, error) {
 }
 
 func convertYoutubeURL(originalURL string) (string, error) {
-	re := regexp.MustCompile(youtubeRegex)
-	match := re.FindAllStringSubmatch(originalURL, 2)
+	match := youtubeRegex.FindAllStringSubmatch(originalURL, 2)
 	if len(match) == 0 {
 		return "", fmt.Errorf("Invalid Youtube Link")
 	}
