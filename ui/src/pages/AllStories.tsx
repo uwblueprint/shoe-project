@@ -148,7 +148,7 @@ export const AllStories: React.FC = () => {
       </StyledAppBar>
       <AllStoriesTabs value={tabValue} index={0}>
         <VirtualizedTable
-          data={stableSort(tableData, getComparator(order, orderBy))}
+          data={rows}
           order={order}
           orderBy={orderBy}
           columns={[
