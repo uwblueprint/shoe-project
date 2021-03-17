@@ -439,6 +439,82 @@ func (suite *endpointTestSuite) TestGetStoryByID() {
 	response.Object().Value("payload").Object().Value("video_url").Equal("https://youtube.com")
 }
 
+// Commenting out this test because Delete Story By ID also deletes the image from s3, so the test fails when calling s3. We can look into mocking s3 calls later
+/*
+func (suite *endpointTestSuite) TestDeleteStoryByID() {
+	json := []models.Author{
+		{
+			FirstName:     "Chimamanda",
+			LastName:      "Ngozi Adieche",
+			OriginCountry: "Nigeria",
+			Bio:           "bio",
+		},
+	}
+
+	suite.db.Create(&json)
+
+	json_stories := []models.Story{
+		{
+			Title:           "Half of a Yellow Sun",
+			Content:         "Fiction",
+			Year:            2019,
+			IsVisible:       true,
+			Summary:         "Summary1",
+			CurrentCity:     "Toronto",
+			ImageURL:        "https://exampleurl.com",
+			VideoURL:        "https://youtube.com",
+			AuthorFirstName: "Chimamanda",
+			AuthorLastName:  "Ngozi Adieche",
+			AuthorCountry:   "Nigeria",
+		},
+	}
+
+	suite.db.Create(&json_stories)
+
+	json_tags := []models.Tag{
+		{
+			Name:    "EDUCATION",
+			StoryID: 1,
+		},
+	}
+
+	suite.db.Create(&json_tags)
+
+	var response = suite.endpoint.DELETE("/story/1").
+		Expect().
+		Status(http.StatusOK).JSON()
+	mock := `{
+				"message" : "Story Deleted Successfully"
+			}`
+	//Verify they are the same
+	response.Schema(mock)
+	response.Object().Value("message").Equal("Story Deleted Successfully")
+
+	var authors []models.Author
+	var authorCount int64
+	suite.db.Find(&authors).Count(&authorCount)
+	suite.Equal(0, int(authorCount))
+
+	var tags []models.Tag
+	var tagCount int64
+	suite.db.Find(&tags).Count(&tagCount)
+	suite.Equal(0, int(tagCount))
+
+	response = suite.endpoint.GET("/stories").
+		Expect().
+		Status(http.StatusOK).JSON()
+
+	mock = `{
+		"payload": [],
+		"status": "OK"
+	}`
+
+	response.Schema(mock)
+	response.Object().Value("payload").Array().Length().Equal(0)
+
+}
+*/
+
 func (suite *endpointTestSuite) TearDownSuite() {
 	if err := testutils.CloseDatabase(suite.db); err != nil {
 		suite.Fail("error while closing database", err)
