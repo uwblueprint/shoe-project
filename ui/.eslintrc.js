@@ -38,6 +38,7 @@ module.exports = {
     // React stuff
     "react/jsx-boolean-value": "error",
     "react/no-array-index-key": "error",
-    "react/prop-types": "off"
+    "react/prop-types": "off",
+    "react/display-name": "off"
   },
 };

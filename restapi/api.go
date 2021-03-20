@@ -46,7 +46,7 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 	api.oauthconfig = &oauth2.Config{
 		ClientID:     config.GetGoogleClientId(),
 		ClientSecret: config.GetGoogleClientSecret(),
-		RedirectURL:  "http://localhost:8900/api/auth/callback",
+		RedirectURL:  config.GetAuthRedirectURL(),
 		Scopes: []string{
 			"https://www.googleapis.com/auth/userinfo.email",
 		},
@@ -56,11 +56,14 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 	// Public API
 	r.Group(func(r chi.Router) {
 		rest.GetHandler(r, "/health", api.health)
+		rest.GetHandler(r, "/countries", api.ReturnAllCountries)
+		rest.PostHandler(r, "/countries", api.AddCountries)
 		rest.GetHandler(r, "/stories", api.ReturnAllStories)
 		rest.GetHandler(r, "/stories/{countries}", api.ReturnStoriesByCountries)
 		rest.GetHandler(r, "/story/{storyID}", api.ReturnStoryByID)
+		rest.DeleteHandler(r, "/story/{storyID}", api.DeleteStoryByID)
 		rest.PutHandler(r, "/story/{storyID}", api.EditStoryByID)
-		rest.GetHandler(r, "/authors/origin_countries", api.ReturnAllCountries)
+		rest.GetHandler(r, "/authors/origin_countries", api.ReturnAuthorOriginCountries)
 		rest.GetHandler(r, "/tags", api.ReturnAllUniqueTags)
 		rest.GetHandler(r, "/login", api.Login)
 		rest.GetHandler(r, "/auth/callback", api.AuthCallback)

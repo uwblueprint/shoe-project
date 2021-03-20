@@ -77,9 +77,61 @@ func (api api) AddAuthorToStories(stories []models.Story) ([]models.Story, error
 
 func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var stories []models.Story
+	var storiesByTags []models.Tag
 
-	err := api.database.Find(&stories).Error
-	// err := api.database.Where("is_visible = true").Find(&stories).Error
+	getVisibility := r.URL.Query()["visibility"]
+	visibility := true
+	if getVisibility != nil {
+		vb, err := strconv.ParseBool(getVisibility[0])
+		if err != nil {
+			return rest.ErrInternal(api.logger, err)
+		}
+		visibility = vb
+	}
+	err := r.ParseForm()
+	if err != nil {
+		return rest.ErrInternal(api.logger, err)
+	}
+	sort := r.Form["sort"]
+	order := r.Form["order"]
+	tags := r.Form["tags"]
+
+	sortString := ""
+	for i := 0; i < len(sort); i++ {
+		//special case for author name because our db table doesnt have "name" in one column
+		if sort[i] == "author_name" {
+			sortString += "author_first_name" + " " + order[i] + ", " + "author_last_name" + " " + order[i]
+		} else {
+			sortString += sort[i] + " " + order[i]
+		}
+
+		if i != len(sort)-1 {
+			sortString += ", "
+		}
+	}
+	
+	gormStories := api.database.Table("stories")
+	gormTags := api.database.Table("tags")
+	
+	err = gormTags.Where("name IN ?", tags).Find(&storiesByTags).Error
+	if err != nil {
+		return rest.ErrInternal(api.logger, err)
+	}
+
+	if len(storiesByTags) != 0 {
+
+		storyIDs := make([]string, len(storiesByTags))
+		for i := 0; i < len(storiesByTags); i++ {
+			storyIDs[i] = strconv.FormatUint(uint64(storiesByTags[i].StoryID), 10)
+		}
+		gormStories = gormStories.Where("id IN ?", storyIDs)
+	}
+
+	if len(sortString) != 0 {
+		gormStories = gormStories.Order(sortString)
+	}
+
+	err = gormStories.Where("is_visible = ?", visibility).Find(&stories).Error
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
@@ -131,16 +183,16 @@ func (api api) EditStoryByID(w http.ResponseWriter, r *http.Request) render.Rend
 			return rest.ErrInvalidRequest(api.logger, msg, err)
 		}*/
 
+	imageURL := story.ImageURL
+
 	file, h, err := r.FormFile("image")
 
-	if err != nil {
-		return rest.ErrInvalidRequest(api.logger, "Error getting the image.", err)
+	if err == nil {
+		imageURL, err = api.uploadImageTos3(file, h.Size, h.Filename)
+		if err != nil {
+			return rest.ErrInvalidRequest(api.logger, "Error uploading the image to s3.", err)
+		}
 	}
-	imageURL, err := api.uploadImageTos3(file, h.Size, h.Filename)
-	if err != nil {
-		return rest.ErrInvalidRequest(api.logger, "Error uploading the image to s3.", err)
-	}
-	defer file.Close()
 
 	var author models.Author
 	author.FirstName = r.FormValue("author_first_name")
@@ -218,6 +270,54 @@ func (api api) EditStoryByID(w http.ResponseWriter, r *http.Request) render.Rend
 	}
 
 	return rest.MsgStatusOK("Story Updated successfully")
+}
+
+func (api api) DeleteStoryByID(w http.ResponseWriter, r *http.Request) render.Renderer {
+	// TODO: Delete the image from S3 properly
+	var story models.Story
+	id := chi.URLParam(r, "storyID")
+
+	err := api.database.Where("id=?", id).First(&story).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return rest.ErrNotFound(fmt.Sprintf("Could not find story with ID %s", id))
+		}
+		return rest.ErrInternal(api.logger, err)
+	}
+
+	var author = models.Author{
+		FirstName:     story.AuthorFirstName,
+		LastName:      story.AuthorLastName,
+		OriginCountry: story.AuthorCountry,
+	}
+	err = api.database.First(&author).Error
+	if err != nil {
+		return rest.ErrInternal(api.logger, err)
+	}
+	story.Author = author
+
+	var stories []models.Story
+	var numStories int64
+	err = api.database.Where("author_first_name=?", story.AuthorFirstName).Where("author_last_name=?", story.AuthorLastName).Where("author_country=?", story.AuthorCountry).Find(&stories).Count(&numStories).Error
+	if err != nil {
+		return rest.ErrInternal(api.logger, err)
+	}
+
+	if err := api.database.Where("story_id=?", id).Unscoped().Delete(models.Tag{}).Error; err != nil { // delete existing tags
+		return rest.ErrInternal(api.logger, err)
+	}
+
+	if err := api.database.Unscoped().Delete(story).Error; err != nil { // delete existing story
+		return rest.ErrInternal(api.logger, err)
+	}
+
+	if numStories == 1 { // This would mean the author has only 1 story which is being deleted, so author needs to be deleted as well
+		if err := api.database.Unscoped().Delete(author).Error; err != nil { // delete existing author
+			return rest.ErrInternal(api.logger, err)
+		}
+	}
+
+	return rest.MsgStatusOK("Story Deleted Successfully")
 }
 
 func (api api) CreateStories(w http.ResponseWriter, r *http.Request) render.Renderer {
@@ -338,7 +438,6 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 	if err != nil {
 		return rest.ErrInvalidRequest(api.logger, "Error uploading the image to s3.", err)
 	}
-	defer file.Close()
 	var story models.Story
 	var author models.Author
 	author.FirstName = r.FormValue("author_first_name")
