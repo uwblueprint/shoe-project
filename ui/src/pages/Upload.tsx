@@ -29,7 +29,7 @@ import countriesList from "../data/countries.json";
 import { colors } from "../styles/colors";
 import { device } from "../styles/device";
 import { UploadLabelsText, UploadStoriesHeading } from "../styles/typography";
-import { Author,Story } from "../types";
+import { Author, Story } from "../types";
 
 const StyledGrid = styled(Grid)`
   background-color: ${colors.primaryLight6};

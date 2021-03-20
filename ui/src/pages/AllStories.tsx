@@ -261,7 +261,7 @@ export const AllStories: React.FC = () => {
             story={clickedStory}
             onClose={() => setClickedStory(undefined)}
             onClickEditStory={() => {
-              console.log("TODO: Route to edit page")
+              console.log("TODO: Route to edit page");
             }}
           />
         </>
