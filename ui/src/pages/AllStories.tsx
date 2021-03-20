@@ -65,6 +65,8 @@ export const AllStories: React.FC = () => {
   const [visibleState, setVisibleState] = React.useState([]);
   const [tableData, setTableData] = useState(rows);
 
+  const [changedVisibility, setChangedVisibility] = useState([]]);
+
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState("id");
@@ -76,7 +78,18 @@ export const AllStories: React.FC = () => {
       setVisibleState((prevState) => prevState.filter((e) => e !== d.id));
     }
 
+    const changedVisibilityContainsID = (elem: any) => elem.id === d.id;
+
+    if (changedVisibility.some(changedVisibilityContainsID)) {
+      console.log("NI HOWDY");
+      setChangedVisibility(prevState => prevState.filter((i) => i.id !== d.id));
+    } else {
+      setChangedVisibility(prevState => [...prevState, d]);
+    }
+
     console.log(visibleState);
+    console.log(d);
+    console.log(changedVisibility);
   };
 
   const handleCheckedAll = () => {
@@ -142,14 +155,6 @@ export const AllStories: React.FC = () => {
   ) => {
     setTabValue(newValue);
   };
-
-  // const setVisibleChangesIcon = (id) => {
-  //   if (visibleState.includes(id)) {
-  //     <AddIcon />
-  //   } else {
-  //     <RemoveIcon />
-  //   }
-  // }
 
   return (
     <>
@@ -259,13 +264,13 @@ export const AllStories: React.FC = () => {
       <AllStoriesTabs value={tabValue} index={1}>
         {/* Visible Changes */}
         <VirtualizedTable
-          data={stableSort(tableData, getComparator(order, orderBy))}
+          data={stableSort(changedVisibility, getComparator(order, orderBy))}
           order={order}
           orderBy={orderBy}
           columns={[
             {
               name: "pending-map-changes-changes",
-              width: 200,
+              width: 100,
               header: (
                 <div>
                   Changes
@@ -273,7 +278,6 @@ export const AllStories: React.FC = () => {
               ),
               cell: (d) => (
                 <div>
-                  {/* <AddIcon /> */}
                   {(visibleState.includes(d.id)) ? <AddIcon /> : <RemoveIcon />}
                 </div>
               ),
