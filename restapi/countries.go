@@ -11,7 +11,7 @@ import (
 
 func (api api) ReturnAllCountries(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var countries []models.Country
-	err := api.database.Find(&countries).Error
+	err := api.database.Distinct("name").Order("name").Find(&countries).Error
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}
@@ -21,6 +21,21 @@ func (api api) ReturnAllCountries(w http.ResponseWriter, r *http.Request) render
 	}
 	return rest.JSONStatusOK(names)
 }
+
+/*
+
+Sample Request Payload to Add Countries
+
+[
+    {
+        "country_name": "test1"
+    },
+    {
+        "country_name":"test2"
+    }
+]
+
+*/
 
 func (api api) AddCountries(w http.ResponseWriter, r *http.Request) render.Renderer {
 	// Declare a new Country struct.

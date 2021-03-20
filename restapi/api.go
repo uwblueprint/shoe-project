@@ -63,7 +63,7 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 		rest.GetHandler(r, "/story/{storyID}", api.ReturnStoryByID)
 		rest.DeleteHandler(r, "/story/{storyID}", api.DeleteStoryByID)
 		rest.PutHandler(r, "/story/{storyID}", api.EditStoryByID)
-		rest.GetHandler(r, "/authors/origin_countries", api.ReturnAllUsedCountries)
+		rest.GetHandler(r, "/authors/origin_countries", api.ReturnAuthorOriginCountries)
 		rest.GetHandler(r, "/tags", api.ReturnAllUniqueTags)
 		rest.GetHandler(r, "/login", api.Login)
 		rest.GetHandler(r, "/auth/callback", api.AuthCallback)
