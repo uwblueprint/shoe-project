@@ -2,16 +2,18 @@ package migrations
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 
+	"github.com/biter777/countries"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
 	"github.com/uwblueprint/shoe-project/internal/location"
 	"gorm.io/gorm"
 )
 
 func RunMigration(db *gorm.DB) error {
-	return db.AutoMigrate(&models.Author{}, &models.Story{}, &models.User{}, &models.Tag{})
+	return db.AutoMigrate(&models.Author{}, &models.Story{}, &models.User{}, &models.Tag{}, &models.Country{})
 }
 
 func CreateTables(db *gorm.DB) error {
@@ -28,6 +30,10 @@ func DropAllTables(db *gorm.DB) error {
 		return err
 	}
 	err = db.Migrator().DropTable(&models.Tag{})
+	if err != nil {
+		return err
+	}
+	err = db.Migrator().DropTable(&models.Country{})
 	if err != nil {
 		return err
 	}
@@ -54,6 +60,17 @@ func ChooseRandomTag() string {
 }
 
 func Seed(db *gorm.DB, locationFinder location.LocationFinder) error {
+	var Countries = countries.All()
+	for _, name := range Countries {
+		country := models.Country{
+			Name: fmt.Sprint(name),
+		}
+		err := db.Create(&country).Error
+		if err != nil {
+			return err
+		}
+	}
+
 	// read in the authors file from authors.json
 	var authors []models.Author
 	err := parseJson("data/authors.json", &authors)
@@ -96,5 +113,6 @@ func Seed(db *gorm.DB, locationFinder location.LocationFinder) error {
 			return err
 		}
 	}
+
 	return nil
 }
