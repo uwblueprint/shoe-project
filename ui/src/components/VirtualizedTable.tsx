@@ -4,7 +4,7 @@ import * as React from "react";
 import AutoSizer from "react-virtualized/dist/commonjs/AutoSizer";
 
 import { colors } from "../styles/colors";
-
+import { fontSize } from "../styles/typography";
 const useVirtualizedTableStyles = makeStyles({
   root: {
     marginLeft: "55px",
@@ -15,7 +15,7 @@ const useVirtualizedTableStyles = makeStyles({
       padding: "0px",
       fontStyle: "normal",
       fontWeight: "bold",
-      fontSize: "16px",
+      fontSize: fontSize.subtitle,
       lineHeight: "120%",
       marginRight: "none",
     },
@@ -36,6 +36,7 @@ const useVirtualizedTableStyles = makeStyles({
 
 interface VirtualizedTableProps {
   data: [];
+  // eslint-disable-next-line
   columns: any;
   order: string;
   orderBy: string;

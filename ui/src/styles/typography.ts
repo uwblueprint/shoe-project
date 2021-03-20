@@ -311,3 +311,14 @@ export const UploadLabelsText = styled.div`
   line-height: 120%;
   color: ${colors.black};
 `;
+
+export const StyledAllStoriesHeader = styled.div`
+  font-family: Canela;
+  font-style: normal;
+  font-weight: normal;
+  font-size: ${fontSize.h1Text};
+  line-height: 37px;
+  padding-bottom: 24px;
+  padding-top: 80px;
+  margin-left: 64px;
+`;
