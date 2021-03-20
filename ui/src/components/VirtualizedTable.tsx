@@ -8,20 +8,24 @@ import { colors } from "../styles/colors";
 const useVirtualizedTableStyles = makeStyles({
   root: {
     marginLeft: "55px",
+
     "& .MuiTableCell-root": {
       backgroundColor: colors.white,
       fontFamily: "Poppins",
-   
+      padding: "0px",
+      fontStyle: "normal",
+      fontWeight: "bold",
+      fontSize: "16px",
+      lineHeight: "120%",
+      marginRight: "none",
     },
     "& .topLeftGrid, & .topRightGrid": {
       border: "none",
+      backgroundColor: "transparent",
     },
     "& .bottomLeftGrid": {
       border: "none",
     },
-  },
-  headerCell: {
-    fontSize: "12px",
   },
   stickyCell: {
     display: "flex",
@@ -45,7 +49,7 @@ export function VirtualizedTable({
 }: VirtualizedTableProps): JSX.Element {
   const classes = useVirtualizedTableStyles();
   return (
-    <div className={classes.root} style={{ height: "calc(100vh)" }}>
+    <div className={classes.root} style={{ width: "auto" }}>
       <AutoSizer>
         {({ height, width }) => (
           <MuiTable
@@ -55,7 +59,6 @@ export function VirtualizedTable({
             orderDirection={order}
             includeHeaders
             cellProps={(column) => {
-             
               if (column.name === columns[0].name) {
                 return {
                   className: `
@@ -66,10 +69,9 @@ export function VirtualizedTable({
               }
             }}
             width={width}
-            height = {height}
+            height={height}
             maxHeight={800}
             fixedRowCount={1}
-            fixedColumnCount={1}
             style={{ tableLayout: "fixed", backgroundColor: colors.white }}
           />
         )}
