@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   Chip,
   Dialog,
   DialogActions,
@@ -14,6 +15,7 @@ import {
   Select,
   Snackbar,
   TextField,
+  Paper,
 } from "@material-ui/core/";
 import Alert from "@material-ui/lab/Alert";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -82,7 +84,7 @@ const StyledDropzoneArea = styled(DropzoneArea)`
   }
 `;
 
-const StyledTags = styled(Autocomplete)`
+const StyledAutocomplete = styled(Autocomplete)`
   && {
     font-family: Poppins;
     margin-top: 12px;
@@ -103,6 +105,27 @@ const StyledButton = styled(Button)`
   }
 `;
 
+const AddCountryPaper = styled(Paper)`
+  width: 30vw;
+  font-family: Poppins !important;
+`;
+
+const AddCountryDiv = styled.div`
+  margin-left: 18px;
+  margin-top: 5px;
+`;
+
+const AddCountryButton = styled(Button)`
+  margin-right: 5px;
+  width: 2vw;
+  float: right;
+  height: 3.75vh;
+  
+  .MuiButton-label {
+    color: ${colors.primaryDark1};
+    font-family: Poppins !important;
+  }
+`;
 const StyledBackgroundColor = styled.div`
   background-color: ${colors.white};
   width: 40vw;
@@ -141,12 +164,19 @@ export const UploadStory: React.FC<StoryProps> = ({
 }: StoryProps) => {
   const { data: tagOptions, error } = useSWR<string[]>("/api/tags");
   const [tagArray, setTagArrayValues] = useState(story.tags);
+  const [authorCountry, setAuthorCountry] = useState(story.author_country);
+  const [autocompleteAuthor, setAutocompleteAuthor] = useState(story.author_country);
   const [newImage, setNewImage] = useState(story.image_url);
   const [disabled, setDisabled] = useState(false);
   //handleSubmit component states
   const [dialogOpenState, setDialogOpenState] = useState(false);
   const [uploadErrorState, setErrorOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const countries = new Array<string>(countriesList.length + 1);
+  for (let i = 1; i <= countriesList.length; i++) {
+    countries[i] = countriesList[i - 1].name;
+  }
 
   const addNewImageButton = () => {
     setNewImage("");
@@ -169,7 +199,7 @@ export const UploadStory: React.FC<StoryProps> = ({
       summary: story.summary,
       author_first_name: story.author_first_name,
       author_last_name: story.author_last_name,
-      author_country: story.author_country,
+      // author_country: story.author_country,
       year: story.year,
       current_city: story.current_city,
       bio: bio,
@@ -239,6 +269,23 @@ export const UploadStory: React.FC<StoryProps> = ({
     }
   };
 
+  const newCountry = ({ children, ...other }) => (
+    <AddCountryPaper {...other}>
+      {countries.filter((str) => str.toLowerCase() == autocompleteAuthor.toLowerCase()).length == 0 && autocompleteAuthor != "" &&
+          <AddCountryDiv
+          onMouseDown={event => {
+            event.preventDefault();
+          }}
+          >
+            {autocompleteAuthor}
+            <AddCountryButton>ADD</AddCountryButton>
+          </AddCountryDiv>
+      }
+      
+      {children}
+    </AddCountryPaper>
+  );
+
   const handleSubmit = (event) => {
     event.preventDefault();
     setLoading(true);
@@ -247,10 +294,12 @@ export const UploadStory: React.FC<StoryProps> = ({
     for (const key in formInput) {
       formData.append(key, formInput[key]);
     }
+    formData.append("author_country", authorCountry);
 
     for (const index in tagArray) {
       formData.append("tags", tagArray[index]);
     }
+    
     let fetchString = "/api/story";
     let method = "POST";
 
@@ -365,10 +414,35 @@ export const UploadStory: React.FC<StoryProps> = ({
               </UploadStoriesHeading>
               <FormControl>
                 <UploadLabelsText>Country of Origin</UploadLabelsText>
-                <StyledInputLabel id="Country of Origin">
+                {/* <StyledInputLabel id="Country of Origin">
                   Enter story&#39;s country of origin
-                </StyledInputLabel>
-                <StyledSelect
+                </StyledInputLabel> */}
+
+                <StyledAutocomplete
+                  color="Primary"
+                  loading={!countries}
+                  options={countries || []}
+                  forcePopupIcon
+                  name="author_country"
+                  id="select-label-country"
+                  freeSolo
+                  value={authorCountry ? authorCountry : null}
+                  onInputChange={(_, newValue) => setAutocompleteAuthor(newValue)}
+                  onChange={(_, newValue) => setAuthorCountry(newValue)}
+                  renderInput={(params) => {
+                    return (
+                      <TextField
+                        {...params}
+                        variant="outlined"
+                        label=""
+                        placeholder="Enter story&#39;s country of origin"
+                      />
+                    );
+                  }}
+                  PaperComponent={newCountry}
+                />
+
+                {/* <StyledSelect
                   variant="outlined"
                   value={formInput.author_country}
                   onChange={handleChange}
@@ -382,7 +456,7 @@ export const UploadStory: React.FC<StoryProps> = ({
                       {country.name}
                     </StyledMenuItem>
                   ))}
-                </StyledSelect>
+                </StyledSelect> */}
               </FormControl>
               <UploadLabelsText>Current City</UploadLabelsText>
               <StyledInputLabel id="Current Location">
@@ -409,9 +483,8 @@ export const UploadStory: React.FC<StoryProps> = ({
                 <UploadLabelsText>Year Published</UploadLabelsText>
                 <StyledSelect
                   variant="outlined"
-                  value={formInput.year}
+                  value={formInput.year ? formInput.year : ""}
                   onChange={handleChange}
-                  defaultValue={"2021"}
                   inputProps={{
                     name: "year",
                     id: "select-label-year",
@@ -426,7 +499,7 @@ export const UploadStory: React.FC<StoryProps> = ({
               </FormControl>
               <FormControl>
                 <UploadLabelsText>Tags</UploadLabelsText>
-                <StyledTags
+                <StyledAutocomplete
                   autoHighlight
                   multiple
                   id="tags-outlined"
