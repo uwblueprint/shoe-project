@@ -3,9 +3,9 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Drawer from "@material-ui/core/Drawer";
 import Grid from "@material-ui/core/Grid";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
+import CreateIcon from "@material-ui/icons/Create";
 import * as React from "react";
 import styled from "styled-components";
-import CreateIcon from "@material-ui/icons/Create";
 
 import { colors } from "../styles/colors";
 import { device } from "../styles/device";

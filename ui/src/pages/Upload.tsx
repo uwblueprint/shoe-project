@@ -23,13 +23,13 @@ import * as React from "react";
 import { KeyboardEvent, useReducer, useState } from "react";
 import styled from "styled-components";
 import useSWR from "swr";
-import { StoryDrawer } from "../components";
 
+import { StoryDrawer } from "../components";
 import countriesList from "../data/countries.json";
 import { colors } from "../styles/colors";
 import { device } from "../styles/device";
 import { UploadLabelsText, UploadStoriesHeading } from "../styles/typography";
-import { Story, Author } from "../types";
+import { Author,Story } from "../types";
 
 const StyledGrid = styled(Grid)`
   background-color: ${colors.primaryLight6};
