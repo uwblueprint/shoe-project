@@ -77,8 +77,61 @@ func (api api) AddAuthorToStories(stories []models.Story) ([]models.Story, error
 
 func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var stories []models.Story
+	var storiesByTags []models.Tag
 
-	err := api.database.Where("is_visible = true").Find(&stories).Error
+	getVisibility := r.URL.Query()["visibility"]
+	visibility := true
+	if getVisibility != nil {
+		vb, err := strconv.ParseBool(getVisibility[0])
+		if err != nil {
+			return rest.ErrInternal(api.logger, err)
+		}
+		visibility = vb
+	}
+	err := r.ParseForm()
+	if err != nil {
+		return rest.ErrInternal(api.logger, err)
+	}
+	sort := r.Form["sort"]
+	order := r.Form["order"]
+	tags := r.Form["tags"]
+
+	sortString := ""
+	for i := 0; i < len(sort); i++ {
+		//special case for author name because our db table doesnt have "name" in one column
+		if sort[i] == "author_name" {
+			sortString += "author_first_name" + " " + order[i] + ", " + "author_last_name" + " " + order[i]
+		} else {
+			sortString += sort[i] + " " + order[i]
+		}
+
+		if i != len(sort)-1 {
+			sortString += ", "
+		}
+	}
+	
+	gormStories := api.database.Table("stories")
+	gormTags := api.database.Table("tags")
+	
+	err = gormTags.Where("name IN ?", tags).Find(&storiesByTags).Error
+	if err != nil {
+		return rest.ErrInternal(api.logger, err)
+	}
+
+	if len(storiesByTags) != 0 {
+
+		storyIDs := make([]string, len(storiesByTags))
+		for i := 0; i < len(storiesByTags); i++ {
+			storyIDs[i] = strconv.FormatUint(uint64(storiesByTags[i].StoryID), 10)
+		}
+		gormStories = gormStories.Where("id IN ?", storyIDs)
+	}
+
+	if len(sortString) != 0 {
+		gormStories = gormStories.Order(sortString)
+	}
+
+	err = gormStories.Where("is_visible = ?", visibility).Find(&stories).Error
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
 	}

@@ -36,7 +36,7 @@ func (api api) CreateAuthors(w http.ResponseWriter, r *http.Request) render.Rend
 	return rest.MsgStatusOK("Authors added successfully")
 }
 
-func (api api) ReturnAllCountries(w http.ResponseWriter, r *http.Request) render.Renderer {
+func (api api) ReturnAuthorOriginCountries(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var authors []models.Author
 	countries := make(map[string]bool)
 

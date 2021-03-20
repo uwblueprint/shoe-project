@@ -64,6 +64,7 @@ export const AllStories: React.FC = () => {
   const [tabValue, setTabValue] = React.useState(0);
   const [visibleState, setVisibleState] = React.useState([]);
   const [tableData, setTableData] = useState(rows);
+
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState("id");
@@ -119,7 +120,11 @@ export const AllStories: React.FC = () => {
       if (order !== 0) return order;
       return a[1] - b[1];
     });
-    return stabilizedThis.map((el) => el[0]);
+    const sortedArray = stabilizedThis.map((el) => el[0]);
+    if (sortedArray.length === 0) {
+      return rows;
+    }
+    return sortedArray;
   };
   const getComparator = (order, orderBy) => {
     return order === "desc"
@@ -137,7 +142,6 @@ export const AllStories: React.FC = () => {
 
   const indeterminate =
     selectedRowIds.length > 0 && selectedRowIds.length !== rows.length;
-
   if (error) return <div>Error returning stories data!</div>;
   if (!allStories) return <div>Loading all stories table..</div>;
 
