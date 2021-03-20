@@ -9,8 +9,10 @@ import styled from "styled-components";
 import useSWR from "swr";
 
 import { a11yProps, AllStoriesTabs } from "../components/AllStoriesTabs";
-import VirtualizedTable from "../components/VirtualizedTable";
 import { Story } from "../types/index";
+import VirtualizedTable from "../components/VirtualizedTable";
+import { StoryDrawer } from "../components";
+
 
 function createData(
   id: number,
@@ -41,9 +43,10 @@ const StyledAppBar = styled(AppBar)`
 export const AllStories: React.FC = () => {
   const { data: allStories, error } = useSWR<Story[]>("/api/stories");
   let rows = [];
-
+ 
   // if (allStories===undefined) return;
   if (allStories) {
+
     rows = allStories.map((story, i) =>
       createData(
         i,
@@ -64,6 +67,17 @@ export const AllStories: React.FC = () => {
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState("id");
+
+  const [clickedStory, setClickedStory] = useState<Story | undefined>(undefined);
+
+  const setClickedRow = (rowId: number | undefined) => {
+    if(rowId){
+      const story = allStories?.find((story) => story.ID === rowId);
+      if(story){
+        setClickedStory(story);
+      }
+    }
+  }
 
   const handleChange = (e, d) => {
     if (e.target.checked) {
@@ -147,10 +161,12 @@ export const AllStories: React.FC = () => {
         </Tabs>
       </StyledAppBar>
       <AllStoriesTabs value={tabValue} index={0}>
+        <>
         <VirtualizedTable
           data={stableSort(tableData, getComparator(order, orderBy))}
           order={order}
           orderBy={orderBy}
+          setClickedRow={setClickedRow}
           columns={[
             {
               name: "id",
@@ -237,6 +253,8 @@ export const AllStories: React.FC = () => {
             },
           ]}
         />
+        <StoryDrawer story={clickedStory} onClose={()=> setClickedStory(undefined)} onClickEditStory={() => {}} />
+        </>
       </AllStoriesTabs>
       <AllStoriesTabs value={tabValue} index={1}>
         Visible Changes
