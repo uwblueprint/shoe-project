@@ -151,9 +151,9 @@ export const Upload: React.FC = () => {
     }
   );
 
-  const story = React.useMemo(()=> {
-    if(isDrawerOpen){
-      const storyFromData : Story ={
+  const story = React.useMemo(() => {
+    if (isDrawerOpen) {
+      const storyFromData: Story = {
         image_url: URL.createObjectURL(formInput.image),
         video_url: formInput.video_url as string,
         title: formInput.title as string,
@@ -187,18 +187,25 @@ export const Upload: React.FC = () => {
           Time: "",
           Valid: true,
         },
-      }
-      console.log(storyFromData)
+      };
+      console.log(storyFromData);
       return storyFromData;
-
     }
     return undefined;
   }, [isDrawerOpen, formInput]);
 
   const hasAllRequiredFields = React.useMemo(() => {
-    return formInput.image && formInput.title && formInput.content && formInput.summary
-    && formInput.author_first_name && formInput.author_last_name && formInput.year 
-    && formInput.current_city && formInput.author_country;
+    return (
+      formInput.image &&
+      formInput.title &&
+      formInput.content &&
+      formInput.summary &&
+      formInput.author_first_name &&
+      formInput.author_last_name &&
+      formInput.year &&
+      formInput.current_city &&
+      formInput.author_country
+    );
   }, [formInput]);
 
   const setImage = (files: File[]) => {
@@ -289,17 +296,37 @@ export const Upload: React.FC = () => {
 
   return (
     <>
-    <AppBar color="default" position="sticky">
-      <Grid container direction="row">
-        <Grid item xs={6}>
-          <UploadStoriesHeading>Upload New Story</UploadStoriesHeading>
+      <AppBar color="default" position="sticky">
+        <Grid container direction="row">
+          <Grid item xs={6}>
+            <UploadStoriesHeading>Upload New Story</UploadStoriesHeading>
+          </Grid>
+          <Grid
+            container
+            item
+            xs={6}
+            direction="row"
+            alignContent="center"
+            justify="flex-end"
+          >
+            <StyledButton
+              disabled={!hasAllRequiredFields}
+              onClick={() => setIsDrawerOpen(true)}
+              color="primary"
+              variant="outlined"
+            >
+              Preview
+            </StyledButton>
+            <StyledButton
+              disabled={disabled || !hasAllRequiredFields}
+              variant="contained"
+              color="primary"
+            >
+              Upload
+            </StyledButton>
+          </Grid>
         </Grid>
-        <Grid container item xs={6} direction="row" alignContent="center" justify="flex-end">
-          <StyledButton disabled={!hasAllRequiredFields} onClick={() => setIsDrawerOpen(true)} color="primary" variant="outlined">Preview</StyledButton>
-          <StyledButton disabled={disabled || !hasAllRequiredFields} variant="contained" color="primary">Upload</StyledButton>
-        </Grid>
-      </Grid>
-    </AppBar>
+      </AppBar>
       <StyledGrid container justify="center" alignContent="center">
         <form onSubmit={handleSubmit}>
           <FormControl>
@@ -536,7 +563,7 @@ export const Upload: React.FC = () => {
           </FormControl>
         </form>
       </StyledGrid>
-      <StoryDrawer story={story} onClose={()=> setIsDrawerOpen(false)} />
+      <StoryDrawer story={story} onClose={() => setIsDrawerOpen(false)} />
       {loading ? <StyledLinearProgress /> : null}
     </>
   );
