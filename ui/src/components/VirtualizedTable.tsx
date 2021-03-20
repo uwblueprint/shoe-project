@@ -7,9 +7,11 @@ import { colors } from "../styles/colors";
 
 const useVirtualizedTableStyles = makeStyles({
   root: {
+    marginLeft: "55px",
     "& .MuiTableCell-root": {
       backgroundColor: colors.white,
       fontFamily: "Poppins",
+   
     },
     "& .topLeftGrid, & .topRightGrid": {
       border: "none",
@@ -45,22 +47,15 @@ export function VirtualizedTable({
   return (
     <div className={classes.root} style={{ height: "calc(100vh)" }}>
       <AutoSizer>
-        {({ width }) => (
+        {({ height, width }) => (
           <MuiTable
             data={data}
             columns={columns}
             orderBy={orderBy}
             orderDirection={order}
             includeHeaders
-            cellProps={(column, row) => {
-              /* alternate the background colour of rows between colors.white and colors.primaryLight6 */
-              if (data.indexOf(row) > 0 && data.indexOf(row) % 2 !== 0) {
-                return {
-                  style: {
-                    backgroundColor: colors.primaryLight6,
-                  },
-                };
-              }
+            cellProps={(column) => {
+             
               if (column.name === columns[0].name) {
                 return {
                   className: `
@@ -71,6 +66,7 @@ export function VirtualizedTable({
               }
             }}
             width={width}
+            height = {height}
             maxHeight={800}
             fixedRowCount={1}
             fixedColumnCount={1}

@@ -7,10 +7,43 @@ import { useState } from "react";
 import * as React from "react";
 import styled from "styled-components";
 import useSWR from "swr";
+import { makeStyles } from "@material-ui/core/styles";
 
 import { a11yProps, AllStoriesTabs } from "../components/AllStoriesTabs";
 import VirtualizedTable from "../components/VirtualizedTable";
 import { Story } from "../types/index";
+
+const StyledHeader = styled.div`
+font-family: Canela;
+font-style: normal;
+font-weight: normal;
+font-size: 32px;
+line-height: 37px;
+margin-bottom: 24px;
+margin-top: 80px;
+margin-left: 64px;
+`;
+
+const StyledContainer = styled.div`
+
+`;
+
+const useStyles = makeStyles({
+  root: {
+    background: '#F5FBFC',
+    fontFamily: 'Poppins',
+    fontStyle: 'normal',
+    fontWeight: 500,
+    fontSize: '16px',
+    lineHeight: '150%',
+    color: '#2D6394',
+    marginLeft: "64px",
+    boxShadow: "none",
+  },
+  indicator:{
+    color: "#2D6394",
+  }
+});
 
 function createData(
   id: number,
@@ -34,9 +67,6 @@ function createData(
   };
 }
 
-const StyledAppBar = styled(AppBar)`
-  //styling
-`;
 
 export const AllStories: React.FC = () => {
   const { data: allStories, error } = useSWR<Story[]>("/api/stories");
@@ -61,7 +91,7 @@ export const AllStories: React.FC = () => {
   const [tabValue, setTabValue] = React.useState(0);
   const [visibleState, setVisibleState] = React.useState([]);
   const [tableData, setTableData] = useState(rows);
-
+  const classes = useStyles();
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState("id");
@@ -139,7 +169,8 @@ export const AllStories: React.FC = () => {
   };
   return (
     <>
-      <StyledAppBar position="relative">
+    <StyledHeader>The Shoe Project Impact Map Portal</StyledHeader>
+      <AppBar className={classes.root} position="relative">
         <Tabs
           value={tabValue}
           onChange={handleTabChange}
@@ -149,7 +180,7 @@ export const AllStories: React.FC = () => {
           <Tab label="VISIBLE CHANGES" {...a11yProps(1)} />
           <Tab label="PENDING MAP CHANGES" {...a11yProps(2)} />
         </Tabs>
-      </StyledAppBar>
+      </AppBar>
       <AllStoriesTabs value={tabValue} index={0}>
         <VirtualizedTable
           data={stableSort(tableData, getComparator(order, orderBy))}
