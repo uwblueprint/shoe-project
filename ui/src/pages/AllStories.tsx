@@ -31,18 +31,18 @@ const StyledContainer = styled.div`
 
 const useStyles = makeStyles({
   root: {
-    background: "#F5FBFC",
+    background: colors.primaryLight6,
     fontFamily: "Poppins",
     fontStyle: "normal",
     fontWeight: 500,
     fontSize: "16px",
     lineHeight: "150%",
-    color: "#2D6394",
+    color: colors.primaryDark1,
     marginLeft: "64px",
     boxShadow: "none",
   },
   indicator: {
-    color: "#2D6394",
+    backgroundColor: colors.primaryDark1,
   },
 });
 
@@ -95,8 +95,12 @@ export const AllStories: React.FC = () => {
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState("id");
+  //Initialize visible stories to zero
+  const [visibleTableData, setVisibleTableData] = useState([]);
 
   const handleChange = (e, d) => {
+    setVisibleTableData([...visibleTableData, d]);
+
     if (e.target.checked) {
       setVisibleState((prevState) => [...prevState, d.id]);
     } else {
@@ -174,6 +178,9 @@ export const AllStories: React.FC = () => {
 
         <AppBar className={classes.root} position="relative">
           <Tabs
+            classes={{
+              indicator: classes.indicator,
+            }}
             value={tabValue}
             onChange={handleTabChange}
             aria-label="all stories tabs"
@@ -276,7 +283,96 @@ export const AllStories: React.FC = () => {
           />
         </AllStoriesTabs>
         <AllStoriesTabs value={tabValue} index={1}>
-          Visible Changes
+          <VirtualizedTable
+            data={visibleTableData}
+            order={order}
+            orderBy={orderBy}
+            columns={[
+              {
+                name: "id",
+                width: 100,
+                onHeaderClick() {
+                  handleRequestSort("id");
+                },
+                header: (
+                  <div>
+                    <Checkbox
+                      checked={selectedRowIds.length > 0}
+                      indeterminate={indeterminate}
+                      onChange={handleCheckedAll}
+                    />
+                    ID
+                  </div>
+                ),
+                cell: (d) => (
+                  <div>
+                    <Checkbox
+                      onChange={(e) => handleChecked(e, d)}
+                      checked={selectedRowIds.includes(d.id)}
+                    />
+                    {d.id}
+                  </div>
+                ),
+              },
+
+              {
+                name: "title",
+                header: "Story Name",
+                width: 500,
+                onHeaderClick() {
+                  handleRequestSort("title");
+                },
+              },
+              {
+                name: "current_city",
+                header: "Current City",
+                width: 200,
+                onHeaderClick() {
+                  handleRequestSort("current_city");
+                },
+              },
+              {
+                name: "year",
+                header: "Year",
+                width: 100,
+                onHeaderClick() {
+                  handleRequestSort("year");
+                },
+              },
+              {
+                name: "author_name",
+                header: "Author name",
+                width: 250,
+                onHeaderClick() {
+                  handleRequestSort("author_name");
+                },
+              },
+              {
+                name: "author_country",
+                header: "Country",
+                width: 300,
+                onHeaderClick() {
+                  handleRequestSort("author_country");
+                },
+              },
+              {
+                name: "is_visible",
+                header: "Show on Map",
+                width: 150,
+                onHeaderClick() {
+                  handleRequestSort("jobType");
+                },
+                cell: (d) => (
+                  <Switch
+                    checked={visibleState.includes(d.id)}
+                    onChange={(e) => handleChange(e, d)}
+                    name="checked"
+                    color="primary"
+                  />
+                ),
+              },
+            ]}
+          />
         </AllStoriesTabs>
         <AllStoriesTabs value={tabValue} index={2}>
           Pending Changes
