@@ -42,34 +42,37 @@ const StyledAppBar = styled(AppBar)`
 `;
 
 export const AllStories: React.FC = () => {
-  const { data: allStories, error } = useSWR<Story[]>("/api/stories");
   let rows = [];
 
-  // if (allStories===undefined) return;
-  if (allStories) {
-    rows = allStories.map((story, i) =>
-      createData(
-        i,
-        story.title,
-        story.current_city,
-        story.year,
-        story.is_visible,
-        story.author_first_name,
-        story.author_last_name,
-        story.author_country
-      )
-    );
-  }
-
+  const { data: allStories, error } = useSWR<Story[]>("/api/stories");
+ 
   const [tabValue, setTabValue] = React.useState(0);
   const [visibleState, setVisibleState] = React.useState([]);
-  const [tableData, setTableData] = useState(rows);
-
-  const [changedVisibility, setChangedVisibility] = useState([]]);
-
+  const [tableData, setTableData] = useState([]);
+  const [changedVisibility, setChangedVisibility] = useState([]);
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState("id");
+
+  React.useEffect(() => {
+    if (allStories) {
+      rows = allStories.map((story, i) =>
+        createData(
+          i,
+          story.title,
+          story.current_city,
+          story.year,
+          story.is_visible,
+          story.author_first_name,
+          story.author_last_name,
+          story.author_country
+        )
+      );
+      console.log(rows);
+      setVisibleState(rows);
+      setTableData(rows);
+  }
+},[allStories])
 
   const handleChange = (e, d) => {
     if (e.target.checked) {
@@ -81,15 +84,10 @@ export const AllStories: React.FC = () => {
     const changedVisibilityContainsID = (elem: any) => elem.id === d.id;
 
     if (changedVisibility.some(changedVisibilityContainsID)) {
-      console.log("NI HOWDY");
       setChangedVisibility(prevState => prevState.filter((i) => i.id !== d.id));
     } else {
       setChangedVisibility(prevState => [...prevState, d]);
     }
-
-    console.log(visibleState);
-    console.log(d);
-    console.log(changedVisibility);
   };
 
   const handleCheckedAll = () => {
@@ -262,8 +260,11 @@ export const AllStories: React.FC = () => {
         />
       </AllStoriesTabs>
       <AllStoriesTabs value={tabValue} index={1}>
-        {/* Visible Changes */}
-        <VirtualizedTable
+        Visible Changes
+      </AllStoriesTabs>
+      <AllStoriesTabs value={tabValue} index={2}>
+        {/* Pending Changes */}
+        {(changedVisibility.length > 0) ? <VirtualizedTable
           data={stableSort(changedVisibility, getComparator(order, orderBy))}
           order={order}
           orderBy={orderBy}
@@ -340,10 +341,7 @@ export const AllStories: React.FC = () => {
               ),
             },
           ]}
-        />
-      </AllStoriesTabs>
-      <AllStoriesTabs value={tabValue} index={2}>
-        Pending Changes
+        /> : <div> No pending changes! </div>}
       </AllStoriesTabs>
     </>
   );
