@@ -19,6 +19,7 @@ import {
 } from "@material-ui/core/";
 import Alert from "@material-ui/lab/Alert";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import { countReset } from "console";
 import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
 import { KeyboardEvent, useReducer, useState } from "react";
@@ -120,7 +121,7 @@ const AddCountryButton = styled(Button)`
   width: 2vw;
   float: right;
   height: 3.75vh;
-  
+
   .MuiButton-label {
     color: ${colors.primaryDark1};
     font-family: Poppins !important;
@@ -165,7 +166,10 @@ export const UploadStory: React.FC<StoryProps> = ({
   const { data: tagOptions, error } = useSWR<string[]>("/api/tags");
   const [tagArray, setTagArrayValues] = useState(story.tags);
   const [authorCountry, setAuthorCountry] = useState(story.author_country);
-  const [autocompleteAuthor, setAutocompleteAuthor] = useState(story.author_country);
+  const [autocompleteAuthor, setAutocompleteAuthor] = useState(
+    story.author_country
+  );
+  const [addedCountry, setAddedCountry] = useState("");
   const [newImage, setNewImage] = useState(story.image_url);
   const [disabled, setDisabled] = useState(false);
   //handleSubmit component states
@@ -173,10 +177,9 @@ export const UploadStory: React.FC<StoryProps> = ({
   const [uploadErrorState, setErrorOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const countries = new Array<string>(countriesList.length + 1);
-  for (let i = 1; i <= countriesList.length; i++) {
-    countries[i] = countriesList[i - 1].name;
-  }
+  const { data: countries, error: errorCountries } = useSWR<string[]>(
+    "/api/countries"
+  );
 
   const addNewImageButton = () => {
     setNewImage("");
@@ -269,45 +272,41 @@ export const UploadStory: React.FC<StoryProps> = ({
     }
   };
 
+  const addCountryButtonPressed = (autocompleteAuthor: string) => {
+    setAddedCountry(autocompleteAuthor);
+    setAuthorCountry(autocompleteAuthor);
+    countries.push(autocompleteAuthor);
+  };
+
   const newCountry = ({ children, ...other }) => (
     <AddCountryPaper {...other}>
-      {countries.filter((str) => str.toLowerCase() == autocompleteAuthor.toLowerCase()).length == 0 && autocompleteAuthor != "" &&
+      {countries.filter(
+        (str) => str.toLowerCase() == autocompleteAuthor.toLowerCase()
+      ).length == 0 &&
+        autocompleteAuthor != "" && (
           <AddCountryDiv
-          onMouseDown={event => {
-            event.preventDefault();
-          }}
+            onMouseDown={(event) => {
+              event.preventDefault();
+            }}
           >
             {autocompleteAuthor}
-            <AddCountryButton>ADD</AddCountryButton>
+            <AddCountryButton
+              onClick={() => addCountryButtonPressed(autocompleteAuthor)}
+            >
+              ADD
+            </AddCountryButton>
           </AddCountryDiv>
-      }
-      
+        )}
+
       {children}
     </AddCountryPaper>
   );
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    setLoading(true);
-    setDisabled(true);
-    const formData = new FormData();
-    for (const key in formInput) {
-      formData.append(key, formInput[key]);
-    }
-    formData.append("author_country", authorCountry);
-
-    for (const index in tagArray) {
-      formData.append("tags", tagArray[index]);
-    }
-    
-    let fetchString = "/api/story";
-    let method = "POST";
-
-    if (id) {
-      fetchString = `/api/story/${id}`;
-      method = "PUT";
-    }
-
+  const apiSubmitCall = (
+    fetchString: string,
+    method: string,
+    formData: FormData
+  ) => {
     fetch(fetchString, {
       method: method,
       body: formData,
@@ -320,9 +319,61 @@ export const UploadStory: React.FC<StoryProps> = ({
       .catch((error) => console.log("Error: ", error));
   };
 
+  const handleSubmit = (event) => {
+    console.log("HERE");
+    event.preventDefault();
+    setLoading(true);
+    setDisabled(true);
+    const formData = new FormData();
+    for (const key in formInput) {
+      if (key != "image") {
+        formData.append(key, formInput[key]);
+      }
+    }
+
+    for (const index in tagArray) {
+      formData.append("tags", tagArray[index]);
+    }
+
+    let fetchString = "/api/story";
+    let method = "POST";
+
+    if (id) {
+      // if a new image was uplaoded, add the image to the formdata
+      if (newImage == "") {
+        formData.append("image", formInput["image"]);
+      }
+      fetchString = `/api/story/${id}`;
+      method = "PUT";
+    } else {
+      formData.append("image", formInput["image"]);
+    }
+
+    formData.append("author_country", authorCountry);
+    if (authorCountry === addedCountry) {
+      let empArray = [
+        {
+          country_name: addedCountry,
+        },
+      ];
+
+      const jsonBody = JSON.stringify(empArray);
+      fetch("/api/countries", {
+        method: "POST",
+        body: jsonBody,
+      })
+        .then((response) => response.text())
+        .then(() => apiSubmitCall(fetchString, method, formData))
+        .catch((error) => console.log("Error: ", error));
+    } else {
+      apiSubmitCall(fetchString, method, formData);
+    }
+  };
+
   const successMessage = id ? "Story Edit Success!" : "Story Upload Success!";
 
   if (error) return <div>Error fetching tags!</div>;
+  if (errorCountries) return <div>Error fetching countries array!</div>;
 
   return (
     <>
@@ -414,10 +465,6 @@ export const UploadStory: React.FC<StoryProps> = ({
               </UploadStoriesHeading>
               <FormControl>
                 <UploadLabelsText>Country of Origin</UploadLabelsText>
-                {/* <StyledInputLabel id="Country of Origin">
-                  Enter story&#39;s country of origin
-                </StyledInputLabel> */}
-
                 <StyledAutocomplete
                   color="Primary"
                   loading={!countries}
@@ -426,8 +473,12 @@ export const UploadStory: React.FC<StoryProps> = ({
                   name="author_country"
                   id="select-label-country"
                   freeSolo
-                  value={authorCountry ? authorCountry : null}
-                  onInputChange={(_, newValue) => setAutocompleteAuthor(newValue)}
+                  // if user adds a new country display it as the default value, if not, look for prefilled value (edit stories)
+                  // prettier-ignore
+                  value={addedCountry != "" ? addedCountry : (authorCountry ? authorCountry : null)}
+                  onInputChange={(_, newValue) =>
+                    setAutocompleteAuthor(newValue)
+                  }
                   onChange={(_, newValue) => setAuthorCountry(newValue)}
                   renderInput={(params) => {
                     return (
@@ -441,22 +492,6 @@ export const UploadStory: React.FC<StoryProps> = ({
                   }}
                   PaperComponent={newCountry}
                 />
-
-                {/* <StyledSelect
-                  variant="outlined"
-                  value={formInput.author_country}
-                  onChange={handleChange}
-                  inputProps={{
-                    name: "author_country",
-                    id: "select-label-country",
-                  }}
-                >
-                  {countriesList.map((country) => (
-                    <StyledMenuItem key={country.code} value={country.name}>
-                      {country.name}
-                    </StyledMenuItem>
-                  ))}
-                </StyledSelect> */}
               </FormControl>
               <UploadLabelsText>Current City</UploadLabelsText>
               <StyledInputLabel id="Current Location">
