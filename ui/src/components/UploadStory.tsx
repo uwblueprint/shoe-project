@@ -33,11 +33,13 @@ import { useTheme, makeStyles } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 import countriesList from "../data/countries.json";
-// import citiesList from "../data/cities.json";
+import citiesList from "../data/cities.json";
 import { colors } from "../styles/colors";
 import { device } from "../styles/device";
 import { UploadLabelsText, UploadStoriesHeading } from "../styles/typography";
 import { Story } from "../types";
+
+
 
 const StyledGrid = styled(Grid)`
   background-color: ${colors.primaryLight6};
@@ -593,8 +595,8 @@ export const UploadStory: React.FC<StoryProps> = ({
               <StyledAutocomplete
                 color="Primary"
                 disableListWrap
-                loading={!countries}
-                options={countries || []}
+                loading={!citiesList}
+                options={citiesList || []}
                 ListboxComponent={
                   ListboxComponent as React.ComponentType<
                     React.HTMLAttributes<HTMLElement>
@@ -604,9 +606,9 @@ export const UploadStory: React.FC<StoryProps> = ({
                 forcePopupIcon
                 name="current_city"
                 id="select-label-city"
-                value={formInput.current_city ? formInput.current_city : null}
+                value={formInput.current_city ? formInput.current_city.toString().toUpperCase(): ""}
                 //TODO: double check that this onChange method works
-                onChange={handleChange}
+                // onChange={handleChange}
                 renderInput={(params) => {
                   return (
                     <TextField
