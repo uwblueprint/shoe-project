@@ -123,7 +123,7 @@ func (api api) EditStoryByID(w http.ResponseWriter, r *http.Request) render.Rend
 
 	file, h, err := r.FormFile("image")
 
-	if err == nil { // If image is passed in
+	if err == nil { // If new image is passed in
 		imageKey, err := convertImageURLToKeyName(story.ImageURL)
 
 		if err != nil {
@@ -133,7 +133,7 @@ func (api api) EditStoryByID(w http.ResponseWriter, r *http.Request) render.Rend
 		versionId, err := convertImageURLToVersionId(story.ImageURL)
 
 		if err != nil {
-			return rest.ErrInvalidRequest(api.logger, "ImageUrl of existing image is not valid", err)
+			return rest.ErrInvalidRequest(api.logger, "VersionID of existing image is not valid", err)
 		}
 		msg, err := api.DeleteImageInS3(imageKey, versionId) //delete existing image
 		if err != nil {
@@ -376,20 +376,24 @@ func (api api) DeleteImageInS3(name string, versionId string) (string, error) {
 }
 
 func convertImageURLToKeyName(originalURL string) (string, error) {
-	match := s3KeyNameRegex.FindAllStringSubmatch(originalURL, 2)
+	match := s3KeyNameRegex.FindAllStringSubmatch(originalURL, 2) // This is for the URLs that have versionID
 	if len(match) == 0 {
-		match = s3KeyNameRegexAlternate.FindAllStringSubmatch(originalURL, 2)
+		match = s3KeyNameRegexAlternate.FindAllStringSubmatch(originalURL, 2) // This is for the image URl that are valid but dont have versionID. E.g. the current seeded stories image url dont have version id
 		if len(match) == 0 {
-			return "", fmt.Errorf("Invalid Image Link - Image Key")
+			return "", fmt.Errorf("Invalid Image Link - Image Key not found")
 		}
 	}
 	return match[0][1], nil
 }
 
 func convertImageURLToVersionId(originalURL string) (string, error) {
-	match := s3VersionIdRegex.FindAllStringSubmatch(originalURL, 2)
+	match := s3KeyNameRegex.FindAllStringSubmatch(originalURL, 2) // This checks if url has the versionId or not
 	if len(match) == 0 {
 		return "", nil
+	}
+	match = s3VersionIdRegex.FindAllStringSubmatch(originalURL, 2)
+	if len(match) == 0 {
+		return "", fmt.Errorf("Invalid Image Link - VersionID not found")
 	}
 	return match[0][1], nil
 }
