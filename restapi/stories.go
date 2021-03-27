@@ -111,10 +111,10 @@ func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.R
 			sortString += ", "
 		}
 	}
-	
+
 	gormStories := api.database.Table("stories")
 	gormTags := api.database.Table("tags")
-	
+
 	err = gormTags.Where("name IN ?", tags).Find(&storiesByTags).Error
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
@@ -375,6 +375,20 @@ func (api api) CreateStories(w http.ResponseWriter, r *http.Request) render.Rend
 	}
 
 	return rest.MsgStatusOK("Stories added successfully")
+}
+
+func (api api) PublishStories(w http.ResponseWriter, r *http.Request) render.Renderer {
+	var stories []models.Story
+	if err := json.NewDecoder(r.Body).Decode(&stories); err != nil {
+		return rest.ErrInvalidRequest(api.logger, "Invalid payload", err)
+	}
+	for _, story := range stories {
+		if err := api.database.Save(&story).Error; err != nil {
+			return rest.ErrInternal(api.logger, err)
+		}
+	}
+
+	return rest.MsgStatusOK("Stories published successfully")
 }
 
 func (api api) uploadImageTos3(file multipart.File, size int64, name string) (string, error) {
