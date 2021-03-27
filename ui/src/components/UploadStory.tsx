@@ -18,15 +18,22 @@ import {
   Paper,
 } from "@material-ui/core/";
 import Alert from "@material-ui/lab/Alert";
-import Autocomplete from "@material-ui/lab/Autocomplete";
+import Autocomplete, {
+  AutocompleteRenderGroupParams,
+} from "@material-ui/lab/Autocomplete";
 import { countReset } from "console";
 import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
 import { KeyboardEvent, useReducer, useState } from "react";
 import styled from "styled-components";
 import useSWR from "swr";
+import { VariableSizeList, ListChildComponentProps } from "react-window";
+import ListSubheader from "@material-ui/core/ListSubheader";
+import { useTheme, makeStyles } from "@material-ui/core/styles";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 import countriesList from "../data/countries.json";
+// import citiesList from "../data/cities.json";
 import { colors } from "../styles/colors";
 import { device } from "../styles/device";
 import { UploadLabelsText, UploadStoriesHeading } from "../styles/typography";
@@ -142,6 +149,91 @@ const StyledImage = styled.img`
   width: 30vw;
 `;
 
+const LISTBOX_PADDING = 8; // px
+
+function renderRow(props: ListChildComponentProps) {
+  const { data, index, style } = props;
+  return React.cloneElement(data[index], {
+    style: {
+      ...style,
+      top: (style.top as number) + LISTBOX_PADDING,
+    },
+  });
+}
+
+const OuterElementContext = React.createContext({});
+
+const OuterElementType = React.forwardRef<HTMLDivElement>((props, ref) => {
+  const outerProps = React.useContext(OuterElementContext);
+  return <div ref={ref} {...props} {...outerProps} />;
+});
+
+function useResetCache(data: any) {
+  const ref = React.useRef<VariableSizeList>(null);
+  React.useEffect(() => {
+    if (ref.current != null) {
+      ref.current.resetAfterIndex(0, true);
+    }
+  }, [data]);
+  return ref;
+}
+
+// Adapter for react-window
+const ListboxComponent = React.forwardRef<HTMLDivElement>(
+  function ListboxComponent(props, ref) {
+    const { children, ...other } = props;
+    const itemData = React.Children.toArray(children);
+    const theme = useTheme();
+    const smUp = useMediaQuery(theme.breakpoints.up("sm"), { noSsr: true });
+    const itemCount = itemData.length;
+    const itemSize = smUp ? 36 : 48;
+
+    const getChildSize = (child: React.ReactNode) => {
+      if (React.isValidElement(child) && child.type === ListSubheader) {
+        return 48;
+      }
+
+      return itemSize;
+    };
+
+    const getHeight = () => {
+      if (itemCount > 8) {
+        return 8 * itemSize;
+      }
+      return itemData.map(getChildSize).reduce((a, b) => a + b, 0);
+    };
+
+    const gridRef = useResetCache(itemCount);
+
+    return (
+      <div ref={ref}>
+        <OuterElementContext.Provider value={other}>
+          <VariableSizeList
+            itemData={itemData}
+            height={getHeight() + 2 * LISTBOX_PADDING}
+            width="100%"
+            ref={gridRef}
+            outerElementType={OuterElementType}
+            innerElementType="ul"
+            itemSize={(index) => getChildSize(itemData[index])}
+            overscanCount={5}
+            itemCount={itemCount}
+          >
+            {renderRow}
+          </VariableSizeList>
+        </OuterElementContext.Provider>
+      </div>
+    );
+  }
+);
+
+const renderGroup = (params: AutocompleteRenderGroupParams) => [
+  <ListSubheader key={params.key} component="div">
+    {params.group}
+  </ListSubheader>,
+  params.children,
+];
+
 interface InputProps {
   onKeyDown: (
     event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -166,7 +258,7 @@ export const UploadStory: React.FC<StoryProps> = ({
   const { data: tagOptions, error } = useSWR<string[]>("/api/tags");
   const [tagArray, setTagArrayValues] = useState(story.tags);
   const [authorCountry, setAuthorCountry] = useState(story.author_country);
-  const [autocompleteAuthor, setAutocompleteAuthor] = useState(
+  const [autocompleteAuthorCountry, setAutocompleteAuthorCountry] = useState(
     story.author_country
   );
   const [addedCountry, setAddedCountry] = useState("");
@@ -272,26 +364,26 @@ export const UploadStory: React.FC<StoryProps> = ({
     }
   };
 
-  const addCountryButtonPressed = (autocompleteAuthor: string) => {
-    setAddedCountry(autocompleteAuthor);
-    setAuthorCountry(autocompleteAuthor);
-    countries.push(autocompleteAuthor);
+  const addCountryButtonPressed = (autocompleteAuthorCountry: string) => {
+    setAddedCountry(autocompleteAuthorCountry);
+    setAuthorCountry(autocompleteAuthorCountry);
+    countries.push(autocompleteAuthorCountry);
   };
 
   const newCountry = ({ children, ...other }) => (
     <AddCountryPaper {...other}>
       {countries.filter(
-        (str) => str.toLowerCase() == autocompleteAuthor.toLowerCase()
+        (str) => str.toLowerCase() == autocompleteAuthorCountry.toLowerCase()
       ).length == 0 &&
-        autocompleteAuthor != "" && (
+        autocompleteAuthorCountry != "" && (
           <AddCountryDiv
             onMouseDown={(event) => {
               event.preventDefault();
             }}
           >
-            {autocompleteAuthor}
+            {autocompleteAuthorCountry}
             <AddCountryButton
-              onClick={() => addCountryButtonPressed(autocompleteAuthor)}
+              onClick={() => addCountryButtonPressed(autocompleteAuthorCountry)}
             >
               ADD
             </AddCountryButton>
@@ -477,16 +569,17 @@ export const UploadStory: React.FC<StoryProps> = ({
                   // prettier-ignore
                   value={addedCountry != "" ? addedCountry : (authorCountry ? authorCountry : null)}
                   onInputChange={(_, newValue) =>
-                    setAutocompleteAuthor(newValue)
+                    setAutocompleteAuthorCountry(newValue)
                   }
                   onChange={(_, newValue) => setAuthorCountry(newValue)}
                   renderInput={(params) => {
                     return (
                       <TextField
                         {...params}
+                        required
                         variant="outlined"
                         label=""
-                        placeholder="Enter story&#39;s country of origin"
+                        placeholder="Enter story&#39;s country of origin *"
                       />
                     );
                   }}
@@ -494,10 +587,39 @@ export const UploadStory: React.FC<StoryProps> = ({
                 />
               </FormControl>
               <UploadLabelsText>Current City</UploadLabelsText>
-              <StyledInputLabel id="Current Location">
+              {/* <StyledInputLabel id="Current Location">
                 Enter where story was written
-              </StyledInputLabel>
-              <StyledSelect
+              </StyledInputLabel> */}
+              <StyledAutocomplete
+                color="Primary"
+                disableListWrap
+                loading={!countries}
+                options={countries || []}
+                ListboxComponent={
+                  ListboxComponent as React.ComponentType<
+                    React.HTMLAttributes<HTMLElement>
+                  >
+                }
+                renderGroup={renderGroup}
+                forcePopupIcon
+                name="current_city"
+                id="select-label-city"
+                value={formInput.current_city ? formInput.current_city : null}
+                //TODO: double check that this onChange method works
+                onChange={handleChange}
+                renderInput={(params) => {
+                  return (
+                    <TextField
+                      {...params}
+                      required
+                      variant="outlined"
+                      label=""
+                      placeholder="Enter where story was written *"
+                    />
+                  );
+                }}
+              />
+              {/* <StyledSelect
                 variant="outlined"
                 value={formInput.current_city}
                 onChange={handleChange}
@@ -513,7 +635,7 @@ export const UploadStory: React.FC<StoryProps> = ({
                 <StyledMenuItem value={"Thunder Bay"}>
                   Thunder Bay
                 </StyledMenuItem>
-              </StyledSelect>
+              </StyledSelect> */}
               <FormControl>
                 <UploadLabelsText>Year Published</UploadLabelsText>
                 <StyledSelect
