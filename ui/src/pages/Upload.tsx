@@ -188,7 +188,6 @@ export const Upload: React.FC = () => {
           Valid: true,
         },
       };
-      console.log(storyFromData);
       return storyFromData;
     }
     return undefined;
