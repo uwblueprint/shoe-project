@@ -4,20 +4,18 @@ import { makeStyles } from "@material-ui/core/styles";
 import Switch from "@material-ui/core/Switch";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
-import { useState } from "react";
+import AddIcon from "@material-ui/icons/Add";
+import RemoveIcon from "@material-ui/icons/Remove";
+import { useEffect, useState } from "react";
 import * as React from "react";
 import styled from "styled-components";
-import useSWR, { mutate} from "swr";
-
+import useSWR, { mutate } from "swr";
 
 import { a11yProps, AllStoriesTabs } from "../components/AllStoriesTabs";
 import VirtualizedTable from "../components/VirtualizedTable";
 import { colors } from "../styles/colors";
-import { StyledAllStoriesHeader } from "../styles/typography";
+import { fontSize, StyledAllStoriesHeader } from "../styles/typography";
 import { Story } from "../types/index";
-
-import AddIcon from '@material-ui/icons/Add';
-import RemoveIcon from '@material-ui/icons/Remove';
 
 const StyledSwitch = styled(Switch)`
   && {
@@ -30,6 +28,12 @@ const StyledSwitch = styled(Switch)`
   }
 `;
 
+const StyledEmptyMessage = styled.div`
+  margin-left: 50vw;
+  margin-top: 30vh;
+  font-family: Poppins;
+  font-size: ${fontSize.subtitle};
+`;
 const StyledContainer = styled.div`
   background-color: ${colors.primaryLight6};
 `;
@@ -49,6 +53,12 @@ const useStyles = makeStyles({
   indicator: {
     backgroundColor: colors.primaryDark1,
   },
+  checkbox: {
+    "&$checked": {
+      color: colors.primaryDark1,
+    },
+  },
+  checked: {},
 });
 
 function createData(
@@ -75,21 +85,21 @@ function createData(
 
 export const AllStories: React.FC = () => {
   const { data: allStories, error } = useSWR<Story[]>("/api/stories");
-  let rows = [];
-
-  const [tabValue, setTabValue] = React.useState(0);
-  const [visibleState, setVisibleState] = React.useState([]);
-  const [visibleTableState, setVisibleTableState] = React.useState([]);
-  const [tableData, setTableData] = useState(rows);
+  const [tabValue, setTabValue] = useState(0);
+  const [visibleState, setVisibleState] = useState([]);
+  const [visibleTableState, setVisibleTableState] = useState([]);
+  const [tableData, setTableData] = useState([]);
   const [changedVisibility, setChangedVisibility] = useState([]);
   const classes = useStyles();
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState("id");
 
-  React.useEffect(() => {
+  let rows = [];
+  useEffect(() => {
     if (allStories) {
-      rows = allStories.map((story, i) =>
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      rows = allStories.map((story) =>
         createData(
           story.ID,
           story.title,
@@ -101,37 +111,45 @@ export const AllStories: React.FC = () => {
           story.author_country
         )
       );
+      //Initialize state after allstories are mapped
       setVisibleState(rows);
       setVisibleTableState(rows);
       setTableData(rows);
     }
-  },[allStories])
+  }, [allStories]);
 
   const handleSwitchChange = (e, story) => {
-    //If switch was unchecked
     if (e.target.checked) {
-      setVisibleState((prevState) => [...prevState, story.id]);
+      setVisibleState((prevStories) => [...prevStories, story.id]);
       setVisibleTableState([...visibleTableState, story]);
     } else {
-      setVisibleState((prevState) => prevState.filter((e) => e !== story.id));
+      setVisibleState((prevStories) =>
+        prevStories.filter((e) => e !== story.id)
+      );
       setVisibleTableState((visibleTableState) =>
         visibleTableState.filter((e) => e.id !== story.id)
       );
     }
-    console.log(story)
-    mutate("/api/stories", (prevStories: Story[]) => {
-      console.log(prevStories)
-      return prevStories.map((currStory) => currStory.ID === story.ID ?
-        {...currStory, is_visible: !currStory.is_visible}: 
-        currStory)}, 
-    false);
+    mutate(
+      "/api/stories",
+      (prevStories: Story[]) => {
+        return prevStories.map((currStory) =>
+          currStory.ID === story.ID
+            ? { ...currStory, is_visible: !currStory.is_visible }
+            : currStory
+        );
+      },
+      false
+    );
 
-    const changedVisibilityContainsID = (elem: any) => elem.ID === story.ID;
+    const changedVisibilityContainsID = (elem) => elem.ID === story.ID;
 
     if (changedVisibility.some(changedVisibilityContainsID)) {
-      setChangedVisibility(prevState => prevState.filter((i) => i.ID !== story.ID));
+      setChangedVisibility((prevState) =>
+        prevState.filter((i) => i.ID !== story.ID)
+      );
     } else {
-      setChangedVisibility(prevState => [...prevState, story]);
+      setChangedVisibility((prevState) => [...prevState, story]);
     }
   };
 
@@ -142,9 +160,9 @@ export const AllStories: React.FC = () => {
   };
   const handleChecked = (e, story) => {
     if (e.target.checked) {
-      setSelectedRowIds((prevState) => [...prevState, story.id]);
+      setSelectedRowIds((prevState) => [...prevState, story.ID]);
     } else {
-      setSelectedRowIds((prevState) => prevState.filter((e) => e !== story.id));
+      setSelectedRowIds((prevState) => prevState.filter((e) => e !== story.ID));
     }
   };
 
@@ -216,7 +234,7 @@ export const AllStories: React.FC = () => {
           aria-label="all stories tabs"
         >
           <Tab label="ALL STORIES" {...a11yProps(0)} />
-          <Tab label="VISIBLE CHANGES" {...a11yProps(1)} />
+          <Tab label="VISIBLE STORIES" {...a11yProps(1)} />
           <Tab label="PENDING MAP CHANGES" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
@@ -235,6 +253,10 @@ export const AllStories: React.FC = () => {
               header: (
                 <div>
                   <Checkbox
+                    classes={{
+                      root: classes.checkbox,
+                      checked: classes.checked,
+                    }}
                     checked={selectedRowIds.length > 0}
                     indeterminate={indeterminate}
                     onChange={handleCheckedAll}
@@ -245,10 +267,14 @@ export const AllStories: React.FC = () => {
               cell: (story) => (
                 <div>
                   <Checkbox
+                    classes={{
+                      root: classes.checkbox,
+                      checked: classes.checked,
+                    }}
                     onChange={(e) => handleChecked(e, story)}
-                    checked={selectedRowIds.includes(story.id)}
+                    checked={selectedRowIds.includes(story.ID)}
                   />
-                  {story.id}
+                  {story.ID}
                 </div>
               ),
             },
@@ -314,7 +340,7 @@ export const AllStories: React.FC = () => {
       </AllStoriesTabs>
       <AllStoriesTabs value={tabValue} index={1}>
         <VirtualizedTable
-          data={visibleTableState.filter(s => s.is_visible)}
+          data={visibleTableState.filter((story) => story.is_visible)}
           order={order}
           orderBy={orderBy}
           columns={[
@@ -327,6 +353,10 @@ export const AllStories: React.FC = () => {
               header: (
                 <div>
                   <Checkbox
+                    classes={{
+                      root: classes.checkbox,
+                      checked: classes.checked,
+                    }}
                     checked={selectedRowIds.length > 0}
                     indeterminate={indeterminate}
                     onChange={handleCheckedAll}
@@ -337,10 +367,14 @@ export const AllStories: React.FC = () => {
               cell: (story) => (
                 <div>
                   <Checkbox
+                    classes={{
+                      root: classes.checkbox,
+                      checked: classes.checked,
+                    }}
                     onChange={(e) => handleChecked(e, story)}
-                    checked={selectedRowIds.includes(story.id)}
+                    checked={selectedRowIds.includes(story.ID)}
                   />
-                  {story.id}
+                  {story.ID}
                 </div>
               ),
             },
@@ -393,7 +427,7 @@ export const AllStories: React.FC = () => {
               },
               cell: (story) => (
                 <StyledSwitch
-                  checked={visibleState.includes(story.id)}
+                  checked={story.is_visible}
                   onChange={(e) => handleSwitchChange(e, story)}
                   name="checked"
                   color="primary"
@@ -405,84 +439,84 @@ export const AllStories: React.FC = () => {
       </AllStoriesTabs>
       <AllStoriesTabs value={tabValue} index={2}>
         {/* Pending Changes */}
-        {(changedVisibility.length > 0) ? <VirtualizedTable
-          data={stableSort(changedVisibility, getComparator(order, orderBy))}
-          order={order}
-          orderBy={orderBy}
-          columns={[
-            {
-              name: "pending-map-changes-changes",
-              width: 100,
-              header: (
-                <div>
-                  Changes
-                </div>
-              ),
-              cell: (d) => (
-                <div>
-                  {(visibleState.includes(d.id)) ? <AddIcon /> : <RemoveIcon />}
-                </div>
-              ),
-            },
+        {changedVisibility.length > 0 ? (
+          <VirtualizedTable
+            data={stableSort(changedVisibility, getComparator(order, orderBy))}
+            order={order}
+            orderBy={orderBy}
+            columns={[
+              {
+                name: "pending-map-changes-changes",
+                width: 100,
+                header: <div>Changes</div>,
+                cell: (d) => (
+                  <div>
+                    {visibleState.includes(d.id) ? <AddIcon /> : <RemoveIcon />}
+                  </div>
+                ),
+              },
 
-            {
-              name: "title",
-              header: "Story Name",
-              width: 200,
-              onHeaderClick() {
-                handleRequestSort("title");
+              {
+                name: "title",
+                header: "Story Name",
+                width: 200,
+                onHeaderClick() {
+                  handleRequestSort("title");
+                },
               },
-            },
-            {
-              name: "current_city",
-              header: "Current City",
-              width: 200,
-              onHeaderClick() {
-                handleRequestSort("current_city");
+              {
+                name: "current_city",
+                header: "Current City",
+                width: 200,
+                onHeaderClick() {
+                  handleRequestSort("current_city");
+                },
               },
-            },
-            {
-              name: "year",
-              header: "Year",
-              width: 100,
-              onHeaderClick() {
-                handleRequestSort("year");
+              {
+                name: "year",
+                header: "Year",
+                width: 100,
+                onHeaderClick() {
+                  handleRequestSort("year");
+                },
               },
-            },
-            {
-              name: "author_name",
-              header: "Author name",
-              width: 250,
-              onHeaderClick() {
-                handleRequestSort("author_name");
+              {
+                name: "author_name",
+                header: "Author name",
+                width: 250,
+                onHeaderClick() {
+                  handleRequestSort("author_name");
+                },
               },
-            },
-            {
-              name: "author_country",
-              header: "Country",
-              width: 300,
-              onHeaderClick() {
-                handleRequestSort("author_country");
+              {
+                name: "author_country",
+                header: "Country",
+                width: 300,
+                onHeaderClick() {
+                  handleRequestSort("author_country");
+                },
               },
-            },
-            {
-              name: "is_visible",
-              header: "Show on Map",
-              width: 150,
-              onHeaderClick() {
-                handleRequestSort("jobType");
+              {
+                name: "is_visible",
+                header: "Show on Map",
+                width: 150,
+                onHeaderClick() {
+                  handleRequestSort("jobType");
+                },
+                cell: (story) => (
+                  <StyledSwitch
+                    checked={visibleState.includes(story.id)}
+                    onChange={(e) => handleSwitchChange(e, story)}
+                    name="checked"
+                    color="primary"
+                  />
+                ),
               },
-              cell: (story) => (
-                <StyledSwitch
-                  checked={visibleState.includes(story.id)}
-                  onChange={(e) => handleSwitchChange(e, story)}
-                  name="checked"
-                  color="primary"
-                />
-              ),
-            },
-          ]}
-        /> : <div> No pending changes! </div>}
+            ]}
+          />
+        ) : (
+          <StyledEmptyMessage> No pending changes! </StyledEmptyMessage>
+        )}
       </AllStoriesTabs>
     </>
   );
