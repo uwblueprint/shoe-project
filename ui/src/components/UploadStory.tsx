@@ -320,7 +320,6 @@ export const UploadStory: React.FC<StoryProps> = ({
   };
 
   const handleSubmit = (event) => {
-    console.log("HERE");
     event.preventDefault();
     setLoading(true);
     setDisabled(true);

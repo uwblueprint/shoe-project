@@ -26,3 +26,4 @@ export const Upload: React.FC = () => {
   };
 
   return <UploadStory id={null} story={story} bio={""}></UploadStory>;
+};
