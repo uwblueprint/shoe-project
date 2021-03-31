@@ -8,6 +8,7 @@ import * as React from "react";
 import styled from "styled-components";
 import useSWR from "swr";
 
+import { StoryDrawer } from "../components";
 import { a11yProps, AllStoriesTabs } from "../components/AllStoriesTabs";
 import VirtualizedTable from "../components/VirtualizedTable";
 import { Story } from "../types/index";
@@ -65,6 +66,19 @@ export const AllStories: React.FC = () => {
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState("id");
+
+  const [clickedStory, setClickedStory] = useState<Story | undefined>(
+    undefined
+  );
+
+  const setClickedRow = (rowId: number | undefined) => {
+    if (rowId) {
+      const story = allStories?.find((story) => story.ID === rowId);
+      if (story) {
+        setClickedStory(story);
+      }
+    }
+  };
 
   const handleChange = (e, d) => {
     if (e.target.checked) {
@@ -151,96 +165,106 @@ export const AllStories: React.FC = () => {
         </Tabs>
       </StyledAppBar>
       <AllStoriesTabs value={tabValue} index={0}>
-        <VirtualizedTable
-          data={stableSort(tableData, getComparator(order, orderBy))}
-          order={order}
-          orderBy={orderBy}
-          columns={[
-            {
-              name: "id",
-              width: 100,
-              onHeaderClick() {
-                handleRequestSort("id");
+        <>
+          <VirtualizedTable
+            data={stableSort(tableData, getComparator(order, orderBy))}
+            order={order}
+            orderBy={orderBy}
+            setClickedRow={setClickedRow}
+            columns={[
+              {
+                name: "id",
+                width: 100,
+                onHeaderClick() {
+                  handleRequestSort("id");
+                },
+                header: (
+                  <div>
+                    <Checkbox
+                      checked={selectedRowIds.length > 0}
+                      indeterminate={indeterminate}
+                      onChange={handleCheckedAll}
+                    />
+                    ID
+                  </div>
+                ),
+                cell: (d) => (
+                  <div>
+                    <Checkbox
+                      onChange={(e) => handleChecked(e, d)}
+                      checked={selectedRowIds.includes(d.id)}
+                    />
+                    {d.id}
+                  </div>
+                ),
               },
-              header: (
-                <div>
-                  <Checkbox
-                    checked={selectedRowIds.length > 0}
-                    indeterminate={indeterminate}
-                    onChange={handleCheckedAll}
-                  />
-                  ID
-                </div>
-              ),
-              cell: (d) => (
-                <div>
-                  <Checkbox
-                    onChange={(e) => handleChecked(e, d)}
-                    checked={selectedRowIds.includes(d.id)}
-                  />
-                  {d.id}
-                </div>
-              ),
-            },
 
-            {
-              name: "title",
-              header: "Story Name",
-              width: 200,
-              onHeaderClick() {
-                handleRequestSort("title");
+              {
+                name: "title",
+                header: "Story Name",
+                width: 200,
+                onHeaderClick() {
+                  handleRequestSort("title");
+                },
               },
-            },
-            {
-              name: "current_city",
-              header: "Current City",
-              width: 200,
-              onHeaderClick() {
-                handleRequestSort("current_city");
+              {
+                name: "current_city",
+                header: "Current City",
+                width: 200,
+                onHeaderClick() {
+                  handleRequestSort("current_city");
+                },
               },
-            },
-            {
-              name: "year",
-              header: "Year",
-              width: 100,
-              onHeaderClick() {
-                handleRequestSort("year");
+              {
+                name: "year",
+                header: "Year",
+                width: 100,
+                onHeaderClick() {
+                  handleRequestSort("year");
+                },
               },
-            },
-            {
-              name: "author_name",
-              header: "Author name",
-              width: 250,
-              onHeaderClick() {
-                handleRequestSort("author_name");
+              {
+                name: "author_name",
+                header: "Author name",
+                width: 250,
+                onHeaderClick() {
+                  handleRequestSort("author_name");
+                },
               },
-            },
-            {
-              name: "author_country",
-              header: "Country",
-              width: 300,
-              onHeaderClick() {
-                handleRequestSort("author_country");
+              {
+                name: "author_country",
+                header: "Country",
+                width: 300,
+                onHeaderClick() {
+                  handleRequestSort("author_country");
+                },
               },
-            },
-            {
-              name: "is_visible",
-              header: "Show on Map",
-              width: 150,
-              onHeaderClick() {
-                handleRequestSort("jobType");
+              {
+                name: "is_visible",
+                header: "Show on Map",
+                width: 150,
+                onHeaderClick() {
+                  handleRequestSort("jobType");
+                },
+                cell: (d) => (
+                  <Switch
+                    checked={visibleState.includes(d.id)}
+                    onChange={(e) => handleChange(e, d)}
+                    name="checked"
+                    color="primary"
+                  />
+                ),
               },
-              cell: (d) => (
-                <Switch
-                  checked={visibleState.includes(d.id)}
-                  onChange={(e) => handleChange(e, d)}
-                  name="checked"
-                  color="primary"
-                />
-              ),
-            },
-          ]}
-        />
+            ]}
+          />
+          <StoryDrawer
+            story={clickedStory}
+            onClose={() => setClickedStory(undefined)}
+            onClickEditStory={() => {
+              console.log("TODO: Route to edit page");
+            }}
+          />
+        </>
       </AllStoriesTabs>
       <AllStoriesTabs value={tabValue} index={1}>
         Visible Changes

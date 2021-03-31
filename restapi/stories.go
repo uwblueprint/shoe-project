@@ -16,7 +16,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/biter777/countries"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
@@ -111,10 +110,10 @@ func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.R
 			sortString += ", "
 		}
 	}
-	
+
 	gormStories := api.database.Table("stories")
 	gormTags := api.database.Table("tags")
-	
+
 	err = gormTags.Where("name IN ?", tags).Find(&storiesByTags).Error
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
@@ -206,10 +205,6 @@ func (api api) EditStoryByID(w http.ResponseWriter, r *http.Request) render.Rend
 	errAuthor := api.database.First(&author).Error // Checking if author exists or not. If it does not, a new author would be created
 	if errAuthor != nil {
 		if errAuthor == gorm.ErrRecordNotFound {
-			country := countries.ByName(author.OriginCountry)
-			if country == countries.Unknown {
-				return rest.ErrInvalidRequest(api.logger, "Unknown origin country", nil)
-			}
 			if err := api.database.Create(&author).Error; err != nil { // This is where a new author is added if it did not already exist
 				return rest.ErrInternal(api.logger, errAuthor)
 			}
@@ -479,10 +474,6 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 	errAuthor := api.database.First(&author).Error
 	if errAuthor != nil {
 		if errAuthor == gorm.ErrRecordNotFound {
-			country := countries.ByName(author.OriginCountry)
-			if country == countries.Unknown {
-				return rest.ErrInvalidRequest(api.logger, "Unknown origin country", nil)
-			}
 			if err := api.database.Create(&author).Error; err != nil { //Adding author
 				return rest.ErrInternal(api.logger, errAuthor)
 			}

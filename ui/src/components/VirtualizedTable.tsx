@@ -33,6 +33,7 @@ interface VirtualizedTableProps {
   columns: any;
   order: string;
   orderBy: string;
+  setClickedRow: (rowId: number | undefined) => void;
 }
 
 export function VirtualizedTable({
@@ -40,6 +41,7 @@ export function VirtualizedTable({
   columns,
   order,
   orderBy,
+  setClickedRow,
 }: VirtualizedTableProps): JSX.Element {
   const classes = useVirtualizedTableStyles();
   return (
@@ -52,6 +54,12 @@ export function VirtualizedTable({
             orderBy={orderBy}
             orderDirection={order}
             includeHeaders
+            onCellClick={(e, { rowData }) => {
+              const id: number = rowData?.id;
+              if (id) {
+                setClickedRow(id);
+              }
+            }}
             cellProps={(column, row) => {
               /* alternate the background colour of rows between colors.white and colors.primaryLight6 */
               if (data.indexOf(row) > 0 && data.indexOf(row) % 2 !== 0) {
