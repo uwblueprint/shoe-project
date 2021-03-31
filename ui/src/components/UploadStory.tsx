@@ -260,6 +260,7 @@ export const UploadStory: React.FC<StoryProps> = ({
   const { data: tagOptions, error } = useSWR<string[]>("/api/tags");
   const [tagArray, setTagArrayValues] = useState(story.tags);
   const [authorCountry, setAuthorCountry] = useState(story.author_country);
+  const [currentCity, setCurrentCity] = useState(story.current_city.toUpperCase());
   const [autocompleteAuthorCountry, setAutocompleteAuthorCountry] = useState(
     story.author_country
   );
@@ -298,7 +299,7 @@ export const UploadStory: React.FC<StoryProps> = ({
       author_last_name: story.author_last_name,
       // author_country: story.author_country,
       year: story.year,
-      current_city: story.current_city,
+      current_city: story.current_city.toUpperCase(),
       bio: bio,
     }
   );
@@ -414,16 +415,16 @@ export const UploadStory: React.FC<StoryProps> = ({
   };
 
   const handleSubmit = (event) => {
-    console.log("HERE");
     event.preventDefault();
     setLoading(true);
     setDisabled(true);
     const formData = new FormData();
     for (const key in formInput) {
-      if (key != "image") {
+      if (key != "image" && key != "current_city") {
         formData.append(key, formInput[key]);
       }
     }
+    formData.append("current_city", currentCity);
 
     for (const index in tagArray) {
       formData.append("tags", tagArray[index]);
@@ -594,7 +595,6 @@ export const UploadStory: React.FC<StoryProps> = ({
               </StyledInputLabel> */}
               <StyledAutocomplete
                 color="Primary"
-                disableListWrap
                 loading={!citiesList}
                 options={citiesList || []}
                 ListboxComponent={
@@ -604,11 +604,12 @@ export const UploadStory: React.FC<StoryProps> = ({
                 }
                 renderGroup={renderGroup}
                 forcePopupIcon
+                freeSolo
                 name="current_city"
                 id="select-label-city"
-                value={formInput.current_city ? formInput.current_city.toString().toUpperCase(): ""}
+                value={currentCity != "" ? currentCity : null}
                 //TODO: double check that this onChange method works
-                // onChange={handleChange}
+                onChange={(_, newValue) => setCurrentCity(newValue)}
                 renderInput={(params) => {
                   return (
                     <TextField
