@@ -373,7 +373,7 @@ func (suite *endpointTestSuite) TestMixedUpQueryParams() {
 	//Add to sqlite db
 	suite.db.Create(&jsonAuthors)
 	suite.db.Create(&jsonStories)
-	
+
 	var response = suite.endpoint.GET("/stories").
 		WithQuery("sort", "current_city").
 		WithQuery("order", "asc").
@@ -382,7 +382,7 @@ func (suite *endpointTestSuite) TestMixedUpQueryParams() {
 		WithQuery("visibility", true).
 		Expect().
 		Status(http.StatusOK).JSON()
-	
+
 	response.Object().Value("payload").Array().Length().Equal(4)
 	response.Object().Value("payload").Array().Element(0).Object().Value("title").Equal("Pulp Fiction")
 	response.Object().Value("payload").Array().Element(1).Object().Value("title").Equal("Hitchhiker's Guide to the Galaxy")
@@ -539,7 +539,7 @@ func (suite *endpointTestSuite) TestTagsWithSort() {
 	response.Object().Value("payload").Array().Element(1).Object().Value("tags").Array().Length().Equal(2)
 	response.Object().Value("payload").Array().Element(1).Object().Value("tags").Array().Element(0).Equal("REFUGEE")
 	response.Object().Value("payload").Array().Element(1).Object().Value("tags").Array().Element(1).Equal("EDUCATION")
-	
+
 }
 
 func (suite *endpointTestSuite) TestVisibleStories() {
@@ -603,6 +603,95 @@ func (suite *endpointTestSuite) TestVisibleStories() {
 		Status(http.StatusOK).JSON()
 
 	response.Object().Value("payload").Array().Length().Equal(1)
+}
+
+func (suite *endpointTestSuite) TestPublishStories() {
+
+	json := []models.Author{
+		{
+			FirstName:     "Antoine",
+			LastName:      "dSE",
+			OriginCountry: "France",
+			Bio:           "bio",
+		},
+		{
+			FirstName:     "Douglas",
+			LastName:      "Adams",
+			OriginCountry: "UK",
+			Bio:           "bio",
+		},
+	}
+
+	token, _ := testutils.ValidToken()
+
+	suite.endpoint.POST("/authors").WithHeader("Authorization", fmt.Sprintf("Bearer %s", token)).
+		WithJSON(json).
+		Expect().
+		Status(http.StatusOK)
+
+	invisibleStory := models.Story{
+
+		Title:           "The Little Prince",
+		Content:         "Children",
+		Year:            2012,
+		IsVisible:       false,
+		Summary:         "Summary1",
+		CurrentCity:     "Toronto",
+		ImageURL:        "https://exampleurl.com",
+		VideoURL:        "https://youtube.com",
+		AuthorFirstName: "Antoine",
+		AuthorLastName:  "dSE",
+		AuthorCountry:   "France",
+	}
+
+	visibleStory := models.Story{
+
+		Title:           "Hitchhiker's Guide to the Galaxy",
+		Content:         "Fiction",
+		Year:            2012,
+		IsVisible:       true,
+		Summary:         "Summary2",
+		CurrentCity:     "Toronto",
+		ImageURL:        "https://exampleurl.com",
+		AuthorFirstName: "Douglas",
+		AuthorLastName:  "Adams",
+		AuthorCountry:   "UK",
+	}
+
+	suite.db.Create(&invisibleStory)
+	suite.db.Create(&visibleStory)
+
+	invisibleStory.IsVisible = true
+	visibleStory.IsVisible = false
+
+	storiesJson := []models.Story{
+		invisibleStory,
+		visibleStory,
+	}
+
+	suite.endpoint.PUT("/stories/publish").WithHeader("Authorization", fmt.Sprintf("Bearer %s", token)).
+		WithJSON(storiesJson).
+		Expect().
+		Status(http.StatusOK)
+
+	var response = suite.endpoint.GET("/stories").
+		WithQuery("visibility", false).
+		Expect().
+		Status(http.StatusOK).JSON()
+
+	response.Object().Value("payload").Array().Length().Equal(1)
+	response.Object().Value("payload").Array().Element(0).Object().Value("is_visible").Equal(false)
+	response.Object().Value("payload").Array().Element(0).Object().Value("title").Equal("Hitchhiker's Guide to the Galaxy")
+
+	var responseVisibleStory = suite.endpoint.GET("/stories").
+		WithQuery("visibility", true).
+		Expect().
+		Status(http.StatusOK).JSON()
+
+	responseVisibleStory.Object().Value("payload").Array().Length().Equal(1)
+	responseVisibleStory.Object().Value("payload").Array().Element(0).Object().Value("is_visible").Equal(true)
+	responseVisibleStory.Object().Value("payload").Array().Element(0).Object().Value("title").Equal("The Little Prince")
+
 }
 
 func (suite *endpointTestSuite) TestCreateAuthor() {

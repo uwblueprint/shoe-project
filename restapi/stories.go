@@ -383,7 +383,7 @@ func (api api) PublishStories(w http.ResponseWriter, r *http.Request) render.Ren
 		return rest.ErrInvalidRequest(api.logger, "Invalid payload", err)
 	}
 	for _, story := range stories {
-		if err := api.database.Save(&story).Error; err != nil {
+		if err := api.database.Model(&story).Update("is_visible", story.IsVisible).Error; err != nil {
 			return rest.ErrInternal(api.logger, err)
 		}
 	}
