@@ -16,6 +16,7 @@ import VirtualizedTable from "../components/VirtualizedTable";
 import { colors } from "../styles/colors";
 import { fontSize, StyledAllStoriesHeader } from "../styles/typography";
 import { Story } from "../types/index";
+import SearchBar from "material-ui-search-bar";
 
 const StyledSwitch = styled(Switch)`
   && {
@@ -85,6 +86,7 @@ function createData(
 
 export const AllStories: React.FC = () => {
   const { data: allStories, error } = useSWR<Story[]>("/api/stories");
+  const [origTableData, setOrigTableData] = useState([]);
   const [tabValue, setTabValue] = useState(0);
   const [visibleState, setVisibleState] = useState([]);
   const [visibleTableState, setVisibleTableState] = useState([]);
@@ -94,6 +96,7 @@ export const AllStories: React.FC = () => {
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [order, setOrder] = useState("desc");
   const [orderBy, setOrderBy] = useState("id");
+  const [searched, setSearched] = useState<string>("");
 
   let rows = [];
   useEffect(() => {
@@ -115,6 +118,7 @@ export const AllStories: React.FC = () => {
       setVisibleState(rows);
       setVisibleTableState(rows);
       setTableData(rows);
+      setOrigTableData(rows);
     }
   }, [allStories]);
 
@@ -217,6 +221,27 @@ export const AllStories: React.FC = () => {
   ) => {
     setTabValue(newValue);
   };
+
+
+  const requestSearch = (searchedVal: string) => {
+    const filteredRows = origTableData.filter((row) => {
+      let exist = false
+      Object.keys(row).forEach(prop => {
+        console.log(prop)
+        if (typeof row[prop] === 'string' && row[prop].toLowerCase().includes(searchedVal.toLowerCase())) {
+          exist = true
+        }
+      })
+      return exist
+    });
+    console.log(filteredRows)
+    setTableData(filteredRows);
+  };
+  const cancelSearch = () => {
+    setSearched("");
+    requestSearch(searched);
+  };
+
   return (
     <>
       <StyledContainer>
@@ -238,7 +263,13 @@ export const AllStories: React.FC = () => {
           <Tab label="PENDING MAP CHANGES" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
+      <SearchBar
+    value={searched}
+    onChange={(searchVal) => requestSearch(searchVal)}
+    onCancelSearch={() => cancelSearch()}
+  />
       <AllStoriesTabs value={tabValue} index={0}>
+        
         <VirtualizedTable
           data={stableSort(tableData, getComparator(order, orderBy))}
           order={order}
