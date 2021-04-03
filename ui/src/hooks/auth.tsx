@@ -97,11 +97,14 @@ export function useProvideAuth(): AuthContextType {
   ) => {
     const response = res as GoogleLoginResponse;
     dispatch({ type: "START_LOADING" });
-    await fetch("api/login", {
+    fetch("api/login", {
       method: "POST",
       headers: { Authorization: response.tokenId },
+    }).then(() => {
+      dispatch({ type: "SUCCESS", response });
+    }).catch(() => {
+      dispatch({ type: "FAILURE", response });
     });
-    dispatch({ type: "SUCCESS", response });
   };
 
   const handleFailure = (response?: unknown) => {
