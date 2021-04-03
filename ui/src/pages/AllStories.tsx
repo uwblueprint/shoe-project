@@ -6,6 +6,7 @@ import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
+import SearchBar from "material-ui-search-bar";
 import { useEffect, useState } from "react";
 import * as React from "react";
 import styled from "styled-components";
@@ -16,7 +17,6 @@ import VirtualizedTable from "../components/VirtualizedTable";
 import { colors } from "../styles/colors";
 import { fontSize, StyledAllStoriesHeader } from "../styles/typography";
 import { Story } from "../types/index";
-import SearchBar from "material-ui-search-bar";
 
 const StyledSwitch = styled(Switch)`
   && {
@@ -222,19 +222,22 @@ export const AllStories: React.FC = () => {
     setTabValue(newValue);
   };
 
-
   const requestSearch = (searchedVal: string) => {
     const filteredRows = origTableData.filter((row) => {
-      let exist = false
-      Object.keys(row).forEach(prop => {
-        console.log(prop)
-        if (typeof row[prop] === 'string' && row[prop].toLowerCase().includes(searchedVal.toLowerCase())) {
-          exist = true
+      let doesExist = false;
+      Object.keys(row).forEach((prop) => {
+        const numExist =
+          typeof row[prop] === "number" &&
+          row[prop].toString().includes(searchedVal);
+        const stringExist =
+          typeof row[prop] === "string" &&
+          row[prop].toLowerCase().includes(searchedVal.toLowerCase());
+        if (stringExist || numExist) {
+          doesExist = true;
         }
-      })
-      return exist
+      });
+      return doesExist;
     });
-    console.log(filteredRows)
     setTableData(filteredRows);
   };
   const cancelSearch = () => {
@@ -264,12 +267,11 @@ export const AllStories: React.FC = () => {
         </Tabs>
       </AppBar>
       <SearchBar
-    value={searched}
-    onChange={(searchVal) => requestSearch(searchVal)}
-    onCancelSearch={() => cancelSearch()}
-  />
+        value={searched}
+        onChange={(searchVal) => requestSearch(searchVal)}
+        onCancelSearch={() => cancelSearch()}
+      />
       <AllStoriesTabs value={tabValue} index={0}>
-        
         <VirtualizedTable
           data={stableSort(tableData, getComparator(order, orderBy))}
           order={order}
