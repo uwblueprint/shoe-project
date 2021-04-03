@@ -3,7 +3,7 @@ import * as React from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
 
-import { useAuth } from "../hooks/auth";
+import { useAuth } from "../../hooks/auth";
 import { AllStories } from "./AllStories";
 import { Upload } from "./Upload";
 

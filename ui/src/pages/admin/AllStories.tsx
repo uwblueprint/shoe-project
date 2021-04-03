@@ -8,10 +8,9 @@ import * as React from "react";
 import styled from "styled-components";
 import useSWR from "swr";
 
-import { a11yProps, AllStoriesTabs } from "../components/AllStoriesTabs";
-import VirtualizedTable from "../components/VirtualizedTable";
-import { Story } from "../types/index";
-import { useAuth } from "../hooks/auth";
+import { a11yProps, AllStoriesTabs } from "../../components/AllStoriesTabs";
+import VirtualizedTable from "../../components/VirtualizedTable";
+import { Story } from "../../types/index";
 
 function createData(
   id: number,
