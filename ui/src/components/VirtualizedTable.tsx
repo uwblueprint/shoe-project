@@ -34,10 +34,18 @@ const useVirtualizedTableStyles = makeStyles({
   stickyColumnClass: {},
 });
 
+type TableColumn = {
+  name: string;
+  width: number;
+  onHeaderClick?: () => void;
+  header: JSX.Element | string;
+  cell?: (any) => JSX.Element;
+}
+
 interface VirtualizedTableProps {
-  data: [];
-  // eslint-disable-next-line
-  columns: any;
+  data: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any  columns: any;
+  columns: TableColumn[];
   order: string;
   orderBy: string;
 }

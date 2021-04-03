@@ -6,7 +6,7 @@ import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useReducer } from "react";
 import * as React from "react";
 import styled from "styled-components";
 import useSWR, { mutate } from "swr";
@@ -83,17 +83,121 @@ function createData(
   };
 }
 
+type State = {
+  tabValue: number;
+  visibleState: any[];
+  visibleTableState: any[]; 
+  tableData: any[];
+  changedVisibility: any[];
+  selectedRowIds: any[];
+  order: string;
+  orderBy: string;
+}
+
+type ActionType = 
+  | { type: "SWITCH_TAB", id: number; }
+  | { type: "HANDLE_SWITCH_CHANGE", e: any, story: Story }
+  | { type: "INITIALIZE_AFTER_API", rows: any[] }
+  | { type: "HANDLE_CHECKED_ALL", rows }
+  | { type: "HANDLE_CHECKED", e: any, story: Story }
+  | { type: "SET_ORDERING", order: string, orderBy: string }
+  | { type: "SET_TABLE_DATA", data: any[] }
+  | { type: "SET_TAB_VALUE", newValue: number }
+
+const initialState: State = {
+  tabValue: 0,
+  visibleState: [],
+  visibleTableState: [],
+  tableData: [],
+  changedVisibility: [],
+  selectedRowIds: [],
+  order: "desc",
+  orderBy: "id"
+}
+
+function reducer(state: State, action: ActionType) {
+  switch (action.type) {
+    case "SWITCH_TAB":
+      return {
+        ...state,
+        tabValue: action.id
+      };
+    case "HANDLE_SWITCH_CHANGE":
+
+      const changedVisibilityFoundID = (elem) => elem.ID === action.story.ID;
+      const changedVisibilityContainsID = state.changedVisibility.some(changedVisibilityFoundID);
+
+      if (action.e.target.checked) {
+        return {
+          ...state,
+          visibleState: [...state.visibleState, action.story.ID],
+          visibleTableState: [...state.visibleTableState, action.story.ID],
+          changedVisibility: changedVisibilityContainsID ? 
+            state.changedVisibility.filter(e => e.ID !== action.story.ID) :
+            [...state.changedVisibility, action.story]
+        };
+      } else {
+        return {
+          ...state,
+          visibleState: state.visibleState.filter(e => e !== action.story.ID),
+          visibleTableState: state.visibleTableState.filter(e => e.id !== action.story.ID),
+          changedVisibility: changedVisibilityContainsID ? 
+            state.changedVisibility.filter(e => e.ID !== action.story.ID) :
+            [...state.changedVisibility, action.story]
+        };
+      }
+
+    case "INITIALIZE_AFTER_API":
+      return {
+        ...state,
+        visibleState: action.rows,
+        visibleTableState: action.rows,
+        tableData: action.rows
+      };
+    case "HANDLE_CHECKED_ALL":
+      return {
+        ...state,
+        selectedRowIds: state.selectedRowIds.length === action.rows.length ?
+          []:
+          action.rows.map( story => story.id)
+      };
+    case "HANDLE_CHECKED":
+      if (action.e.target.checked) {
+        return {
+          ...state,
+          selectedRowIds: [...state.selectedRowIds, action.story.ID]
+        };
+      } else {
+        return {
+          ...state,
+          selectedRowIds: state.selectedRowIds.filter(e => e !== action.story.ID)
+        };
+      }
+    case "SET_ORDERING":
+      return {
+        ...state,
+        order: action.order,
+        orderBy: action.orderBy
+      };
+    case "SET_TABLE_DATA":
+      return {
+        ...state,
+        tableData: action.data
+      };
+    case "SET_TAB_VALUE":
+      return {
+        ...state,
+        tabValue: action.newValue
+      }
+  }
+}
+
 export const AllStories: React.FC = () => {
+
+  const [state, dispatch] = useReducer(reducer, initialState);
+
   const { data: allStories, error } = useSWR<Story[]>("/api/stories");
-  const [tabValue, setTabValue] = useState(0);
-  const [visibleState, setVisibleState] = useState([]);
-  const [visibleTableState, setVisibleTableState] = useState([]);
-  const [tableData, setTableData] = useState([]);
-  const [changedVisibility, setChangedVisibility] = useState([]);
   const classes = useStyles();
-  const [selectedRowIds, setSelectedRowIds] = useState([]);
-  const [order, setOrder] = useState("desc");
-  const [orderBy, setOrderBy] = useState("id");
 
   let rows = [];
   useEffect(() => {
@@ -112,24 +216,12 @@ export const AllStories: React.FC = () => {
         )
       );
       //Initialize state after allstories are mapped
-      setVisibleState(rows);
-      setVisibleTableState(rows);
-      setTableData(rows);
+      dispatch({type: "INITIALIZE_AFTER_API", rows })
     }
   }, [allStories]);
 
   const handleSwitchChange = (e, story) => {
-    if (e.target.checked) {
-      setVisibleState((prevStories) => [...prevStories, story.id]);
-      setVisibleTableState([...visibleTableState, story]);
-    } else {
-      setVisibleState((prevStories) =>
-        prevStories.filter((e) => e !== story.id)
-      );
-      setVisibleTableState((visibleTableState) =>
-        visibleTableState.filter((e) => e.id !== story.id)
-      );
-    }
+    dispatch({ type: "HANDLE_SWITCH_CHANGE", e, story });
     mutate(
       "/api/stories",
       (prevStories: Story[]) => {
@@ -142,41 +234,49 @@ export const AllStories: React.FC = () => {
       false
     );
 
-    const changedVisibilityContainsID = (elem) => elem.ID === story.ID;
+    
+    //todo: figure out if this stuff needs to come after mutate() or nah LOL 
+    // const changedVisibilityContainsID = (elem) => elem.ID === story.ID;
 
-    if (changedVisibility.some(changedVisibilityContainsID)) {
-      setChangedVisibility((prevState) =>
-        prevState.filter((i) => i.ID !== story.ID)
-      );
-    } else {
-      setChangedVisibility((prevState) => [...prevState, story]);
-    }
+    // if (changedVisibility.some(changedVisibilityContainsID)) {
+    //   setChangedVisibility((prevState) =>
+    //     prevState.filter((i) => i.ID !== story.ID)
+    //   );
+    // } else {
+    //   setChangedVisibility((prevState) => [...prevState, story]);
+    // }
   };
 
   const handleCheckedAll = () => {
-    setSelectedRowIds((prevState) =>
-      prevState.length === rows.length ? [] : rows.map((story) => story.id)
-    );
+    // setSelectedRowIds((prevState) =>
+    //   prevState.length === rows.length ? [] : rows.map((story) => story.id)
+    // );
+    dispatch({type: "HANDLE_CHECKED_ALL", rows });
   };
   const handleChecked = (e, story) => {
-    if (e.target.checked) {
-      setSelectedRowIds((prevState) => [...prevState, story.ID]);
-    } else {
-      setSelectedRowIds((prevState) => prevState.filter((e) => e !== story.ID));
-    }
+    dispatch({type: "HANDLE_CHECKED", e, story });
+
+    // if (e.target.checked) {
+    //   setSelectedRowIds((prevState) => [...prevState, story.ID]);
+    // } else {
+    //   setSelectedRowIds((prevState) => prevState.filter((e) => e !== story.ID));
+    // }
   };
 
-  const handleRequestSort = (property) => {
-    const isDesc = orderBy === property && order === "asc";
-    const newOrder = isDesc ? "desc" : "asc";
-    setOrder(newOrder);
-    setOrderBy(property);
+  const handleRequestSort = (property: string) => {
+    const isDesc = state.orderBy === property && state.order === "asc";
+    const order = isDesc ? "desc" : "asc";
 
-    onChangeTableSort(newOrder, property);
+    // setOrder(order);
+    // setOrderBy(property);
+    dispatch({ type: "SET_ORDERING", order, orderBy: property });
+
+    onChangeTableSort(order, property);
   };
   const onChangeTableSort = (order, property) => {
-    const newData = stableSort(tableData, getComparator(order, property));
-    setTableData(newData);
+    const data = stableSort(state.tableData, getComparator(order, property));
+    // setTableData(newData);
+    dispatch({ type: "SET_TABLE_DATA", data })
   };
   const stableSort = (array, comparator) => {
     const stabilizedThis = array.map((el, index) => [el, index]);
@@ -207,7 +307,7 @@ export const AllStories: React.FC = () => {
   };
 
   const indeterminate =
-    selectedRowIds.length > 0 && selectedRowIds.length !== rows.length;
+  state.selectedRowIds.length > 0 && state.selectedRowIds.length !== rows.length;
   if (error) return <div>Error returning stories data!</div>;
   if (!allStories) return <div>Loading all stories table..</div>;
 
@@ -215,7 +315,8 @@ export const AllStories: React.FC = () => {
     event: React.ChangeEvent<Record<string, unknown>>,
     newValue: number
   ) => {
-    setTabValue(newValue);
+    // setTabValue(newValue);
+    dispatch({ type: "SET_TAB_VALUE", newValue });
   };
   return (
     <>
@@ -229,7 +330,7 @@ export const AllStories: React.FC = () => {
           classes={{
             indicator: classes.indicator,
           }}
-          value={tabValue}
+          value={state.tabValue}
           onChange={handleTabChange}
           aria-label="all stories tabs"
         >
@@ -238,11 +339,11 @@ export const AllStories: React.FC = () => {
           <Tab label="PENDING MAP CHANGES" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
-      <AllStoriesTabs value={tabValue} index={0}>
+      <AllStoriesTabs value={state.tabValue} index={0}>
         <VirtualizedTable
-          data={stableSort(tableData, getComparator(order, orderBy))}
-          order={order}
-          orderBy={orderBy}
+          data={stableSort(state.tableData, getComparator(state.order, state.orderBy))}
+          order={state.order}
+          orderBy={state.orderBy}
           columns={[
             {
               name: "ID",
@@ -257,7 +358,7 @@ export const AllStories: React.FC = () => {
                       root: classes.checkbox,
                       checked: classes.checked,
                     }}
-                    checked={selectedRowIds.length > 0}
+                    checked={state.selectedRowIds.length > 0}
                     indeterminate={indeterminate}
                     onChange={handleCheckedAll}
                   />
@@ -272,107 +373,7 @@ export const AllStories: React.FC = () => {
                       checked: classes.checked,
                     }}
                     onChange={(e) => handleChecked(e, story)}
-                    checked={selectedRowIds.includes(story.ID)}
-                  />
-                  {story.ID}
-                </div>
-              ),
-            },
-
-            {
-              name: "title",
-              header: "Story Name",
-              width: 500,
-              onHeaderClick() {
-                handleRequestSort("title");
-              },
-            },
-            {
-              name: "current_city",
-              header: "Current City",
-              width: 200,
-              onHeaderClick() {
-                handleRequestSort("current_city");
-              },
-            },
-            {
-              name: "year",
-              header: "Year",
-              width: 100,
-              onHeaderClick() {
-                handleRequestSort("year");
-              },
-            },
-            {
-              name: "author_name",
-              header: "Author name",
-              width: 250,
-              onHeaderClick() {
-                handleRequestSort("author_name");
-              },
-            },
-            {
-              name: "author_country",
-              header: "Country",
-              width: 300,
-              onHeaderClick() {
-                handleRequestSort("author_country");
-              },
-            },
-            {
-              name: "is_visible",
-              header: "Show on Map",
-              width: 150,
-              onHeaderClick() {
-                handleRequestSort("jobType");
-              },
-              cell: (story) => (
-                <StyledSwitch
-                  checked={story.is_visible}
-                  onChange={(e) => handleSwitchChange(e, story)}
-                  name="checked"
-                  color="primary"
-                />
-              ),
-            },
-          ]}
-        />
-      </AllStoriesTabs>
-      <AllStoriesTabs value={tabValue} index={1}>
-        <VirtualizedTable
-          data={visibleTableState.filter((story) => story.is_visible)}
-          order={order}
-          orderBy={orderBy}
-          columns={[
-            {
-              name: "ID",
-              width: 100,
-              onHeaderClick() {
-                handleRequestSort("ID");
-              },
-              header: (
-                <div>
-                  <Checkbox
-                    classes={{
-                      root: classes.checkbox,
-                      checked: classes.checked,
-                    }}
-                    checked={selectedRowIds.length > 0}
-                    indeterminate={indeterminate}
-                    onChange={handleCheckedAll}
-                  />
-                  ID
-                </div>
-              ),
-              cell: (story) => (
-                <div>
-                  <Checkbox
-                    classes={{
-                      root: classes.checkbox,
-                      checked: classes.checked,
-                    }}
-                    onChange={(e) => handleChecked(e, story)}
-                    checked={selectedRowIds.includes(story.ID)}
+                    checked={state.selectedRowIds.includes(story.ID)}
                   />
                   {story.ID}
                 </div>
@@ -437,13 +438,112 @@ export const AllStories: React.FC = () => {
           ]}
         />
       </AllStoriesTabs>
-      <AllStoriesTabs value={tabValue} index={2}>
+      <AllStoriesTabs value={state.tabValue} index={1}>
+        <VirtualizedTable
+          data={state.visibleTableState.filter((story) => story.is_visible)}
+          order={state.order}
+          orderBy={state.orderBy}
+          columns={[
+            {
+              name: "ID",
+              width: 100,
+              onHeaderClick() {
+                handleRequestSort("ID");
+              },
+              header: (
+                <div>
+                  <Checkbox
+                    classes={{
+                      root: classes.checkbox,
+                      checked: classes.checked,
+                    }}
+                    checked={state.selectedRowIds.length > 0}
+                    indeterminate={indeterminate}
+                    onChange={handleCheckedAll}
+                  />
+                  ID
+                </div>
+              ),
+              cell: (story) => (
+                <div>
+                  <Checkbox
+                    classes={{
+                      root: classes.checkbox,
+                      checked: classes.checked,
+                    }}
+                    onChange={(e) => handleChecked(e, story)}
+                    checked={state.selectedRowIds.includes(story.ID)}
+                  />
+                  {story.ID}
+                </div>
+              ),
+            },
+            {
+              name: "title",
+              header: "Story Name",
+              width: 500,
+              onHeaderClick() {
+                handleRequestSort("title");
+              },
+            },
+            {
+              name: "current_city",
+              header: "Current City",
+              width: 200,
+              onHeaderClick() {
+                handleRequestSort("current_city");
+              },
+            },
+            {
+              name: "year",
+              header: "Year",
+              width: 100,
+              onHeaderClick() {
+                handleRequestSort("year");
+              },
+            },
+            {
+              name: "author_name",
+              header: "Author name",
+              width: 250,
+              onHeaderClick() {
+                handleRequestSort("author_name");
+              },
+            },
+            {
+              name: "author_country",
+              header: "Country",
+              width: 300,
+              onHeaderClick() {
+                handleRequestSort("author_country");
+              },
+            },
+            {
+              name: "is_visible",
+              header: "Show on Map",
+              width: 150,
+              onHeaderClick() {
+                handleRequestSort("jobType");
+              },
+              cell: (story) => (
+                <StyledSwitch
+                  checked={story.is_visible}
+                  onChange={(e) => handleSwitchChange(e, story)}
+                  name="checked"
+                  color="primary"
+                />
+              ),
+            },
+          ]}
+        />
+      </AllStoriesTabs>
+      <AllStoriesTabs value={state.tabValue} index={2}>
         {/* Pending Changes */}
-        {changedVisibility.length > 0 ? (
+        {state.changedVisibility.length > 0 ? (
           <VirtualizedTable
-            data={stableSort(changedVisibility, getComparator(order, orderBy))}
-            order={order}
-            orderBy={orderBy}
+            data={stableSort(state.changedVisibility, getComparator(state.order, state.orderBy))}
+            order={state.order}
+            orderBy={state.orderBy}
             columns={[
               {
                 name: "pending-map-changes-changes",
@@ -451,7 +551,7 @@ export const AllStories: React.FC = () => {
                 header: <div>Changes</div>,
                 cell: (d) => (
                   <div>
-                    {visibleState.includes(d.id) ? <AddIcon /> : <RemoveIcon />}
+                    {state.visibleState.includes(d.id) ? <AddIcon /> : <RemoveIcon />}
                   </div>
                 ),
               },
@@ -505,7 +605,7 @@ export const AllStories: React.FC = () => {
                 },
                 cell: (story) => (
                   <StyledSwitch
-                    checked={visibleState.includes(story.id)}
+                    checked={state.visibleState.includes(story.id)}
                     onChange={(e) => handleSwitchChange(e, story)}
                     name="checked"
                     color="primary"
