@@ -18,6 +18,24 @@ import { colors } from "../styles/colors";
 import { fontSize, StyledAllStoriesHeader } from "../styles/typography";
 import { Story } from "../types/index";
 
+const StyledSearchBar = styled(SearchBar)`
+max-width: 320px;
+background-color: ${colors.primaryLight4};
+border-radius: 5px;
+height: 40px;
+margin-left: 70vw;
+margin-top: 1vh;
+color: ${colors.primaryDark1};
+border: none;
+box-shadow: none;
+.ForwardRef-iconButton-10{
+  color: ${colors.primaryDark1};
+}
+.MuiInputBase-input{
+ font-family: “Poppins”;
+}
+`;
+
 const StyledSwitch = styled(Switch)`
   && {
     .MuiSwitch-colorPrimary {
@@ -90,8 +108,10 @@ export const AllStories: React.FC = () => {
   const [tabValue, setTabValue] = useState(0);
   const [visibleState, setVisibleState] = useState([]);
   const [visibleTableState, setVisibleTableState] = useState([]);
+  const [visibleTableFilterState, setVisibleTableFilterState] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [changedVisibility, setChangedVisibility] = useState([]);
+  const [changedVisibilityFilter, setChangedVisibilityFilter] = useState([]);
   const classes = useStyles();
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [order, setOrder] = useState("desc");
@@ -117,6 +137,7 @@ export const AllStories: React.FC = () => {
       //Initialize state after allstories are mapped
       setVisibleState(rows);
       setVisibleTableState(rows);
+      setVisibleTableFilterState(rows);
       setTableData(rows);
       setOrigTableData(rows);
     }
@@ -126,11 +147,15 @@ export const AllStories: React.FC = () => {
     if (e.target.checked) {
       setVisibleState((prevStories) => [...prevStories, story.id]);
       setVisibleTableState([...visibleTableState, story]);
+      setVisibleTableFilterState([...visibleTableState, story]);
     } else {
       setVisibleState((prevStories) =>
         prevStories.filter((e) => e !== story.id)
       );
       setVisibleTableState((visibleTableState) =>
+        visibleTableState.filter((e) => e.id !== story.id)
+      );
+      setVisibleTableFilterState((visibleTableState) =>
         visibleTableState.filter((e) => e.id !== story.id)
       );
     }
@@ -152,8 +177,12 @@ export const AllStories: React.FC = () => {
       setChangedVisibility((prevState) =>
         prevState.filter((i) => i.ID !== story.ID)
       );
+      setChangedVisibilityFilter((prevState) =>
+        prevState.filter((i) => i.ID !== story.ID)
+      );
     } else {
       setChangedVisibility((prevState) => [...prevState, story]);
+      setChangedVisibilityFilter((prevState) => [...prevState, story]);
     }
   };
 
@@ -219,32 +248,51 @@ export const AllStories: React.FC = () => {
     event: React.ChangeEvent<Record<string, unknown>>,
     newValue: number
   ) => {
+    cancelSearch()
     setTabValue(newValue);
+
   };
 
-  const requestSearch = (searchedVal: string) => {
-    const filteredRows = origTableData.filter((row) => {
-      let doesExist = false;
-      Object.keys(row).forEach((prop) => {
-        const numExist =
-          typeof row[prop] === "number" &&
-          row[prop].toString().includes(searchedVal);
-        const stringExist =
-          typeof row[prop] === "string" &&
-          row[prop].toLowerCase().includes(searchedVal.toLowerCase());
-        if (stringExist || numExist) {
-          doesExist = true;
-        }
-      });
-      return doesExist;
+  const requestSearchHelper = (row : any, searchedVal : string) => {
+    let doesExist = false;
+    Object.keys(row).forEach((prop) => {
+      const numExist =
+        typeof row[prop] === "number" &&
+        row[prop].toString().includes(searchedVal);
+      const stringExist =
+        typeof row[prop] === "string" &&
+        row[prop].toLowerCase().includes(searchedVal.toLowerCase());
+      if (stringExist || numExist) {
+        doesExist = true;
+      }
     });
-    setTableData(filteredRows);
+    return doesExist
+  }
+
+  const requestSearch = (searchedVal: string) => {
+    if (tabValue === 0) {
+      const filteredRows = origTableData.filter((row) => {
+        return requestSearchHelper(row,searchedVal);
+      });
+      setTableData(filteredRows);
+    }
+    else if (tabValue === 1) {
+      const filteredRows = visibleTableFilterState.filter((row) => {
+        return requestSearchHelper(row,searchedVal);
+      });
+      setVisibleTableState(filteredRows);
+    }
+    else if (tabValue === 2) {
+      const filteredRows = changedVisibilityFilter.filter((row) => {
+        return requestSearchHelper(row,searchedVal);
+      });
+      setChangedVisibility(filteredRows);
+    }
   };
   const cancelSearch = () => {
     setSearched("");
-    requestSearch(searched);
+    requestSearch("");
   };
-
   return (
     <>
       <StyledContainer>
@@ -266,9 +314,12 @@ export const AllStories: React.FC = () => {
           <Tab label="PENDING MAP CHANGES" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
-      <SearchBar
+      <StyledSearchBar
+        placeholder="Type to search..."
         value={searched}
-        onChange={(searchVal) => requestSearch(searchVal)}
+        onChange={(searchVal) => {
+          setSearched(searchVal)
+           requestSearch(searchVal)}}
         onCancelSearch={() => cancelSearch()}
       />
       <AllStoriesTabs value={tabValue} index={0}>
