@@ -71,6 +71,7 @@ export function VirtualizedTable({
             orderDirection={order}
             includeHeaders
             onCellClick={(e, { rowData }) => {
+              e.persist();
               const id: number = rowData?.id;
               if (id) {
                 setClickedRow(id);

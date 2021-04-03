@@ -70,6 +70,11 @@ export interface StoryView {
   is_visible: boolean;
   author_name: string;
   author_country: string;
+  author_first_name: string;
+  author_last_name: string;
+  image_url: string;
+  video_url: string;
+  content: string;
 }
 
 function createData(
@@ -80,7 +85,10 @@ function createData(
   is_visible: boolean,
   author_first_name: string,
   author_last_name: string,
-  author_country: string
+  author_country: string,
+  image_url: string,
+  video_url: string,
+  content: string
 ): StoryView {
   const author_name = `${author_first_name} ${author_last_name}`;
   return {
@@ -89,8 +97,13 @@ function createData(
     current_city,
     year,
     author_name,
+    author_first_name,
+    author_last_name,
     author_country,
     is_visible,
+    image_url,
+    video_url,
+    content,
   };
 }
 
@@ -236,7 +249,10 @@ export const AllStories: React.FC = () => {
             story.is_visible,
             story.author_first_name,
             story.author_last_name,
-            story.author_country
+            story.author_country,
+            story.image_url,
+            story.video_url,
+            story.content
           );
         })
       );
@@ -245,7 +261,7 @@ export const AllStories: React.FC = () => {
     "/api/stories",
     fetchStories
   );
-  const [clickedStory, setClickedStory] = useState<Story | undefined>(
+  const [clickedStory, setClickedStory] = useState<StoryView | undefined>(
     undefined
   );
   const classes = useStyles();
@@ -256,7 +272,7 @@ export const AllStories: React.FC = () => {
 
   const setClickedRow = (rowId: number | undefined) => {
     if (rowId) {
-      const story = allStories?.find((story) => story.ID === rowId);
+      const story = allStories?.find((story: StoryView) => story.ID === rowId);
       if (story) {
         setClickedStory(story);
       }
@@ -410,45 +426,45 @@ export const AllStories: React.FC = () => {
                 handleRequestSort("title");
               },
             },
-              {
-                name: "current_city",
-                header: "Current City",
-                width: 200,
-                onHeaderClick() {
-                  handleRequestSort("current_city");
-                },
+            {
+              name: "current_city",
+              header: "Current City",
+              width: 200,
+              onHeaderClick() {
+                handleRequestSort("current_city");
               },
-              {
-                name: "year",
-                header: "Year",
-                width: 100,
-                onHeaderClick() {
-                  handleRequestSort("year");
-                },
+            },
+            {
+              name: "year",
+              header: "Year",
+              width: 100,
+              onHeaderClick() {
+                handleRequestSort("year");
               },
-              {
-                name: "author_name",
-                header: "Author name",
-                width: 250,
-                onHeaderClick() {
-                  handleRequestSort("author_name");
-                },
+            },
+            {
+              name: "author_name",
+              header: "Author name",
+              width: 250,
+              onHeaderClick() {
+                handleRequestSort("author_name");
               },
-              {
-                name: "author_country",
-                header: "Country",
-                width: 300,
-                onHeaderClick() {
-                  handleRequestSort("author_country");
-                },
+            },
+            {
+              name: "author_country",
+              header: "Country",
+              width: 300,
+              onHeaderClick() {
+                handleRequestSort("author_country");
               },
-              {
-                name: "is_visible",
-                header: "Show on Map",
-                width: 150,
-                onHeaderClick() {
-                  handleRequestSort("jobType");
-                },
+            },
+            {
+              name: "is_visible",
+              header: "Show on Map",
+              width: 150,
+              onHeaderClick() {
+                handleRequestSort("jobType");
+              },
               cell: (story) => (
                 <StyledSwitch
                   checked={story.is_visible}
@@ -460,13 +476,13 @@ export const AllStories: React.FC = () => {
             },
           ]}
         />
-         <StoryDrawer
-            story={clickedStory}
-            onClose={() => setClickedStory(undefined)}
-            onClickEditStory={() => {
-              console.log("TODO: Route to edit page");
-            }}
-          />
+        <StoryDrawer
+          story={clickedStory}
+          onClose={() => setClickedStory(undefined)}
+          onClickEditStory={() => {
+            console.log("TODO: Route to edit page");
+          }}
+        />
       </AllStoriesTabs>
 
       <AllStoriesTabs value={state.tabValue} index={1}>
@@ -658,7 +674,6 @@ export const AllStories: React.FC = () => {
           <StyledEmptyMessage> No pending changes! </StyledEmptyMessage>
         )}
       </AllStoriesTabs>
-     
     </>
   );
 };
