@@ -30,6 +30,7 @@ import { VariableSizeList, ListChildComponentProps } from "react-window";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import { useTheme, makeStyles } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
+import { Redirect } from "react-router-dom";
 
 import citiesList from "../data/cities.json";
 import { StoryDrawer } from "../components";
@@ -426,7 +427,8 @@ export const UploadStory: React.FC<StoryProps> = ({
       resultMessage === "Story Added Successfully" ||
       resultMessage === "Story Updated successfully"
     ) {
-      setDialogOpenState(true);
+      console.log("HERE");
+      return <Redirect to="/admin" />;
     } else {
       setErrorOpen(true);
     }
