@@ -12,7 +12,7 @@ export const Edit: React.FC = () => {
   return (
     <div>
       {story && !error && (
-        <UploadStory id={id} story={story} bio={story.author.bio}></UploadStory>
+        <UploadStory id={id} currentStory={story} bio={story.author.bio}></UploadStory>
       )}
     </div>
   );
