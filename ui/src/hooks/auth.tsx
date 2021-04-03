@@ -13,7 +13,6 @@ type State = {
   loading: boolean;
   auth?: GoogleLoginResponse;
   failure?: unknown;
-  logoutFailure: boolean;
 };
 
 type Action =
@@ -43,7 +42,6 @@ const INIT_STATE: State = Object.freeze({
   loading: false,
   auth: undefined,
   failure: undefined,
-  logoutFailure: false,
 });
 
 function reducer(state: State, action: Action): State {
@@ -75,13 +73,6 @@ function reducer(state: State, action: Action): State {
         ...state,
         failure: undefined,
         auth: undefined,
-        logoutFailure: true,
-      };
-    }
-    case "LOGOUT_FAILURE": {
-      return {
-        ...state,
-        logoutFailure: true,
       };
     }
     default:
@@ -100,8 +91,12 @@ export function useProvideAuth(): AuthContextType {
     fetch("api/login", {
       method: "POST",
       headers: { Authorization: response.tokenId },
-    }).then(() => {
-      dispatch({ type: "SUCCESS", response });
+    }).then((res) => {
+      if (res.ok) {
+        dispatch({ type: "SUCCESS", response });
+      } else {
+        dispatch({ type: "FAILURE", response });
+      }
     }).catch(() => {
       dispatch({ type: "FAILURE", response });
     });
@@ -115,10 +110,6 @@ export function useProvideAuth(): AuthContextType {
     dispatch({ type: "LOGOUT_SUCCESS" });
   };
 
-  const handleLogoutFailure = () => {
-    dispatch({ type: "LOGOUT_FAILURE" });
-  };
-
   const { signIn, loaded } = useGoogleLogin({
     onSuccess: handleSuccess,
     onFailure: handleFailure,
@@ -128,7 +119,6 @@ export function useProvideAuth(): AuthContextType {
 
   const { signOut } = useGoogleLogout({
     onLogoutSuccess: handleLogoutSuccess,
-    onFailure: handleLogoutFailure,
     clientId: CLIENT_ID,
   });
 
