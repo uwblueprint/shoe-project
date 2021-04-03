@@ -6,7 +6,7 @@ import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
-import { useEffect, useState, useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import * as React from "react";
 import styled from "styled-components";
 import useSWR, { mutate } from "swr";
@@ -61,6 +61,16 @@ const useStyles = makeStyles({
   checked: {},
 });
 
+export interface StoryView {
+  ID: number;
+  title: string;
+  current_city: string;
+  year: number;
+  is_visible: boolean;
+  author_name: string;
+  author_country: string;
+}
+
 function createData(
   id: number,
   title: string,
@@ -70,7 +80,7 @@ function createData(
   author_first_name: string,
   author_last_name: string,
   author_country: string
-) {
+): StoryView {
   const author_name = `${author_first_name} ${author_last_name}`;
   return {
     ID: id,
@@ -83,141 +93,161 @@ function createData(
   };
 }
 
-type State = {
+interface State {
   tabValue: number;
-  visibleState: any[];
-  visibleTableState: any[]; 
-  tableData: any[];
-  changedVisibility: any[];
-  selectedRowIds: any[];
-  order: string;
+  visibleState: StoryView[];
+  visibleTableState: StoryView[];
+  tableData: StoryView[];
+  changedVisibility: StoryView[];
+  selectedRowIds: number[];
+  order: "asc" | "desc";
   orderBy: string;
 }
 
-type ActionType = 
-  | { type: "SWITCH_TAB", id: number; }
-  | { type: "HANDLE_SWITCH_CHANGE", e: any, story: Story }
-  | { type: "INITIALIZE_AFTER_API", rows: any[] }
-  | { type: "HANDLE_CHECKED_ALL", rows }
-  | { type: "HANDLE_CHECKED", e: any, story: Story }
-  | { type: "SET_ORDERING", order: string, orderBy: string }
-  | { type: "SET_TABLE_DATA", data: any[] }
-  | { type: "SET_TAB_VALUE", newValue: number }
+type Action =
+  | { type: "SWITCH_TAB"; id: number }
+  | { type: "HANDLE_SWITCH_CHANGE"; e: React.ChangeEvent; story: StoryView }
+  | { type: "INITIALIZE_AFTER_API"; rows: StoryView[] }
+  | { type: "HANDLE_CHECKED_ALL"; rows: StoryView[] }
+  | { type: "HANDLE_CHECKED"; e: React.ChangeEvent; story: StoryView }
+  | { type: "SET_ORDERING"; order: "asc" | "desc"; orderBy: string }
+  | { type: "SET_TABLE_DATA"; data: StoryView[] }
+  | { type: "SET_TAB_VALUE"; newValue: number };
 
 const initialState: State = {
   tabValue: 0,
-  visibleState: [],
-  visibleTableState: [],
-  tableData: [],
+  visibleState: [] as StoryView[],
+  visibleTableState: [] as StoryView[],
+  tableData: [] as StoryView[],
   changedVisibility: [],
   selectedRowIds: [],
   order: "desc",
-  orderBy: "id"
-}
+  orderBy: "ID",
+};
 
-function reducer(state: State, action: ActionType) {
+function reducer(state: State, action: Action): State {
   switch (action.type) {
-    case "SWITCH_TAB":
+    case "SWITCH_TAB": {
       return {
         ...state,
-        tabValue: action.id
+        tabValue: action.id,
       };
-    case "HANDLE_SWITCH_CHANGE":
-
+    }
+    case "HANDLE_SWITCH_CHANGE": {
       const changedVisibilityFoundID = (elem) => elem.ID === action.story.ID;
-      const changedVisibilityContainsID = state.changedVisibility.some(changedVisibilityFoundID);
+      const changedVisibilityContainsID = state.changedVisibility.some(
+        changedVisibilityFoundID
+      );
 
       if (action.e.target.checked) {
         return {
           ...state,
-          visibleState: [...state.visibleState, action.story.ID],
-          visibleTableState: [...state.visibleTableState, action.story.ID],
-          changedVisibility: changedVisibilityContainsID ? 
-            state.changedVisibility.filter(e => e.ID !== action.story.ID) :
-            [...state.changedVisibility, action.story]
+          visibleState: [...state.visibleState, action.story],
+          visibleTableState: [...state.visibleTableState, action.story],
+          changedVisibility: changedVisibilityContainsID
+            ? state.changedVisibility.filter((e) => e.ID !== action.story.ID)
+            : [...state.changedVisibility, action.story],
         };
       } else {
         return {
           ...state,
-          visibleState: state.visibleState.filter(e => e !== action.story.ID),
-          visibleTableState: state.visibleTableState.filter(e => e.id !== action.story.ID),
-          changedVisibility: changedVisibilityContainsID ? 
-            state.changedVisibility.filter(e => e.ID !== action.story.ID) :
-            [...state.changedVisibility, action.story]
+          visibleState: state.visibleState.filter(
+            (e) => e.ID !== action.story.ID
+          ),
+          visibleTableState: state.visibleTableState.filter(
+            (e) => e.ID !== action.story.ID
+          ),
+          changedVisibility: changedVisibilityContainsID
+            ? state.changedVisibility.filter((e) => e.ID !== action.story.ID)
+            : [...state.changedVisibility, action.story],
         };
       }
-
-    case "INITIALIZE_AFTER_API":
+    }
+    case "INITIALIZE_AFTER_API": {
       return {
         ...state,
-        visibleState: action.rows,
-        visibleTableState: action.rows,
-        tableData: action.rows
+        visibleState: action.rows ? action.rows : [],
+        visibleTableState: action.rows ? action.rows : [],
+        tableData: action.rows ? action.rows : [],
       };
-    case "HANDLE_CHECKED_ALL":
+    }
+    case "HANDLE_CHECKED_ALL": {
       return {
         ...state,
-        selectedRowIds: state.selectedRowIds.length === action.rows.length ?
-          []:
-          action.rows.map( story => story.id)
+        selectedRowIds:
+          state.selectedRowIds.length === state.tableData.length
+            ? []
+            : state.tableData.map((story) => story.ID),
       };
-    case "HANDLE_CHECKED":
+    }
+    case "HANDLE_CHECKED": {
       if (action.e.target.checked) {
         return {
           ...state,
-          selectedRowIds: [...state.selectedRowIds, action.story.ID]
+          selectedRowIds: [...state.selectedRowIds, action.story.ID],
         };
       } else {
         return {
           ...state,
-          selectedRowIds: state.selectedRowIds.filter(e => e !== action.story.ID)
+          selectedRowIds: state.selectedRowIds.filter(
+            (e) => e !== action.story.ID
+          ),
         };
       }
-    case "SET_ORDERING":
+    }
+    case "SET_ORDERING": {
       return {
         ...state,
         order: action.order,
-        orderBy: action.orderBy
+        orderBy: action.orderBy,
       };
-    case "SET_TABLE_DATA":
+    }
+    case "SET_TABLE_DATA": {
       return {
         ...state,
-        tableData: action.data
+        tableData: action.data,
       };
-    case "SET_TAB_VALUE":
+    }
+    case "SET_TAB_VALUE": {
       return {
         ...state,
-        tabValue: action.newValue
-      }
+        tabValue: action.newValue,
+      };
+    }
   }
 }
 
 export const AllStories: React.FC = () => {
-
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const { data: allStories, error } = useSWR<Story[]>("/api/stories");
+  const fetchStories = (url) =>
+    fetch(url)
+      .then((res) => {
+        return res.json();
+      })
+      .then((response) =>
+        response.payload.map((story) => {
+          return createData(
+            story.ID,
+            story.title,
+            story.current_city,
+            story.year,
+            story.is_visible,
+            story.author_first_name,
+            story.author_last_name,
+            story.author_country
+          );
+        })
+      );
+
+  const { data: allStories, error } = useSWR<StoryView[] | undefined>(
+    "/api/stories",
+    fetchStories
+  );
   const classes = useStyles();
 
-  let rows = [];
   useEffect(() => {
-    if (allStories) {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      rows = allStories.map((story) =>
-        createData(
-          story.ID,
-          story.title,
-          story.current_city,
-          story.year,
-          story.is_visible,
-          story.author_first_name,
-          story.author_last_name,
-          story.author_country
-        )
-      );
-      //Initialize state after allstories are mapped
-      dispatch({type: "INITIALIZE_AFTER_API", rows })
-    }
+    dispatch({ type: "INITIALIZE_AFTER_API", rows: allStories });
   }, [allStories]);
 
   const handleSwitchChange = (e, story) => {
@@ -233,53 +263,28 @@ export const AllStories: React.FC = () => {
       },
       false
     );
-
-    
-    //todo: figure out if this stuff needs to come after mutate() or nah LOL 
-    // const changedVisibilityContainsID = (elem) => elem.ID === story.ID;
-
-    // if (changedVisibility.some(changedVisibilityContainsID)) {
-    //   setChangedVisibility((prevState) =>
-    //     prevState.filter((i) => i.ID !== story.ID)
-    //   );
-    // } else {
-    //   setChangedVisibility((prevState) => [...prevState, story]);
-    // }
   };
 
   const handleCheckedAll = () => {
-    // setSelectedRowIds((prevState) =>
-    //   prevState.length === rows.length ? [] : rows.map((story) => story.id)
-    // );
-    dispatch({type: "HANDLE_CHECKED_ALL", rows });
+    dispatch({ type: "HANDLE_CHECKED_ALL", rows: allStories });
   };
   const handleChecked = (e, story) => {
-    dispatch({type: "HANDLE_CHECKED", e, story });
-
-    // if (e.target.checked) {
-    //   setSelectedRowIds((prevState) => [...prevState, story.ID]);
-    // } else {
-    //   setSelectedRowIds((prevState) => prevState.filter((e) => e !== story.ID));
-    // }
+    dispatch({ type: "HANDLE_CHECKED", e, story });
   };
 
   const handleRequestSort = (property: string) => {
     const isDesc = state.orderBy === property && state.order === "asc";
     const order = isDesc ? "desc" : "asc";
-
-    // setOrder(order);
-    // setOrderBy(property);
     dispatch({ type: "SET_ORDERING", order, orderBy: property });
 
     onChangeTableSort(order, property);
   };
   const onChangeTableSort = (order, property) => {
     const data = stableSort(state.tableData, getComparator(order, property));
-    // setTableData(newData);
-    dispatch({ type: "SET_TABLE_DATA", data })
+    dispatch({ type: "SET_TABLE_DATA", data });
   };
   const stableSort = (array, comparator) => {
-    const stabilizedThis = array.map((el, index) => [el, index]);
+    const stabilizedThis = array ? array.map((el, index) => [el, index]) : [];
     stabilizedThis.sort((a, b) => {
       const order = comparator(a[0], b[0]);
       if (order !== 0) return order;
@@ -287,7 +292,7 @@ export const AllStories: React.FC = () => {
     });
     const sortedArray = stabilizedThis.map((el) => el[0]);
     if (sortedArray.length === 0) {
-      return rows;
+      return allStories ? allStories : [];
     }
     return sortedArray;
   };
@@ -307,7 +312,8 @@ export const AllStories: React.FC = () => {
   };
 
   const indeterminate =
-  state.selectedRowIds.length > 0 && state.selectedRowIds.length !== rows.length;
+    state.selectedRowIds.length > 0 &&
+    state.selectedRowIds.length !== allStories.length;
   if (error) return <div>Error returning stories data!</div>;
   if (!allStories) return <div>Loading all stories table..</div>;
 
@@ -341,7 +347,10 @@ export const AllStories: React.FC = () => {
       </AppBar>
       <AllStoriesTabs value={state.tabValue} index={0}>
         <VirtualizedTable
-          data={stableSort(state.tableData, getComparator(state.order, state.orderBy))}
+          data={stableSort(
+            state.tableData,
+            getComparator(state.order, state.orderBy)
+          )}
           order={state.order}
           orderBy={state.orderBy}
           columns={[
@@ -541,7 +550,10 @@ export const AllStories: React.FC = () => {
         {/* Pending Changes */}
         {state.changedVisibility.length > 0 ? (
           <VirtualizedTable
-            data={stableSort(state.changedVisibility, getComparator(state.order, state.orderBy))}
+            data={stableSort(
+              state.changedVisibility,
+              getComparator(state.order, state.orderBy)
+            )}
             order={state.order}
             orderBy={state.orderBy}
             columns={[
@@ -551,7 +563,11 @@ export const AllStories: React.FC = () => {
                 header: <div>Changes</div>,
                 cell: (d) => (
                   <div>
-                    {state.visibleState.includes(d.id) ? <AddIcon /> : <RemoveIcon />}
+                    {state.visibleState.includes(d.id) ? (
+                      <AddIcon />
+                    ) : (
+                      <RemoveIcon />
+                    )}
                   </div>
                 ),
               },

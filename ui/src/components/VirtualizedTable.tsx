@@ -3,8 +3,10 @@ import MuiTable from "mui-virtualized-table";
 import * as React from "react";
 import AutoSizer from "react-virtualized/dist/commonjs/AutoSizer";
 
+import { StoryView } from "../pages/AllStories";
 import { colors } from "../styles/colors";
 import { fontSize } from "../styles/typography";
+
 const useVirtualizedTableStyles = makeStyles({
   root: {
     marginLeft: "55px",
@@ -40,13 +42,12 @@ type TableColumn = {
   onHeaderClick?: () => void;
   header: JSX.Element | string;
   cell?: (any) => JSX.Element;
-}
+};
 
 interface VirtualizedTableProps {
-  data: any[];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any  columns: any;
+  data: StoryView[];
   columns: TableColumn[];
-  order: string;
+  order: "desc" | "asc";
   orderBy: string;
 }
 
