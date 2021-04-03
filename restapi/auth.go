@@ -1,38 +1,19 @@
 package restapi
 
 import (
-	"encoding/base64"
-	"math/rand"
+	"context"
 	"net/http"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/jwtauth"
 	"github.com/go-chi/render"
+	"github.com/mitchellh/mapstructure"
 	"github.com/uwblueprint/shoe-project/config"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
 	"github.com/uwblueprint/shoe-project/restapi/rest"
 	"google.golang.org/api/idtoken"
-	"golang.org/x/oauth2"
-	"github.com/mitchellh/mapstructure"
 )
-
-func generateStateOauthCookie(w http.ResponseWriter) (string, error) {
-	duration, err := config.GetTokenExpiryDuration()
-	if err != nil {
-		return "", err
-	}
-	var expiration = time.Now().Add(duration)
-	secure := (config.GetMode() == config.MODE_PROD)
-
-	b := make([]byte, 16)
-	rand.Read(b)
-	state := base64.URLEncoding.EncodeToString(b)
-	cookie := http.Cookie{Name: "oauthstate", Value: state, Expires: expiration, HttpOnly: true, Secure: secure}
-	http.SetCookie(w, &cookie)
-
-	return state, nil
-}
 
 type GoogleClaims struct {
 	Email string `mapstructure:"email"`
@@ -41,28 +22,31 @@ type GoogleClaims struct {
 
 func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
 
-	payload, err := idtoken.Validate(oauth2.NoContext, r.Header.Get("Authorization"), config.GetGoogleClientId())
+	payload, err := idtoken.Validate(context.TODO(), r.Header.Get("Authorization"), config.GetGoogleClientId())
 	if err != nil {
-		return rest.ErrInternal(api.logger, err)
+		return rest.ErrInvalidRequest(api.logger, "Invalid token in header", err)
 	}
 
 	googleClaims := GoogleClaims{}
-	mapstructure.Decode(payload.Claims, &googleClaims)
+	err = mapstructure.Decode(payload.Claims, &googleClaims)
+	if err != nil {
+		return rest.ErrInvalidRequest(api.logger, "Could not decode google response", err)
+	}
 	user := models.User{
 		Email: googleClaims.Email,
-		Hd: googleClaims.Hd,
+		Hd:    googleClaims.Hd,
 	}
 
 	// create user in database if valid
 	err = api.database.FirstOrCreate(&user, models.User{Email: user.Email}).Error
 	if err != nil {
-		return rest.ErrInternal(api.logger, err)
+		return rest.ErrInvalidRequest(api.logger, "User does not have a valid email address", err)
 	}
 
 	// if valid set jwt token in cookie
 	err = generateJWTToken(user.Email, w)
 	if err != nil {
-		return rest.ErrInternal(api.logger, err)
+		return rest.ErrInvalidRequest(api.logger, "Could not generate JWT token", err)
 	}
 
 	return rest.JSONStatusOK("Authenticated Successfully")
