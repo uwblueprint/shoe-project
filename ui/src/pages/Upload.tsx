@@ -266,8 +266,7 @@ export const Upload: React.FC = () => {
       setErrorOpen(true);
     }
   };
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const handleSubmit = () => {
     setLoading(true);
     setDisabled(true);
     const formData = new FormData();
@@ -320,6 +319,7 @@ export const Upload: React.FC = () => {
               disabled={disabled || !hasAllRequiredFields}
               variant="contained"
               color="primary"
+              onClick={handleSubmit}
             >
               Upload
             </StyledButton>
