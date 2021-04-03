@@ -42,19 +42,25 @@ export const Login: React.FC = () => {
   const { auth, googleLoaded, failure, signIn } = useAuth();
 
   if (!googleLoaded) {
-    return <Center><CircularProgress /></Center>;
+    return (
+      <Center>
+        <CircularProgress />
+      </Center>
+    );
   }
 
   if (auth !== undefined) {
     return <Redirect to="/admin" />;
   }
 
-  const title = failure === undefined
-  ? "Welcome to the Shoe Project Admin Portal"
-  : "Sorry, that is not a valid email";
-const description = failure === undefined
-  ? "Please Sign In using your Shoe Project Email"
-  : "Make sure you are using a Shoe Project Organization Email";
+  const title =
+    failure === undefined
+      ? "Welcome to the Shoe Project Admin Portal"
+      : "Sorry, that is not a valid email";
+  const description =
+    failure === undefined
+      ? "Please Sign In using your Shoe Project Email"
+      : "Make sure you are using a Shoe Project Organization Email";
 
   return (
     <CardDiv>

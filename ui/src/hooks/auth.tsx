@@ -9,10 +9,16 @@ import {
 const CLIENT_ID =
   "722954318269-211qsag71c3bsfjik321h9sa0kmbnelf.apps.googleusercontent.com";
 
+export enum FailureState {
+  InvalidEmail,
+  PopupFail,
+  Unknown,
+}
+
 type State = {
   loading: boolean;
   auth?: GoogleLoginResponse;
-  failure?: unknown;
+  failure?: FailureState;
 };
 
 type Action =
@@ -21,7 +27,7 @@ type Action =
       type: "SUCCESS";
       response: GoogleLoginResponse;
     }
-  | { type: "FAILURE"; response: unknown }
+  | { type: "FAILURE"; failure: FailureState }
   | { type: "LOGOUT_SUCCESS" }
   | { type: "LOGOUT_FAILURE" };
 
@@ -41,7 +47,7 @@ export function useAuth(): AuthContextType {
 const INIT_STATE: State = Object.freeze({
   loading: false,
   auth: undefined,
-  failure: undefined,
+  failure: FailureState,
 });
 
 function reducer(state: State, action: Action): State {
@@ -64,7 +70,7 @@ function reducer(state: State, action: Action): State {
       return {
         ...state,
         loading: false,
-        failure: action.response,
+        failure: action.failure,
         auth: undefined,
       };
     }
@@ -83,6 +89,15 @@ function reducer(state: State, action: Action): State {
 export function useProvideAuth(): AuthContextType {
   const [state, dispatch] = React.useReducer(reducer, INIT_STATE);
 
+  const handleLogoutSuccess = () => {
+    dispatch({ type: "LOGOUT_SUCCESS" });
+  };
+
+  const { signOut } = useGoogleLogout({
+    onLogoutSuccess: handleLogoutSuccess,
+    clientId: CLIENT_ID,
+  });
+
   const handleSuccess = async (
     res: GoogleLoginResponse | GoogleLoginResponseOffline
   ) => {
@@ -91,23 +106,23 @@ export function useProvideAuth(): AuthContextType {
     fetch("api/login", {
       method: "POST",
       headers: { Authorization: response.tokenId },
-    }).then((res) => {
-      if (res.ok) {
-        dispatch({ type: "SUCCESS", response });
-      } else {
-        dispatch({ type: "FAILURE", response });
-      }
-    }).catch(() => {
-      dispatch({ type: "FAILURE", response });
-    });
+    })
+      .then((res) => {
+        if (res.ok) {
+          dispatch({ type: "SUCCESS", response });
+        } else {
+          signOut();
+          dispatch({ type: "FAILURE", failure: FailureState.InvalidEmail });
+        }
+      })
+      .catch(() => {
+        signOut();
+        dispatch({ type: "FAILURE", failure: FailureState.Unknown });
+      });
   };
 
-  const handleFailure = (response?: unknown) => {
-    dispatch({ type: "FAILURE", response });
-  };
-
-  const handleLogoutSuccess = () => {
-    dispatch({ type: "LOGOUT_SUCCESS" });
+  const handleFailure = () => {
+    dispatch({ type: "FAILURE", failure: FailureState.PopupFail });
   };
 
   const { signIn, loaded } = useGoogleLogin({
@@ -115,11 +130,6 @@ export function useProvideAuth(): AuthContextType {
     onFailure: handleFailure,
     clientId: CLIENT_ID,
     isSignedIn: true,
-  });
-
-  const { signOut } = useGoogleLogout({
-    onLogoutSuccess: handleLogoutSuccess,
-    clientId: CLIENT_ID,
   });
 
   return {

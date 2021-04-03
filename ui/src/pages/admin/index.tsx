@@ -21,7 +21,11 @@ export const Admin: React.FC = () => {
   const { auth, googleLoaded } = useAuth();
 
   if (!googleLoaded) {
-    return <Center><CircularProgress /></Center>;
+    return (
+      <Center>
+        <CircularProgress />
+      </Center>
+    );
   }
 
   if (auth === undefined) {
