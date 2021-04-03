@@ -19,21 +19,21 @@ import { fontSize, StyledAllStoriesHeader } from "../styles/typography";
 import { Story } from "../types/index";
 
 const StyledSearchBar = styled(SearchBar)`
-max-width: 320px;
-background-color: ${colors.primaryLight4};
-border-radius: 5px;
-height: 40px;
-margin-left: 70vw;
-margin-top: 1vh;
-color: ${colors.primaryDark1};
-border: none;
-box-shadow: none;
-.ForwardRef-iconButton-10{
+  max-width: 320px;
+  background-color: ${colors.primaryLight4};
+  border-radius: 5px;
+  height: 40px;
+  margin-left: 70vw;
+  margin-top: 1vh;
   color: ${colors.primaryDark1};
-}
-.MuiInputBase-input{
- font-family: “Poppins”;
-}
+  border: none;
+  box-shadow: none;
+  .ForwardRef-iconButton-10 {
+    color: ${colors.primaryDark1};
+  }
+  .MuiInputBase-input {
+    font-family: "Poppins";
+  }
 `;
 
 const StyledSwitch = styled(Switch)`
@@ -248,12 +248,11 @@ export const AllStories: React.FC = () => {
     event: React.ChangeEvent<Record<string, unknown>>,
     newValue: number
   ) => {
-    cancelSearch()
+    cancelSearch();
     setTabValue(newValue);
-
   };
 
-  const requestSearchHelper = (row : any, searchedVal : string) => {
+  const requestSearchHelper = (row: any, searchedVal: string) => {
     let doesExist = false;
     Object.keys(row).forEach((prop) => {
       const numExist =
@@ -266,25 +265,23 @@ export const AllStories: React.FC = () => {
         doesExist = true;
       }
     });
-    return doesExist
-  }
+    return doesExist;
+  };
 
   const requestSearch = (searchedVal: string) => {
     if (tabValue === 0) {
       const filteredRows = origTableData.filter((row) => {
-        return requestSearchHelper(row,searchedVal);
+        return requestSearchHelper(row, searchedVal);
       });
       setTableData(filteredRows);
-    }
-    else if (tabValue === 1) {
+    } else if (tabValue === 1) {
       const filteredRows = visibleTableFilterState.filter((row) => {
-        return requestSearchHelper(row,searchedVal);
+        return requestSearchHelper(row, searchedVal);
       });
       setVisibleTableState(filteredRows);
-    }
-    else if (tabValue === 2) {
+    } else if (tabValue === 2) {
       const filteredRows = changedVisibilityFilter.filter((row) => {
-        return requestSearchHelper(row,searchedVal);
+        return requestSearchHelper(row, searchedVal);
       });
       setChangedVisibility(filteredRows);
     }
@@ -318,8 +315,9 @@ export const AllStories: React.FC = () => {
         placeholder="Type to search..."
         value={searched}
         onChange={(searchVal) => {
-          setSearched(searchVal)
-           requestSearch(searchVal)}}
+          setSearched(searchVal);
+          requestSearch(searchVal);
+        }}
         onCancelSearch={() => cancelSearch()}
       />
       <AllStoriesTabs value={tabValue} index={0}>
@@ -543,7 +541,7 @@ export const AllStories: React.FC = () => {
               {
                 name: "title",
                 header: "Story Name",
-                width: 200,
+                width: 500,
                 onHeaderClick() {
                   handleRequestSort("title");
                 },
