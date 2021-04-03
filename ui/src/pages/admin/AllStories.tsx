@@ -39,7 +39,7 @@ const StyledAppBar = styled(AppBar)`
 `;
 
 export const AllStories: React.FC = () => {
-  const { data: allStories, error } = useSWR<Story[]>("/api/stories", {});
+  const { data: allStories, error } = useSWR<Story[]>("/api/stories");
   let rows = [];
 
   // if (allStories===undefined) return;

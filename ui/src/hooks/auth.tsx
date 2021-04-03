@@ -47,7 +47,7 @@ export function useAuth(): AuthContextType {
 const INIT_STATE: State = Object.freeze({
   loading: false,
   auth: undefined,
-  failure: FailureState,
+  failure: undefined,
 });
 
 function reducer(state: State, action: Action): State {
@@ -93,12 +93,12 @@ export function useProvideAuth(): AuthContextType {
     dispatch({ type: "LOGOUT_SUCCESS" });
   };
 
-  const { signOut } = useGoogleLogout({
+  const { signOut, loaded: signOutLoaded } = useGoogleLogout({
     onLogoutSuccess: handleLogoutSuccess,
     clientId: CLIENT_ID,
   });
 
-  const handleSuccess = async (
+  const handleSuccess = (
     res: GoogleLoginResponse | GoogleLoginResponseOffline
   ) => {
     const response = res as GoogleLoginResponse;
@@ -111,19 +111,23 @@ export function useProvideAuth(): AuthContextType {
         if (res.ok) {
           dispatch({ type: "SUCCESS", response });
         } else {
-          signOut();
+          if (signOutLoaded) {
+            signOut();
+          }
           dispatch({ type: "FAILURE", failure: FailureState.InvalidEmail });
         }
       })
       .catch(() => {
-        signOut();
+        if (signOutLoaded) {
+          signOut();
+        }
         dispatch({ type: "FAILURE", failure: FailureState.Unknown });
       });
   };
 
-  const handleFailure = () => {
+  function handleFailure() {
     dispatch({ type: "FAILURE", failure: FailureState.PopupFail });
-  };
+  }
 
   const { signIn, loaded } = useGoogleLogin({
     onSuccess: handleSuccess,
@@ -134,7 +138,7 @@ export function useProvideAuth(): AuthContextType {
 
   return {
     ...state,
-    googleLoaded: loaded,
+    googleLoaded: loaded && signOutLoaded,
     signIn,
     signOut,
   };
