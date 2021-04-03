@@ -21,7 +21,6 @@ import Alert from "@material-ui/lab/Alert";
 import Autocomplete, {
   AutocompleteRenderGroupParams,
 } from "@material-ui/lab/Autocomplete";
-import { countReset } from "console";
 import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
 import { KeyboardEvent, useReducer, useState } from "react";
@@ -32,7 +31,6 @@ import ListSubheader from "@material-ui/core/ListSubheader";
 import { useTheme, makeStyles } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 
-import countriesList from "../data/countries.json";
 import citiesList from "../data/cities.json";
 import { StoryDrawer } from "../components";
 import { colors } from "../styles/colors";
@@ -289,10 +287,6 @@ export const UploadStory: React.FC<StoryProps> = ({
   const { data: countries, error: errorCountries } = useSWR<string[]>(
     "/api/countries"
   );
-
-  const addNewImageButton = () => {
-    setNewImage("");
-  };
 
   const yearArray = [];
   let year: number = new Date().getFullYear();
@@ -702,9 +696,6 @@ export const UploadStory: React.FC<StoryProps> = ({
                 />
               </FormControl>
               <UploadLabelsText>Current City</UploadLabelsText>
-              {/* <StyledInputLabel id="Current Location">
-                Enter where story was written
-              </StyledInputLabel> */}
               <StyledAutocomplete
                 color="Primary"
                 loading={!citiesList}
@@ -721,7 +712,11 @@ export const UploadStory: React.FC<StoryProps> = ({
                 id="select-label-city"
                 value={currentCity != "" ? currentCity : null}
                 //TODO: double check that this onChange method works
-                onChange={(_, newValue) => setCurrentCity(newValue)}
+                onChange={(_, newValue) => {
+                  setFormInput({
+                    ["current_city"]: newValue,
+                  });
+                  setCurrentCity(newValue);}}
                 renderInput={(params) => {
                   return (
                     <TextField
@@ -734,23 +729,6 @@ export const UploadStory: React.FC<StoryProps> = ({
                   );
                 }}
               />
-              {/* <StyledSelect
-                variant="outlined"
-                value={formInput.current_city}
-                onChange={handleChange}
-                inputProps={{
-                  name: "current_city",
-                  id: "select-label-city",
-                }}
-              >
-                <StyledMenuItem value={"Toronto"}>Toronto</StyledMenuItem>
-                <StyledMenuItem value={"Calgary"}>Calgary</StyledMenuItem>
-                <StyledMenuItem value={"Vancouver"}>Vancouver</StyledMenuItem>
-                <StyledMenuItem value={"Halifax"}>Halifax</StyledMenuItem>
-                <StyledMenuItem value={"Thunder Bay"}>
-                  Thunder Bay
-                </StyledMenuItem>
-              </StyledSelect> */}
               <FormControl>
                 <UploadLabelsText>Year Published</UploadLabelsText>
                 <StyledSelect
@@ -829,7 +807,7 @@ export const UploadStory: React.FC<StoryProps> = ({
                     <Button
                       color="primary"
                       variant="contained"
-                      onClick={addNewImageButton}
+                      onClick={() => setNewImage("")}
                     >
                       Change Image
                     </Button>
@@ -850,14 +828,6 @@ export const UploadStory: React.FC<StoryProps> = ({
                 defaultValue={formInput.video_url}
               />
             </StyledBackgroundColor>
-            {/* <StyledButton
-              disabled={disabled}
-              color="primary"
-              type="submit"
-              variant="contained"
-            >
-              Submit Story
-            </StyledButton> */}
             <Snackbar
               open={uploadErrorState}
               autoHideDuration={5000}
