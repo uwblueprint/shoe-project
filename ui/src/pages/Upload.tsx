@@ -509,7 +509,9 @@ export const Upload: React.FC = () => {
                   maxFileSize={7000000}
                   acceptedFiles={["image/*"]}
                   filesLimit={1}
-                  dropzoneText={"Drag image here or select from device"}
+                  dropzoneText={
+                    "Drag image here or select from device - file limit is 7MB."
+                  }
                   onChange={(files) => {
                     setImage(files);
                   }}
