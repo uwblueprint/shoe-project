@@ -1,13 +1,36 @@
 import * as React from "react";
-import { Redirect, Route, RouteProps } from "react-router-dom";
+import {
+  GoogleLoginResponse,
+  GoogleLoginResponseOffline,
+  useGoogleLogin,
+  useGoogleLogout,
+} from "react-google-login";
 
-import { User } from "../types";
+const CLIENT_ID =
+  "722954318269-211qsag71c3bsfjik321h9sa0kmbnelf.apps.googleusercontent.com";
 
-interface AuthContextType {
-  user: User | null;
-  signin: () => void;
-  signout: () => void;
-}
+type State = {
+  loading: boolean;
+  auth?: GoogleLoginResponse;
+  failure?: unknown;
+  logoutFailure: boolean;
+};
+
+type Action =
+  | { type: "START_LOADING" }
+  | {
+      type: "SUCCESS";
+      response: GoogleLoginResponse;
+    }
+  | { type: "FAILURE"; response: unknown }
+  | { type: "LOGOUT_SUCCESS" }
+  | { type: "LOGOUT_FAILURE" };
+
+type AuthContextType = State & {
+  googleLoaded: boolean;
+  signIn: () => void;
+  signOut: () => void;
+};
 
 // These auth helpers are based on: https://usehooks.com/useAuth/
 const AuthContext = React.createContext({});
@@ -16,50 +39,104 @@ export function useAuth(): AuthContextType {
   return React.useContext(AuthContext) as AuthContextType;
 }
 
-export function useProvideAuth(): AuthContextType {
-  const [user, setUser] = React.useState<User | null>(null);
+const INIT_STATE: State = Object.freeze({
+  loading: false,
+  auth: undefined,
+  failure: undefined,
+  logoutFailure: false,
+});
 
-  // TODO: Write signin function
-  const signin = () => {
-    setUser({ email: "abhijeet@uwblueprint.org" });
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case "START_LOADING": {
+      return {
+        ...state,
+        loading: true,
+      };
+    }
+    case "SUCCESS": {
+      return {
+        ...state,
+        loading: false,
+        failure: undefined,
+        auth: action.response,
+      };
+    }
+    case "FAILURE": {
+      return {
+        ...state,
+        loading: false,
+        failure: action.response,
+        auth: undefined,
+      };
+    }
+    case "LOGOUT_SUCCESS": {
+      return {
+        ...state,
+        failure: undefined,
+        auth: undefined,
+        logoutFailure: true,
+      };
+    }
+    case "LOGOUT_FAILURE": {
+      return {
+        ...state,
+        logoutFailure: true,
+      };
+    }
+    default:
+      return state;
+  }
+}
+
+export function useProvideAuth(): AuthContextType {
+  const [state, dispatch] = React.useReducer(reducer, INIT_STATE);
+
+  const handleSuccess = async (
+    res: GoogleLoginResponse | GoogleLoginResponseOffline
+  ) => {
+    const response = res as GoogleLoginResponse;
+    dispatch({ type: "START_LOADING" });
+    await fetch("api/login", {
+      method: "POST",
+      headers: { Authorization: response.tokenId },
+    });
+    dispatch({ type: "SUCCESS", response });
   };
 
-  // TODO: Write signout function
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  const signout = () => {};
+  const handleFailure = (response?: unknown) => {
+    dispatch({ type: "FAILURE", response });
+  };
+
+  const handleLogoutSuccess = () => {
+    dispatch({ type: "LOGOUT_SUCCESS" });
+  };
+
+  const handleLogoutFailure = () => {
+    dispatch({ type: "LOGOUT_FAILURE" });
+  };
+
+  const { signIn, loaded } = useGoogleLogin({
+    onSuccess: handleSuccess,
+    onFailure: handleFailure,
+    clientId: CLIENT_ID,
+    isSignedIn: true,
+  });
+
+  const { signOut } = useGoogleLogout({
+    onLogoutSuccess: handleLogoutSuccess,
+    onFailure: handleLogoutFailure,
+    clientId: CLIENT_ID,
+  });
 
   return {
-    user,
-    signin,
-    signout,
+    ...state,
+    googleLoaded: loaded,
+    signIn,
+    signOut,
   };
 }
 
-// A wrapper for <Route> that redirects to the login
-// screen if you're not yet authenticated.
-// eslint-disable-next-line react/prop-types
-export const PrivateRoute: React.FC<RouteProps> = ({ children, ...rest }) => {
-  const auth = useAuth();
-  return (
-    <Route
-      {...rest}
-      render={({ location }) =>
-        auth.user ? (
-          children
-        ) : (
-          <Redirect
-            to={{
-              pathname: "/login",
-              state: { from: location },
-            }}
-          />
-        )
-      }
-    />
-  );
-};
-
-// eslint-disable-next-line react/prop-types
 export const AuthProvider: React.FC = ({ children }) => {
   const auth = useProvideAuth();
   return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
