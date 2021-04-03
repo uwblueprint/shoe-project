@@ -1,6 +1,6 @@
 import {
+  AppBar,
   Button,
-  Checkbox,
   Chip,
   Dialog,
   DialogActions,
@@ -34,10 +34,11 @@ import useMediaQuery from "@material-ui/core/useMediaQuery";
 
 import countriesList from "../data/countries.json";
 import citiesList from "../data/cities.json";
+import { StoryDrawer } from "../components";
 import { colors } from "../styles/colors";
 import { device } from "../styles/device";
 import { UploadLabelsText, UploadStoriesHeading } from "../styles/typography";
-import { Story } from "../types";
+import { Author, Story } from "../types";
 
 
 
@@ -94,6 +95,20 @@ const StyledDropzoneArea = styled(DropzoneArea)`
   }
 `;
 
+const StyledTags = styled(Autocomplete)`
+  && {
+    font-family: Poppins;
+    margin-top: 12px;
+    width: 30vw;
+    .MuiInputLabel-root {
+      font-family: Poppins !important;
+    }
+    .MuiInputBase-input {
+      font-family: Poppins !important;
+    }
+  }
+`;
+
 const StyledAutocomplete = styled(Autocomplete)`
   && {
     font-family: Poppins;
@@ -109,10 +124,8 @@ const StyledAutocomplete = styled(Autocomplete)`
 `;
 
 const StyledButton = styled(Button)`
-  && {
-    width: 30vw;
-    margin-left: 24px;
-  }
+  text-transform: none;
+  margin: 5px;
 `;
 
 const AddCountryPaper = styled(Paper)`
@@ -248,29 +261,30 @@ interface TagParameters {
 
 interface StoryProps {
   id: number;
-  story: Story;
+  currentStory: Story;
   bio: string;
 }
 
 export const UploadStory: React.FC<StoryProps> = ({
   id,
-  story,
+  currentStory,
   bio,
 }: StoryProps) => {
   const { data: tagOptions, error } = useSWR<string[]>("/api/tags");
-  const [tagArray, setTagArrayValues] = useState(story.tags);
-  const [authorCountry, setAuthorCountry] = useState(story.author_country);
-  const [currentCity, setCurrentCity] = useState(story.current_city.toUpperCase());
+  const [tagArray, setTagArrayValues] = useState(currentStory.tags);
+  const [authorCountry, setAuthorCountry] = useState(currentStory.author_country);
+  const [currentCity, setCurrentCity] = useState(currentStory.current_city.toUpperCase());
   const [autocompleteAuthorCountry, setAutocompleteAuthorCountry] = useState(
-    story.author_country
+    currentStory.author_country
   );
   const [addedCountry, setAddedCountry] = useState("");
-  const [newImage, setNewImage] = useState(story.image_url);
+  const [newImage, setNewImage] = useState(currentStory.image_url);
   const [disabled, setDisabled] = useState(false);
   //handleSubmit component states
   const [dialogOpenState, setDialogOpenState] = useState(false);
   const [uploadErrorState, setErrorOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const { data: countries, error: errorCountries } = useSWR<string[]>(
     "/api/countries"
@@ -291,18 +305,75 @@ export const UploadStory: React.FC<StoryProps> = ({
     (state, newState) => ({ ...state, ...newState }),
     {
       image: new File([""], "filename"),
-      video_url: story.video_url,
-      title: story.title,
-      content: story.content,
-      summary: story.summary,
-      author_first_name: story.author_first_name,
-      author_last_name: story.author_last_name,
-      // author_country: story.author_country,
-      year: story.year,
-      current_city: story.current_city.toUpperCase(),
+      video_url: currentStory.video_url,
+      title: currentStory.title,
+      content: currentStory.content,
+      summary: currentStory.summary,
+      author_first_name: currentStory.author_first_name,
+      author_last_name: currentStory.author_last_name,
+      author_country: currentStory.author_country,
+      year: currentStory.year,
+      current_city: currentStory.current_city.toUpperCase(),
       bio: bio,
     }
   );
+
+  const story = React.useMemo(() => {
+    if (isDrawerOpen) {
+      const storyFromData: Story = {
+        image_url: (newImage == "" ? URL.createObjectURL(formInput.image) : currentStory.image_url),
+        video_url: formInput.video_url as string,
+        title: formInput.title as string,
+        content: formInput.content as string,
+        summary: formInput.summary as string,
+        author_first_name: formInput.author_first_name as string,
+        author_last_name: formInput.author_last_name as string,
+        author_country: authorCountry as string,
+        year: formInput.year as number,
+        current_city: formInput.current_city as string,
+        author: {
+          ID: 0,
+          CreatedAt: "",
+          UpdatedAt: "",
+          DeletedAt: {
+            Time: "",
+            Valid: true,
+          },
+          firstName: formInput.author_last_name as string,
+          currentCity: formInput.current_city as string,
+          bio: formInput.bio as string,
+        } as Author,
+        tags: [],
+        is_visible: true,
+        latitude: 0,
+        longitude: 0,
+        ID: 0,
+        CreatedAt: "",
+        UpdatedAt: "",
+        DeletedAt: {
+          Time: "",
+          Valid: true,
+        },
+      };
+      return storyFromData;
+    }
+    return undefined;
+  }, [isDrawerOpen, formInput]);
+
+  const hasAllRequiredFields = React.useMemo(() => {
+
+    return (
+      formInput.image &&
+      formInput.title &&
+      formInput.content &&
+      formInput.summary &&
+      formInput.author_first_name &&
+      formInput.author_last_name &&
+      formInput.year &&
+      formInput.current_city &&
+      formInput.author_country
+    );
+  }, [formInput]);
 
   const setImage = (files: File[]) => {
     setFormInput({
@@ -368,12 +439,15 @@ export const UploadStory: React.FC<StoryProps> = ({
   };
 
   const addCountryButtonPressed = (autocompleteAuthorCountry: string) => {
+    setFormInput({
+      ["author_country"]: autocompleteAuthorCountry,
+    });
     setAddedCountry(autocompleteAuthorCountry);
     setAuthorCountry(autocompleteAuthorCountry);
     countries.push(autocompleteAuthorCountry);
   };
 
-  const newCountry = ({ children, ...other }) => (
+  const addNewCountry = ({ children, ...other }) => (
     <AddCountryPaper {...other}>
       {countries.filter(
         (str) => str.toLowerCase() == autocompleteAuthorCountry.toLowerCase()
@@ -434,7 +508,7 @@ export const UploadStory: React.FC<StoryProps> = ({
     let method = "POST";
 
     if (id) {
-      // if a new image was uplaoded, add the image to the formdata
+      // if a new image was uploaded, add the image to the formdata
       if (newImage == "") {
         formData.append("image", formInput["image"]);
       }
@@ -446,13 +520,13 @@ export const UploadStory: React.FC<StoryProps> = ({
 
     formData.append("author_country", authorCountry);
     if (authorCountry === addedCountry) {
-      let empArray = [
+      let countryNameJsonBody = [
         {
           country_name: addedCountry,
         },
       ];
 
-      const jsonBody = JSON.stringify(empArray);
+      const jsonBody = JSON.stringify(countryNameJsonBody);
       fetch("/api/countries", {
         method: "POST",
         body: jsonBody,
@@ -466,12 +540,46 @@ export const UploadStory: React.FC<StoryProps> = ({
   };
 
   const successMessage = id ? "Story Edit Success!" : "Story Upload Success!";
+  const pageTitle = id ? "Edit Story" : "Upload New Story";
+  const submitButtonText = id ? "Save Edits" : "Upload";
 
   if (error) return <div>Error fetching tags!</div>;
   if (errorCountries) return <div>Error fetching countries array!</div>;
 
   return (
     <>
+      <AppBar color="default" position="sticky">
+        <Grid container direction="row">
+          <Grid item xs={6}>
+            <UploadStoriesHeading>{pageTitle}</UploadStoriesHeading>
+          </Grid>
+          <Grid
+            container
+            item
+            xs={6}
+            direction="row"
+            alignContent="center"
+            justify="flex-end"
+          >
+            <StyledButton
+              disabled={!hasAllRequiredFields}
+              onClick={() => setIsDrawerOpen(true)}
+              color="primary"
+              variant="outlined"
+            >
+              Preview
+            </StyledButton>
+            <StyledButton
+              disabled={disabled || !hasAllRequiredFields}
+              variant="contained"
+              color="primary"
+              onClick={handleSubmit}
+            >
+              {submitButtonText}
+            </StyledButton>
+          </Grid>
+        </Grid>
+      </AppBar>
       <StyledGrid container justify="center" alignContent="center">
         <form onSubmit={handleSubmit}>
           <FormControl>
@@ -574,7 +682,11 @@ export const UploadStory: React.FC<StoryProps> = ({
                   onInputChange={(_, newValue) =>
                     setAutocompleteAuthorCountry(newValue)
                   }
-                  onChange={(_, newValue) => setAuthorCountry(newValue)}
+                  onChange={(_, newValue) => {
+                    setFormInput({
+                      ["author_country"]: newValue,
+                    });
+                   setAuthorCountry(newValue)}}
                   renderInput={(params) => {
                     return (
                       <TextField
@@ -586,7 +698,7 @@ export const UploadStory: React.FC<StoryProps> = ({
                       />
                     );
                   }}
-                  PaperComponent={newCountry}
+                  PaperComponent={addNewCountry}
                 />
               </FormControl>
               <UploadLabelsText>Current City</UploadLabelsText>
@@ -713,7 +825,7 @@ export const UploadStory: React.FC<StoryProps> = ({
                   <div>
                     <UploadLabelsText>Current Image:</UploadLabelsText>
                     <br />
-                    <StyledImage src={story.image_url} />
+                    <StyledImage src={currentStory.image_url} />
                     <Button
                       color="primary"
                       variant="contained"
@@ -738,14 +850,14 @@ export const UploadStory: React.FC<StoryProps> = ({
                 defaultValue={formInput.video_url}
               />
             </StyledBackgroundColor>
-            <StyledButton
+            {/* <StyledButton
               disabled={disabled}
               color="primary"
               type="submit"
               variant="contained"
             >
               Submit Story
-            </StyledButton>
+            </StyledButton> */}
             <Snackbar
               open={uploadErrorState}
               autoHideDuration={5000}
@@ -781,6 +893,7 @@ export const UploadStory: React.FC<StoryProps> = ({
           </FormControl>
         </form>
       </StyledGrid>
+      <StoryDrawer story={story} onClose={() => setIsDrawerOpen(false)} />
       {loading ? <StyledLinearProgress /> : null}
     </>
   );
