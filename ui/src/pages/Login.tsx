@@ -6,7 +6,7 @@ import * as React from "react";
 import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 
-import { useAuth } from "../hooks/auth";
+import { FailureState, useAuth } from "../hooks/auth";
 import { LoginMessageText, LoginTitleText } from "../styles/typography";
 
 const CardDiv = styled.div`
@@ -54,11 +54,11 @@ export const Login: React.FC = () => {
   }
 
   const title =
-    failure === undefined
+    failure !== FailureState.InvalidEmail
       ? "Welcome to the Shoe Project Admin Portal"
       : "Sorry, that is not a valid email";
   const description =
-    failure === undefined
+    failure !== FailureState.InvalidEmail
       ? "Please Sign In using your Shoe Project Email"
       : "Make sure you are using a Shoe Project Organization Email";
 
