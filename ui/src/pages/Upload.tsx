@@ -506,6 +506,7 @@ export const Upload: React.FC = () => {
                 <UploadLabelsText>Add Image</UploadLabelsText>
                 <StyledDropzoneArea
                   showFileNames
+                  maxFileSize={7000000}
                   acceptedFiles={["image/*"]}
                   filesLimit={1}
                   dropzoneText={"Drag image here or select from device"}
