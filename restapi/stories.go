@@ -16,7 +16,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/biter777/countries"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/render"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
@@ -24,10 +23,12 @@ import (
 	"gorm.io/gorm"
 )
 
-const youtubeRegex = `(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})`
-const youtubeEmbedURL = "https://www.youtube.com/embed/"
+var youtubeRegex = regexp.MustCompile(`(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})`)
+var youtubeEmbedURL = regexp.MustCompile("https://www.youtube.com/embed/")
 
-//const s3KeyNameRegex = `^https://shoeproject.s3.us-west-000.backblazeb2.com/(.*)`
+var s3KeyNameRegex = regexp.MustCompile(`^https:\/\/shoeproject.s3.us-west-000.backblazeb2.com\/(.*)\?versionId`)
+var s3KeyNameRegexAlternate = regexp.MustCompile(`^https:\/\/shoeproject.s3.us-west-000.backblazeb2.com\/(.*)`)
+var s3VersionIdRegex = regexp.MustCompile(`\?versionId=(.*)`)
 
 func init() {
 	rand.Seed(time.Now().UTC().UnixNano())
@@ -109,10 +110,10 @@ func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.R
 			sortString += ", "
 		}
 	}
-	
+
 	gormStories := api.database.Table("stories")
 	gormTags := api.database.Table("tags")
-	
+
 	err = gormTags.Where("name IN ?", tags).Find(&storiesByTags).Error
 	if err != nil {
 		return rest.ErrInternal(api.logger, err)
@@ -170,24 +171,26 @@ func (api api) EditStoryByID(w http.ResponseWriter, r *http.Request) render.Rend
 		return rest.ErrInternal(api.logger, err)
 	}
 
-	// TODO: Right now, all images with same name gets deleted. Figure out how to properly delete images from S3
-	/*
+	imageURL := story.ImageURL
+
+	file, h, err := r.FormFile("image")
+
+	if err == nil { // If new image is passed in
 		imageKey, err := convertImageURLToKeyName(story.ImageURL)
 
 		if err != nil {
 			return rest.ErrInvalidRequest(api.logger, "ImageUrl of existing image is not valid", err)
 		}
 
-		msg, err := api.DeleteImageInS3(imageKey) //delete existing image
+		versionId, err := convertImageURLToVersionId(story.ImageURL)
+
+		if err != nil {
+			return rest.ErrInvalidRequest(api.logger, "VersionID of existing image is not valid", err)
+		}
+		msg, err := api.DeleteImageInS3(imageKey, versionId) //delete existing image
 		if err != nil {
 			return rest.ErrInvalidRequest(api.logger, msg, err)
-		}*/
-
-	imageURL := story.ImageURL
-
-	file, h, err := r.FormFile("image")
-
-	if err == nil {
+		}
 		imageURL, err = api.uploadImageTos3(file, h.Size, h.Filename)
 		if err != nil {
 			return rest.ErrInvalidRequest(api.logger, "Error uploading the image to s3.", err)
@@ -202,10 +205,6 @@ func (api api) EditStoryByID(w http.ResponseWriter, r *http.Request) render.Rend
 	errAuthor := api.database.First(&author).Error // Checking if author exists or not. If it does not, a new author would be created
 	if errAuthor != nil {
 		if errAuthor == gorm.ErrRecordNotFound {
-			country := countries.ByName(author.OriginCountry)
-			if country == countries.Unknown {
-				return rest.ErrInvalidRequest(api.logger, "Unknown origin country", nil)
-			}
 			if err := api.database.Create(&author).Error; err != nil { // This is where a new author is added if it did not already exist
 				return rest.ErrInternal(api.logger, errAuthor)
 			}
@@ -273,7 +272,6 @@ func (api api) EditStoryByID(w http.ResponseWriter, r *http.Request) render.Rend
 }
 
 func (api api) DeleteStoryByID(w http.ResponseWriter, r *http.Request) render.Renderer {
-	// TODO: Delete the image from S3 properly
 	var story models.Story
 	id := chi.URLParam(r, "storyID")
 
@@ -283,6 +281,22 @@ func (api api) DeleteStoryByID(w http.ResponseWriter, r *http.Request) render.Re
 			return rest.ErrNotFound(fmt.Sprintf("Could not find story with ID %s", id))
 		}
 		return rest.ErrInternal(api.logger, err)
+	}
+
+	imageKey, err := convertImageURLToKeyName(story.ImageURL)
+
+	if err != nil {
+		return rest.ErrInvalidRequest(api.logger, "ImageUrl of existing image is not valid. ImageKey could not be found", err)
+	}
+
+	versionId, err := convertImageURLToVersionId(story.ImageURL)
+
+	if err != nil {
+		return rest.ErrInvalidRequest(api.logger, "ImageUrl of existing image is not valid", err)
+	}
+	msg, err := api.DeleteImageInS3(imageKey, versionId) //delete existing image
+	if err != nil {
+		return rest.ErrInvalidRequest(api.logger, msg, err)
 	}
 
 	var author = models.Author{
@@ -358,6 +372,20 @@ func (api api) CreateStories(w http.ResponseWriter, r *http.Request) render.Rend
 	return rest.MsgStatusOK("Stories added successfully")
 }
 
+func (api api) PublishStories(w http.ResponseWriter, r *http.Request) render.Renderer {
+	var stories []models.Story
+	if err := json.NewDecoder(r.Body).Decode(&stories); err != nil {
+		return rest.ErrInvalidRequest(api.logger, "Invalid payload", err)
+	}
+	for _, story := range stories {
+		if err := api.database.Model(&story).Update("is_visible", story.IsVisible).Error; err != nil {
+			return rest.ErrInternal(api.logger, err)
+		}
+	}
+
+	return rest.MsgStatusOK("Stories published successfully")
+}
+
 func (api api) uploadImageTos3(file multipart.File, size int64, name string) (string, error) {
 	newSession, err := session.NewSession(api.s3config)
 	if err != nil {
@@ -375,7 +403,7 @@ func (api api) uploadImageTos3(file multipart.File, size int64, name string) (st
 	fileType := http.DetectContentType(buffer)
 	bucket := aws.String(os.Getenv("BUCKET_NAME"))
 
-	_, err = s3Client.PutObject(&s3.PutObjectInput{
+	res, err := s3Client.PutObject(&s3.PutObjectInput{
 		Body:          fileBytes,
 		Bucket:        bucket,
 		Key:           aws.String(name),
@@ -385,12 +413,11 @@ func (api api) uploadImageTos3(file multipart.File, size int64, name string) (st
 	if err != nil {
 		return "", fmt.Errorf("Could not upload to S3")
 	}
-	return fmt.Sprintf("https://%s.s3.us-west-000.backblazeb2.com/%s", os.Getenv("BUCKET_NAME"), name), nil
+	return fmt.Sprintf("https://%s.s3.us-west-000.backblazeb2.com/%s?versionId=%s", os.Getenv("BUCKET_NAME"), name, *res.VersionId), nil
 }
 
-// Not using these functions currently since not doing image deletion for now
-/*
-func (api api) DeleteImageInS3(name string) (string, error) {
+func (api api) DeleteImageInS3(name string, versionId string) (string, error) {
+
 	newSession, err := session.NewSession(api.s3config)
 	if err != nil {
 		return "", fmt.Errorf("Could not connect with S3")
@@ -399,9 +426,10 @@ func (api api) DeleteImageInS3(name string) (string, error) {
 	s3Client := s3.New(newSession)
 	bucket := aws.String(os.Getenv("BUCKET_NAME"))
 
-	_, err = s3Client.DeleteObject(&s3.DeleteObjectInput{ // To Do: Only friendly URL being deleted on Backblaze, not the image
-		Bucket: bucket,
-		Key:    aws.String(name),
+	_, err = s3Client.DeleteObject(&s3.DeleteObjectInput{
+		Bucket:    bucket,
+		Key:       aws.String(name),
+		VersionId: aws.String(versionId),
 	})
 	if err != nil {
 		return "", fmt.Errorf("Could not delete image in S3")
@@ -409,19 +437,31 @@ func (api api) DeleteImageInS3(name string) (string, error) {
 	return "Image Successfully Deleted", nil
 }
 
-
 func convertImageURLToKeyName(originalURL string) (string, error) {
-	re := regexp.MustCompile(s3KeyNameRegex)
-	match := re.FindAllStringSubmatch(originalURL, 2)
+	match := s3KeyNameRegex.FindAllStringSubmatch(originalURL, 2) // This is for the URLs that have versionID
 	if len(match) == 0 {
-		return "", fmt.Errorf("Invalid Image Link")
+		match = s3KeyNameRegexAlternate.FindAllStringSubmatch(originalURL, 2) // This is for the image URl that are valid but dont have versionID. E.g. the current seeded stories image url dont have version id
+		if len(match) == 0 {
+			return "", fmt.Errorf("Invalid Image Link - Image Key not found")
+		}
 	}
 	return match[0][1], nil
-} */
+}
+
+func convertImageURLToVersionId(originalURL string) (string, error) {
+	match := s3KeyNameRegex.FindAllStringSubmatch(originalURL, 2) // This checks if url has the versionId or not
+	if len(match) == 0 {
+		return "", nil
+	}
+	match = s3VersionIdRegex.FindAllStringSubmatch(originalURL, 2)
+	if len(match) == 0 {
+		return "", fmt.Errorf("Invalid Image Link - VersionID not found")
+	}
+	return match[0][1], nil
+}
 
 func convertYoutubeURL(originalURL string) (string, error) {
-	re := regexp.MustCompile(youtubeRegex)
-	match := re.FindAllStringSubmatch(originalURL, 2)
+	match := youtubeRegex.FindAllStringSubmatch(originalURL, 2)
 	if len(match) == 0 {
 		return "", fmt.Errorf("Invalid Youtube Link")
 	}
@@ -448,10 +488,6 @@ func (api api) CreateStoriesFormData(w http.ResponseWriter, r *http.Request) ren
 	errAuthor := api.database.First(&author).Error
 	if errAuthor != nil {
 		if errAuthor == gorm.ErrRecordNotFound {
-			country := countries.ByName(author.OriginCountry)
-			if country == countries.Unknown {
-				return rest.ErrInvalidRequest(api.logger, "Unknown origin country", nil)
-			}
 			if err := api.database.Create(&author).Error; err != nil { //Adding author
 				return rest.ErrInternal(api.logger, errAuthor)
 			}

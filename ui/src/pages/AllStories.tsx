@@ -6,11 +6,12 @@ import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import * as React from "react";
 import styled from "styled-components";
 import useSWR, { mutate } from "swr";
 
+import { StoryDrawer } from "../components";
 import { a11yProps, AllStoriesTabs } from "../components/AllStoriesTabs";
 import VirtualizedTable from "../components/VirtualizedTable";
 import { colors } from "../styles/colors";
@@ -244,11 +245,23 @@ export const AllStories: React.FC = () => {
     "/api/stories",
     fetchStories
   );
+  const [clickedStory, setClickedStory] = useState<Story | undefined>(
+    undefined
+  );
   const classes = useStyles();
 
   useEffect(() => {
     dispatch({ type: "INITIALIZE_AFTER_API", rows: allStories });
   }, [allStories]);
+
+  const setClickedRow = (rowId: number | undefined) => {
+    if (rowId) {
+      const story = allStories?.find((story) => story.ID === rowId);
+      if (story) {
+        setClickedStory(story);
+      }
+    }
+  };
 
   const handleSwitchChange = (e, story) => {
     dispatch({ type: "HANDLE_SWITCH_CHANGE", e, story });
@@ -353,6 +366,7 @@ export const AllStories: React.FC = () => {
           )}
           order={state.order}
           orderBy={state.orderBy}
+          setClickedRow={setClickedRow}
           columns={[
             {
               name: "ID",
@@ -396,45 +410,45 @@ export const AllStories: React.FC = () => {
                 handleRequestSort("title");
               },
             },
-            {
-              name: "current_city",
-              header: "Current City",
-              width: 200,
-              onHeaderClick() {
-                handleRequestSort("current_city");
+              {
+                name: "current_city",
+                header: "Current City",
+                width: 200,
+                onHeaderClick() {
+                  handleRequestSort("current_city");
+                },
               },
-            },
-            {
-              name: "year",
-              header: "Year",
-              width: 100,
-              onHeaderClick() {
-                handleRequestSort("year");
+              {
+                name: "year",
+                header: "Year",
+                width: 100,
+                onHeaderClick() {
+                  handleRequestSort("year");
+                },
               },
-            },
-            {
-              name: "author_name",
-              header: "Author name",
-              width: 250,
-              onHeaderClick() {
-                handleRequestSort("author_name");
+              {
+                name: "author_name",
+                header: "Author name",
+                width: 250,
+                onHeaderClick() {
+                  handleRequestSort("author_name");
+                },
               },
-            },
-            {
-              name: "author_country",
-              header: "Country",
-              width: 300,
-              onHeaderClick() {
-                handleRequestSort("author_country");
+              {
+                name: "author_country",
+                header: "Country",
+                width: 300,
+                onHeaderClick() {
+                  handleRequestSort("author_country");
+                },
               },
-            },
-            {
-              name: "is_visible",
-              header: "Show on Map",
-              width: 150,
-              onHeaderClick() {
-                handleRequestSort("jobType");
-              },
+              {
+                name: "is_visible",
+                header: "Show on Map",
+                width: 150,
+                onHeaderClick() {
+                  handleRequestSort("jobType");
+                },
               cell: (story) => (
                 <StyledSwitch
                   checked={story.is_visible}
@@ -446,12 +460,21 @@ export const AllStories: React.FC = () => {
             },
           ]}
         />
+         <StoryDrawer
+            story={clickedStory}
+            onClose={() => setClickedStory(undefined)}
+            onClickEditStory={() => {
+              console.log("TODO: Route to edit page");
+            }}
+          />
       </AllStoriesTabs>
+
       <AllStoriesTabs value={state.tabValue} index={1}>
         <VirtualizedTable
           data={state.visibleTableState.filter((story) => story.is_visible)}
           order={state.order}
           orderBy={state.orderBy}
+          setClickedRow={setClickedRow}
           columns={[
             {
               name: "ID",
@@ -556,6 +579,7 @@ export const AllStories: React.FC = () => {
             )}
             order={state.order}
             orderBy={state.orderBy}
+            setClickedRow={setClickedRow}
             columns={[
               {
                 name: "pending-map-changes-changes",
@@ -634,6 +658,7 @@ export const AllStories: React.FC = () => {
           <StyledEmptyMessage> No pending changes! </StyledEmptyMessage>
         )}
       </AllStoriesTabs>
+     
     </>
   );
 };
