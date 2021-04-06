@@ -1,5 +1,6 @@
 import AppBar from "@material-ui/core/AppBar";
 import Checkbox from "@material-ui/core/Checkbox";
+import Chip from "@material-ui/core/Chip";
 import { makeStyles } from "@material-ui/core/styles";
 import Switch from "@material-ui/core/Switch";
 import Tab from "@material-ui/core/Tab";
@@ -16,6 +17,7 @@ import { a11yProps, AllStoriesTabs } from "../../components/AllStoriesTabs";
 import VirtualizedTable from "../../components/VirtualizedTable";
 import { colors } from "../../styles/colors";
 import {
+  fontSize,
   StyledAllStoriesHeader,
   StyledEmptyMessage,
 } from "../../styles/typography";
@@ -33,6 +35,19 @@ const StyledSwitch = styled(Switch)`
   }
 `;
 
+const StyledChip = styled(Chip)`
+  &&.MuiChip-root {
+    color: ${colors.primaryDark2};
+    font-family: Poppins;
+    font-size: ${fontSize.body1};
+    line-height: 150%;
+    margin-right: 4px;
+  }
+
+  &&.MuiChip-colorPrimary {
+    background: ${colors.primaryLight3};
+  }
+`;
 const StyledContainer = styled.div`
   background-color: ${colors.primaryLight6};
 `;
@@ -73,6 +88,7 @@ export type StoryView = {
   image_url: string;
   video_url: string;
   content: string;
+  tags: string[];
 };
 
 function createData({
@@ -87,6 +103,7 @@ function createData({
   image_url,
   video_url,
   content,
+  tags,
 }): StoryView {
   const author_name = `${author_first_name} ${author_last_name}`;
   return {
@@ -102,6 +119,7 @@ function createData({
     image_url,
     video_url,
     content,
+    tags,
   };
 }
 
@@ -322,6 +340,18 @@ export const AllStories: React.FC = () => {
               },
             },
             {
+              name: "tags",
+              header: "Tags",
+              width: 300,
+              onHeaderClick() {
+                handleRequestSort("tags");
+              },
+              cell: (story) =>
+                story.tags.map((tag) => (
+                  <StyledChip color="primary" key={story.id} label={tag} />
+                )),
+            },
+            {
               name: "is_visible",
               header: "Show on Map",
               width: 150,
@@ -430,6 +460,18 @@ export const AllStories: React.FC = () => {
               },
             },
             {
+              name: "tags",
+              header: "Tags",
+              width: 300,
+              onHeaderClick() {
+                handleRequestSort("tags");
+              },
+              cell: (story) =>
+                story.tags.map((tag) => (
+                  <StyledChip color="primary" key={story.id} label={tag} />
+                )),
+            },
+            {
               name: "is_visible",
               header: "Show on Map",
               width: 150,
@@ -514,6 +556,18 @@ export const AllStories: React.FC = () => {
                 onHeaderClick() {
                   handleRequestSort("author_country");
                 },
+              },
+              {
+                name: "tags",
+                header: "Tags",
+                width: 300,
+                onHeaderClick() {
+                  handleRequestSort("tags");
+                },
+                cell: (story) =>
+                  story.tags.map((tag) => (
+                    <StyledChip color="primary" key={story.ID} label={tag} />
+                  )),
               },
               {
                 name: "is_visible",
