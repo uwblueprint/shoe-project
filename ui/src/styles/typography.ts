@@ -322,3 +322,10 @@ export const StyledAllStoriesHeader = styled.div`
   padding-top: 80px;
   margin-left: 64px;
 `;
+
+export const StyledEmptyMessage = styled.div`
+  margin-left: 50vw;
+  margin-top: 30vh;
+  font-family: Poppins;
+  font-size: ${fontSize.subtitle};
+`;

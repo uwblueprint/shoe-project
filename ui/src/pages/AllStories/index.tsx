@@ -11,12 +11,16 @@ import * as React from "react";
 import styled from "styled-components";
 import useSWR, { mutate } from "swr";
 
-import { StoryDrawer } from "../components";
-import { a11yProps, AllStoriesTabs } from "../components/AllStoriesTabs";
-import VirtualizedTable from "../components/VirtualizedTable";
-import { colors } from "../styles/colors";
-import { fontSize, StyledAllStoriesHeader } from "../styles/typography";
-import { Story } from "../types/index";
+import { StoryDrawer } from "../../components";
+import { a11yProps, AllStoriesTabs } from "../../components/AllStoriesTabs";
+import VirtualizedTable from "../../components/VirtualizedTable";
+import { colors } from "../../styles/colors";
+import {
+  StyledAllStoriesHeader,
+  StyledEmptyMessage,
+} from "../../styles/typography";
+import { Story } from "../../types/index";
+import { allStoriesReducer, INIT_STATE } from "../AllStories/reducer";
 
 const StyledSwitch = styled(Switch)`
   && {
@@ -29,12 +33,6 @@ const StyledSwitch = styled(Switch)`
   }
 `;
 
-const StyledEmptyMessage = styled.div`
-  margin-left: 50vw;
-  margin-top: 30vh;
-  font-family: Poppins;
-  font-size: ${fontSize.subtitle};
-`;
 const StyledContainer = styled.div`
   background-color: ${colors.primaryLight6};
 `;
@@ -62,7 +60,7 @@ const useStyles = makeStyles({
   checked: {},
 });
 
-export interface StoryView {
+export type StoryView = {
   ID: number;
   title: string;
   current_city: string;
@@ -75,24 +73,24 @@ export interface StoryView {
   image_url: string;
   video_url: string;
   content: string;
-}
+};
 
-function createData(
-  id: number,
-  title: string,
-  current_city: string,
-  year: number,
-  is_visible: boolean,
-  author_first_name: string,
-  author_last_name: string,
-  author_country: string,
-  image_url: string,
-  video_url: string,
-  content: string
-): StoryView {
+function createData({
+  ID,
+  title,
+  current_city,
+  year,
+  author_first_name,
+  author_last_name,
+  author_country,
+  is_visible,
+  image_url,
+  video_url,
+  content,
+}): StoryView {
   const author_name = `${author_first_name} ${author_last_name}`;
   return {
-    ID: id,
+    ID,
     title,
     current_city,
     year,
@@ -107,132 +105,12 @@ function createData(
   };
 }
 
-interface State {
-  tabValue: number;
-  visibleState: StoryView[];
-  visibleTableState: StoryView[];
-  tableData: StoryView[];
-  changedVisibility: StoryView[];
-  selectedRowIds: number[];
-  order: "asc" | "desc";
-  orderBy: string;
-}
-
-type Action =
-  | { type: "SWITCH_TAB"; id: number }
-  | { type: "HANDLE_SWITCH_CHANGE"; e: React.ChangeEvent; story: StoryView }
-  | { type: "INITIALIZE_AFTER_API"; rows: StoryView[] }
-  | { type: "HANDLE_CHECKED_ALL"; rows: StoryView[] }
-  | { type: "HANDLE_CHECKED"; e: React.ChangeEvent; story: StoryView }
-  | { type: "SET_ORDERING"; order: "asc" | "desc"; orderBy: string }
-  | { type: "SET_TABLE_DATA"; data: StoryView[] }
-  | { type: "SET_TAB_VALUE"; newValue: number };
-
-const initialState: State = {
-  tabValue: 0,
-  visibleState: [] as StoryView[],
-  visibleTableState: [] as StoryView[],
-  tableData: [] as StoryView[],
-  changedVisibility: [],
-  selectedRowIds: [],
-  order: "desc",
-  orderBy: "ID",
-};
-
-function reducer(state: State, action: Action): State {
-  switch (action.type) {
-    case "SWITCH_TAB": {
-      return {
-        ...state,
-        tabValue: action.id,
-      };
-    }
-    case "HANDLE_SWITCH_CHANGE": {
-      const changedVisibilityFoundID = (elem) => elem.ID === action.story.ID;
-      const changedVisibilityContainsID = state.changedVisibility.some(
-        changedVisibilityFoundID
-      );
-
-      if (action.e.target.checked) {
-        return {
-          ...state,
-          visibleState: [...state.visibleState, action.story],
-          visibleTableState: [...state.visibleTableState, action.story],
-          changedVisibility: changedVisibilityContainsID
-            ? state.changedVisibility.filter((e) => e.ID !== action.story.ID)
-            : [...state.changedVisibility, action.story],
-        };
-      } else {
-        return {
-          ...state,
-          visibleState: state.visibleState.filter(
-            (e) => e.ID !== action.story.ID
-          ),
-          visibleTableState: state.visibleTableState.filter(
-            (e) => e.ID !== action.story.ID
-          ),
-          changedVisibility: changedVisibilityContainsID
-            ? state.changedVisibility.filter((e) => e.ID !== action.story.ID)
-            : [...state.changedVisibility, action.story],
-        };
-      }
-    }
-    case "INITIALIZE_AFTER_API": {
-      return {
-        ...state,
-        visibleState: action.rows ? action.rows : [],
-        visibleTableState: action.rows ? action.rows : [],
-        tableData: action.rows ? action.rows : [],
-      };
-    }
-    case "HANDLE_CHECKED_ALL": {
-      return {
-        ...state,
-        selectedRowIds:
-          state.selectedRowIds.length === state.tableData.length
-            ? []
-            : state.tableData.map((story) => story.ID),
-      };
-    }
-    case "HANDLE_CHECKED": {
-      if (action.e.target.checked) {
-        return {
-          ...state,
-          selectedRowIds: [...state.selectedRowIds, action.story.ID],
-        };
-      } else {
-        return {
-          ...state,
-          selectedRowIds: state.selectedRowIds.filter(
-            (e) => e !== action.story.ID
-          ),
-        };
-      }
-    }
-    case "SET_ORDERING": {
-      return {
-        ...state,
-        order: action.order,
-        orderBy: action.orderBy,
-      };
-    }
-    case "SET_TABLE_DATA": {
-      return {
-        ...state,
-        tableData: action.data,
-      };
-    }
-    case "SET_TAB_VALUE": {
-      return {
-        ...state,
-        tabValue: action.newValue,
-      };
-    }
-  }
-}
-
 export const AllStories: React.FC = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(allStoriesReducer, INIT_STATE);
+  const [clickedStory, setClickedStory] = useState<StoryView | undefined>(
+    undefined
+  );
+  const classes = useStyles();
 
   const fetchStories = (url) =>
     fetch(url)
@@ -241,19 +119,7 @@ export const AllStories: React.FC = () => {
       })
       .then((response) =>
         response.payload.map((story) => {
-          return createData(
-            story.ID,
-            story.title,
-            story.current_city,
-            story.year,
-            story.is_visible,
-            story.author_first_name,
-            story.author_last_name,
-            story.author_country,
-            story.image_url,
-            story.video_url,
-            story.content
-          );
+          return createData(story);
         })
       );
 
@@ -261,13 +127,11 @@ export const AllStories: React.FC = () => {
     "/api/stories",
     fetchStories
   );
-  const [clickedStory, setClickedStory] = useState<StoryView | undefined>(
-    undefined
-  );
-  const classes = useStyles();
 
   useEffect(() => {
-    dispatch({ type: "INITIALIZE_AFTER_API", rows: allStories });
+    if (allStories) {
+      dispatch({ type: "INITIALIZE_AFTER_API", rows: allStories });
+    }
   }, [allStories]);
 
   const setClickedRow = (rowId: number | undefined) => {
@@ -350,7 +214,6 @@ export const AllStories: React.FC = () => {
     event: React.ChangeEvent<Record<string, unknown>>,
     newValue: number
   ) => {
-    // setTabValue(newValue);
     dispatch({ type: "SET_TAB_VALUE", newValue });
   };
   return (
