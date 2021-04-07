@@ -311,3 +311,21 @@ export const UploadLabelsText = styled.div`
   line-height: 120%;
   color: ${colors.black};
 `;
+
+export const StyledAllStoriesHeader = styled.div`
+  font-family: Canela;
+  font-style: normal;
+  font-weight: normal;
+  font-size: ${fontSize.h1Text};
+  line-height: 37px;
+  padding-bottom: 24px;
+  padding-top: 80px;
+  margin-left: 64px;
+`;
+
+export const StyledEmptyMessage = styled.div`
+  margin-left: 50vw;
+  margin-top: 30vh;
+  font-family: Poppins;
+  font-size: ${fontSize.subtitle};
+`;
