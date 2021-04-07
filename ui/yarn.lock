@@ -5744,17 +5744,10 @@ ms@2.1.2:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.2.tgz#d09d1f357b443f493382a8eb3ccd183872ae6009"
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
 
-<<<<<<< HEAD
-mui-virtualized-table@^2.2.3:
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/mui-virtualized-table/-/mui-virtualized-table-2.2.3.tgz#d68fd2a3d151f1351993df952fdea1eb284c8e90"
-  integrity sha512-QeIeHLs/WnvbTHvr+lCILMhiNaZcgzwHxOU8jD0buplCLrEm1Ez6YAstBg/NbNmJkapvcgci5nB8u/9OGiD8kA==
-=======
 mui-virtualized-table@3.0.0-6:
   version "3.0.0-6"
   resolved "https://registry.yarnpkg.com/mui-virtualized-table/-/mui-virtualized-table-3.0.0-6.tgz#9ceae2b962b6a7ffd782de212c85fe282e9af0b4"
   integrity sha512-qZdsiXRxqNlM0bmuJWEmXLFEHsSM1NPxhvNE2ds5NWYM+QLZ1pbnnva0yC7Oo+g7ieCmkK6tJYd89FSOUaM1mg==
->>>>>>> main
   dependencies:
     classnames "^2.2.5"
     prop-types "^15.6.1"
