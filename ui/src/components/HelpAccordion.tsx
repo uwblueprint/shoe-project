@@ -83,9 +83,10 @@ const StyledBox = styled.div`
 interface HelpDrawerProps {
   title: string;
   body: string;
+  login: boolean;
 }
 
-export function HelpAccordion({ title, body }: HelpDrawerProps): JSX.Element {
+export function HelpAccordion({ title, body, login }: HelpDrawerProps): JSX.Element {
   const [isHover, setIsHover] = useState(false);
   return (
     <StyledAccordion
@@ -101,8 +102,14 @@ export function HelpAccordion({ title, body }: HelpDrawerProps): JSX.Element {
         <Body1> {title} </Body1>
       </StyledAccordionSummary>
       <AccordionDetails>
+        
         <StyledBox>
-          <Body1> {body} </Body1>
+          {login ? (
+            <div>Are you a TSP administrator?
+            Sign in here to make changes to the map. </div>
+          ) : (
+            <Body1> {body} </Body1>
+          )}
         </StyledBox>
       </AccordionDetails>
     </StyledAccordion>
