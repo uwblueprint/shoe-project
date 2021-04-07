@@ -44,7 +44,8 @@ export function allStoriesReducer(state: State, action: Action): State {
       const changedVisibilityContainsID = state.changedVisibility.some(
         (e) => e.ID === action.story.ID
       );
-      if (action.e.target.checked) {
+      const target = action.e.target as HTMLInputElement;
+      if (target.checked) {
         return {
           ...state,
           visibleState: [...state.visibleState, action.story],
@@ -86,7 +87,9 @@ export function allStoriesReducer(state: State, action: Action): State {
       };
     }
     case "HANDLE_CHECKED": {
-      if (action.e.target.checked) {
+      const target = action.e.target as HTMLInputElement;
+
+      if (target.checked) {
         return {
           ...state,
           selectedRowIds: [...state.selectedRowIds, action.story.ID],

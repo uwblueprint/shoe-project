@@ -1,3 +1,5 @@
+import React from "react";
+
 import {
   Action,
   allStoriesReducer,
@@ -37,10 +39,10 @@ const mockTableData = [
 describe("allstories table", () => {
   describe("reducer", () => {
     it("should set the correct tab value", () => {
-      const action: Action = { type: "SWITCH_TAB", id: INIT_STATE.tabValue };
+      const action: Action = { type: "SWITCH_TAB", id: 2 };
       expect(INIT_STATE.tabValue).toBe(0);
       const newState = allStoriesReducer(INIT_STATE, action);
-      expect(newState.id !== 0).toBe(true);
+      expect(newState.tabValue).toBe(2);
     });
 
     it("should order table data", () => {
@@ -82,6 +84,40 @@ describe("allstories table", () => {
       expect(INIT_STATE.tabValue).toBe(0);
       const newState = allStoriesReducer(INIT_STATE, action);
       expect(newState.tabValue).toBe(1);
+    });
+
+    it("should check one box", () => {
+      const changeEvent = {
+        target: {
+          checked: true,
+        },
+      } as React.ChangeEvent<HTMLInputElement>;
+
+      const action: Action = {
+        type: "HANDLE_CHECKED",
+        e: changeEvent,
+        story: mockTableData[1],
+      };
+      expect(INIT_STATE.selectedRowIds.length).toBe(0);
+      const newState = allStoriesReducer(INIT_STATE, action);
+      expect(newState.selectedRowIds.length).toBe(1);
+    });
+
+    it("should toggle switch", () => {
+      const changeEvent = {
+        target: {
+          checked: true,
+        },
+      } as React.ChangeEvent<HTMLInputElement>;
+
+      const action: Action = {
+        type: "HANDLE_SWITCH_CHANGE",
+        e: changeEvent,
+        story: mockTableData[2],
+      };
+      expect(INIT_STATE.changedVisibility.length).toBe(0);
+      const newState = allStoriesReducer(INIT_STATE, action);
+      expect(newState.changedVisibility.length).toBe(1);
     });
   });
 });

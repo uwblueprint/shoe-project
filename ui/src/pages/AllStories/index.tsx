@@ -60,20 +60,17 @@ const useStyles = makeStyles({
   checked: {},
 });
 
-export type StoryView = {
-  ID: number;
-  title: string;
-  current_city: string;
-  year: number;
-  is_visible: boolean;
-  author_name: string;
-  author_country: string;
-  author_first_name: string;
-  author_last_name: string;
-  image_url: string;
-  video_url: string;
-  content: string;
-};
+export type StoryView = Omit<
+  Story,
+  | "summary"
+  | "latitude"
+  | "longitude"
+  | "author"
+  | "tags"
+  | "CreatedAt"
+  | "DeletedAt"
+  | "UpdatedAt"
+> & { author_name: string };
 
 function createData({
   ID,
@@ -87,7 +84,7 @@ function createData({
   image_url,
   video_url,
   content,
-}): StoryView {
+}: Story): StoryView {
   const author_name = `${author_first_name} ${author_last_name}`;
   return {
     ID,
@@ -117,11 +114,7 @@ export const AllStories: React.FC = () => {
       .then((res) => {
         return res.json();
       })
-      .then((response) =>
-        response.payload.map((story) => {
-          return createData(story);
-        })
-      );
+      .then((response) => response.payload.map(createData));
 
   const { data: allStories, error } = useSWR<StoryView[] | undefined>(
     "/api/stories",
