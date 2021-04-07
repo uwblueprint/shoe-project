@@ -169,6 +169,9 @@ export function HelpDrawer({
                 }
               />
             </Grid>
+            <Grid item xs={12}>
+              <HelpAccordion title={"The Shoe Project Admin"} body={""} login />
+            </Grid>
           </ScrollArea>
           <Grid container direction="row" justify="center">
             <LaunchButton onClick={handleLaunchTour}>
