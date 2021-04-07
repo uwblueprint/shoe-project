@@ -1,8 +1,9 @@
-import { useParams } from "react-router-dom";
 import * as React from "react";
+import { useParams } from "react-router-dom";
+import useSWR from "swr";
+
 import { UploadStory } from "../components/UploadStory";
 import { Story } from "../types/index";
-import useSWR from "swr";
 
 export const Edit: React.FC = () => {
   const { id } = useParams();
@@ -12,7 +13,11 @@ export const Edit: React.FC = () => {
   return (
     <div>
       {story && !error && (
-        <UploadStory id={id} currentStory={story} bio={story.author.bio}></UploadStory>
+        <UploadStory
+          id={id}
+          currentStory={story}
+          bio={story.author.bio}
+        ></UploadStory>
       )}
     </div>
   );

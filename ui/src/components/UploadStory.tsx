@@ -9,14 +9,16 @@ import {
   DialogTitle,
   FormControl,
   Grid,
-  InputLabel,
   LinearProgress,
   MenuItem,
+  Paper,
   Select,
   Snackbar,
   TextField,
-  Paper,
 } from "@material-ui/core/";
+import ListSubheader from "@material-ui/core/ListSubheader";
+import { useTheme } from "@material-ui/core/styles";
+import useMediaQuery from "@material-ui/core/useMediaQuery";
 import Alert from "@material-ui/lab/Alert";
 import Autocomplete, {
   AutocompleteRenderGroupParams,
@@ -24,37 +26,23 @@ import Autocomplete, {
 import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
 import { KeyboardEvent, useReducer, useState } from "react";
+import { Redirect } from "react-router-dom";
+import { ListChildComponentProps, VariableSizeList } from "react-window";
 import styled from "styled-components";
 import useSWR from "swr";
-import { VariableSizeList, ListChildComponentProps } from "react-window";
-import ListSubheader from "@material-ui/core/ListSubheader";
-import { useTheme, makeStyles } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
-import { Redirect } from "react-router-dom";
 
-import citiesList from "../data/cities.json";
 import { StoryDrawer } from "../components";
+import citiesList from "../data/cities.json";
 import { colors } from "../styles/colors";
 import { device } from "../styles/device";
 import { UploadLabelsText, UploadStoriesHeading } from "../styles/typography";
 import { Author, Story } from "../types";
-
-
 
 const StyledGrid = styled(Grid)`
   background-color: ${colors.primaryLight6};
   @media ${device.laptop} {
     justify: left;
     width: 100vw;
-  }
-`;
-
-const StyledInputLabel = styled(InputLabel)`
-  && {
-    position: relative;
-    font-family: Poppins;
-    padding-left: 16px;
-    width: 30vw;
   }
 `;
 
@@ -91,20 +79,6 @@ const ImageContainer = styled.div`
 const StyledDropzoneArea = styled(DropzoneArea)`
   && {
     margin-top: 12px;
-  }
-`;
-
-const StyledTags = styled(Autocomplete)`
-  && {
-    font-family: Poppins;
-    margin-top: 12px;
-    width: 30vw;
-    .MuiInputLabel-root {
-      font-family: Poppins !important;
-    }
-    .MuiInputBase-input {
-      font-family: Poppins !important;
-    }
   }
 `;
 
@@ -271,8 +245,12 @@ export const UploadStory: React.FC<StoryProps> = ({
 }: StoryProps) => {
   const { data: tagOptions, error } = useSWR<string[]>("/api/tags");
   const [tagArray, setTagArrayValues] = useState(currentStory.tags);
-  const [authorCountry, setAuthorCountry] = useState(currentStory.author_country);
-  const [currentCity, setCurrentCity] = useState(currentStory.current_city.toUpperCase());
+  const [authorCountry, setAuthorCountry] = useState(
+    currentStory.author_country
+  );
+  const [currentCity, setCurrentCity] = useState(
+    currentStory.current_city.toUpperCase()
+  );
   const [autocompleteAuthorCountry, setAutocompleteAuthorCountry] = useState(
     currentStory.author_country
   );
@@ -316,7 +294,10 @@ export const UploadStory: React.FC<StoryProps> = ({
   const story = React.useMemo(() => {
     if (isDrawerOpen) {
       const storyFromData: Story = {
-        image_url: (newImage == "" ? URL.createObjectURL(formInput.image) : currentStory.image_url),
+        image_url:
+          newImage == ""
+            ? URL.createObjectURL(formInput.image)
+            : currentStory.image_url,
         video_url: formInput.video_url as string,
         title: formInput.title as string,
         content: formInput.content as string,
@@ -356,7 +337,6 @@ export const UploadStory: React.FC<StoryProps> = ({
   }, [isDrawerOpen, formInput]);
 
   const hasAllRequiredFields = React.useMemo(() => {
-
     return (
       formInput.image &&
       formInput.title &&
@@ -517,7 +497,7 @@ export const UploadStory: React.FC<StoryProps> = ({
 
     formData.append("author_country", authorCountry);
     if (authorCountry === addedCountry) {
-      let countryNameJsonBody = [
+      const countryNameJsonBody = [
         {
           country_name: addedCountry,
         },
@@ -683,7 +663,8 @@ export const UploadStory: React.FC<StoryProps> = ({
                     setFormInput({
                       ["author_country"]: newValue,
                     });
-                   setAuthorCountry(newValue)}}
+                    setAuthorCountry(newValue);
+                  }}
                   renderInput={(params) => {
                     return (
                       <TextField
@@ -719,7 +700,8 @@ export const UploadStory: React.FC<StoryProps> = ({
                   setFormInput({
                     ["current_city"]: newValue,
                   });
-                  setCurrentCity(newValue);}}
+                  setCurrentCity(newValue);
+                }}
                 renderInput={(params) => {
                   return (
                     <TextField
