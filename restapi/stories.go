@@ -132,9 +132,16 @@ func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.R
 		gormStories = gormStories.Order(sortString)
 	}
 
-	err = gormStories.Where("is_visible = ?", visibility).Find(&stories).Error
-	if err != nil {
-		return rest.ErrInternal(api.logger, err)
+	if getVisibility != nil {
+		err = gormStories.Where("is_visible = ?", visibility).Find(&stories).Error
+		if err != nil {
+			return rest.ErrInternal(api.logger, err)
+		}
+	} else {
+		err = gormStories.Find(&stories).Error
+		if err != nil {
+			return rest.ErrInternal(api.logger, err)
+		}
 	}
 
 	stories, err = api.AddAuthorToStories(stories)
