@@ -427,6 +427,7 @@ export const UploadStory: React.FC<StoryProps> = ({
       resultMessage === "Story Added Successfully" ||
       resultMessage === "Story Updated successfully"
     ) {
+      //TODO: Fix redirect (currently does nothing)
       console.log("HERE");
       return <Redirect to="/admin" />;
     } else {
