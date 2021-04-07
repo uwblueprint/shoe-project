@@ -111,9 +111,7 @@ export const AllStories: React.FC = () => {
 
   const fetchStories = (url) =>
     fetch(url)
-      .then((res) => {
-        return res.json();
-      })
+      .then((res) => res.json())
       .then((response) => response.payload.map(createData));
 
   const { data: allStories, error } = useSWR<StoryView[] | undefined>(
@@ -158,6 +156,11 @@ export const AllStories: React.FC = () => {
     dispatch({ type: "HANDLE_CHECKED", e, story });
   };
 
+  const onChangeTableSort = (order, property) => {
+    const data = stableSort(state.tableData, getComparator(order, property));
+    dispatch({ type: "SET_TABLE_DATA", data });
+  };
+
   const handleRequestSort = (property: string) => {
     const isDesc = state.orderBy === property && state.order === "asc";
     const order = isDesc ? "desc" : "asc";
@@ -165,10 +168,7 @@ export const AllStories: React.FC = () => {
 
     onChangeTableSort(order, property);
   };
-  const onChangeTableSort = (order, property) => {
-    const data = stableSort(state.tableData, getComparator(order, property));
-    dispatch({ type: "SET_TABLE_DATA", data });
-  };
+
   const stableSort = (array, comparator) => {
     const stabilizedThis = array ? array.map((el, index) => [el, index]) : [];
     stabilizedThis.sort((a, b) => {
@@ -200,8 +200,6 @@ export const AllStories: React.FC = () => {
   const indeterminate =
     state.selectedRowIds.length > 0 &&
     state.selectedRowIds.length !== allStories.length;
-  if (error) return <div>Error returning stories data!</div>;
-  if (!allStories) return <div>Loading all stories table..</div>;
 
   const handleTabChange = (
     event: React.ChangeEvent<Record<string, unknown>>,
@@ -209,6 +207,9 @@ export const AllStories: React.FC = () => {
   ) => {
     dispatch({ type: "SET_TAB_VALUE", newValue });
   };
+
+  if (error) return <div>Error returning stories data!</div>;
+  if (!allStories) return <div>Loading all stories table..</div>;
   return (
     <>
       <StyledContainer>
