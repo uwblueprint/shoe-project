@@ -143,7 +143,6 @@ export function HelpDrawer({
                 body={
                   "The pins are placed on the city where these women currently reside. Zoom in on any pin to see all the stories from that city."
                 }
-                login={false}
               />
             </Grid>
             <Grid item xs={12}>
@@ -152,7 +151,6 @@ export function HelpDrawer({
                 body={
                   "Each pin represents a story written by a participant of The Shoe Project. To preview a story, click on any pin."
                 }
-                login={false}
               />
             </Grid>
             <Grid item xs={12}>
@@ -161,7 +159,6 @@ export function HelpDrawer({
                 body={
                   "Stories can be filtered by their author’s country of origin. Only stories from selected countries will remain on the map."
                 }
-                login={false}
               />
             </Grid>
             <Grid item xs={12}>
@@ -170,11 +167,10 @@ export function HelpDrawer({
                 body={
                   "If you are no longer able to find a story pin, click on a redirect icon and it will bring you to the nearest story."
                 }
-                login={false}
               />
             </Grid>
             <Grid item xs={12}>
-              <HelpAccordion title={"The Shoe Project Admin"} body={""} login />
+              <HelpAccordion title={"The Shoe Project Admin"} body={""} login={true}/>
             </Grid>
           </ScrollArea>
           <Grid container direction="row" justify="center">

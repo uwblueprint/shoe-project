@@ -84,13 +84,13 @@ const StyledBox = styled.div`
 interface HelpDrawerProps {
   title: string;
   body: string;
-  login: boolean;
+  login?: boolean;
 }
 
 export function HelpAccordion({
   title,
   body,
-  login,
+  login = false,
 }: HelpDrawerProps): JSX.Element {
   const [isHover, setIsHover] = useState(false);
   const link = <Link to="/login">here</Link>;
