@@ -174,13 +174,7 @@ export function HelpDrawer({
               />
             </Grid>
             <Grid item xs={12}>
-              <HelpAccordion
-                title={"TSP Administrator?"}
-                body={
-                  ""
-                }
-                login
-              />
+              <HelpAccordion title={"The Shoe Project Admin"} body={""} login />
             </Grid>
           </ScrollArea>
           <Grid container direction="row" justify="center">

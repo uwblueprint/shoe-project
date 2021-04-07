@@ -4,6 +4,7 @@ import AccordionSummary from "@material-ui/core/AccordionSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import * as React from "react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import styled, { css } from "styled-components";
 
 import { colors } from "../styles/colors";
@@ -86,8 +87,13 @@ interface HelpDrawerProps {
   login: boolean;
 }
 
-export function HelpAccordion({ title, body, login }: HelpDrawerProps): JSX.Element {
+export function HelpAccordion({
+  title,
+  body,
+  login,
+}: HelpDrawerProps): JSX.Element {
   const [isHover, setIsHover] = useState(false);
+  const link = <Link to="/login">here</Link>;
   return (
     <StyledAccordion
       onMouseEnter={() => setIsHover(true)}
@@ -102,11 +108,13 @@ export function HelpAccordion({ title, body, login }: HelpDrawerProps): JSX.Elem
         <Body1> {title} </Body1>
       </StyledAccordionSummary>
       <AccordionDetails>
-        
         <StyledBox>
           {login ? (
-            <div>Are you a TSP administrator?
-            Sign in here to make changes to the map. </div>
+            <div>
+              <Body1>Are you a TSP administrator?</Body1>
+              <br />
+              <Body1>Sign in {link} to make changes to the map. </Body1>
+            </div>
           ) : (
             <Body1> {body} </Body1>
           )}
