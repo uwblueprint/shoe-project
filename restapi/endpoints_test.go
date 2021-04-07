@@ -317,7 +317,7 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 
 	//Verify response matches
 	response.Schema(mock)
-	response.Object().Value("payload").Array().Length().Equal(4)
+	response.Object().Value("payload").Array().Length().Equal(7)
 
 	response.Object().Value("payload").Array().Element(0).Object().Value("author_first_name").Equal("John")
 	response.Object().Value("payload").Array().Element(0).Object().Value("author_last_name").Equal("Doe")
@@ -482,6 +482,7 @@ func (suite *endpointTestSuite) TestGetVisibleStoriesWithTags() {
 	suite.db.Create(&jsonStories)
 	suite.db.Create(&jsonTags)
 	var response = suite.endpoint.GET("/stories").
+		WithQuery("visibility", true).
 		WithQuery("tags", "EDUCATION").
 		WithQuery("tags", "REFUGEE").
 		WithQuery("tags", "IMMIGRATION").
@@ -599,6 +600,7 @@ func (suite *endpointTestSuite) TestVisibleStories() {
 	suite.db.Create(&visibleStory)
 
 	var response = suite.endpoint.GET("/stories").
+		WithQuery("visibility", true).
 		Expect().
 		Status(http.StatusOK).JSON()
 
