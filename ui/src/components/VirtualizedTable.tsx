@@ -71,6 +71,9 @@ export function VirtualizedTable({
             orderDirection={order}
             includeHeaders
             onCellClick={(e, { rowData }) => {
+              if (e.target.type === "checkbox") {
+                return;
+              }
               const id: number = rowData?.ID;
               if (id) {
                 setClickedRow(id);
