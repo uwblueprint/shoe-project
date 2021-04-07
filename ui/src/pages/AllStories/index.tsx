@@ -255,7 +255,10 @@ export const AllStories: React.FC = () => {
                     }}
                     checked={state.selectedRowIds.length > 0}
                     indeterminate={indeterminate}
-                    onChange={handleCheckedAll}
+                    onChange={(e) => {
+                      e.persist();
+                      handleCheckedAll;
+                    }}
                   />
                   ID
                 </div>
@@ -267,7 +270,10 @@ export const AllStories: React.FC = () => {
                       root: classes.checkbox,
                       checked: classes.checked,
                     }}
-                    onChange={(e) => handleChecked(e, story)}
+                    onChange={(e) => {
+                      e.persist();
+                      handleChecked(e, story);
+                    }}
                     checked={state.selectedRowIds.includes(story.ID)}
                   />
                   {story.ID}
@@ -324,7 +330,10 @@ export const AllStories: React.FC = () => {
               cell: (story) => (
                 <StyledSwitch
                   checked={story.is_visible}
-                  onChange={(e) => handleSwitchChange(e, story)}
+                  onChange={(e) => {
+                    e.persist();
+                    handleSwitchChange(e, story);
+                  }}
                   name="checked"
                   color="primary"
                 />
@@ -363,7 +372,10 @@ export const AllStories: React.FC = () => {
                     }}
                     checked={state.selectedRowIds.length > 0}
                     indeterminate={indeterminate}
-                    onChange={handleCheckedAll}
+                    onChange={(e) => {
+                      e.persist();
+                      handleCheckedAll;
+                    }}
                   />
                   ID
                 </div>
@@ -375,7 +387,10 @@ export const AllStories: React.FC = () => {
                       root: classes.checkbox,
                       checked: classes.checked,
                     }}
-                    onChange={(e) => handleChecked(e, story)}
+                    onChange={(e) => {
+                      e.persist();
+                      handleChecked(e, story);
+                    }}
                     checked={state.selectedRowIds.includes(story.ID)}
                   />
                   {story.ID}
@@ -432,7 +447,10 @@ export const AllStories: React.FC = () => {
               cell: (story) => (
                 <StyledSwitch
                   checked={story.is_visible}
-                  onChange={(e) => handleSwitchChange(e, story)}
+                  onChange={(e) => {
+                    e.persist();
+                    handleSwitchChange(e, story);
+                  }}
                   name="checked"
                   color="primary"
                 />
@@ -518,7 +536,10 @@ export const AllStories: React.FC = () => {
                 cell: (story) => (
                   <StyledSwitch
                     checked={state.visibleState.includes(story.id)}
-                    onChange={(e) => handleSwitchChange(e, story)}
+                    onChange={(e) => {
+                      e.persist();
+                      handleSwitchChange(e, story);
+                    }}
                     name="checked"
                     color="primary"
                   />
