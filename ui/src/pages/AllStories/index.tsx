@@ -23,6 +23,16 @@ import {
 } from "../../styles/typography";
 import { Story } from "../../types/index";
 import { allStoriesReducer, INIT_STATE } from "../AllStories/reducer";
+import Popover from '@material-ui/core/Popover';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import FormLabel from '@material-ui/core/FormLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Checkbox from '@material-ui/core/Checkbox';
+
 
 const StyledSwitch = styled(Switch)`
   && {
@@ -124,6 +134,46 @@ function createData({
 }
 
 export const AllStories: React.FC = () => {
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const [filterState, setFilterState] = React.useState({
+    visible: false,
+    nonVisible: false
+  });
+
+
+
+  
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFilterState({ ...filterState, [event.target.name]: event.target.checked });
+  };
+
+  const { visible, nonVisible } = filterState;
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
+
+  const { data: tagOptions } = useSWR<string[]>("/api/tags");
+
+  var tagBooleans = {}
+  tagOptions.forEach((tag) => {
+    tagBooleans[tag] = false
+  })
+
+  const [tagFilterState, setTagFilterState] = React.useState(tagBooleans);
+  const handleTagFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTagFilterState({ ...tagFilterState, [event.target.name]: event.target.checked });
+  };
+
   const [state, dispatch] = useReducer(allStoriesReducer, INIT_STATE);
   const [clickedStory, setClickedStory] = useState<StoryView | undefined>(
     undefined
@@ -234,6 +284,7 @@ export const AllStories: React.FC = () => {
   ) => {
     dispatch({ type: "SET_TAB_VALUE", newValue });
   };
+  console.log(tagOptions)
   return (
     <>
       <StyledContainer>
@@ -255,6 +306,51 @@ export const AllStories: React.FC = () => {
           <Tab label="PENDING MAP CHANGES" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
+      <div>
+      <Button aria-describedby={id} variant="contained" color="primary" onClick={handleClick}>
+        Filter
+      </Button>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+      >
+          <FormControl component="fieldset">
+          <FormLabel component="legend">Tags: </FormLabel>
+          <FormGroup>
+            {
+            tagOptions.map((tag) => {
+              return(  <FormControlLabel
+                control={<Checkbox checked={tagFilterState[tag]} onChange={handleTagFilterChange} name={tag} />}
+                label={tag}
+                />)
+              })}
+          </FormGroup>
+        </FormControl>
+        <FormControl component="fieldset">
+          <FormLabel component="legend">Visibility: </FormLabel>
+          <FormGroup>
+            <FormControlLabel
+              control={<Checkbox checked={visible} onChange={handleChange} name="visible" />}
+              label="Shown"
+            />
+            <FormControlLabel
+              control={<Checkbox checked={nonVisible} onChange={handleChange} name="nonVisible" />}
+              label="Hidden"
+            />
+          </FormGroup>
+        </FormControl>
+      </Popover>
+    </div>
       <AllStoriesTabs value={state.tabValue} index={0}>
         <VirtualizedTable
           data={stableSort(
