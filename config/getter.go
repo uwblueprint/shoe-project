@@ -194,4 +194,3 @@ func GetZipCodeToken() string {
 func GetAuthRedirectURL() string {
 	return viper.GetString("auth.redirect.url")
 }
-

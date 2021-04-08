@@ -128,7 +128,7 @@ export const ShoeMap: React.FC = () => {
   const { data: tokens, error: tokens_error } = useSWR<Tokens>(
     "/api/client_tokens"
   );
-  const { data, error } = useSWR<Story[]>("/api/stories");
+  const { data, error } = useSWR<Story[]>("/api/stories?visibility=true");
 
   const [filteredCountries, setFilteredCountries] = useState<string[]>([]);
   function onTagsChange(_, options: string[]) {

@@ -3,8 +3,13 @@ import MuiTable from "mui-virtualized-table";
 import * as React from "react";
 import AutoSizer from "react-virtualized/dist/commonjs/AutoSizer";
 
+import { StoryView } from "../pages/AllStories";
 import { colors } from "../styles/colors";
 import { fontSize } from "../styles/typography";
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/main
 const useVirtualizedTableStyles = makeStyles({
   root: {
     marginLeft: "55px",
@@ -34,12 +39,20 @@ const useVirtualizedTableStyles = makeStyles({
   stickyColumnClass: {},
 });
 
+type TableColumn = {
+  name: string;
+  width: number;
+  onHeaderClick?: () => void;
+  header: JSX.Element | string;
+  cell?: (any) => JSX.Element;
+};
+
 interface VirtualizedTableProps {
-  data: [];
-  // eslint-disable-next-line
-  columns: any;
-  order: string;
+  data: StoryView[];
+  columns: TableColumn[];
+  order: "desc" | "asc";
   orderBy: string;
+  setClickedRow: (rowId: number | undefined) => void;
 }
 
 export function VirtualizedTable({
@@ -47,6 +60,7 @@ export function VirtualizedTable({
   columns,
   order,
   orderBy,
+  setClickedRow,
 }: VirtualizedTableProps): JSX.Element {
   const classes = useVirtualizedTableStyles();
   return (
@@ -59,6 +73,15 @@ export function VirtualizedTable({
             orderBy={orderBy}
             orderDirection={order}
             includeHeaders
+            onCellClick={(e, { rowData }) => {
+              if (e.target.type === "checkbox") {
+                return;
+              }
+              const id: number = rowData?.ID;
+              if (id) {
+                setClickedRow(id);
+              }
+            }}
             cellProps={(column) => {
               if (column.name === columns[0].name) {
                 return {

@@ -92,13 +92,13 @@ func Seed(db *gorm.DB, locationFinder location.LocationFinder) error {
 	}
 
 	// set lat long for coordinates
-	for _, story := range stories {
-		coordinates, err := locationFinder.GetCityCenter(story.CurrentCity)
+	for index, story := range stories {
+		lat, lng, err := locationFinder.GetPostalLatitudeAndLongitude(story.CurrentCity, int64(index))
 		if err != nil {
 			return err
 		}
-		story.Latitude = coordinates.Latitude
-		story.Longitude = coordinates.Longitude
+		story.Latitude = lat
+		story.Longitude = lng
 		story.IsVisible = true
 		err = db.Create(&story).Error
 		if err != nil {
