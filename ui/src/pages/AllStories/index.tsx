@@ -85,21 +85,16 @@ const useStyles = makeStyles({
   checked: {},
 });
 
-export type StoryView = {
-  ID: number;
-  title: string;
-  current_city: string;
-  year: number;
-  is_visible: boolean;
-  author_name: string;
-  author_country: string;
-  author_first_name: string;
-  author_last_name: string;
-  image_url: string;
-  video_url: string;
-  content: string;
-  tags: string[];
-};
+export type StoryView = Omit<
+  Story,
+  | "summary"
+  | "latitude"
+  | "longitude"
+  | "author"
+  | "CreatedAt"
+  | "DeletedAt"
+  | "UpdatedAt"
+> & { author_name: string };
 
 function createData({
   ID,
@@ -113,8 +108,8 @@ function createData({
   image_url,
   video_url,
   content,
-  tags,
-}): StoryView {
+  tags
+}: Story): StoryView {
   const author_name = `${author_first_name} ${author_last_name}`;
   return {
     ID,
@@ -182,14 +177,8 @@ export const AllStories: React.FC = () => {
 
   const fetchStories = (url) =>
     fetch(url)
-      .then((res) => {
-        return res.json();
-      })
-      .then((response) =>
-        response.payload.map((story) => {
-          return createData(story);
-        })
-      );
+      .then((res) => res.json())
+      .then((response) => response.payload.map(createData));
 
   const { data: allStories, error } = useSWR<StoryView[] | undefined>(
     "/api/stories",
@@ -233,6 +222,11 @@ export const AllStories: React.FC = () => {
     dispatch({ type: "HANDLE_CHECKED", e, story });
   };
 
+  const onChangeTableSort = (order, property) => {
+    const data = stableSort(state.tableData, getComparator(order, property));
+    dispatch({ type: "SET_TABLE_DATA", data });
+  };
+
   const handleRequestSort = (property: string) => {
     const isDesc = state.orderBy === property && state.order === "asc";
     const order = isDesc ? "desc" : "asc";
@@ -240,10 +234,7 @@ export const AllStories: React.FC = () => {
 
     onChangeTableSort(order, property);
   };
-  const onChangeTableSort = (order, property) => {
-    const data = stableSort(state.tableData, getComparator(order, property));
-    dispatch({ type: "SET_TABLE_DATA", data });
-  };
+
   const stableSort = (array, comparator) => {
     const stabilizedThis = array ? array.map((el, index) => [el, index]) : [];
     stabilizedThis.sort((a, b) => {
@@ -275,16 +266,67 @@ export const AllStories: React.FC = () => {
   const indeterminate =
     state.selectedRowIds.length > 0 &&
     state.selectedRowIds.length !== allStories.length;
-  if (error) return <div>Error returning stories data!</div>;
-  if (!allStories) return <div>Loading all stories table..</div>;
 
   const handleTabChange = (
     event: React.ChangeEvent<Record<string, unknown>>,
     newValue: number
   ) => {
+    cancelSearch();
     dispatch({ type: "SET_TAB_VALUE", newValue });
   };
-  console.log(tagOptions)
+
+  const requestSearchHelper = (row, searchedVal: string) => {
+    let doesExist = false;
+    Object.keys(row).forEach((prop) => {
+      //Exclude search for StoryView members not displayed on table cells
+      const excludedParameters =
+        prop !== "image_url" &&
+        prop !== "video_url" &&
+        prop !== "content" &&
+        prop !== "is_visible";
+      const numExist =
+        typeof row[prop] === "number" &&
+        row[prop].toString().includes(searchedVal) &&
+        excludedParameters;
+      const stringExist =
+        typeof row[prop] === "string" &&
+        row[prop].toLowerCase().includes(searchedVal.toLowerCase()) &&
+        excludedParameters;
+      if (stringExist || numExist) {
+        doesExist = true;
+      }
+    });
+    return doesExist;
+  };
+
+  const requestSearch = (searchedVal: string) => {
+    if (state.tabValue === 0) {
+      const filteredRows: StoryView[] = state.origTableData.filter((row) => {
+        return requestSearchHelper(row, searchedVal);
+      });
+      dispatch({ type: "SET_TABLE_DATA", data: filteredRows });
+    } else if (state.tabValue === 1) {
+      const filteredRows: StoryView[] = state.visibleTableFilterState.filter(
+        (row) => {
+          return requestSearchHelper(row, searchedVal);
+        }
+      );
+      dispatch({ type: "SET_VISIBLE_TABLE_STATE", data: filteredRows });
+    } else if (state.tabValue === 2) {
+      const filteredRows: StoryView[] = state.changedVisibilityFilter.filter(
+        (row) => {
+          return requestSearchHelper(row, searchedVal);
+        }
+      );
+      dispatch({ type: "SET_CHANGED_VISIBILITY", data: filteredRows });
+    }
+  };
+  const cancelSearch = () => {
+    dispatch({ type: "HANDLE_SEARCH", data: "" });
+    requestSearch("");
+  };
+  if (error) return <div>Error returning stories data!</div>;
+  if (!allStories) return <div>Loading all stories table..</div>;
   return (
     <>
       <StyledContainer>
@@ -351,6 +393,15 @@ export const AllStories: React.FC = () => {
         </FormControl>
       </Popover>
     </div>
+      <StyledSearchBar
+        placeholder="Type to search..."
+        value={state.search}
+        onChange={(searchVal) => {
+          dispatch({ type: "HANDLE_SEARCH", data: searchVal });
+          requestSearch(searchVal);
+        }}
+        onCancelSearch={() => cancelSearch()}
+      />
       <AllStoriesTabs value={state.tabValue} index={0}>
         <VirtualizedTable
           data={stableSort(
@@ -376,7 +427,10 @@ export const AllStories: React.FC = () => {
                     }}
                     checked={state.selectedRowIds.length > 0}
                     indeterminate={indeterminate}
-                    onChange={handleCheckedAll}
+                    onChange={(e) => {
+                      e.persist();
+                      handleCheckedAll;
+                    }}
                   />
                   ID
                 </div>
@@ -388,7 +442,10 @@ export const AllStories: React.FC = () => {
                       root: classes.checkbox,
                       checked: classes.checked,
                     }}
-                    onChange={(e) => handleChecked(e, story)}
+                    onChange={(e) => {
+                      e.persist();
+                      handleChecked(e, story);
+                    }}
                     checked={state.selectedRowIds.includes(story.ID)}
                   />
                   {story.ID}
@@ -436,18 +493,6 @@ export const AllStories: React.FC = () => {
               },
             },
             {
-              name: "tags",
-              header: "Tags",
-              width: 300,
-              onHeaderClick() {
-                handleRequestSort("tags");
-              },
-              cell: (story) =>
-                story.tags.map((tag) => (
-                  <StyledChip color="primary" key={story.id} label={tag} />
-                )),
-            },
-            {
               name: "is_visible",
               header: "Show on Map",
               width: 150,
@@ -457,7 +502,10 @@ export const AllStories: React.FC = () => {
               cell: (story) => (
                 <StyledSwitch
                   checked={story.is_visible}
-                  onChange={(e) => handleSwitchChange(e, story)}
+                  onChange={(e) => {
+                    e.persist();
+                    handleSwitchChange(e, story);
+                  }}
                   name="checked"
                   color="primary"
                 />
@@ -496,7 +544,10 @@ export const AllStories: React.FC = () => {
                     }}
                     checked={state.selectedRowIds.length > 0}
                     indeterminate={indeterminate}
-                    onChange={handleCheckedAll}
+                    onChange={(e) => {
+                      e.persist();
+                      handleCheckedAll;
+                    }}
                   />
                   ID
                 </div>
@@ -508,7 +559,10 @@ export const AllStories: React.FC = () => {
                       root: classes.checkbox,
                       checked: classes.checked,
                     }}
-                    onChange={(e) => handleChecked(e, story)}
+                    onChange={(e) => {
+                      e.persist();
+                      handleChecked(e, story);
+                    }}
                     checked={state.selectedRowIds.includes(story.ID)}
                   />
                   {story.ID}
@@ -577,7 +631,10 @@ export const AllStories: React.FC = () => {
               cell: (story) => (
                 <StyledSwitch
                   checked={story.is_visible}
-                  onChange={(e) => handleSwitchChange(e, story)}
+                  onChange={(e) => {
+                    e.persist();
+                    handleSwitchChange(e, story);
+                  }}
                   name="checked"
                   color="primary"
                 />
@@ -675,7 +732,10 @@ export const AllStories: React.FC = () => {
                 cell: (story) => (
                   <StyledSwitch
                     checked={state.visibleState.includes(story.id)}
-                    onChange={(e) => handleSwitchChange(e, story)}
+                    onChange={(e) => {
+                      e.persist();
+                      handleSwitchChange(e, story);
+                    }}
                     name="checked"
                     color="primary"
                   />
