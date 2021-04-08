@@ -24,9 +24,9 @@ export type Action =
   | { type: "SET_ORDERING"; order: "asc" | "desc"; orderBy: string }
   | { type: "SET_TABLE_DATA"; data: StoryView[] }
   | { type: "SET_TAB_VALUE"; newValue: number }
-  | { type: "SET_CHANGED_VISIBILITY"; data: StoryView[]}
-  | { type: "SET_VISIBLE_TABLE_STATE"; data: StoryView[]}
-  | { type: "HANDLE_SEARCH"; data: string};
+  | { type: "SET_CHANGED_VISIBILITY"; data: StoryView[] }
+  | { type: "SET_VISIBLE_TABLE_STATE"; data: StoryView[] }
+  | { type: "HANDLE_SEARCH"; data: string };
 
 export const INIT_STATE: State = {
   tabValue: 0,
@@ -64,8 +64,15 @@ export function allStoriesReducer(state: State, action: Action): State {
           changedVisibility: changedVisibilityContainsID
             ? state.changedVisibility.filter((e) => e.ID !== action.story.ID)
             : [...state.changedVisibility, action.story],
-          visibleTableFilterState: [...state.visibleTableFilterState, action.story],
-          changedVisibilityFilter: changedVisibilityContainsID ? state.changedVisibilityFilter.filter((e) => e.ID !== action.story.ID) :[...state.changedVisibilityFilter, action.story],
+          visibleTableFilterState: [
+            ...state.visibleTableFilterState,
+            action.story,
+          ],
+          changedVisibilityFilter: changedVisibilityContainsID
+            ? state.changedVisibilityFilter.filter(
+                (e) => e.ID !== action.story.ID
+              )
+            : [...state.changedVisibilityFilter, action.story],
         };
       } else {
         return {
@@ -81,8 +88,12 @@ export function allStoriesReducer(state: State, action: Action): State {
             : [...state.changedVisibility, action.story],
           visibleTableFilterState: state.visibleTableState.filter(
             (e) => e.ID !== action.story.ID
-            ),
-            changedVisibilityFilter: changedVisibilityContainsID ? state.changedVisibilityFilter.filter((e) => e.ID !== action.story.ID) :[...state.changedVisibilityFilter, action.story],
+          ),
+          changedVisibilityFilter: changedVisibilityContainsID
+            ? state.changedVisibilityFilter.filter(
+                (e) => e.ID !== action.story.ID
+              )
+            : [...state.changedVisibilityFilter, action.story],
         };
       }
     }

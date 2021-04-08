@@ -6,6 +6,7 @@ import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
+import SearchBar from "material-ui-search-bar";
 import { useEffect, useReducer, useState } from "react";
 import * as React from "react";
 import styled from "styled-components";
@@ -21,7 +22,6 @@ import {
 } from "../../styles/typography";
 import { Story } from "../../types/index";
 import { allStoriesReducer, INIT_STATE } from "../AllStories/reducer";
-import SearchBar from "material-ui-search-bar";
 
 const StyledSearchBar = styled(SearchBar)`
   max-width: 320px;
@@ -227,17 +227,23 @@ export const AllStories: React.FC = () => {
     dispatch({ type: "SET_TAB_VALUE", newValue });
   };
 
-
-  const requestSearchHelper = (row: any, searchedVal: string) => {
-    console.log(state.tableData.length);
+  const requestSearchHelper = (row, searchedVal: string) => {
     let doesExist = false;
     Object.keys(row).forEach((prop) => {
+      //Exclude search for StoryView members not displayed on table cells
+      const excludedParameters =
+        prop !== "image_url" &&
+        prop !== "video_url" &&
+        prop !== "content" &&
+        prop !== "is_visible";
       const numExist =
         typeof row[prop] === "number" &&
-        row[prop].toString().includes(searchedVal);
+        row[prop].toString().includes(searchedVal) &&
+        excludedParameters;
       const stringExist =
         typeof row[prop] === "string" &&
-        row[prop].toLowerCase().includes(searchedVal.toLowerCase());
+        row[prop].toLowerCase().includes(searchedVal.toLowerCase()) &&
+        excludedParameters;
       if (stringExist || numExist) {
         doesExist = true;
       }
@@ -250,17 +256,21 @@ export const AllStories: React.FC = () => {
       const filteredRows: StoryView[] = state.origTableData.filter((row) => {
         return requestSearchHelper(row, searchedVal);
       });
-      dispatch({ type: "SET_TABLE_DATA", data: filteredRows});
+      dispatch({ type: "SET_TABLE_DATA", data: filteredRows });
     } else if (state.tabValue === 1) {
-      const filteredRows: StoryView[] = state.visibleTableFilterState.filter((row) => {
-        return requestSearchHelper(row, searchedVal);
-      });
-      dispatch({ type: "SET_VISIBLE_TABLE_STATE", data: filteredRows});
+      const filteredRows: StoryView[] = state.visibleTableFilterState.filter(
+        (row) => {
+          return requestSearchHelper(row, searchedVal);
+        }
+      );
+      dispatch({ type: "SET_VISIBLE_TABLE_STATE", data: filteredRows });
     } else if (state.tabValue === 2) {
-      const filteredRows: StoryView[] = state.changedVisibilityFilter.filter((row) => {
-        return requestSearchHelper(row, searchedVal);
-      });
-      dispatch({ type: "SET_CHANGED_VISIBILITY", data: filteredRows})
+      const filteredRows: StoryView[] = state.changedVisibilityFilter.filter(
+        (row) => {
+          return requestSearchHelper(row, searchedVal);
+        }
+      );
+      dispatch({ type: "SET_CHANGED_VISIBILITY", data: filteredRows });
     }
   };
   const cancelSearch = () => {

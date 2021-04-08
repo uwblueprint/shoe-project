@@ -6,10 +6,7 @@ import AutoSizer from "react-virtualized/dist/commonjs/AutoSizer";
 import { StoryView } from "../pages/AllStories";
 import { colors } from "../styles/colors";
 import { fontSize } from "../styles/typography";
-<<<<<<< HEAD
-=======
 
->>>>>>> origin/main
 const useVirtualizedTableStyles = makeStyles({
   root: {
     marginLeft: "55px",

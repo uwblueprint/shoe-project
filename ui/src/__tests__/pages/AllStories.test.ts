@@ -24,7 +24,7 @@ const mockTableData = [
     ID: 2,
     title: "Test2",
     current_city: "City2",
-    year: 2000,
+    year: 2019,
     author_name: "TestName2",
     author_first_name: "TestFirstName2",
     author_last_name: "TestLastName2",
@@ -73,10 +73,12 @@ describe("allstories table", () => {
       };
       expect(INIT_STATE.visibleTableState.length).toBe(0);
       expect(INIT_STATE.visibleState.length).toBe(0);
+      expect(INIT_STATE.origTableData.length).toBe(0);
 
       const newState = allStoriesReducer(INIT_STATE, action);
       expect(newState.visibleTableState.length).toBe(2);
       expect(newState.visibleState.length).toBe(2);
+      expect(newState.origTableData.length).toBe(2);
     });
 
     it("should switch tabs", () => {
@@ -118,6 +120,50 @@ describe("allstories table", () => {
       expect(INIT_STATE.changedVisibility.length).toBe(0);
       const newState = allStoriesReducer(INIT_STATE, action);
       expect(newState.changedVisibility.length).toBe(1);
+    });
+
+    it("should search a story by number", () => {
+      const searchedVal = "2019";
+      const action: Action = {
+        type: "HANDLE_SEARCH",
+        data: searchedVal,
+      };
+      expect(INIT_STATE.search).toBe("");
+      const newState = allStoriesReducer(INIT_STATE, action);
+      expect(newState.search).toBe(searchedVal);
+    });
+
+    it("should search a story by string", () => {
+      const searchedVal = "City1";
+      const action: Action = {
+        type: "HANDLE_SEARCH",
+        data: searchedVal,
+      };
+      expect(INIT_STATE.search).toBe("");
+      const newState = allStoriesReducer(INIT_STATE, action);
+      expect(newState.search).toBe(searchedVal);
+    });
+
+    it("should set changed visibility state", () => {
+      const action: Action = {
+        type: "SET_CHANGED_VISIBILITY",
+        data: mockTableData,
+      };
+      expect(INIT_STATE.changedVisibility.length).toBe(0);
+
+      const newState = allStoriesReducer(INIT_STATE, action);
+      expect(newState.changedVisibility.length).toBe(2);
+    });
+
+    it("should set visible table state", () => {
+      const action: Action = {
+        type: "SET_VISIBLE_TABLE_STATE",
+        data: mockTableData,
+      };
+      expect(INIT_STATE.visibleTableState.length).toBe(0);
+
+      const newState = allStoriesReducer(INIT_STATE, action);
+      expect(newState.visibleTableState.length).toBe(2);
     });
   });
 });
