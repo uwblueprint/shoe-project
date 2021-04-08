@@ -224,7 +224,7 @@ export const AllStories: React.FC = () => {
     event: React.ChangeEvent<Record<string, unknown>>,
     newValue: number
   ) => {
-    cancelSearch()
+    cancelSearch();
     dispatch({ type: "SET_TAB_VALUE", newValue });
   };
 
