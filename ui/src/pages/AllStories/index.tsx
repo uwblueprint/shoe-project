@@ -224,6 +224,7 @@ export const AllStories: React.FC = () => {
     event: React.ChangeEvent<Record<string, unknown>>,
     newValue: number
   ) => {
+    cancelSearch()
     dispatch({ type: "SET_TAB_VALUE", newValue });
   };
 
@@ -304,7 +305,7 @@ export const AllStories: React.FC = () => {
         placeholder="Type to search..."
         value={state.search}
         onChange={(searchVal) => {
-          dispatch({ type: "HANDLE_SEARCH", data: "" });
+          dispatch({ type: "HANDLE_SEARCH", data: searchVal });
           requestSearch(searchVal);
         }}
         onCancelSearch={() => cancelSearch()}
