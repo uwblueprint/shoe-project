@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { SWRConfig } from "swr";
 
 import { AuthProvider, PrivateRoute } from "./hooks/auth";
-import { Admin, AllStories, Edit, Login, ShoeMap, Upload } from "./pages";
+import { Admin, AllStories, Login, ShoeMap, Upload } from "./pages";
+import { Edit } from "./pages/Edit";
 
 const defaultFetcher = (
   input: RequestInfo,

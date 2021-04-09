@@ -2,8 +2,8 @@ import * as React from "react";
 import { useParams } from "react-router-dom";
 import useSWR from "swr";
 
-import { UploadStory } from "../components/UploadStory";
-import { Story } from "../types/index";
+import { Story } from "../../types/index";
+import { UploadStory } from "./UploadStory";
 
 export const Edit: React.FC = () => {
   const { id } = useParams();

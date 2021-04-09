@@ -2,11 +2,6 @@ import {
   AppBar,
   Button,
   Chip,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   FormControl,
   Grid,
   LinearProgress,
@@ -16,27 +11,27 @@ import {
   Snackbar,
   TextField,
 } from "@material-ui/core/";
-import ListSubheader from "@material-ui/core/ListSubheader";
-import { useTheme } from "@material-ui/core/styles";
-import useMediaQuery from "@material-ui/core/useMediaQuery";
 import Alert from "@material-ui/lab/Alert";
-import Autocomplete, {
-  AutocompleteRenderGroupParams,
-} from "@material-ui/lab/Autocomplete";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
-import { KeyboardEvent, useReducer, useState } from "react";
+import { useReducer, useState } from "react";
 import { Redirect } from "react-router-dom";
-import { ListChildComponentProps, VariableSizeList } from "react-window";
 import styled from "styled-components";
 import useSWR from "swr";
 
-import { StoryDrawer } from "../components";
-import citiesList from "../data/cities.json";
-import { colors } from "../styles/colors";
-import { device } from "../styles/device";
-import { UploadLabelsText, UploadStoriesHeading } from "../styles/typography";
-import { Author, Story } from "../types";
+import { StoryDrawer } from "../../components";
+import { citiesList } from "../../data/cities";
+import { colors } from "../../styles/colors";
+import { device } from "../../styles/device";
+import {
+  UploadLabelsText,
+  UploadStoriesHeading,
+} from "../../styles/typography";
+import { Author, Story } from "../../types";
+import { ListboxComponent, renderGroup } from "./Listbox";
+import { StoryProps, TagParameters } from "./types";
+import { uploadStoryReducer, INIT_STATE } from "./reducer";
 
 const StyledGrid = styled(Grid)`
   background-color: ${colors.primaryLight6};
@@ -137,134 +132,22 @@ const StyledImage = styled.img`
   width: 30vw;
 `;
 
-const LISTBOX_PADDING = 8; // px
-
-function renderRow(props: ListChildComponentProps) {
-  const { data, index, style } = props;
-  return React.cloneElement(data[index], {
-    style: {
-      ...style,
-      top: (style.top as number) + LISTBOX_PADDING,
-    },
-  });
-}
-
-const OuterElementContext = React.createContext({});
-
-const OuterElementType = React.forwardRef<HTMLDivElement>((props, ref) => {
-  const outerProps = React.useContext(OuterElementContext);
-  return <div ref={ref} {...props} {...outerProps} />;
-});
-
-function useResetCache(data: number) {
-  const ref = React.useRef<VariableSizeList>(null);
-  React.useEffect(() => {
-    if (ref.current != null) {
-      ref.current.resetAfterIndex(0, true);
-    }
-  }, [data]);
-  return ref;
-}
-
-// Adapter for react-window
-const ListboxComponent = React.forwardRef<HTMLDivElement>(
-  function ListboxComponent(props, ref) {
-    const { children, ...other } = props;
-    const itemData = React.Children.toArray(children);
-    const theme = useTheme();
-    const smUp = useMediaQuery(theme.breakpoints.up("sm"), { noSsr: true });
-    const itemCount = itemData.length;
-    const itemSize = smUp ? 36 : 48;
-
-    const getChildSize = (child: React.ReactNode) => {
-      if (React.isValidElement(child) && child.type === ListSubheader) {
-        return 48;
-      }
-
-      return itemSize;
-    };
-
-    const getHeight = () => {
-      if (itemCount > 8) {
-        return 8 * itemSize;
-      }
-      return itemData.map(getChildSize).reduce((a, b) => a + b, 0);
-    };
-
-    const gridRef = useResetCache(itemCount);
-
-    return (
-      <div ref={ref}>
-        <OuterElementContext.Provider value={other}>
-          <VariableSizeList
-            itemData={itemData}
-            height={getHeight() + 2 * LISTBOX_PADDING}
-            width="100%"
-            ref={gridRef}
-            outerElementType={OuterElementType}
-            innerElementType="ul"
-            itemSize={(index) => getChildSize(itemData[index])}
-            overscanCount={5}
-            itemCount={itemCount}
-          >
-            {renderRow}
-          </VariableSizeList>
-        </OuterElementContext.Provider>
-      </div>
-    );
-  }
-);
-
-const renderGroup = (params: AutocompleteRenderGroupParams) => [
-  <ListSubheader key={params.key} component="div">
-    {params.group}
-  </ListSubheader>,
-  params.children,
-];
-
-interface InputProps {
-  onKeyDown: (
-    event: KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
-}
-
-interface TagParameters {
-  inputProps: InputProps;
-}
-
-interface StoryProps {
-  id: number;
-  currentStory: Story;
-  bio: string;
-}
-
 export const UploadStory: React.FC<StoryProps> = ({
   id,
   currentStory,
   bio,
 }: StoryProps) => {
   const { data: tagOptions, error } = useSWR<string[]>("/api/tags");
-  const [tagArray, setTagArrayValues] = useState(currentStory.tags);
-  const [authorCountry, setAuthorCountry] = useState(
-    currentStory.author_country
-  );
-  const [currentCity, setCurrentCity] = useState(
-    currentStory.current_city.toUpperCase()
-  );
-  const [autocompleteAuthorCountry, setAutocompleteAuthorCountry] = useState(
-    currentStory.author_country
-  );
-  const [addedCountry, setAddedCountry] = useState("");
-  const [newImage, setNewImage] = useState(currentStory.image_url);
-  const [disabled, setDisabled] = useState(false);
-  //handleSubmit component states
-  const [dialogOpenState, setDialogOpenState] = useState(false);
-  const [uploadErrorState, setErrorOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  if (error) return <div>Error fetching tags!</div>;
 
   const { data: countries, error: errorCountries } = useSWR<string[]>(
     "/api/countries"
+  );
+  if (errorCountries) return <div>Error fetching countries array!</div>;
+
+  const [state, dispatch] = useReducer(
+    uploadStoryReducer,
+    INIT_STATE(currentStory)
   );
 
   const startYear = new Date().getFullYear();
@@ -288,10 +171,10 @@ export const UploadStory: React.FC<StoryProps> = ({
   );
 
   const story = React.useMemo(() => {
-    if (isDrawerOpen) {
+    if (state.isDrawerOpen) {
       const storyFromData: Story = {
         image_url:
-          newImage == ""
+          state.newImage === ""
             ? URL.createObjectURL(formInput.image)
             : currentStory.image_url,
         video_url: formInput.video_url as string,
@@ -300,7 +183,7 @@ export const UploadStory: React.FC<StoryProps> = ({
         summary: formInput.summary as string,
         author_first_name: formInput.author_first_name as string,
         author_last_name: formInput.author_last_name as string,
-        author_country: authorCountry as string,
+        author_country: state.authorCountry as string,
         year: formInput.year as number,
         current_city: formInput.current_city as string,
         author: {
@@ -330,7 +213,7 @@ export const UploadStory: React.FC<StoryProps> = ({
       return storyFromData;
     }
     return undefined;
-  }, [isDrawerOpen, formInput]);
+  }, [state.isDrawerOpen, formInput]);
 
   const hasAllRequiredFields = React.useMemo(() => {
     return (
@@ -359,7 +242,10 @@ export const UploadStory: React.FC<StoryProps> = ({
         event.preventDefault();
         event.stopPropagation();
         if (event.target.value.length > 0) {
-          setTagArrayValues([...tagArray, event.target.value]);
+          dispatch({
+            type: "SET_TAG_VALUES",
+            tags: [...state.tagArray, event.target.value],
+          });
         }
         break;
       }
@@ -371,7 +257,7 @@ export const UploadStory: React.FC<StoryProps> = ({
     if (reason === "clickaway") {
       return;
     }
-    setErrorOpen(false);
+    dispatch({ type: "SET_ERROR_STATE", errorState: false });
   };
 
   const handleChange = (
@@ -384,18 +270,18 @@ export const UploadStory: React.FC<StoryProps> = ({
   };
 
   const storySubmitDialog = (result) => {
-    setLoading(false);
-    setDisabled(false);
+    dispatch({ type: "SET_LOADING_STATUS", loadingStatus: false });
+    dispatch({ type: "SET_BUTTON_DISABLE", status: false });
     const resultMessage = JSON.parse(result).message;
     if (
       resultMessage === "Story Added Successfully" ||
       resultMessage === "Story Updated successfully"
     ) {
       //TODO: Fix redirect (currently does nothing)
-      console.log("HERE");
+      // console.log("HERE");
       return <Redirect to="/admin" />;
     } else {
-      setErrorOpen(true);
+      dispatch({ type: "SET_ERROR_STATE", errorState: true });
     }
   };
 
@@ -403,25 +289,31 @@ export const UploadStory: React.FC<StoryProps> = ({
     setFormInput({
       ["author_country"]: autocompleteAuthorCountry,
     });
-    setAddedCountry(autocompleteAuthorCountry);
-    setAuthorCountry(autocompleteAuthorCountry);
+    dispatch({ type: "ADD_COUNTRY", newCountry: autocompleteAuthorCountry });
+    dispatch({
+      type: "SET_AUTHOR_COUNTRY",
+      country: autocompleteAuthorCountry,
+    });
     countries.push(autocompleteAuthorCountry);
   };
 
   const addNewCountry = ({ children, ...other }) => (
     <AddCountryPaper {...other}>
       {countries.filter(
-        (str) => str.toLowerCase() === autocompleteAuthorCountry.toLowerCase()
+        (str) =>
+          str.toLowerCase() === state.autocompleteAuthorCountry.toLowerCase()
       ).length === 0 &&
-        autocompleteAuthorCountry !== "" && (
+        state.autocompleteAuthorCountry !== "" && (
           <AddCountryDiv
             onMouseDown={(event) => {
               event.preventDefault();
             }}
           >
-            {autocompleteAuthorCountry}
+            {state.autocompleteAuthorCountry}
             <AddCountryButton
-              onClick={() => addCountryButtonPressed(autocompleteAuthorCountry)}
+              onClick={() =>
+                addCountryButtonPressed(state.autocompleteAuthorCountry)
+              }
             >
               ADD
             </AddCountryButton>
@@ -451,18 +343,18 @@ export const UploadStory: React.FC<StoryProps> = ({
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setLoading(true);
-    setDisabled(true);
+    dispatch({ type: "SET_LOADING_STATUS", loadingStatus: true });
+    dispatch({ type: "SET_BUTTON_DISABLE", status: true });
     const formData = new FormData();
     for (const key in formInput) {
       if (key != "image" && key != "current_city") {
         formData.append(key, formInput[key]);
       }
     }
-    formData.append("current_city", currentCity);
+    formData.append("current_city", state.currentCity);
 
-    for (const index in tagArray) {
-      formData.append("tags", tagArray[index]);
+    for (const index in state.tagArray) {
+      formData.append("tags", state.tagArray[index]);
     }
 
     let fetchString = "/api/story";
@@ -470,7 +362,7 @@ export const UploadStory: React.FC<StoryProps> = ({
 
     if (id) {
       // if a new image was uploaded, add the image to the formdata
-      if (newImage == "") {
+      if (state.newImage === "") {
         formData.append("image", formInput["image"]);
       }
       fetchString = `/api/story/${id}`;
@@ -479,11 +371,11 @@ export const UploadStory: React.FC<StoryProps> = ({
       formData.append("image", formInput["image"]);
     }
 
-    formData.append("author_country", authorCountry);
-    if (authorCountry === addedCountry) {
+    formData.append("author_country", state.authorCountry);
+    if (state.authorCountry === state.addedCountry) {
       const countryNameJsonBody = [
         {
-          country_name: addedCountry,
+          country_name: state.addedCountry,
         },
       ];
 
@@ -500,12 +392,8 @@ export const UploadStory: React.FC<StoryProps> = ({
     }
   };
 
-  const successMessage = id ? "Story Edit Success!" : "Story Upload Success!";
   const pageTitle = id ? "Edit Story" : "Upload New Story";
   const submitButtonText = id ? "Save Edits" : "Upload";
-
-  if (error) return <div>Error fetching tags!</div>;
-  if (errorCountries) return <div>Error fetching countries array!</div>;
 
   return (
     <>
@@ -524,14 +412,16 @@ export const UploadStory: React.FC<StoryProps> = ({
           >
             <StyledButton
               disabled={!hasAllRequiredFields}
-              onClick={() => setIsDrawerOpen(true)}
+              onClick={() =>
+                dispatch({ type: "SET_DRAWER_OPEN", drawerOpen: true })
+              }
               color="primary"
               variant="outlined"
             >
               Preview
             </StyledButton>
             <StyledButton
-              disabled={disabled || !hasAllRequiredFields}
+              disabled={state.disabled || !hasAllRequiredFields}
               variant="contained"
               color="primary"
               onClick={handleSubmit}
@@ -540,6 +430,7 @@ export const UploadStory: React.FC<StoryProps> = ({
             </StyledButton>
           </Grid>
         </Grid>
+        {state.loading ? <StyledLinearProgress /> : null}
       </AppBar>
       <StyledGrid container justify="center" alignContent="center">
         <form onSubmit={handleSubmit}>
@@ -639,15 +530,18 @@ export const UploadStory: React.FC<StoryProps> = ({
                   freeSolo
                   // if user adds a new country display it as the default value, if not, look for prefilled value (edit stories)
                   // prettier-ignore
-                  value={addedCountry != "" ? addedCountry : (authorCountry ? authorCountry : null)}
+                  value={state.addedCountry != "" ? state.addedCountry : (state.authorCountry ? state.authorCountry : null)}
                   onInputChange={(_, newValue) =>
-                    setAutocompleteAuthorCountry(newValue)
+                    dispatch({
+                      type: "SET_AUTOCOMPLETE_COUNTRY",
+                      autocompleteCountry: newValue,
+                    })
                   }
                   onChange={(_, newValue) => {
                     setFormInput({
                       ["author_country"]: newValue,
                     });
-                    setAuthorCountry(newValue);
+                    dispatch({ type: "SET_AUTHOR_COUNTRY", country: newValue });
                   }}
                   renderInput={(params) => {
                     return (
@@ -678,12 +572,12 @@ export const UploadStory: React.FC<StoryProps> = ({
                 freeSolo
                 name="current_city"
                 id="select-label-city"
-                value={currentCity != "" ? currentCity : null}
+                value={state.currentCity != "" ? state.currentCity : null}
                 onChange={(_, newValue) => {
                   setFormInput({
                     ["current_city"]: newValue,
                   });
-                  setCurrentCity(newValue);
+                  dispatch({ type: "SET_CURRENT_CITY", city: newValue });
                 }}
                 renderInput={(params) => {
                   return (
@@ -725,8 +619,10 @@ export const UploadStory: React.FC<StoryProps> = ({
                   freeSolo
                   options={tagOptions ? tagOptions : [""]}
                   filterSelectedOptions
-                  onChange={(_, newValue) => setTagArrayValues(newValue)}
-                  value={tagArray ? tagArray : [""]}
+                  onChange={(_, newValue) =>
+                    dispatch({ type: "SET_TAG_VALUES", tags: newValue })
+                  }
+                  value={state.tagArray ? state.tagArray : [""]}
                   renderTags={(value, getTagProps) =>
                     value.map((option, index) => (
                       <Chip
@@ -754,7 +650,7 @@ export const UploadStory: React.FC<StoryProps> = ({
             <StyledBackgroundColor>
               <UploadStoriesHeading>Multimedia</UploadStoriesHeading>
               <ImageContainer>
-                {newImage == "" ? (
+                {state.newImage == "" ? (
                   <div>
                     <UploadLabelsText>Add Image</UploadLabelsText>
                     <StyledDropzoneArea
@@ -778,7 +674,9 @@ export const UploadStory: React.FC<StoryProps> = ({
                     <Button
                       color="primary"
                       variant="contained"
-                      onClick={() => setNewImage("")}
+                      onClick={() =>
+                        dispatch({ type: "ADD_IMAGE", addedImage: "" })
+                      }
                     >
                       Change Image
                     </Button>
@@ -800,7 +698,7 @@ export const UploadStory: React.FC<StoryProps> = ({
               />
             </StyledBackgroundColor>
             <Snackbar
-              open={uploadErrorState}
+              open={state.uploadErrorState}
               autoHideDuration={5000}
               onClose={setErrorUploadingState}
             >
@@ -811,8 +709,10 @@ export const UploadStory: React.FC<StoryProps> = ({
           </FormControl>
         </form>
       </StyledGrid>
-      <StoryDrawer story={story} onClose={() => setIsDrawerOpen(false)} />
-      {loading ? <StyledLinearProgress /> : null}
+      <StoryDrawer
+        story={story}
+        onClose={() => dispatch({ type: "SET_DRAWER_OPEN", drawerOpen: false })}
+      />
     </>
   );
 };

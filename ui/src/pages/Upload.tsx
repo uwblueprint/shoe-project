@@ -1,7 +1,7 @@
 import * as React from "react";
 
-import { UploadStory } from "../components/UploadStory";
 import { Story } from "../types/index";
+import { UploadStory } from "./Edit/UploadStory";
 
 export const Upload: React.FC = () => {
   const story: Story = {

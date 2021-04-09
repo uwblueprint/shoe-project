@@ -1,4 +1,4 @@
-[
+export const citiesList = [
   "100 MILE HOUSE, BC",
   "108 MILE RANCH, BC",
   "150 MILE HOUSE, BC",
@@ -6641,5 +6641,5 @@
   "ZENON PARK, SK",
   "ZEPHYR, ON",
   "ZIONVILLE, NB",
-  "ZURICH, ON"
-]
+  "ZURICH, ON",
+];
