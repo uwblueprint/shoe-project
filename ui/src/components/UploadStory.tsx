@@ -156,7 +156,7 @@ const OuterElementType = React.forwardRef<HTMLDivElement>((props, ref) => {
   return <div ref={ref} {...props} {...outerProps} />;
 });
 
-function useResetCache(data: any) {
+function useResetCache(data: number) {
   const ref = React.useRef<VariableSizeList>(null);
   React.useEffect(() => {
     if (ref.current != null) {
@@ -267,12 +267,8 @@ export const UploadStory: React.FC<StoryProps> = ({
     "/api/countries"
   );
 
-  const yearArray = [];
-  let year: number = new Date().getFullYear();
-  for (let i = 30; i > 0; i--) {
-    yearArray.push(year);
-    year -= 1;
-  }
+  const startYear = new Date().getFullYear();
+  const yearArray = Array.from({ length: 30 }, (_, i) => startYear - i);
 
   const [formInput, setFormInput] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
@@ -387,18 +383,6 @@ export const UploadStory: React.FC<StoryProps> = ({
     });
   };
 
-  const handleDialogClose = () => {
-    setDialogOpenState(false);
-  };
-
-  const handleDialogAgree = () => {
-    handleDialogClose();
-  };
-
-  const handleDialogDisagree = () => {
-    handleDialogClose();
-  };
-
   const storySubmitDialog = (result) => {
     setLoading(false);
     setDisabled(false);
@@ -427,9 +411,9 @@ export const UploadStory: React.FC<StoryProps> = ({
   const addNewCountry = ({ children, ...other }) => (
     <AddCountryPaper {...other}>
       {countries.filter(
-        (str) => str.toLowerCase() == autocompleteAuthorCountry.toLowerCase()
-      ).length == 0 &&
-        autocompleteAuthorCountry != "" && (
+        (str) => str.toLowerCase() === autocompleteAuthorCountry.toLowerCase()
+      ).length === 0 &&
+        autocompleteAuthorCountry !== "" && (
           <AddCountryDiv
             onMouseDown={(event) => {
               event.preventDefault();
@@ -695,7 +679,6 @@ export const UploadStory: React.FC<StoryProps> = ({
                 name="current_city"
                 id="select-label-city"
                 value={currentCity != "" ? currentCity : null}
-                //TODO: double check that this onChange method works
                 onChange={(_, newValue) => {
                   setFormInput({
                     ["current_city"]: newValue,
@@ -776,9 +759,12 @@ export const UploadStory: React.FC<StoryProps> = ({
                     <UploadLabelsText>Add Image</UploadLabelsText>
                     <StyledDropzoneArea
                       showFileNames
+                      maxFileSize={7000000}
                       acceptedFiles={["image/*"]}
                       filesLimit={1}
-                      dropzoneText={"Drag image here or select from device"}
+                      dropzoneText={
+                        "Drag image here or select from device - Maximum Supported File Size is 7MB."
+                      }
                       onChange={(files) => {
                         setImage(files);
                       }}
@@ -822,29 +808,6 @@ export const UploadStory: React.FC<StoryProps> = ({
                 Error uploading story!
               </Alert>
             </Snackbar>
-            <Dialog
-              open={dialogOpenState}
-              onClose={handleDialogClose}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialogd-description"
-            >
-              <DialogTitle id="alert-dialog-title">
-                {successMessage}
-              </DialogTitle>
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  Your story is now available on the All Stories Dashboard!
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleDialogDisagree} color="primary">
-                  Return to Dashboard
-                </Button>
-                <Button onClick={handleDialogAgree} color="primary">
-                  Continue Uploading
-                </Button>
-              </DialogActions>
-            </Dialog>
           </FormControl>
         </form>
       </StyledGrid>

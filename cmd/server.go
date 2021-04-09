@@ -39,10 +39,8 @@ var (
 			server.Router.Get("/*", func(w http.ResponseWriter, r *http.Request) {
 				if _, err := os.Stat(dir + r.RequestURI); os.IsNotExist(err) {
 					http.StripPrefix(r.RequestURI, fs).ServeHTTP(w, r)
-					logger.Info("here 1")
 				} else {
 					fs.ServeHTTP(w, r)
-					logger.Info("here 2")
 				}
 			})
 
