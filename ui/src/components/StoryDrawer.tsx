@@ -7,6 +7,7 @@ import CreateIcon from "@material-ui/icons/Create";
 import * as React from "react";
 import styled from "styled-components";
 
+import { StoryView } from "../pages/AllStories";
 import { colors } from "../styles/colors";
 import { device } from "../styles/device";
 import {
@@ -96,7 +97,7 @@ const StyledVideo = styled.iframe`
 `;
 
 interface StoryDrawerProps {
-  story?: Story;
+  story?: Story | StoryView;
   onClose: () => void;
   onClickEditStory?: () => void;
 }

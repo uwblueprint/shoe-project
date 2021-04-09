@@ -3,23 +3,31 @@ import MuiTable from "mui-virtualized-table";
 import * as React from "react";
 import AutoSizer from "react-virtualized/dist/commonjs/AutoSizer";
 
+import { StoryView } from "../pages/AllStories";
 import { colors } from "../styles/colors";
+import { fontSize } from "../styles/typography";
 
 const useVirtualizedTableStyles = makeStyles({
   root: {
+    marginLeft: "55px",
+
     "& .MuiTableCell-root": {
       backgroundColor: colors.white,
       fontFamily: "Poppins",
+      padding: "0px",
+      fontStyle: "normal",
+      fontWeight: "bold",
+      fontSize: fontSize.subtitle,
+      lineHeight: "120%",
+      marginRight: "none",
     },
     "& .topLeftGrid, & .topRightGrid": {
       border: "none",
+      backgroundColor: "transparent",
     },
     "& .bottomLeftGrid": {
       border: "none",
     },
-  },
-  headerCell: {
-    fontSize: "12px",
   },
   stickyCell: {
     display: "flex",
@@ -28,10 +36,18 @@ const useVirtualizedTableStyles = makeStyles({
   stickyColumnClass: {},
 });
 
+type TableColumn = {
+  name: string;
+  width: number;
+  onHeaderClick?: () => void;
+  header: JSX.Element | string;
+  cell?: (any) => JSX.Element;
+};
+
 interface VirtualizedTableProps {
-  data: [];
-  columns: any;
-  order: string;
+  data: StoryView[];
+  columns: TableColumn[];
+  order: "desc" | "asc";
   orderBy: string;
   setClickedRow: (rowId: number | undefined) => void;
 }
@@ -45,9 +61,9 @@ export function VirtualizedTable({
 }: VirtualizedTableProps): JSX.Element {
   const classes = useVirtualizedTableStyles();
   return (
-    <div className={classes.root} style={{ height: "calc(100vh)" }}>
+    <div className={classes.root} style={{ width: "auto" }}>
       <AutoSizer>
-        {({ width }) => (
+        {({ height, width }) => (
           <MuiTable
             data={data}
             columns={columns}
@@ -55,20 +71,15 @@ export function VirtualizedTable({
             orderDirection={order}
             includeHeaders
             onCellClick={(e, { rowData }) => {
-              const id: number = rowData?.id;
+              if (e.target.type === "checkbox") {
+                return;
+              }
+              const id: number = rowData?.ID;
               if (id) {
                 setClickedRow(id);
               }
             }}
-            cellProps={(column, row) => {
-              /* alternate the background colour of rows between colors.white and colors.primaryLight6 */
-              if (data.indexOf(row) > 0 && data.indexOf(row) % 2 !== 0) {
-                return {
-                  style: {
-                    backgroundColor: colors.primaryLight6,
-                  },
-                };
-              }
+            cellProps={(column) => {
               if (column.name === columns[0].name) {
                 return {
                   className: `
@@ -79,9 +90,9 @@ export function VirtualizedTable({
               }
             }}
             width={width}
+            height={height}
             maxHeight={800}
             fixedRowCount={1}
-            fixedColumnCount={1}
             style={{ tableLayout: "fixed", backgroundColor: colors.white }}
           />
         )}
