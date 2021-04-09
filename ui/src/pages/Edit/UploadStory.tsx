@@ -15,7 +15,7 @@ import Alert from "@material-ui/lab/Alert";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
-import { useReducer, useState } from "react";
+import { useReducer } from "react";
 import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 import useSWR from "swr";
@@ -30,8 +30,8 @@ import {
 } from "../../styles/typography";
 import { Author, Story } from "../../types";
 import { ListboxComponent, renderGroup } from "./Listbox";
+import { INIT_STATE, uploadStoryReducer } from "./reducer";
 import { StoryProps, TagParameters } from "./types";
-import { uploadStoryReducer, INIT_STATE } from "./reducer";
 
 const StyledGrid = styled(Grid)`
   background-color: ${colors.primaryLight6};
@@ -138,13 +138,9 @@ export const UploadStory: React.FC<StoryProps> = ({
   bio,
 }: StoryProps) => {
   const { data: tagOptions, error } = useSWR<string[]>("/api/tags");
-  if (error) return <div>Error fetching tags!</div>;
-
   const { data: countries, error: errorCountries } = useSWR<string[]>(
     "/api/countries"
   );
-  if (errorCountries) return <div>Error fetching countries array!</div>;
-
   const [state, dispatch] = useReducer(
     uploadStoryReducer,
     INIT_STATE(currentStory)
@@ -391,6 +387,13 @@ export const UploadStory: React.FC<StoryProps> = ({
       apiSubmitCall(fetchString, method, formData);
     }
   };
+
+  if (error) {
+    return <div>Error fetching tags!</div>;
+  }
+  if (errorCountries) {
+    return <div>Error fetching countries array!</div>;
+  }
 
   const pageTitle = id ? "Edit Story" : "Upload New Story";
   const submitButtonText = id ? "Save Edits" : "Upload";
