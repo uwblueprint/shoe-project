@@ -72,12 +72,11 @@ describe("allstories table", () => {
         rows: mockTableData,
       };
       expect(INIT_STATE.visibleTableState.length).toBe(0);
-      expect(INIT_STATE.visibleState.length).toBe(0);
       expect(INIT_STATE.origTableData.length).toBe(0);
-
+      expect(INIT_STATE.origTableData.length).toBe(0);
       const newState = allStoriesReducer(INIT_STATE, action);
       expect(newState.visibleTableState.length).toBe(2);
-      expect(newState.visibleState.length).toBe(2);
+      expect(newState.tableData.length).toBe(2);
       expect(newState.origTableData.length).toBe(2);
     });
 
@@ -108,7 +107,7 @@ describe("allstories table", () => {
     it("should toggle switch", () => {
       const changeEvent = {
         target: {
-          checked: true,
+          checked: false,
         },
       } as React.ChangeEvent<HTMLInputElement>;
 

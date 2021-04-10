@@ -2,16 +2,15 @@ import AppBar from "@material-ui/core/AppBar";
 import Checkbox from "@material-ui/core/Checkbox";
 import Chip from "@material-ui/core/Chip";
 import { makeStyles } from "@material-ui/core/styles";
-import Switch from "@material-ui/core/Switch";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
+import SearchBar from "material-ui-search-bar";
 import { useEffect, useReducer, useState } from "react";
 import * as React from "react";
 import styled from "styled-components";
 import useSWR, { mutate } from "swr";
-import SearchBar from "material-ui-search-bar";
 import { StoryDrawer } from "../../components";
 import { a11yProps, AllStoriesTabs } from "../../components/AllStoriesTabs";
 import VirtualizedTable from "../../components/VirtualizedTable";
@@ -32,6 +31,13 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
 
+
+const StyledFilter = styled.div`
+  margin-left: 70vw;
+
+`
+import { VisibilitySwitch } from "./VisibilitySwitch";
+
 const StyledSearchBar = styled(SearchBar)`
   max-width: 320px;
   background-color: ${colors.primaryLight4};
@@ -50,22 +56,6 @@ const StyledSearchBar = styled(SearchBar)`
   }
 `;
 
-const StyledFilter = styled.div`
-  margin-left: 70vw;
-
-`
-
-const StyledSwitch = styled(Switch)`
-  && {
-    .MuiSwitch-colorPrimary {
-      color: ${colors.white};
-    }
-    .MuiSwitch-track {
-      background-color: ${colors.primaryDark1};
-    }
-  }
-`;
-
 const StyledChip = styled(Chip)`
   &&.MuiChip-root {
     color: ${colors.primaryDark2};
@@ -81,6 +71,32 @@ const StyledChip = styled(Chip)`
 `;
 const StyledContainer = styled.div`
   background-color: ${colors.primaryLight6};
+`;
+
+const StyledAddIcon = styled(AddIcon)`
+  &.MuiSvgIcon-colorPrimary {
+    color: ${colors.tertiary};
+    border: 2px solid ${colors.tertiary};
+    border-radius: 5px;
+    width: 24px;
+  }
+  &.MuiSvgIcon-root {
+    width: 24px;
+    height: 24px;
+  }
+`;
+
+const StyledRemoveIcon = styled(RemoveIcon)`
+  &.MuiSvgIcon-colorPrimary {
+    color: ${colors.secondary};
+    border: 2px solid ${colors.secondary};
+    border-radius: 5px;
+    width: 24px;
+  }
+  &.MuiSvgIcon-root {
+    width: 24px;
+    height: 24px;
+  }
 `;
 
 const useStyles = makeStyles({
@@ -172,6 +188,15 @@ export const AllStories: React.FC = () => {
     undefined
   );
   const classes = useStyles();
+  const allStoriesLabel = `${"ALL STORIES"} ${"("} ${
+    state.tableData.length
+  } ${")"}`;
+  const visibleStoriesLabel = `${"VISIBLE STORIES"} ${"("} ${
+    state.visibleTableState.filter((story) => story.is_visible).length
+  } ${")"}`;
+  const pendingChangesLabel = `${"PENDING MAP CHANGES"} ${"("} ${
+    state.changedVisibility.length
+  } ${")"}`;
 
   
 
@@ -315,9 +340,9 @@ export const AllStories: React.FC = () => {
           onChange={handleTabChange}
           aria-label="all stories tabs"
         >
-          <Tab label="ALL STORIES" {...a11yProps(0)} />
-          <Tab label="VISIBLE STORIES" {...a11yProps(1)} />
-          <Tab label="PENDING MAP CHANGES" {...a11yProps(2)} />
+          <Tab label={allStoriesLabel} {...a11yProps(0)} />
+          <Tab label={visibleStoriesLabel} {...a11yProps(1)} />
+          <Tab label={pendingChangesLabel} {...a11yProps(2)} />
         </Tabs>
       </AppBar>
       <StyledFilter>
@@ -478,13 +503,13 @@ export const AllStories: React.FC = () => {
             },
             {
               name: "is_visible",
-              header: "Show on Map",
+              header: "Visibility",
               width: 150,
               onHeaderClick() {
-                handleRequestSort("jobType");
+                handleRequestSort("is_visible");
               },
               cell: (story) => (
-                <StyledSwitch
+                <VisibilitySwitch
                   checked={story.is_visible}
                   onChange={(e) => {
                     e.persist();
@@ -497,15 +522,7 @@ export const AllStories: React.FC = () => {
             },
           ]}
         />
-        <StoryDrawer
-          story={clickedStory}
-          onClose={() => setClickedStory(undefined)}
-          onClickEditStory={() => {
-            console.log("TODO: Route to edit page");
-          }}
-        />
       </AllStoriesTabs>
-
       <AllStoriesTabs value={state.tabValue} index={1}>
         <VirtualizedTable
           data={state.visibleTableState.filter((story) => story.is_visible)}
@@ -607,13 +624,13 @@ export const AllStories: React.FC = () => {
             },
             {
               name: "is_visible",
-              header: "Show on Map",
+              header: "Visibility",
               width: 150,
               onHeaderClick() {
-                handleRequestSort("jobType");
+                handleRequestSort("is_visible");
               },
               cell: (story) => (
-                <StyledSwitch
+                <VisibilitySwitch
                   checked={story.is_visible}
                   onChange={(e) => {
                     e.persist();
@@ -641,23 +658,25 @@ export const AllStories: React.FC = () => {
             columns={[
               {
                 name: "pending-map-changes-changes",
-                width: 100,
-                header: <div>Changes</div>,
-                cell: (d) => (
-                  <div>
-                    {state.visibleState.includes(d.id) ? (
-                      <AddIcon />
-                    ) : (
-                      <RemoveIcon />
-                    )}
-                  </div>
-                ),
+                width: 50,
+                header: "",
+                cell: (d) => {
+                  return (
+                    <div>
+                      {state.visibleState.includes(d.ID) ? (
+                        <StyledAddIcon color="primary" />
+                      ) : (
+                        <StyledRemoveIcon color="primary" />
+                      )}
+                    </div>
+                  );
+                },
               },
 
               {
                 name: "title",
                 header: "Story Name",
-                width: 200,
+                width: 500,
                 onHeaderClick() {
                   handleRequestSort("title");
                 },
@@ -708,14 +727,14 @@ export const AllStories: React.FC = () => {
               },
               {
                 name: "is_visible",
-                header: "Show on Map",
+                header: "Visibility",
                 width: 150,
                 onHeaderClick() {
-                  handleRequestSort("jobType");
+                  handleRequestSort("is_visible");
                 },
                 cell: (story) => (
-                  <StyledSwitch
-                    checked={state.visibleState.includes(story.id)}
+                  <VisibilitySwitch
+                    checked={state.visibleState.includes(story.ID)}
                     onChange={(e) => {
                       e.persist();
                       handleSwitchChange(e, story);
@@ -731,6 +750,13 @@ export const AllStories: React.FC = () => {
           <StyledEmptyMessage> No pending changes! </StyledEmptyMessage>
         )}
       </AllStoriesTabs>
+      <StoryDrawer
+        story={clickedStory}
+        onClose={() => setClickedStory(undefined)}
+        onClickEditStory={() => {
+          console.log("TODO: Route to edit page");
+        }}
+      />
     </>
   );
 };
