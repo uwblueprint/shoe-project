@@ -21,8 +21,8 @@ import {
 } from "../../../styles/typography";
 import { Story } from "../../../types/index";
 import { allStoriesReducer, INIT_STATE } from "../AllStories/reducer";
-import { VisibilitySwitch } from "./VisibilitySwitch";
 import { StoryView } from "./types";
+import { VisibilitySwitch } from "./VisibilitySwitch";
 
 const StyledSearchBar = styled(SearchBar)`
   max-width: 320px;
