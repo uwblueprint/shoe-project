@@ -4,7 +4,7 @@ import {
   Action,
   allStoriesReducer,
   INIT_STATE,
-} from "../../pages/AllStories/reducer";
+} from "../../../pages/admin/AllStories/reducer";
 const mockTableData = [
   {
     ID: 1,

@@ -8,6 +8,8 @@ import {
 
 import { FailureState, INIT_STATE, reducer,State } from "./reducer";
 
+export { FailureState } from "./reducer";
+
 const CLIENT_ID =
   "722954318269-211qsag71c3bsfjik321h9sa0kmbnelf.apps.googleusercontent.com";
 

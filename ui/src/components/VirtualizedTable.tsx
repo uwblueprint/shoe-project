@@ -71,7 +71,9 @@ export function VirtualizedTable({
             orderDirection={order}
             includeHeaders
             onCellClick={(e, { rowData }) => {
-              if (e.target.type === "checkbox") {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const event = e as any;
+              if (event.target.type === "checkbox") {
                 return;
               }
               const id: number = rowData?.ID;
