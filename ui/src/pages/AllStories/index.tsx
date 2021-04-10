@@ -5,6 +5,7 @@ import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
+import SearchBar from "material-ui-search-bar";
 import { useEffect, useReducer, useState } from "react";
 import * as React from "react";
 import styled from "styled-components";
@@ -21,6 +22,24 @@ import {
 import { Story } from "../../types/index";
 import { allStoriesReducer, INIT_STATE } from "../AllStories/reducer";
 import { VisibilitySwitch } from "./VisibilitySwitch";
+
+const StyledSearchBar = styled(SearchBar)`
+  max-width: 320px;
+  background-color: ${colors.primaryLight4};
+  border-radius: 5px;
+  height: 40px;
+  margin-left: 70vw;
+  margin-top: 1vh;
+  color: ${colors.primaryDark1};
+  border: none;
+  box-shadow: none;
+  .ForwardRef-iconButton-10 {
+    color: ${colors.primaryDark1};
+  }
+  .MuiInputBase-input {
+    font-family: "Poppins";
+  }
+`;
 
 const StyledContainer = styled.div`
   background-color: ${colors.primaryLight6};
@@ -229,9 +248,60 @@ export const AllStories: React.FC = () => {
     event: React.ChangeEvent<Record<string, unknown>>,
     newValue: number
   ) => {
+    cancelSearch();
     dispatch({ type: "SET_TAB_VALUE", newValue });
   };
 
+  const requestSearchHelper = (row, searchedVal: string) => {
+    let doesExist = false;
+    Object.keys(row).forEach((prop) => {
+      //Exclude search for StoryView members not displayed on table cells
+      const excludedParameters = prop !== "ID";
+      prop !== "image_url" &&
+        prop !== "video_url" &&
+        prop !== "content" &&
+        prop !== "is_visible";
+      const numExist =
+        typeof row[prop] === "number" &&
+        row[prop].toString().includes(searchedVal) &&
+        excludedParameters;
+      const stringExist =
+        typeof row[prop] === "string" &&
+        row[prop].toLowerCase().includes(searchedVal.toLowerCase()) &&
+        excludedParameters;
+      if (stringExist || numExist) {
+        doesExist = true;
+      }
+    });
+    return doesExist;
+  };
+
+  const requestSearch = (searchedVal: string) => {
+    if (state.tabValue === 0) {
+      const filteredRows: StoryView[] = state.origTableData.filter((row) => {
+        return requestSearchHelper(row, searchedVal);
+      });
+      dispatch({ type: "SET_TABLE_DATA", data: filteredRows });
+    } else if (state.tabValue === 1) {
+      const filteredRows: StoryView[] = state.visibleTableFilterState.filter(
+        (row) => {
+          return requestSearchHelper(row, searchedVal);
+        }
+      );
+      dispatch({ type: "SET_VISIBLE_TABLE_STATE", data: filteredRows });
+    } else if (state.tabValue === 2) {
+      const filteredRows: StoryView[] = state.changedVisibilityFilter.filter(
+        (row) => {
+          return requestSearchHelper(row, searchedVal);
+        }
+      );
+      dispatch({ type: "SET_CHANGED_VISIBILITY", data: filteredRows });
+    }
+  };
+  const cancelSearch = () => {
+    dispatch({ type: "HANDLE_SEARCH", data: "" });
+    requestSearch("");
+  };
   if (error) return <div>Error returning stories data!</div>;
   if (!allStories) return <div>Loading all stories table..</div>;
   return (
@@ -255,6 +325,15 @@ export const AllStories: React.FC = () => {
           <Tab label={pendingChangesLabel} {...a11yProps(2)} />
         </Tabs>
       </AppBar>
+      <StyledSearchBar
+        placeholder="Type to search..."
+        value={state.search}
+        onChange={(searchVal) => {
+          dispatch({ type: "HANDLE_SEARCH", data: searchVal });
+          requestSearch(searchVal);
+        }}
+        onCancelSearch={() => cancelSearch()}
+      />
       <AllStoriesTabs value={state.tabValue} index={0}>
         <VirtualizedTable
           data={stableSort(
@@ -366,15 +445,7 @@ export const AllStories: React.FC = () => {
             },
           ]}
         />
-        <StoryDrawer
-          story={clickedStory}
-          onClose={() => setClickedStory(undefined)}
-          onClickEditStory={() => {
-            console.log("TODO: Route to edit page");
-          }}
-        />
       </AllStoriesTabs>
-
       <AllStoriesTabs value={state.tabValue} index={1}>
         <VirtualizedTable
           data={state.visibleTableState.filter((story) => story.is_visible)}
@@ -516,7 +587,7 @@ export const AllStories: React.FC = () => {
               {
                 name: "title",
                 header: "Story Name",
-                width: 200,
+                width: 500,
                 onHeaderClick() {
                   handleRequestSort("title");
                 },
@@ -578,6 +649,13 @@ export const AllStories: React.FC = () => {
           <StyledEmptyMessage> No pending changes! </StyledEmptyMessage>
         )}
       </AllStoriesTabs>
+      <StoryDrawer
+        story={clickedStory}
+        onClose={() => setClickedStory(undefined)}
+        onClickEditStory={() => {
+          console.log("TODO: Route to edit page");
+        }}
+      />
     </>
   );
 };
