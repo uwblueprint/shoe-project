@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react-hooks'
+import { renderHook } from "@testing-library/react-hooks";
 import { GoogleLoginResponse } from "react-google-login";
 
 import { useProvideAuth } from "../../hooks/auth";
@@ -12,15 +12,18 @@ import {
 const mockSignOut = jest.fn();
 const mockSignIn = jest.fn();
 
-const mockUseGoogleLogin = jest.fn().mockReturnValue({ signIn: mockSignIn, loaded: true });
-const mockUseGoogleLogout = jest.fn().mockReturnValue({ signOut: mockSignOut, loaded: true });
+const mockUseGoogleLogin = jest
+  .fn()
+  .mockReturnValue({ signIn: mockSignIn, loaded: true });
+const mockUseGoogleLogout = jest
+  .fn()
+  .mockReturnValue({ signOut: mockSignOut, loaded: true });
 
 jest.mock("react-google-login", () => ({
   useGoogleLogin: (...args: unknown[]) => mockUseGoogleLogin(...args),
   useGoogleLogout: (...args: unknown[]) => mockUseGoogleLogout(...args),
 }));
 
-// TODO: Write tests for react-google-login hooks (too lazy to mock out rn)
 describe("auth", () => {
   describe("reducer", () => {
     it("starts loading", () => {
@@ -59,7 +62,7 @@ describe("auth", () => {
     });
 
     it("calls useGoogleLogout()", () => {
-    expect(mockUseGoogleLogout).toHaveBeenCalledTimes(0);
+      expect(mockUseGoogleLogout).toHaveBeenCalledTimes(0);
       renderHook(() => useProvideAuth());
       expect(mockUseGoogleLogout).toHaveBeenCalledTimes(1);
       expect(mockUseGoogleLogout).toHaveBeenCalledWith({
@@ -71,49 +74,49 @@ describe("auth", () => {
 
     it("calls useGoogleLogin()", () => {
       expect(mockUseGoogleLogin).toHaveBeenCalledTimes(0);
-        renderHook(() => useProvideAuth());
-        expect(mockUseGoogleLogin).toHaveBeenCalledTimes(1);
-        expect(mockUseGoogleLogin).toHaveBeenCalledWith({
-          clientId: expect.any(String),
-          isSignedIn: true,
-          onFailure: expect.any(Function),
-          onSuccess: expect.any(Function),
-          prompt: "consent",
+      renderHook(() => useProvideAuth());
+      expect(mockUseGoogleLogin).toHaveBeenCalledTimes(1);
+      expect(mockUseGoogleLogin).toHaveBeenCalledWith({
+        clientId: expect.any(String),
+        isSignedIn: true,
+        onFailure: expect.any(Function),
+        onSuccess: expect.any(Function),
+        prompt: "consent",
+      });
+    });
+
+    describe("return value", () => {
+      beforeEach(() => {
+        mockSignIn.mockClear();
+        mockSignOut.mockClear();
+      });
+
+      it("matches expected values", () => {
+        const { result } = renderHook(() => useProvideAuth());
+
+        expect(result.current).toEqual({
+          ...INIT_STATE,
+          googleLoaded: true,
+          signIn: mockSignIn,
+          signOut: mockSignOut,
         });
       });
 
-      describe("return value", () => {
-        beforeEach(() => {
-          mockSignIn.mockClear();
-          mockSignOut.mockClear();
-        })
+      it("calls signIn", () => {
+        const { result } = renderHook(() => useProvideAuth());
 
-        it("matches expected values", () => {
-          const {result} = renderHook(() => useProvideAuth());
+        expect(mockSignIn).toHaveBeenCalledTimes(0);
+        result.current.signIn();
+        expect(mockSignIn).toHaveBeenCalledTimes(1);
+      });
 
-          expect(result.current).toEqual({
-            ...INIT_STATE,
-            googleLoaded: true,
-            signIn: mockSignIn,
-            signOut: mockSignOut,
-          })
-        });
+      it("calls signOut", () => {
+        const { result } = renderHook(() => useProvideAuth());
 
-        it("calls signIn", () => {
-          const {result} = renderHook(() => useProvideAuth());
-
-          expect(mockSignIn).toHaveBeenCalledTimes(0);
-          result.current.signIn();
-          expect(mockSignIn).toHaveBeenCalledTimes(1);
-        });
-
-        it("calls signOut", () => {
-          const {result} = renderHook(() => useProvideAuth());
-
-          expect(mockSignOut).toHaveBeenCalledTimes(0);
-          result.current.signOut();
-          expect(mockSignOut).toHaveBeenCalledTimes(1);
-        });        
-      })
-  })
+        expect(mockSignOut).toHaveBeenCalledTimes(0);
+        result.current.signOut();
+        expect(mockSignOut).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
 });
