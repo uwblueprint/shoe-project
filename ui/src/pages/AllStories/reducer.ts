@@ -70,7 +70,6 @@ export function allStoriesReducer(state: State, action: Action): State {
     case "INITIALIZE_AFTER_API": {
       return {
         ...state,
-        // visibleState: action.rows ? action.rows : [],
         visibleTableState: action.rows ? action.rows : [],
         tableData: action.rows ? action.rows : [],
       };
