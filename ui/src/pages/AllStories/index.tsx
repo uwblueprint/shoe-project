@@ -325,9 +325,8 @@ export const AllStories: React.FC = () => {
   return (
     <>
       <Prompt
-        when={!!state.visibleState}
         message={(location) =>
-          `Are you sure you want to go to ${location.pathname}`
+          `Are you sure you want to go to ${location.pathname}? Your changes on this page will not be saved.`
         }
       />
       <StyledContainer>

@@ -44,9 +44,17 @@ const StyledIconButton = styled(Button)`
 `;
 
 const EditStoryButton = styled(Button)`
-  text-transform: none;
-  margin: 5px;
-  width: 100%;
+  && {
+    width: 50%;
+    box-shadow: none;
+    background-color: ${colors.primaryDark1};
+    margin: 5px;
+    &:active {
+      background-color: ${colors.primaryDark1};
+    }
+    &:hover{
+      background-color: ${colors.primaryDark1};
+    }
 `;
 
 const StyledImage = styled.img`
