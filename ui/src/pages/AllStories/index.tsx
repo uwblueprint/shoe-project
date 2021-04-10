@@ -5,6 +5,10 @@ import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import IconButton from "@material-ui/core/IconButton";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
 import { useEffect, useReducer, useState } from "react";
 import * as React from "react";
 import styled from "styled-components";
@@ -117,8 +121,13 @@ function createData({
   };
 }
 
+const checkboxOptions = ["All", "Hidden Stories", "Visible Stories"];
+
 export const AllStories: React.FC = () => {
   const [state, dispatch] = useReducer(allStoriesReducer, INIT_STATE);
+  const [optionState, setOptionState] = useState("");
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
   const [clickedStory, setClickedStory] = useState<StoryView | undefined>(
     undefined
   );
@@ -132,6 +141,19 @@ export const AllStories: React.FC = () => {
   const pendingChangesLabel = `${"PENDING MAP CHANGES"} ${"("} ${
     state.changedVisibility.length
   } ${")"}`;
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleCheckboxMenuItemPressed = (option: string) => {
+    setOptionState(option);
+    console.log(option);
+  };
 
   const fetchStories = (url) =>
     fetch(url)
@@ -269,7 +291,7 @@ export const AllStories: React.FC = () => {
               name: "ID",
               width: 100,
               onHeaderClick() {
-                handleRequestSort("ID");
+                // handleRequestSort("ID");
               },
               header: (
                 <div>
@@ -282,9 +304,43 @@ export const AllStories: React.FC = () => {
                     indeterminate={indeterminate}
                     onChange={(e) => {
                       e.persist();
-                      handleCheckedAll;
+                      handleCheckedAll();
                     }}
                   />
+                  <IconButton
+                    aria-label="more"
+                    aria-controls="long-menu"
+                    aria-haspopup="true"
+                    onClick={handleClick}
+                  >
+                    <ExpandMoreIcon />
+                  </IconButton>
+                  <Menu
+                    id="long-menu"
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={open}
+                    onClose={handleClose}
+                    // PaperProps={{
+                    //   style: {
+                    //     maxHeight: ITEM_HEIGHT * 4.5,
+                    //     width: "20ch",
+                    //   },
+                    // }}
+                  >
+                    {checkboxOptions.map((option) => (
+                      <MenuItem
+                        key={option}
+                        selected={option === optionState}
+                        onClick={() => {
+                          handleCheckboxMenuItemPressed(option);
+                          handleClose();
+                        }}
+                      >
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </Menu>
                   ID
                 </div>
               ),
