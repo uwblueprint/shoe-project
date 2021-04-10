@@ -1,6 +1,7 @@
-import Switch from '@material-ui/core/Switch';
-import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
-import {colors} from "../../styles/colors"
+import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
+import Switch from "@material-ui/core/Switch";
+
+import { colors } from "../../styles/colors";
 
 export const VisibilitySwitch = withStyles((theme: Theme) =>
   createStyles({
@@ -12,10 +13,10 @@ export const VisibilitySwitch = withStyles((theme: Theme) =>
     switchBase: {
       padding: 3.5,
       color: theme.palette.grey[500],
-      '&$checked': {
-        transform: 'translateX(24px)',
+      "&$checked": {
+        transform: "translateX(24px)",
         color: colors.white,
-        '& + $track': {
+        "& + $track": {
           opacity: 1,
           backgroundColor: colors.primaryDark1,
         },
@@ -24,7 +25,7 @@ export const VisibilitySwitch = withStyles((theme: Theme) =>
     thumb: {
       width: 16,
       height: 16,
-      boxShadow: 'none',
+      boxShadow: "none",
       color: colors.white,
     },
     track: {
@@ -33,5 +34,5 @@ export const VisibilitySwitch = withStyles((theme: Theme) =>
       backgroundColor: colors.grey,
     },
     checked: {},
-  }),
+  })
 )(Switch);

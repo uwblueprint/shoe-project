@@ -57,9 +57,7 @@ export function allStoriesReducer(state: State, action: Action): State {
       } else {
         return {
           ...state,
-          visibleState: state.visibleState.filter(
-            (e) => e !== action.story.ID
-          ),
+          visibleState: state.visibleState.filter((e) => e !== action.story.ID),
           visibleTableState: state.visibleTableState.filter(
             (e) => e.ID !== action.story.ID
           ),

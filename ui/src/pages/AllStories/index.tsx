@@ -9,9 +9,9 @@ import { useEffect, useReducer, useState } from "react";
 import * as React from "react";
 import styled from "styled-components";
 import useSWR, { mutate } from "swr";
-import { VisibilitySwitch}  from "./VisibilitySwitch";
+
 import { StoryDrawer } from "../../components";
-import { a11yProps, AllStoriesTabs } from "./AllStoriesTabs";
+import { a11yProps, AllStoriesTabs } from "../../components/AllStoriesTabs";
 import VirtualizedTable from "../../components/VirtualizedTable";
 import { colors } from "../../styles/colors";
 import {
@@ -20,37 +20,36 @@ import {
 } from "../../styles/typography";
 import { Story } from "../../types/index";
 import { allStoriesReducer, INIT_STATE } from "../AllStories/reducer";
+import { VisibilitySwitch } from "./VisibilitySwitch";
 
 const StyledContainer = styled.div`
   background-color: ${colors.primaryLight6};
 `;
 
 const StyledAddIcon = styled(AddIcon)`
-&.MuiSvgIcon-colorPrimary{
-  color: ${colors.tertiary};
-  border: 2px solid ${colors.tertiary};
-  border-radius: 5px;
-  width: 24px;
-
-}
-&.MuiSvgIcon-root {
-  width: 24px;
-  height: 24px;
-}
+  &.MuiSvgIcon-colorPrimary {
+    color: ${colors.tertiary};
+    border: 2px solid ${colors.tertiary};
+    border-radius: 5px;
+    width: 24px;
+  }
+  &.MuiSvgIcon-root {
+    width: 24px;
+    height: 24px;
+  }
 `;
 
 const StyledRemoveIcon = styled(RemoveIcon)`
-&.MuiSvgIcon-colorPrimary{
-  color: ${colors.secondary};
-  border: 2px solid ${colors.secondary};
-  border-radius: 5px;
-  width: 24px;
-
-}
-&.MuiSvgIcon-root {
-  width: 24px;
-  height: 24px;
-}
+  &.MuiSvgIcon-colorPrimary {
+    color: ${colors.secondary};
+    border: 2px solid ${colors.secondary};
+    border-radius: 5px;
+    width: 24px;
+  }
+  &.MuiSvgIcon-root {
+    width: 24px;
+    height: 24px;
+  }
 `;
 
 const useStyles = makeStyles({
@@ -124,9 +123,15 @@ export const AllStories: React.FC = () => {
     undefined
   );
   const classes = useStyles();
-  const allStoriesLabel = `${"ALL STORIES"} ${"("} ${state.tableData.length} ${")"}`
-  const visibleStoriesLabel = `${"VISIBLE STORIES"} ${"("} ${state.visibleTableState.filter((story) => story.is_visible).length} ${")"}` 
-  const pendingChangesLabel = `${"PENDING MAP CHANGES"} ${"("} ${state.changedVisibility.length} ${")"}` 
+  const allStoriesLabel = `${"ALL STORIES"} ${"("} ${
+    state.tableData.length
+  } ${")"}`;
+  const visibleStoriesLabel = `${"VISIBLE STORIES"} ${"("} ${
+    state.visibleTableState.filter((story) => story.is_visible).length
+  } ${")"}`;
+  const pendingChangesLabel = `${"PENDING MAP CHANGES"} ${"("} ${
+    state.changedVisibility.length
+  } ${")"}`;
 
   const fetchStories = (url) =>
     fetch(url)
@@ -245,7 +250,7 @@ export const AllStories: React.FC = () => {
           onChange={handleTabChange}
           aria-label="all stories tabs"
         >
-       <Tab label={allStoriesLabel}{...a11yProps(0)} />
+          <Tab label={allStoriesLabel} {...a11yProps(0)} />
           <Tab label={visibleStoriesLabel} {...a11yProps(1)} />
           <Tab label={pendingChangesLabel} {...a11yProps(2)} />
         </Tabs>
@@ -496,16 +501,16 @@ export const AllStories: React.FC = () => {
                 width: 50,
                 header: "",
                 cell: (d) => {
-                  return(
+                  return (
                     <div>
-                    {state.visibleState.includes(d.ID) ? (
-                      <StyledAddIcon color="primary"/>
-                    ) : (
-                      <StyledRemoveIcon color="primary" />
-                    )}
-                  </div>
-                  )
-                }
+                      {state.visibleState.includes(d.ID) ? (
+                        <StyledAddIcon color="primary" />
+                      ) : (
+                        <StyledRemoveIcon color="primary" />
+                      )}
+                    </div>
+                  );
+                },
               },
 
               {
