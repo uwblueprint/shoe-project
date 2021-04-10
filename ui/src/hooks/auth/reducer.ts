@@ -33,6 +33,7 @@ export function reducer(state: State, action: Action): State {
     case "START_LOADING": {
       return {
         ...state,
+        failure: undefined,
         loading: true,
       };
     }
@@ -55,7 +56,7 @@ export function reducer(state: State, action: Action): State {
     case "LOGOUT_SUCCESS": {
       return {
         ...state,
-        failure: undefined,
+        failure: state.failure === FailureState.InvalidEmail ? state.failure : undefined,
         auth: undefined,
       };
     }

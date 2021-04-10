@@ -51,15 +51,15 @@ export function useProvideAuth(): AuthContextType {
         if (res.ok) {
           dispatch({ type: "SUCCESS", response });
         } else {
-          if (signOutLoaded && state.auth !== undefined) {
-            signOut();
+          if (signOutLoaded) {
+            signOut()
           }
           dispatch({ type: "FAILURE", failure: FailureState.InvalidEmail });
         }
       })
       .catch(() => {
-        if (signOutLoaded && state.auth !== undefined) {
-          signOut();
+        if (signOutLoaded) {
+          signOut()
         }
         dispatch({ type: "FAILURE", failure: FailureState.Unknown });
       });
