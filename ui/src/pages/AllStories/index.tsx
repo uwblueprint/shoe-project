@@ -11,7 +11,7 @@ import { useEffect, useReducer, useState } from "react";
 import * as React from "react";
 import styled from "styled-components";
 import useSWR, { mutate } from "swr";
-
+import SearchBar from "material-ui-search-bar";
 import { StoryDrawer } from "../../components";
 import { a11yProps, AllStoriesTabs } from "../../components/AllStoriesTabs";
 import VirtualizedTable from "../../components/VirtualizedTable";
@@ -31,8 +31,29 @@ import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import Checkbox from '@material-ui/core/Checkbox';
 
+const StyledSearchBar = styled(SearchBar)`
+  max-width: 320px;
+  background-color: ${colors.primaryLight4};
+  border-radius: 5px;
+  height: 40px;
+  margin-left: 70vw;
+  margin-top: 1vh;
+  color: ${colors.primaryDark1};
+  border: none;
+  box-shadow: none;
+  .ForwardRef-iconButton-10 {
+    color: ${colors.primaryDark1};
+  }
+  .MuiInputBase-input {
+    font-family: "Poppins";
+  }
+`;
+
+const StyledFilter = styled.div`
+  margin-left: 70vw;
+
+`
 
 const StyledSwitch = styled(Switch)`
   && {
@@ -139,42 +160,29 @@ export const AllStories: React.FC = () => {
     setAnchorEl(null);
   };
 
-  const [filterState, setFilterState] = React.useState({
-    visible: false,
-    nonVisible: false
-  });
-
-
-
-  
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFilterState({ ...filterState, [event.target.name]: event.target.checked });
-  };
-
-  const { visible, nonVisible } = filterState;
-
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
-
-  const { data: tagOptions } = useSWR<string[]>("/api/tags");
-
-  var tagBooleans = {}
-  tagOptions.forEach((tag) => {
-    tagBooleans[tag] = false
-  })
-
-  const [tagFilterState, setTagFilterState] = React.useState(tagBooleans);
-  const handleTagFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setTagFilterState({ ...tagFilterState, [event.target.name]: event.target.checked });
-  };
-
+  
+  const { data: tagOptions, error:tagError } = useSWR<string[]>("/api/tags");
+  if (tagError) return <div>Error returning tags data!</div>;
+  
+ 
   const [state, dispatch] = useReducer(allStoriesReducer, INIT_STATE);
   const [clickedStory, setClickedStory] = useState<StoryView | undefined>(
     undefined
   );
   const classes = useStyles();
 
+  
+
+  const handleTagFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch({ type: "HANDLE_SEARCH/FILTER", data: { ...state, filterState: {...state.filterState, tags: {...state.filterState.tags, [event.target.name]: event.target.checked } }}});
+  };
+
+  const handleFilterVisibilityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch({ type: "HANDLE_SEARCH/FILTER", data: { ...state, filterState: {...state.filterState, visibility: {...state.filterState.visibility, [event.target.name]: event.target.checked } }}});
+  };
+  
   const fetchStories = (url) =>
     fetch(url)
       .then((res) => res.json())
@@ -189,7 +197,10 @@ export const AllStories: React.FC = () => {
     if (allStories) {
       dispatch({ type: "INITIALIZE_AFTER_API", rows: allStories });
     }
-  }, [allStories]);
+    if (tagOptions) {
+      dispatch({ type: "INITIALIZE_AFTER_TAGS_API", rows: tagOptions });
+    }
+  }, [allStories, tagOptions]);
 
   const setClickedRow = (rowId: number | undefined) => {
     if (rowId) {
@@ -243,9 +254,6 @@ export const AllStories: React.FC = () => {
       return a[1] - b[1];
     });
     const sortedArray = stabilizedThis.map((el) => el[0]);
-    if (sortedArray.length === 0) {
-      return allStories ? allStories : [];
-    }
     return sortedArray;
   };
 
@@ -271,59 +279,22 @@ export const AllStories: React.FC = () => {
     event: React.ChangeEvent<Record<string, unknown>>,
     newValue: number
   ) => {
-    cancelSearch();
+    let tagBooleans = {}
+      state.tags.forEach((tag) => {
+        tagBooleans[tag] = false
+      })
+    dispatch({ type: "HANDLE_SEARCH/FILTER", data: {...state, search: "", filterState: {
+      visibility: {
+        visible: false,
+        nonVisible : false,
+      },
+      tags : tagBooleans
+    },} });
     dispatch({ type: "SET_TAB_VALUE", newValue });
   };
 
-  const requestSearchHelper = (row, searchedVal: string) => {
-    let doesExist = false;
-    Object.keys(row).forEach((prop) => {
-      //Exclude search for StoryView members not displayed on table cells
-      const excludedParameters =
-        prop !== "image_url" &&
-        prop !== "video_url" &&
-        prop !== "content" &&
-        prop !== "is_visible";
-      const numExist =
-        typeof row[prop] === "number" &&
-        row[prop].toString().includes(searchedVal) &&
-        excludedParameters;
-      const stringExist =
-        typeof row[prop] === "string" &&
-        row[prop].toLowerCase().includes(searchedVal.toLowerCase()) &&
-        excludedParameters;
-      if (stringExist || numExist) {
-        doesExist = true;
-      }
-    });
-    return doesExist;
-  };
-
-  const requestSearch = (searchedVal: string) => {
-    if (state.tabValue === 0) {
-      const filteredRows: StoryView[] = state.origTableData.filter((row) => {
-        return requestSearchHelper(row, searchedVal);
-      });
-      dispatch({ type: "SET_TABLE_DATA", data: filteredRows });
-    } else if (state.tabValue === 1) {
-      const filteredRows: StoryView[] = state.visibleTableFilterState.filter(
-        (row) => {
-          return requestSearchHelper(row, searchedVal);
-        }
-      );
-      dispatch({ type: "SET_VISIBLE_TABLE_STATE", data: filteredRows });
-    } else if (state.tabValue === 2) {
-      const filteredRows: StoryView[] = state.changedVisibilityFilter.filter(
-        (row) => {
-          return requestSearchHelper(row, searchedVal);
-        }
-      );
-      dispatch({ type: "SET_CHANGED_VISIBILITY", data: filteredRows });
-    }
-  };
   const cancelSearch = () => {
-    dispatch({ type: "HANDLE_SEARCH", data: "" });
-    requestSearch("");
+    dispatch({ type: "HANDLE_SEARCH/FILTER", data: {...state, search: ""} });
   };
   if (error) return <div>Error returning stories data!</div>;
   if (!allStories) return <div>Loading all stories table..</div>;
@@ -348,7 +319,7 @@ export const AllStories: React.FC = () => {
           <Tab label="PENDING MAP CHANGES" {...a11yProps(2)} />
         </Tabs>
       </AppBar>
-      <div>
+      <StyledFilter>
       <Button aria-describedby={id} variant="contained" color="primary" onClick={handleClick}>
         Filter
       </Button>
@@ -372,7 +343,7 @@ export const AllStories: React.FC = () => {
             {
             tagOptions.map((tag) => {
               return(  <FormControlLabel
-                control={<Checkbox checked={tagFilterState[tag]} onChange={handleTagFilterChange} name={tag} />}
+                control={<Checkbox checked={state.filterState.tags[tag]} onChange={handleTagFilterChange} name={tag} />}
                 label={tag}
                 />)
               })}
@@ -382,23 +353,22 @@ export const AllStories: React.FC = () => {
           <FormLabel component="legend">Visibility: </FormLabel>
           <FormGroup>
             <FormControlLabel
-              control={<Checkbox checked={visible} onChange={handleChange} name="visible" />}
+              control={<Checkbox checked={state.filterState.visibility.visible} onChange={handleFilterVisibilityChange} name="visible" />}
               label="Shown"
             />
             <FormControlLabel
-              control={<Checkbox checked={nonVisible} onChange={handleChange} name="nonVisible" />}
+              control={<Checkbox checked={state.filterState.visibility.nonVisible} onChange={handleFilterVisibilityChange} name="nonVisible" />}
               label="Hidden"
             />
           </FormGroup>
         </FormControl>
       </Popover>
-    </div>
+    </StyledFilter>
       <StyledSearchBar
         placeholder="Type to search..."
         value={state.search}
         onChange={(searchVal) => {
-          dispatch({ type: "HANDLE_SEARCH", data: searchVal });
-          requestSearch(searchVal);
+          dispatch({ type: "HANDLE_SEARCH/FILTER", data: {...state, search:searchVal} });
         }}
         onCancelSearch={() => cancelSearch()}
       />
@@ -491,6 +461,18 @@ export const AllStories: React.FC = () => {
               onHeaderClick() {
                 handleRequestSort("author_country");
               },
+            },
+            {
+              name: "tags",
+              header: "Tags",
+              width: 300,
+              onHeaderClick() {
+                handleRequestSort("tags");
+              },
+              cell: (story) =>
+                story.tags.map((tag) => (
+                  <StyledChip color="primary" key={story.id} label={tag} />
+                )),
             },
             {
               name: "is_visible",
