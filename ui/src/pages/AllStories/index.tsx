@@ -1,7 +1,6 @@
 import AppBar from "@material-ui/core/AppBar";
 import Checkbox from "@material-ui/core/Checkbox";
 import { makeStyles } from "@material-ui/core/styles";
-import Switch from "@material-ui/core/Switch";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import AddIcon from "@material-ui/icons/Add";
@@ -22,6 +21,7 @@ import {
 } from "../../styles/typography";
 import { Story } from "../../types/index";
 import { allStoriesReducer, INIT_STATE } from "../AllStories/reducer";
+import { VisibilitySwitch } from "./VisibilitySwitch";
 
 const StyledSearchBar = styled(SearchBar)`
   max-width: 320px;
@@ -41,19 +41,35 @@ const StyledSearchBar = styled(SearchBar)`
   }
 `;
 
-const StyledSwitch = styled(Switch)`
-  && {
-    .MuiSwitch-colorPrimary {
-      color: ${colors.white};
-    }
-    .MuiSwitch-track {
-      background-color: ${colors.primaryDark1};
-    }
-  }
-`;
 
 const StyledContainer = styled.div`
   background-color: ${colors.primaryLight6};
+`;
+
+const StyledAddIcon = styled(AddIcon)`
+  &.MuiSvgIcon-colorPrimary {
+    color: ${colors.tertiary};
+    border: 2px solid ${colors.tertiary};
+    border-radius: 5px;
+    width: 24px;
+  }
+  &.MuiSvgIcon-root {
+    width: 24px;
+    height: 24px;
+  }
+`;
+
+const StyledRemoveIcon = styled(RemoveIcon)`
+  &.MuiSvgIcon-colorPrimary {
+    color: ${colors.secondary};
+    border: 2px solid ${colors.secondary};
+    border-radius: 5px;
+    width: 24px;
+  }
+  &.MuiSvgIcon-root {
+    width: 24px;
+    height: 24px;
+  }
 `;
 
 const useStyles = makeStyles({
@@ -127,6 +143,15 @@ export const AllStories: React.FC = () => {
     undefined
   );
   const classes = useStyles();
+  const allStoriesLabel = `${"ALL STORIES"} ${"("} ${
+    state.tableData.length
+  } ${")"}`;
+  const visibleStoriesLabel = `${"VISIBLE STORIES"} ${"("} ${
+    state.visibleTableState.filter((story) => story.is_visible).length
+  } ${")"}`;
+  const pendingChangesLabel = `${"PENDING MAP CHANGES"} ${"("} ${
+    state.changedVisibility.length
+  } ${")"}`;
 
   const fetchStories = (url) =>
     fetch(url)
@@ -296,9 +321,9 @@ export const AllStories: React.FC = () => {
           onChange={handleTabChange}
           aria-label="all stories tabs"
         >
-          <Tab label="ALL STORIES" {...a11yProps(0)} />
-          <Tab label="VISIBLE STORIES" {...a11yProps(1)} />
-          <Tab label="PENDING MAP CHANGES" {...a11yProps(2)} />
+          <Tab label={allStoriesLabel} {...a11yProps(0)} />
+          <Tab label={visibleStoriesLabel} {...a11yProps(1)} />
+          <Tab label={pendingChangesLabel} {...a11yProps(2)} />
         </Tabs>
       </AppBar>
       <StyledSearchBar
@@ -402,13 +427,13 @@ export const AllStories: React.FC = () => {
             },
             {
               name: "is_visible",
-              header: "Show on Map",
+              header: "Visibility",
               width: 150,
               onHeaderClick() {
-                handleRequestSort("jobType");
+                handleRequestSort("is_visible");
               },
               cell: (story) => (
-                <StyledSwitch
+                <VisibilitySwitch
                   checked={story.is_visible}
                   onChange={(e) => {
                     e.persist();
@@ -511,13 +536,13 @@ export const AllStories: React.FC = () => {
             },
             {
               name: "is_visible",
-              header: "Show on Map",
+              header: "Visibility",
               width: 150,
               onHeaderClick() {
-                handleRequestSort("jobType");
+                handleRequestSort("is_visible");
               },
               cell: (story) => (
-                <StyledSwitch
+                <VisibilitySwitch
                   checked={story.is_visible}
                   onChange={(e) => {
                     e.persist();
@@ -545,17 +570,19 @@ export const AllStories: React.FC = () => {
             columns={[
               {
                 name: "pending-map-changes-changes",
-                width: 100,
-                header: <div>Changes</div>,
-                cell: (d) => (
-                  <div>
-                    {state.visibleState.includes(d.id) ? (
-                      <AddIcon />
-                    ) : (
-                      <RemoveIcon />
-                    )}
-                  </div>
-                ),
+                width: 50,
+                header: "",
+                cell: (d) => {
+                  return (
+                    <div>
+                      {state.visibleState.includes(d.ID) ? (
+                        <StyledAddIcon color="primary" />
+                      ) : (
+                        <StyledRemoveIcon color="primary" />
+                      )}
+                    </div>
+                  );
+                },
               },
 
               {
@@ -600,14 +627,14 @@ export const AllStories: React.FC = () => {
               },
               {
                 name: "is_visible",
-                header: "Show on Map",
+                header: "Visibility",
                 width: 150,
                 onHeaderClick() {
-                  handleRequestSort("jobType");
+                  handleRequestSort("is_visible");
                 },
                 cell: (story) => (
-                  <StyledSwitch
-                    checked={state.visibleState.includes(story.id)}
+                  <VisibilitySwitch
+                    checked={state.visibleState.includes(story.ID)}
                     onChange={(e) => {
                       e.persist();
                       handleSwitchChange(e, story);

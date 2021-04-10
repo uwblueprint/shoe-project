@@ -18,6 +18,9 @@ const redLight2 = "#EA7B7B";
 const redLight3 = "#F5B8B8";
 const redLight4 = "#FCDCDC";
 
+/*Tertiary Colours */
+const green = "#4FBD6E";
+
 /* Neutrals */
 const light = "#F2F6F8";
 const dark = "#1E202D";
@@ -52,4 +55,5 @@ export const colors = Object.freeze({
   secondaryLight2: redLight2,
   secondaryLight3: redLight3,
   secondaryLight4: redLight4,
+  tertiary: green,
 });
