@@ -77,7 +77,7 @@ describe("allstories table", () => {
       const newState = allStoriesReducer(INIT_STATE, action);
       expect(newState.visibleTableState.length).toBe(2);
       expect(newState.tableData.length).toBe(2);
-      expect(INIT_STATE.origTableData.length).toBe(2);
+      expect(newState.origTableData.length).toBe(2);
     });
 
     it("should switch tabs", () => {
