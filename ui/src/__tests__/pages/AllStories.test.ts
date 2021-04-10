@@ -78,7 +78,6 @@ describe("allstories table", () => {
       expect(newState.visibleTableState.length).toBe(2);
       expect(newState.tableData.length).toBe(2);
       expect(INIT_STATE.origTableData.length).toBe(2);
-
     });
 
     it("should switch tabs", () => {

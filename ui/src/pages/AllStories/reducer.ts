@@ -2,12 +2,8 @@ import { StoryView } from "../AllStories/index";
 
 export interface State {
   tabValue: number;
-<<<<<<< HEAD
   search: string;
-  visibleState: StoryView[];
-=======
   visibleState: number[];
->>>>>>> origin/main
   visibleTableState: StoryView[];
   tableData: StoryView[];
   changedVisibility: StoryView[];

@@ -41,7 +41,6 @@ const StyledSearchBar = styled(SearchBar)`
   }
 `;
 
-
 const StyledContainer = styled.div`
   background-color: ${colors.primaryLight6};
 `;
