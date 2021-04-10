@@ -83,7 +83,9 @@ export const ListboxComponent = React.forwardRef<HTMLDivElement>(
   }
 );
 
-export const renderGroup = (params: AutocompleteRenderGroupParams) => [
+export const renderGroup = (
+  params: AutocompleteRenderGroupParams
+): React.ReactNode[] => [
   <ListSubheader key={params.key} component="div">
     {params.group}
   </ListSubheader>,
