@@ -164,7 +164,7 @@ export const AllStories: React.FC = () => {
   const id = open ? 'simple-popover' : undefined;
   
   const { data: tagOptions, error:tagError } = useSWR<string[]>("/api/tags");
-  if (tagError) return <div>Error returning tags data!</div>;
+  ;
   
  
   const [state, dispatch] = useReducer(allStoriesReducer, INIT_STATE);
@@ -298,6 +298,7 @@ export const AllStories: React.FC = () => {
   };
   if (error) return <div>Error returning stories data!</div>;
   if (!allStories) return <div>Loading all stories table..</div>;
+  if (tagError) return <div>Error returning tags data!</div>
   return (
     <>
       <StyledContainer>
@@ -341,8 +342,9 @@ export const AllStories: React.FC = () => {
           <FormLabel component="legend">Tags: </FormLabel>
           <FormGroup>
             {
-            tagOptions.map((tag) => {
+            state.tags.map((tag, index) => {
               return(  <FormControlLabel
+                key={index}
                 control={<Checkbox checked={state.filterState.tags[tag]} onChange={handleTagFilterChange} name={tag} />}
                 label={tag}
                 />)
