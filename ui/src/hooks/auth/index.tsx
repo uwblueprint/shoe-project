@@ -35,7 +35,7 @@ export function useProvideAuth(): AuthContextType {
 
   const { signOut, loaded: signOutLoaded } = useGoogleLogout({
     onLogoutSuccess: handleLogoutSuccess,
-    onFailure: () => dispatch({type: "LOGOUT_FAILURE"}),
+    onFailure: () => dispatch({ type: "LOGOUT_FAILURE" }),
     clientId: CLIENT_ID,
   });
 
