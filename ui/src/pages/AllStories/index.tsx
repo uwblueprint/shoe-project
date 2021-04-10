@@ -256,8 +256,8 @@ export const AllStories: React.FC = () => {
     let doesExist = false;
     Object.keys(row).forEach((prop) => {
       //Exclude search for StoryView members not displayed on table cells
-      const excludedParameters =
-        prop !== "image_url" &&
+      const excludedParameters = prop !== "ID";
+      prop !== "image_url" &&
         prop !== "video_url" &&
         prop !== "content" &&
         prop !== "is_visible";
