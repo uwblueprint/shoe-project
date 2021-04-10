@@ -38,7 +38,6 @@ export const colors = Object.freeze({
   dark,
   neutralLight: light,
   neutralDark: neutralDark,
-  neutralGrey: grey,
   primary: teal,
   primaryDark1: tealDark1,
   primaryDark2: tealDark2,
