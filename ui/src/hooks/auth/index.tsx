@@ -35,6 +35,7 @@ export function useProvideAuth(): AuthContextType {
 
   const { signOut, loaded: signOutLoaded } = useGoogleLogout({
     onLogoutSuccess: handleLogoutSuccess,
+    onFailure: () => dispatch({type: "LOGOUT_FAILURE"}),
     clientId: CLIENT_ID,
   });
 
@@ -52,14 +53,14 @@ export function useProvideAuth(): AuthContextType {
           dispatch({ type: "SUCCESS", response });
         } else {
           if (signOutLoaded) {
-            signOut()
+            signOut();
           }
           dispatch({ type: "FAILURE", failure: FailureState.InvalidEmail });
         }
       })
       .catch(() => {
         if (signOutLoaded) {
-          signOut()
+          signOut();
         }
         dispatch({ type: "FAILURE", failure: FailureState.Unknown });
       });
@@ -74,6 +75,7 @@ export function useProvideAuth(): AuthContextType {
     onFailure: handleFailure,
     clientId: CLIENT_ID,
     isSignedIn: true,
+    prompt: "consent",
   });
 
   return {

@@ -56,9 +56,19 @@ export function reducer(state: State, action: Action): State {
     case "LOGOUT_SUCCESS": {
       return {
         ...state,
-        failure: state.failure === FailureState.InvalidEmail ? state.failure : undefined,
+        loading: false,
+        failure:
+          state.failure === FailureState.InvalidEmail
+            ? state.failure
+            : undefined,
         auth: undefined,
       };
+    }
+    case "LOGOUT_FAILURE": {
+      return {
+        ...state,
+        loading: false,
+      }
     }
     default:
       return state;
