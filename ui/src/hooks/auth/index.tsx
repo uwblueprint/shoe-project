@@ -6,7 +6,7 @@ import {
   useGoogleLogout,
 } from "react-google-login";
 
-import { FailureState, INIT_STATE, reducer,State } from "./reducer";
+import { FailureState, INIT_STATE, reducer, State } from "./reducer";
 
 export { FailureState } from "./reducer";
 
