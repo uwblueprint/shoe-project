@@ -20,7 +20,7 @@ import {
   StyledEmptyMessage,
 } from "../../../styles/typography";
 import { Story } from "../../../types/index";
-import { allStoriesReducer, INIT_STATE } from "../AllStories/reducer";
+import { allStoriesReducer, INIT_STATE } from "./reducer";
 import { StoryView } from "./types";
 import { VisibilitySwitch } from "./VisibilitySwitch";
 
