@@ -16,7 +16,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
 import { useReducer } from "react";
-import { Redirect } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import useSWR from "swr";
 
@@ -145,6 +145,7 @@ export const UploadStory: React.FC<StoryProps> = ({
     uploadStoryReducer,
     INIT_STATE(currentStory)
   );
+  const history = useHistory();
 
   const startYear = new Date().getFullYear();
   const yearArray = Array.from({ length: 30 }, (_, i) => startYear - i);
@@ -273,9 +274,7 @@ export const UploadStory: React.FC<StoryProps> = ({
       resultMessage === "Story Added Successfully" ||
       resultMessage === "Story Updated successfully"
     ) {
-      //TODO: Fix redirect (currently does nothing)
-      // console.log("HERE");
-      return <Redirect to="/admin" />;
+      history.push("/success-screen");
     } else {
       dispatch({ type: "SET_ERROR_STATE", errorState: true });
     }
