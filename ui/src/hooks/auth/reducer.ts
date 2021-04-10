@@ -29,7 +29,6 @@ export const INIT_STATE: State = Object.freeze({
 });
 
 export function reducer(state: State, action: Action): State {
-  console.log(action);
   switch (action.type) {
     case "START_LOADING": {
       return {
