@@ -11,17 +11,18 @@ import * as React from "react";
 import styled from "styled-components";
 import useSWR, { mutate } from "swr";
 
-import { StoryDrawer } from "../../components";
-import { a11yProps, AllStoriesTabs } from "../../components/AllStoriesTabs";
-import VirtualizedTable from "../../components/VirtualizedTable";
-import { colors } from "../../styles/colors";
+import { StoryDrawer } from "../../../components";
+import { a11yProps, AllStoriesTabs } from "../../../components/AllStoriesTabs";
+import VirtualizedTable from "../../../components/VirtualizedTable";
+import { colors } from "../../../styles/colors";
 import {
   StyledAllStoriesHeader,
   StyledEmptyMessage,
-} from "../../styles/typography";
-import { Story } from "../../types/index";
+} from "../../../styles/typography";
+import { Story } from "../../../types/index";
 import { allStoriesReducer, INIT_STATE } from "../AllStories/reducer";
 import { VisibilitySwitch } from "./VisibilitySwitch";
+import { StoryView } from "./types";
 
 const StyledSearchBar = styled(SearchBar)`
   max-width: 320px;
@@ -93,18 +94,6 @@ const useStyles = makeStyles({
   },
   checked: {},
 });
-
-export type StoryView = Omit<
-  Story,
-  | "summary"
-  | "latitude"
-  | "longitude"
-  | "author"
-  | "tags"
-  | "CreatedAt"
-  | "DeletedAt"
-  | "UpdatedAt"
-> & { author_name: string };
 
 function createData({
   ID,
