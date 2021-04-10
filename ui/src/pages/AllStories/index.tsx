@@ -421,15 +421,7 @@ export const AllStories: React.FC = () => {
             },
           ]}
         />
-        <StoryDrawer
-          story={clickedStory}
-          onClose={() => setClickedStory(undefined)}
-          onClickEditStory={() => {
-            console.log("TODO: Route to edit page");
-          }}
-        />
       </AllStoriesTabs>
-
       <AllStoriesTabs value={state.tabValue} index={1}>
         <VirtualizedTable
           data={state.visibleTableState.filter((story) => story.is_visible)}
@@ -569,7 +561,7 @@ export const AllStories: React.FC = () => {
               {
                 name: "title",
                 header: "Story Name",
-                width: 200,
+                width: 500,
                 onHeaderClick() {
                   handleRequestSort("title");
                 },
@@ -631,6 +623,13 @@ export const AllStories: React.FC = () => {
           <StyledEmptyMessage> No pending changes! </StyledEmptyMessage>
         )}
       </AllStoriesTabs>
+      <StoryDrawer
+        story={clickedStory}
+        onClose={() => setClickedStory(undefined)}
+        onClickEditStory={() => {
+          console.log("TODO: Route to edit page");
+        }}
+      />
     </>
   );
 };
