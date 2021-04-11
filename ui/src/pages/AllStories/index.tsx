@@ -169,7 +169,8 @@ export const AllStories: React.FC = () => {
   const pendingChangesLabel = `${"PENDING MAP CHANGES"} ${"("} ${
     state.changedVisibility.length
   } ${")"}`;
-
+  const doesVisibleStoriesExist =
+    state.visibleTableState.filter((story) => story.is_visible).length !== 0;
   const fetchStories = (url) =>
     fetch(url)
       .then((res) => res.json())
@@ -197,6 +198,7 @@ export const AllStories: React.FC = () => {
 
   const handleSwitchChange = (e, story) => {
     dispatch({ type: "HANDLE_SWITCH_CHANGE", e, story });
+
     mutate(
       "/api/stories",
       (prevStories: Story[]) => {
@@ -324,11 +326,6 @@ export const AllStories: React.FC = () => {
   if (!allStories) return <div>Loading all stories table..</div>;
   return (
     <>
-      <Prompt
-        message={(location) =>
-          `Are you sure you want to go to ${location.pathname}? Your changes on this page will not be saved.`
-        }
-      />
       <StyledContainer>
         <StyledAllStoriesHeader>
           The Shoe Project Impact Map Portal
@@ -491,8 +488,7 @@ export const AllStories: React.FC = () => {
         )}
       </AllStoriesTabs>
       <AllStoriesTabs value={state.tabValue} index={1}>
-        {state.visibleTableState.filter((story) => story.is_visible).length !==
-        0 ? (
+        {doesVisibleStoriesExist ? (
           <VirtualizedTable
             data={state.visibleTableState.filter((story) => story.is_visible)}
             order={state.order}
@@ -691,7 +687,7 @@ export const AllStories: React.FC = () => {
                 },
                 cell: (story) => (
                   <VisibilitySwitch
-                    checked={state.visibleState.includes(story.ID)}
+                    checked={story.is_visible}
                     onChange={(e) => {
                       e.persist();
                       handleSwitchChange(e, story);
@@ -713,6 +709,12 @@ export const AllStories: React.FC = () => {
         onClickEditStory={() => {
           console.log("TODO: Route to edit page");
         }}
+      />
+      <Prompt
+        when={state.changedVisibility.length !== 0}
+        message={(location) =>
+          `Are you sure you want to go to ${location.pathname}? Your changes on this page will not be saved.`
+        }
       />
     </>
   );
