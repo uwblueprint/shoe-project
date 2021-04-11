@@ -1,6 +1,12 @@
 import AppBar from "@material-ui/core/AppBar";
+import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import Chip from "@material-ui/core/Chip";
+import FormControl from "@material-ui/core/FormControl";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormGroup from "@material-ui/core/FormGroup";
+import FormLabel from "@material-ui/core/FormLabel";
+import Popover from "@material-ui/core/Popover";
 import { makeStyles } from "@material-ui/core/styles";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
@@ -11,6 +17,7 @@ import { useEffect, useReducer, useState } from "react";
 import * as React from "react";
 import styled from "styled-components";
 import useSWR, { mutate } from "swr";
+
 import { StoryDrawer } from "../../components";
 import { a11yProps, AllStoriesTabs } from "../../components/AllStoriesTabs";
 import VirtualizedTable from "../../components/VirtualizedTable";
@@ -22,20 +29,10 @@ import {
 } from "../../styles/typography";
 import { Story } from "../../types/index";
 import { allStoriesReducer, INIT_STATE } from "../AllStories/reducer";
-import Popover from '@material-ui/core/Popover';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
-
 
 const StyledFilter = styled.div`
   margin-left: 70vw;
-
-`
+`;
 import { VisibilitySwitch } from "./VisibilitySwitch";
 
 const StyledSearchBar = styled(SearchBar)`
@@ -145,7 +142,7 @@ function createData({
   image_url,
   video_url,
   content,
-  tags
+  tags,
 }: Story): StoryView {
   const author_name = `${author_first_name} ${author_last_name}`;
   return {
@@ -166,7 +163,9 @@ function createData({
 }
 
 export const AllStories: React.FC = () => {
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
+    null
+  );
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -177,12 +176,10 @@ export const AllStories: React.FC = () => {
   };
 
   const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
-  
-  const { data: tagOptions, error:tagError } = useSWR<string[]>("/api/tags");
-  ;
-  
- 
+  const id = open ? "simple-popover" : undefined;
+
+  const { data: tagOptions, error: tagError } = useSWR<string[]>("/api/tags");
+
   const [state, dispatch] = useReducer(allStoriesReducer, INIT_STATE);
   const [clickedStory, setClickedStory] = useState<StoryView | undefined>(
     undefined
@@ -198,16 +195,42 @@ export const AllStories: React.FC = () => {
     state.changedVisibility.length
   } ${")"}`;
 
-  
-
-  const handleTagFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch({ type: "HANDLE_SEARCH/FILTER", data: { ...state, filterState: {...state.filterState, tags: {...state.filterState.tags, [event.target.name]: event.target.checked } }}});
+  const handleTagFilterChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    dispatch({
+      type: "HANDLE_SEARCH/FILTER",
+      data: {
+        ...state,
+        filterState: {
+          ...state.filterState,
+          tags: {
+            ...state.filterState.tags,
+            [event.target.name]: event.target.checked,
+          },
+        },
+      },
+    });
   };
 
-  const handleFilterVisibilityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch({ type: "HANDLE_SEARCH/FILTER", data: { ...state, filterState: {...state.filterState, visibility: {...state.filterState.visibility, [event.target.name]: event.target.checked } }}});
+  const handleFilterVisibilityChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    dispatch({
+      type: "HANDLE_SEARCH/FILTER",
+      data: {
+        ...state,
+        filterState: {
+          ...state.filterState,
+          visibility: {
+            ...state.filterState.visibility,
+            [event.target.name]: event.target.checked,
+          },
+        },
+      },
+    });
   };
-  
+
   const fetchStories = (url) =>
     fetch(url)
       .then((res) => res.json())
@@ -304,26 +327,30 @@ export const AllStories: React.FC = () => {
     event: React.ChangeEvent<Record<string, unknown>>,
     newValue: number
   ) => {
-    let tagBooleans = {}
-      state.tags.forEach((tag) => {
-        tagBooleans[tag] = false
-      })
-    dispatch({ type: "HANDLE_SEARCH/FILTER", data: {...state, search: "", filterState: {
-      visibility: {
-        visible: false,
-        nonVisible : false,
+    const tagBooleans = {};
+    state.tags.forEach((tag) => {
+      tagBooleans[tag] = false;
+    });
+    const newState = {
+      ...state,
+      search: "",
+      filterState: {
+        visibility: {
+          visible: false,
+          nonVisible: false,
+        },
+        tags: tagBooleans,
       },
-      tags : tagBooleans
-    },} });
-    dispatch({ type: "SET_TAB_VALUE", newValue });
+    };
+    dispatch({ type: "SET_TAB_VALUE", newValue, newState });
   };
 
   const cancelSearch = () => {
-    dispatch({ type: "HANDLE_SEARCH/FILTER", data: {...state, search: ""} });
+    dispatch({ type: "HANDLE_SEARCH/FILTER", data: { ...state, search: "" } });
   };
   if (error) return <div>Error returning stories data!</div>;
   if (!allStories) return <div>Loading all stories table..</div>;
-  if (tagError) return <div>Error returning tags data!</div>
+  if (tagError) return <div>Error returning tags data!</div>;
   return (
     <>
       <StyledContainer>
@@ -346,56 +373,83 @@ export const AllStories: React.FC = () => {
         </Tabs>
       </AppBar>
       <StyledFilter>
-      <Button aria-describedby={id} variant="contained" color="primary" onClick={handleClick}>
-        Filter
-      </Button>
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
-      >
+        <Button
+          aria-describedby={id}
+          variant="contained"
+          color="primary"
+          onClick={handleClick}
+        >
+          Filter
+        </Button>
+        <Popover
+          id={id}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+        >
           <FormControl component="fieldset">
-          <FormLabel component="legend">Tags: </FormLabel>
-          <FormGroup>
-            {
-            state.tags.map((tag, index) => {
-              return(  <FormControlLabel
-                key={index}
-                control={<Checkbox checked={state.filterState.tags[tag]} onChange={handleTagFilterChange} name={tag} />}
-                label={tag}
-                />)
+            <FormLabel component="legend">Tags: </FormLabel>
+            <FormGroup>
+              {state.tags.map((tag) => {
+                return (
+                  <FormControlLabel
+                    key={tag}
+                    control={
+                      <Checkbox
+                        checked={state.filterState.tags[tag]}
+                        onChange={handleTagFilterChange}
+                        name={tag}
+                      />
+                    }
+                    label={tag}
+                  />
+                );
               })}
-          </FormGroup>
-        </FormControl>
-        <FormControl component="fieldset">
-          <FormLabel component="legend">Visibility: </FormLabel>
-          <FormGroup>
-            <FormControlLabel
-              control={<Checkbox checked={state.filterState.visibility.visible} onChange={handleFilterVisibilityChange} name="visible" />}
-              label="Shown"
-            />
-            <FormControlLabel
-              control={<Checkbox checked={state.filterState.visibility.nonVisible} onChange={handleFilterVisibilityChange} name="nonVisible" />}
-              label="Hidden"
-            />
-          </FormGroup>
-        </FormControl>
-      </Popover>
-    </StyledFilter>
+            </FormGroup>
+          </FormControl>
+          <FormControl component="fieldset">
+            <FormLabel component="legend">Visibility: </FormLabel>
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={state.filterState.visibility.visible}
+                    onChange={handleFilterVisibilityChange}
+                    name="visible"
+                  />
+                }
+                label="Shown"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={state.filterState.visibility.nonVisible}
+                    onChange={handleFilterVisibilityChange}
+                    name="nonVisible"
+                  />
+                }
+                label="Hidden"
+              />
+            </FormGroup>
+          </FormControl>
+        </Popover>
+      </StyledFilter>
       <StyledSearchBar
         placeholder="Type to search..."
         value={state.search}
         onChange={(searchVal) => {
-          dispatch({ type: "HANDLE_SEARCH/FILTER", data: {...state, search:searchVal} });
+          dispatch({
+            type: "HANDLE_SEARCH/FILTER",
+            data: { ...state, search: searchVal },
+          });
         }}
         onCancelSearch={() => cancelSearch()}
       />
@@ -498,7 +552,7 @@ export const AllStories: React.FC = () => {
               },
               cell: (story) =>
                 story.tags.map((tag) => (
-                  <StyledChip color="primary" key={story.id} label={tag} />
+                  <StyledChip color="primary" key={tag} label={tag} />
                 )),
             },
             {
@@ -619,7 +673,7 @@ export const AllStories: React.FC = () => {
               },
               cell: (story) =>
                 story.tags.map((tag) => (
-                  <StyledChip color="primary" key={story.id} label={tag} />
+                  <StyledChip color="primary" key={tag} label={tag} />
                 )),
             },
             {
@@ -722,7 +776,7 @@ export const AllStories: React.FC = () => {
                 },
                 cell: (story) =>
                   story.tags.map((tag) => (
-                    <StyledChip color="primary" key={story.ID} label={tag} />
+                    <StyledChip color="primary" key={tag} label={tag} />
                   )),
               },
               {

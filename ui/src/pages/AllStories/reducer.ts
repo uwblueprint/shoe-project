@@ -26,7 +26,7 @@ export type Action =
   | { type: "HANDLE_CHECKED"; e: React.ChangeEvent; story: StoryView }
   | { type: "SET_ORDERING"; order: "asc" | "desc"; orderBy: string }
   | { type: "SET_TABLE_DATA"; data: StoryView[] }
-  | { type: "SET_TAB_VALUE"; newValue: number }
+  | { type: "SET_TAB_VALUE"; newValue: number; newState: State }
   | { type: "SET_CHANGED_VISIBILITY"; data: StoryView[] }
   | { type: "SET_VISIBLE_TABLE_STATE"; data: StoryView[] }
   | { type: "HANDLE_SEARCH/FILTER"; data: State };
@@ -48,9 +48,9 @@ export const INIT_STATE: State = {
   filterState: {
     visibility: {
       visible: false,
-      nonVisible : false,
+      nonVisible: false,
     },
-    tags : {}
+    tags: {},
   },
 };
 
@@ -107,26 +107,30 @@ export function allStoriesReducer(state: State, action: Action): State {
       }
     }
     case "INITIALIZE_AFTER_API": {
-      return {
+      const newState = {
         ...state,
         visibleTableState: action.rows ? action.rows : [],
         tableData: action.rows ? action.rows : [],
         visibleTableFilterState: action.rows ? action.rows : [],
         origTableData: action.rows ? action.rows : [],
       };
+
+      return requestSearchAndFilter(newState);
     }
     case "INITIALIZE_AFTER_TAGS_API": {
-      let tagBooleans = {}
+      const tagBooleans = {};
       action.rows.forEach((tag) => {
-        tagBooleans[tag] = false
-      })
+        tagBooleans[tag] = false;
+      });
       return {
         ...state,
         tags: action.rows,
-        filterState: {...state.filterState, tags: tagBooleans },
+        filterState: {
+          ...state.filterState,
+          tags: state.tags.length > 0 ? state.filterState.tags : tagBooleans,
+        },
       };
     }
-    
 
     case "HANDLE_CHECKED_ALL": {
       return {
@@ -168,8 +172,9 @@ export function allStoriesReducer(state: State, action: Action): State {
       };
     }
     case "SET_TAB_VALUE": {
+      const newState = requestSearchAndFilter(action.newState);
       return {
-        ...state,
+        ...newState,
         tabValue: action.newValue,
       };
     }
@@ -186,102 +191,113 @@ export function allStoriesReducer(state: State, action: Action): State {
       };
     }
     case "HANDLE_SEARCH/FILTER": {
-
-      const newState = action.data
-
-      const requestSearchHelper = (row) => {
-        if (newState.search == "") {
-          return true
-        }
-        let doesExist = false;
-        Object.keys(row).forEach((prop) => {
-          //Exclude search for StoryView members not displayed on table cells
-          const excludedParameters =
-            prop !== "image_url" &&
-            prop !== "video_url" &&
-            prop !== "content" &&
-            prop !== "is_visible";
-          const numExist =
-            typeof row[prop] === "number" &&
-            row[prop].toString().includes(newState.search) &&
-            excludedParameters;
-          const stringExist =
-            typeof row[prop] === "string" &&
-            row[prop].toLowerCase().includes(newState.search.toLowerCase()) &&
-            excludedParameters;
-          if (stringExist || numExist) {
-            doesExist = true;
-          }
-        });
-        return doesExist;
-      };
-
-      const handleTagFilterHelper = (row) => {
-        let exist = false
-        let zeroChecked = true //atleast one tag should be checked off
-        Object.keys(newState.filterState.tags).forEach((tag) => {
-          if (newState.filterState.tags[tag] ) {
-            zeroChecked = false
-            if ( row.tags.includes(tag.toString())) {
-              exist = true;
-            }
-          } 
-        });
-        if (zeroChecked) {
-          return true
-        }
-        return exist;
-      };
-    
-      const checkRowVisibility = (row) => {
-        console.log(row)
-        console.log(newState.filterState.visibility)
-        return ((newState.filterState.visibility.visible && row.is_visible) || (newState.filterState.visibility.nonVisible && !row.is_visible) || (!newState.filterState.visibility.nonVisible && !newState.filterState.visibility.visible))   
-      }
-    
-      const requestSearchAndFilter = () => {
-        if (state.tabValue === 0) {
-          let filteredRows: StoryView[] = newState.origTableData.filter((row) => {
-            return requestSearchHelper(row);
-          });
-          filteredRows = filteredRows.filter((row) => {
-            return checkRowVisibility(row)
-          });
-          filteredRows = filteredRows.filter((row) => {
-            return handleTagFilterHelper(row)
-          });
-          newState.tableData = filteredRows
-        } else if (state.tabValue === 1) {
-          let filteredRows: StoryView[] = newState.visibleTableFilterState.filter(
-            (row) => {
-              return requestSearchHelper(row);
-            }
-          );
-          filteredRows = filteredRows.filter((row) => {
-            return checkRowVisibility(row)
-          });
-          filteredRows = filteredRows.filter((row) => {
-            return handleTagFilterHelper(row)
-          });
-          newState.visibleTableState = filteredRows
-        } else if (state.tabValue === 2) {
-          let filteredRows: StoryView[] = state.changedVisibilityFilter.filter(
-            (row) => {
-              return requestSearchHelper(row);
-            }
-          );
-          filteredRows = filteredRows.filter((row) => {
-            return newState.visibleState.includes(row.ID)
-          });
-          filteredRows = filteredRows.filter((row) => {
-            return handleTagFilterHelper(row)
-          });
-          newState.changedVisibility = filteredRows
-        }
-      };
-      
-      requestSearchAndFilter()
-      return newState
+      return requestSearchAndFilter(action.data);
     }
   }
 }
+
+const requestSearchHelper = (row, newState: State) => {
+  if (newState.search == "") {
+    return true;
+  }
+  let doesExist = false;
+  Object.keys(row).forEach((prop) => {
+    //Exclude search for StoryView members not displayed on table cells
+    const excludedParameters =
+      prop !== "image_url" &&
+      prop !== "video_url" &&
+      prop !== "content" &&
+      prop !== "is_visible";
+    const numExist =
+      typeof row[prop] === "number" &&
+      row[prop].toString().includes(newState.search) &&
+      excludedParameters;
+    const stringExist =
+      typeof row[prop] === "string" &&
+      row[prop].toLowerCase().includes(newState.search.toLowerCase()) &&
+      excludedParameters;
+    if (stringExist || numExist) {
+      doesExist = true;
+    }
+  });
+  return doesExist;
+};
+
+const handleTagFilterHelper = (row, newState: State) => {
+  let exist = false;
+  let zeroChecked = true; //atleast one tag should be checked off
+  Object.keys(newState.filterState.tags).forEach((tag) => {
+    if (newState.filterState.tags[tag]) {
+      zeroChecked = false;
+      if (row.tags.includes(tag.toString())) {
+        exist = true;
+      }
+    }
+  });
+  if (zeroChecked) {
+    return true;
+  }
+  return exist;
+};
+
+const checkRowVisibility = (row, newState: State) => {
+  return (
+    (newState.filterState.visibility.visible && row.is_visible) ||
+    (newState.filterState.visibility.nonVisible && !row.is_visible) ||
+    (!newState.filterState.visibility.nonVisible &&
+      !newState.filterState.visibility.visible)
+  );
+};
+
+const checkRowVisibilityPending = (row, newState: State) => {
+  return (
+    (newState.filterState.visibility.visible &&
+      newState.visibleState.includes(row.ID)) ||
+    (newState.filterState.visibility.nonVisible &&
+      !newState.visibleState.includes(row.ID)) ||
+    (!newState.filterState.visibility.nonVisible &&
+      !newState.filterState.visibility.visible)
+  );
+};
+
+const requestSearchAndFilterHelper = (
+  origRows: StoryView[],
+  newState: State
+) => {
+  let filteredRows: StoryView[] = origRows.filter((row) => {
+    return requestSearchHelper(row, newState);
+  });
+  filteredRows = filteredRows.filter((row) => {
+    if (newState.tabValue === 2) {
+      console.log(row);
+      console.log(checkRowVisibilityPending(row, newState));
+      return checkRowVisibilityPending(row, newState);
+    }
+    return checkRowVisibility(row, newState);
+  });
+  filteredRows = filteredRows.filter((row) => {
+    return handleTagFilterHelper(row, newState);
+  });
+  return filteredRows;
+};
+
+const requestSearchAndFilter = (newState: State) => {
+  if (newState.tabValue === 0) {
+    newState.tableData = requestSearchAndFilterHelper(
+      newState.origTableData,
+      newState
+    );
+  } else if (newState.tabValue === 1) {
+    newState.visibleTableState = requestSearchAndFilterHelper(
+      newState.visibleTableFilterState,
+      newState
+    );
+  } else if (newState.tabValue === 2) {
+    console.log(newState.changedVisibility);
+    newState.changedVisibility = requestSearchAndFilterHelper(
+      newState.changedVisibilityFilter,
+      newState
+    );
+  }
+  return newState;
+};

@@ -81,7 +81,7 @@ func (api api) ReturnAllStories(w http.ResponseWriter, r *http.Request) render.R
 	var storiesByTags []models.Tag
 
 	getVisibility := r.URL.Query()["visibility"]
-	visibility := false
+	visibility := true
 	if getVisibility != nil {
 		vb, err := strconv.ParseBool(getVisibility[0])
 		if err != nil {
