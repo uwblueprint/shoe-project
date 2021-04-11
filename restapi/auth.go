@@ -77,7 +77,7 @@ func generateJWTToken(email string, w http.ResponseWriter) error {
 	// secure := (config.GetMode() == config.MODE_PROD)
 	secure := false
 
-	cookie := http.Cookie{Name: "jwt", Value: signedToken, Expires: expiration, HttpOnly: true, Secure: false, Path: "/api"}
+	cookie := http.Cookie{Name: "jwt", Value: signedToken, Expires: expiration, HttpOnly: true, Secure: secure, Path: "/api"}
 	http.SetCookie(w, &cookie)
 
 	return nil
