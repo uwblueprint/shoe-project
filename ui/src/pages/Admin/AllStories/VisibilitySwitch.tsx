@@ -1,7 +1,7 @@
 import { createStyles, Theme, withStyles } from "@material-ui/core/styles";
 import Switch from "@material-ui/core/Switch";
 
-import { colors } from "../../styles/colors";
+import { colors } from "../../../styles/colors";
 
 export const VisibilitySwitch = withStyles((theme: Theme) =>
   createStyles({

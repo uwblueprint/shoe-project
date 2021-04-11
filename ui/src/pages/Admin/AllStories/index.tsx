@@ -18,22 +18,23 @@ import * as React from "react";
 import styled from "styled-components";
 import useSWR, { mutate } from "swr";
 
-import { StoryDrawer } from "../../components";
-import { a11yProps, AllStoriesTabs } from "../../components/AllStoriesTabs";
-import VirtualizedTable from "../../components/VirtualizedTable";
-import { colors } from "../../styles/colors";
+import { StoryDrawer } from "../../../components";
+import { a11yProps, AllStoriesTabs } from "../../../components/AllStoriesTabs";
+import VirtualizedTable from "../../../components/VirtualizedTable";
+import { colors } from "../../../styles/colors";
 import {
   fontSize,
   StyledAllStoriesHeader,
   StyledEmptyMessage,
-} from "../../styles/typography";
-import { Story } from "../../types/index";
-import { allStoriesReducer, INIT_STATE } from "../AllStories/reducer";
+} from "../../../styles/typography";
+import { Story } from "../../../types/index";
+import { allStoriesReducer, INIT_STATE } from "./reducer";
+import { StoryView } from "./types";
+import { VisibilitySwitch } from "./VisibilitySwitch";
 
 const StyledFilter = styled.div`
   margin-left: 70vw;
 `;
-import { VisibilitySwitch } from "./VisibilitySwitch";
 
 const StyledSearchBar = styled(SearchBar)`
   max-width: 320px;
@@ -118,17 +119,6 @@ const useStyles = makeStyles({
   },
   checked: {},
 });
-
-export type StoryView = Omit<
-  Story,
-  | "summary"
-  | "latitude"
-  | "longitude"
-  | "author"
-  | "CreatedAt"
-  | "DeletedAt"
-  | "UpdatedAt"
-> & { author_name: string };
 
 function createData({
   ID,

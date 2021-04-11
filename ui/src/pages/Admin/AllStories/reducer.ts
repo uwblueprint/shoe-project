@@ -1,4 +1,4 @@
-import { StoryView } from "../AllStories/index";
+import { StoryView } from "./types";
 
 export interface State {
   tabValue: number;

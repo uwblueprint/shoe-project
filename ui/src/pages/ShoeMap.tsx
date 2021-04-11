@@ -8,6 +8,7 @@ import Control from "react-leaflet-control";
 import styled, { css } from "styled-components";
 import useSWR from "swr";
 
+// @ts-ignore svg
 import ShoeLogo from "../assets/images/shoeproject-logo.svg";
 import {
   Filter,
