@@ -1,6 +1,7 @@
 import { StoryView } from "./types";
 
 export interface State {
+  anchorEl: HTMLButtonElement | null;
   tabValue: number;
   search: string;
   visibleState: number[];
@@ -19,6 +20,7 @@ export interface State {
 
 export type Action =
   | { type: "SWITCH_TAB"; id: number }
+  | { type: "SET_ANCHOR"; click: HTMLButtonElement }
   | { type: "HANDLE_SWITCH_CHANGE"; e: React.ChangeEvent; story: StoryView }
   | { type: "INITIALIZE_AFTER_API"; rows: StoryView[] }
   | { type: "INITIALIZE_AFTER_TAGS_API"; rows: string[] }
@@ -32,6 +34,7 @@ export type Action =
   | { type: "HANDLE_SEARCH/FILTER"; data: State };
 
 export const INIT_STATE: State = {
+  anchorEl: null,
   tabValue: 0,
   search: "",
   visibleState: [],
@@ -60,6 +63,12 @@ export function allStoriesReducer(state: State, action: Action): State {
       return {
         ...state,
         tabValue: action.id,
+      };
+    }
+    case "SET_ANCHOR": {
+      return {
+        ...state,
+        anchorEl: action.click,
       };
     }
     case "HANDLE_SWITCH_CHANGE": {
@@ -204,6 +213,7 @@ const requestSearchHelper = (row, newState: State) => {
   Object.keys(row).forEach((prop) => {
     //Exclude search for StoryView members not displayed on table cells
     const excludedParameters =
+      prop !== "ID" &&
       prop !== "image_url" &&
       prop !== "video_url" &&
       prop !== "content" &&
@@ -291,7 +301,6 @@ const requestSearchAndFilter = (newState: State) => {
       newState
     );
   } else if (newState.tabValue === 2) {
-    console.log(newState.changedVisibility);
     newState.changedVisibility = requestSearchAndFilterHelper(
       newState.changedVisibilityFilter,
       newState

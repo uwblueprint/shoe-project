@@ -153,24 +153,25 @@ function createData({
 }
 
 export const AllStories: React.FC = () => {
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-    null
-  );
-
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+    dispatch({
+      type: "SET_ANCHOR",
+      click: event.currentTarget,
+    });
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
+    dispatch({
+      type: "SET_ANCHOR",
+      click: null,
+    });
   };
-
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
 
   const { data: tagOptions, error: tagError } = useSWR<string[]>("/api/tags");
 
   const [state, dispatch] = useReducer(allStoriesReducer, INIT_STATE);
+  const open = Boolean(state.anchorEl);
+  const id = open ? "simple-popover" : undefined;
   const [clickedStory, setClickedStory] = useState<StoryView | undefined>(
     undefined
   );
@@ -374,7 +375,7 @@ export const AllStories: React.FC = () => {
         <Popover
           id={id}
           open={open}
-          anchorEl={anchorEl}
+          anchorEl={state.anchorEl}
           onClose={handleClose}
           anchorOrigin={{
             vertical: "bottom",
