@@ -13,17 +13,19 @@ import { Link, Prompt } from "react-router-dom";
 import styled from "styled-components";
 import useSWR, { mutate } from "swr";
 
-import { StoryDrawer } from "../../components";
-import { a11yProps, AllStoriesTabs } from "../../components/AllStoriesTabs";
-import VirtualizedTable from "../../components/VirtualizedTable";
-import { colors } from "../../styles/colors";
+import { StoryDrawer } from "../../../components";
+import { a11yProps, AllStoriesTabs } from "../../../components/AllStoriesTabs";
+import VirtualizedTable from "../../../components/VirtualizedTable";
+import { colors } from "../../../styles/colors";
 import {
   StyledAllStoriesHeader,
   StyledEmptyMessage,
   StyledSubEmptyMessage,
-} from "../../styles/typography";
-import { Story } from "../../types/index";
-import { allStoriesReducer, INIT_STATE } from "../AllStories/reducer";
+} from "../../../styles/typography";
+
+import { Story } from "../../../types/index";
+import { allStoriesReducer, INIT_STATE } from "./reducer";
+import { StoryView } from "./types";
 import { VisibilitySwitch } from "./VisibilitySwitch";
 
 const StyledSearchBar = styled(SearchBar)`
@@ -111,18 +113,6 @@ const useStyles = makeStyles({
   },
   checked: {},
 });
-
-export type StoryView = Omit<
-  Story,
-  | "summary"
-  | "latitude"
-  | "longitude"
-  | "author"
-  | "tags"
-  | "CreatedAt"
-  | "DeletedAt"
-  | "UpdatedAt"
-> & { author_name: string };
 
 function createData({
   ID,
@@ -687,7 +677,7 @@ export const AllStories: React.FC = () => {
                 },
                 cell: (story) => (
                   <VisibilitySwitch
-                    checked={story.is_visible}
+                    checked={state.visibleState.includes(story.ID)}
                     onChange={(e) => {
                       e.persist();
                       handleSwitchChange(e, story);
