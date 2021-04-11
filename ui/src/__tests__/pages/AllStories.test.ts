@@ -82,7 +82,7 @@ describe("allstories table", () => {
     });
 
     it("should switch tabs", () => {
-      const action: Action = { type: "SET_TAB_VALUE", newValue: 1 };
+      const action: Action = { type: "SET_TAB_VALUE", newValue: 1 , newState: INIT_STATE};
       expect(INIT_STATE.tabValue).toBe(0);
       const newState = allStoriesReducer(INIT_STATE, action);
       expect(newState.tabValue).toBe(1);
@@ -125,8 +125,8 @@ describe("allstories table", () => {
     it("should search a story by number", () => {
       const searchedVal = "2019";
       const action: Action = {
-        type: "HANDLE_SEARCH",
-        data: searchedVal,
+        type: "HANDLE_SEARCH/FILTER",
+        data: {...INIT_STATE, search: searchedVal},
       };
       expect(INIT_STATE.search).toBe("");
       const newState = allStoriesReducer(INIT_STATE, action);
@@ -136,8 +136,8 @@ describe("allstories table", () => {
     it("should search a story by string", () => {
       const searchedVal = "City1";
       const action: Action = {
-        type: "HANDLE_SEARCH",
-        data: searchedVal,
+        type: "HANDLE_SEARCH/FILTER",
+        data: {...INIT_STATE, search: searchedVal},
       };
       expect(INIT_STATE.search).toBe("");
       const newState = allStoriesReducer(INIT_STATE, action);
