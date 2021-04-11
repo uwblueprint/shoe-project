@@ -269,8 +269,6 @@ const requestSearchAndFilterHelper = (
   });
   filteredRows = filteredRows.filter((row) => {
     if (newState.tabValue === 2) {
-      console.log(row);
-      console.log(checkRowVisibilityPending(row, newState));
       return checkRowVisibilityPending(row, newState);
     }
     return checkRowVisibility(row, newState);

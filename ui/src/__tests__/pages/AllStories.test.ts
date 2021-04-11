@@ -73,7 +73,8 @@ describe("allstories table", () => {
       };
       expect(INIT_STATE.visibleTableState.length).toBe(0);
       expect(INIT_STATE.origTableData.length).toBe(0);
-      expect(INIT_STATE.origTableData.length).toBe(0);
+      expect(INIT_STATE.tableData.length).toBe(0);
+      expect(INIT_STATE.tabValue).toBe(0);
       const newState = allStoriesReducer(INIT_STATE, action);
       expect(newState.visibleTableState.length).toBe(2);
       expect(newState.tableData.length).toBe(2);
