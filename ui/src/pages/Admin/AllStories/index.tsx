@@ -186,6 +186,23 @@ export const AllStories: React.FC = () => {
     state.changedVisibility.length
   } ${")"}`;
 
+  const filterAppliedCount = () => {
+    let count = 0
+    Object.keys(state.filterState.tags).forEach((tag) => {
+      if (state.filterState.tags[tag]) {
+        count += 1
+      }
+    })
+    Object.keys(state.filterState.visibility).forEach((vs) => {
+      if (state.filterState.visibility[vs]) {
+        count += 1
+      }
+    })
+    return count
+  }
+
+  const filterLabel = filterAppliedCount() == 0 ? "Filter" : `${filterAppliedCount()} Filter Applied`
+
   const handleTagFilterChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -370,7 +387,7 @@ export const AllStories: React.FC = () => {
           color="primary"
           onClick={handleClick}
         >
-          Filter
+          {filterLabel}
         </Button>
         <Popover
           id={id}
