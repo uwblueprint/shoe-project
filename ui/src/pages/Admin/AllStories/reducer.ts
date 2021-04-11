@@ -1,5 +1,14 @@
 import { StoryView } from "./types";
 
+interface FilterState {
+  visibility: VisibilityType;
+  tags: Record<string, boolean>;
+};
+type VisibilityType = {
+  visible: boolean;
+  nonVisible: boolean;
+};
+
 export interface State {
   anchorEl: HTMLButtonElement | null;
   tabValue: number;
@@ -15,7 +24,7 @@ export interface State {
   order: "asc" | "desc";
   orderBy: string;
   tags: string[];
-  filterState: any;
+  filterState: FilterState;
 }
 
 export type Action =

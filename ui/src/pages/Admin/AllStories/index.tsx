@@ -170,8 +170,8 @@ export const AllStories: React.FC = () => {
   const { data: tagOptions, error: tagError } = useSWR<string[]>("/api/tags");
 
   const [state, dispatch] = useReducer(allStoriesReducer, INIT_STATE);
-  const open = Boolean(state.anchorEl);
-  const id = open ? "simple-popover" : undefined;
+  const isFilterOpen = Boolean(state.anchorEl);
+  const id = "simple-popover"
   const [clickedStory, setClickedStory] = useState<StoryView | undefined>(
     undefined
   );
@@ -374,7 +374,7 @@ export const AllStories: React.FC = () => {
         </Button>
         <Popover
           id={id}
-          open={open}
+          open={isFilterOpen}
           anchorEl={state.anchorEl}
           onClose={handleClose}
           anchorOrigin={{
