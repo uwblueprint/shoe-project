@@ -19,6 +19,7 @@ const mockTableData = [
     image_url: "image1",
     video_url: "video1",
     content: "content1",
+    tags: ["TAG1, TAG2"],
   },
   {
     ID: 2,
@@ -33,6 +34,7 @@ const mockTableData = [
     image_url: "image2",
     video_url: "video2",
     content: "content2",
+    tags: ["TAG1"],
   },
 ];
 
@@ -81,8 +83,36 @@ describe("allstories table", () => {
       expect(newState.origTableData.length).toBe(2);
     });
 
+    it("should initialize tags and filter states after Tags API", () => {
+      const tagRows = ["TAG1", "TAG2"];
+      const action: Action = {
+        type: "INITIALIZE_AFTER_TAGS_API",
+        rows: tagRows,
+      };
+      expect(INIT_STATE.tags.length).toBe(0);
+      expect(INIT_STATE.filterState.tags).toEqual({});
+      expect(INIT_STATE.filterState.visibility).toEqual({
+        visible: false,
+        nonVisible: false,
+      });
+      const newState = allStoriesReducer(INIT_STATE, action);
+      expect(newState.tags.length).toBe(2);
+      expect(newState.filterState.tags).toEqual({
+        TAG1: false,
+        TAG2: false,
+      });
+      expect(newState.filterState.visibility).toEqual({
+        visible: false,
+        nonVisible: false,
+      });
+    });
+
     it("should switch tabs", () => {
-      const action: Action = { type: "SET_TAB_VALUE", newValue: 1 , newState: INIT_STATE};
+      const action: Action = {
+        type: "SET_TAB_VALUE",
+        newValue: 1,
+        newState: INIT_STATE,
+      };
       expect(INIT_STATE.tabValue).toBe(0);
       const newState = allStoriesReducer(INIT_STATE, action);
       expect(newState.tabValue).toBe(1);
@@ -126,7 +156,7 @@ describe("allstories table", () => {
       const searchedVal = "2019";
       const action: Action = {
         type: "HANDLE_SEARCH/FILTER",
-        data: {...INIT_STATE, search: searchedVal},
+        data: { ...INIT_STATE, search: searchedVal },
       };
       expect(INIT_STATE.search).toBe("");
       const newState = allStoriesReducer(INIT_STATE, action);
@@ -137,11 +167,25 @@ describe("allstories table", () => {
       const searchedVal = "City1";
       const action: Action = {
         type: "HANDLE_SEARCH/FILTER",
-        data: {...INIT_STATE, search: searchedVal},
+        data: { ...INIT_STATE, search: searchedVal },
       };
       expect(INIT_STATE.search).toBe("");
       const newState = allStoriesReducer(INIT_STATE, action);
       expect(newState.search).toBe(searchedVal);
+    });
+
+    it("should filter by tag1", () => {
+      const data = {
+        ...INIT_STATE,
+        filterState: { ...INIT_STATE.filterState, tags: { TAG1: true } },
+      };
+      const action: Action = {
+        type: "HANDLE_SEARCH/FILTER",
+        data: data,
+      };
+      expect(INIT_STATE.filterState.tags).toEqual({});
+      const newState = allStoriesReducer(INIT_STATE, action);
+      expect(newState.filterState.tags).toEqual({ TAG1: true });
     });
 
     it("should set changed visibility state", () => {
