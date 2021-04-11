@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import useSWR from "swr";
 
 import { Story } from "../../types/index";
-import { UploadStory } from "./UploadStory";
+import { UploadStoryWrapper } from "./UploadStoryWrapper";
 
 export const Edit: React.FC = () => {
   const { id } = useParams();
@@ -13,11 +13,11 @@ export const Edit: React.FC = () => {
   return (
     <div>
       {story && !error && (
-        <UploadStory
+        <UploadStoryWrapper
           id={id}
           currentStory={story}
           bio={story.author.bio}
-        ></UploadStory>
+        ></UploadStoryWrapper>
       )}
     </div>
   );

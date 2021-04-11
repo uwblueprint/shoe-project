@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { Story } from "../types/index";
-import { UploadStory } from "./Edit/UploadStory";
+import { UploadStoryWrapper } from "./Edit/UploadStoryWrapper";
 
 export const Upload: React.FC = () => {
   const story: Story = {
@@ -26,5 +26,11 @@ export const Upload: React.FC = () => {
     DeletedAt: null,
   };
 
-  return <UploadStory id={null} currentStory={story} bio={""}></UploadStory>;
+  return (
+    <UploadStoryWrapper
+      id={null}
+      currentStory={story}
+      bio={""}
+    ></UploadStoryWrapper>
+  );
 };

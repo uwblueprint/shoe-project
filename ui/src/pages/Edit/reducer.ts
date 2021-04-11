@@ -18,14 +18,15 @@ export type Action =
   | { type: "SET_AUTHOR_COUNTRY"; country: string }
   | { type: "SET_CURRENT_CITY"; city: string }
   | { type: "SET_AUTOCOMPLETE_COUNTRY"; autocompleteCountry: string }
-  | { type: "ADD_COUNTRY"; newCountry: string }
   | { type: "ADD_IMAGE"; addedImage: string }
   | { type: "SET_BUTTON_DISABLE"; status: boolean }
   | { type: "SET_ERROR_STATE"; errorState: boolean }
   | { type: "SET_LOADING_STATUS"; loadingStatus: boolean }
-  | { type: "SET_DRAWER_OPEN"; drawerOpen: boolean };
+  | { type: "SET_DRAWER_OPEN"; drawerOpen: boolean }
+  | { type: "STORY_SUBMITTED"; loadingStatus: boolean; buttonStatus: boolean }
+  | { type: "NEW_COUNTRY_ADDED"; newCountry: string };
 
-export function INIT_STATE(currentStory: Story): State {
+export function get_init_state(currentStory: Story): State {
   return {
     tagArray: currentStory.tags,
     authorCountry: currentStory.author_country,
@@ -66,12 +67,6 @@ export function uploadStoryReducer(state: State, action: Action): State {
         autocompleteAuthorCountry: action.autocompleteCountry,
       };
     }
-    case "ADD_COUNTRY": {
-      return {
-        ...state,
-        addedCountry: action.newCountry,
-      };
-    }
     case "ADD_IMAGE": {
       return {
         ...state,
@@ -100,6 +95,20 @@ export function uploadStoryReducer(state: State, action: Action): State {
       return {
         ...state,
         isDrawerOpen: action.drawerOpen,
+      };
+    }
+    case "STORY_SUBMITTED": {
+      return {
+        ...state,
+        loading: action.loadingStatus,
+        disabled: action.buttonStatus,
+      };
+    }
+    case "NEW_COUNTRY_ADDED": {
+      return {
+        ...state,
+        addedCountry: action.newCountry,
+        authorCountry: action.newCountry,
       };
     }
   }

@@ -18,7 +18,6 @@ import * as React from "react";
 import { useReducer } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import useSWR from "swr";
 
 import { StoryDrawer } from "../../components";
 import { citiesList } from "../../data/cities";
@@ -30,7 +29,7 @@ import {
 } from "../../styles/typography";
 import { Author, Story } from "../../types";
 import { ListboxComponent, renderGroup } from "./Listbox";
-import { INIT_STATE, uploadStoryReducer } from "./reducer";
+import { get_init_state, uploadStoryReducer } from "./reducer";
 import { StoryProps, TagParameters } from "./types";
 
 const StyledGrid = styled(Grid)`
@@ -136,14 +135,12 @@ export const UploadStory: React.FC<StoryProps> = ({
   id,
   currentStory,
   bio,
+  tagOptions,
+  countries,
 }: StoryProps) => {
-  const { data: tagOptions, error } = useSWR<string[]>("/api/tags");
-  const { data: countries, error: errorCountries } = useSWR<string[]>(
-    "/api/countries"
-  );
   const [state, dispatch] = useReducer(
     uploadStoryReducer,
-    INIT_STATE(currentStory)
+    get_init_state(currentStory)
   );
   const history = useHistory();
 
@@ -210,7 +207,13 @@ export const UploadStory: React.FC<StoryProps> = ({
       return storyFromData;
     }
     return undefined;
-  }, [state.isDrawerOpen, formInput]);
+  }, [
+    state.isDrawerOpen,
+    formInput,
+    currentStory.image_url,
+    state.authorCountry,
+    state.newImage,
+  ]);
 
   const hasAllRequiredFields = React.useMemo(() => {
     return (
@@ -267,8 +270,11 @@ export const UploadStory: React.FC<StoryProps> = ({
   };
 
   const storySubmitDialog = (result) => {
-    dispatch({ type: "SET_LOADING_STATUS", loadingStatus: false });
-    dispatch({ type: "SET_BUTTON_DISABLE", status: false });
+    dispatch({
+      type: "STORY_SUBMITTED",
+      loadingStatus: false,
+      buttonStatus: false,
+    });
     const resultMessage = JSON.parse(result).message;
     if (
       resultMessage === "Story Added Successfully" ||
@@ -284,40 +290,41 @@ export const UploadStory: React.FC<StoryProps> = ({
     setFormInput({
       ["author_country"]: autocompleteAuthorCountry,
     });
-    dispatch({ type: "ADD_COUNTRY", newCountry: autocompleteAuthorCountry });
     dispatch({
-      type: "SET_AUTHOR_COUNTRY",
-      country: autocompleteAuthorCountry,
+      type: "NEW_COUNTRY_ADDED",
+      newCountry: autocompleteAuthorCountry,
     });
     countries.push(autocompleteAuthorCountry);
   };
 
-  const addNewCountry = ({ children, ...other }) => (
-    <AddCountryPaper {...other}>
-      {countries.filter(
-        (str) =>
-          str.toLowerCase() === state.autocompleteAuthorCountry.toLowerCase()
-      ).length === 0 &&
-        state.autocompleteAuthorCountry !== "" && (
-          <AddCountryDiv
-            onMouseDown={(event) => {
-              event.preventDefault();
-            }}
-          >
-            {state.autocompleteAuthorCountry}
-            <AddCountryButton
-              onClick={() =>
-                addCountryButtonPressed(state.autocompleteAuthorCountry)
-              }
+  const addNewCountry = ({ children, ...other }) => {
+    const filteredCountriesLength = countries.filter(
+      (str) =>
+        str.toLowerCase() === state.autocompleteAuthorCountry.toLowerCase()
+    ).length;
+    return (
+      <AddCountryPaper {...other}>
+        {filteredCountriesLength === 0 &&
+          state.autocompleteAuthorCountry !== "" && (
+            <AddCountryDiv
+              onMouseDown={(event) => {
+                event.preventDefault();
+              }}
             >
-              ADD
-            </AddCountryButton>
-          </AddCountryDiv>
-        )}
-
-      {children}
-    </AddCountryPaper>
-  );
+              {state.autocompleteAuthorCountry}
+              <AddCountryButton
+                onClick={() =>
+                  addCountryButtonPressed(state.autocompleteAuthorCountry)
+                }
+              >
+                ADD
+              </AddCountryButton>
+            </AddCountryDiv>
+          )}
+        {children}
+      </AddCountryPaper>
+    );
+  };
 
   const apiSubmitCall = (
     fetchString: string,
@@ -386,13 +393,6 @@ export const UploadStory: React.FC<StoryProps> = ({
       apiSubmitCall(fetchString, method, formData);
     }
   };
-
-  if (error) {
-    return <div>Error fetching tags!</div>;
-  }
-  if (errorCountries) {
-    return <div>Error fetching countries array!</div>;
-  }
 
   const pageTitle = id ? "Edit Story" : "Upload New Story";
   const submitButtonText = id ? "Save Edits" : "Upload";

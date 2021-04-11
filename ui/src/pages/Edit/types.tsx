@@ -12,8 +12,15 @@ export interface TagParameters {
   inputProps: InputProps;
 }
 
+export interface StoryWrapperProps {
+  id: number;
+  currentStory: Story;
+  bio: string;
+}
 export interface StoryProps {
   id: number;
   currentStory: Story;
   bio: string;
+  tagOptions: string[];
+  countries: string[];
 }

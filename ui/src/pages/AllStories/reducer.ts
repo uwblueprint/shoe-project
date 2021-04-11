@@ -2,7 +2,7 @@ import { StoryView } from "../AllStories";
 
 export interface State {
   tabValue: number;
-  visibleState: StoryView[];
+  visibleState: number[];
   visibleTableState: StoryView[];
   tableData: StoryView[];
   changedVisibility: StoryView[];
@@ -48,7 +48,7 @@ export function allStoriesReducer(state: State, action: Action): State {
       if (target.checked) {
         return {
           ...state,
-          visibleState: [...state.visibleState, action.story],
+          visibleState: [...state.visibleState, action.story.ID],
           visibleTableState: [...state.visibleTableState, action.story],
           changedVisibility: changedVisibilityContainsID
             ? state.changedVisibility.filter((e) => e.ID !== action.story.ID)
@@ -57,9 +57,7 @@ export function allStoriesReducer(state: State, action: Action): State {
       } else {
         return {
           ...state,
-          visibleState: state.visibleState.filter(
-            (e) => e.ID !== action.story.ID
-          ),
+          visibleState: state.visibleState.filter((e) => e !== action.story.ID),
           visibleTableState: state.visibleTableState.filter(
             (e) => e.ID !== action.story.ID
           ),
@@ -72,7 +70,6 @@ export function allStoriesReducer(state: State, action: Action): State {
     case "INITIALIZE_AFTER_API": {
       return {
         ...state,
-        visibleState: action.rows ? action.rows : [],
         visibleTableState: action.rows ? action.rows : [],
         tableData: action.rows ? action.rows : [],
       };

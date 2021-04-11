@@ -7,8 +7,7 @@ import { ListChildComponentProps, VariableSizeList } from "react-window";
 
 const LISTBOX_PADDING = 8; // px
 
-function renderRow(props: ListChildComponentProps) {
-  const { data, index, style } = props;
+function renderRow({ data, index, style }: ListChildComponentProps) {
   return React.cloneElement(data[index], {
     style: {
       ...style,
