@@ -3,7 +3,7 @@ import { StoryView } from "./types";
 interface FilterState {
   visibility: VisibilityType;
   tags: Record<string, boolean>;
-};
+}
 type VisibilityType = {
   visible: boolean;
   nonVisible: boolean;

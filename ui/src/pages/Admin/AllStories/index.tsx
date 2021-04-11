@@ -171,7 +171,7 @@ export const AllStories: React.FC = () => {
 
   const [state, dispatch] = useReducer(allStoriesReducer, INIT_STATE);
   const isFilterOpen = Boolean(state.anchorEl);
-  const id = "simple-popover"
+  const id = "simple-popover";
   const [clickedStory, setClickedStory] = useState<StoryView | undefined>(
     undefined
   );
@@ -187,21 +187,24 @@ export const AllStories: React.FC = () => {
   } ${")"}`;
 
   const filterAppliedCount = () => {
-    let count = 0
+    let count = 0;
     Object.keys(state.filterState.tags).forEach((tag) => {
       if (state.filterState.tags[tag]) {
-        count += 1
+        count += 1;
       }
-    })
+    });
     Object.keys(state.filterState.visibility).forEach((vs) => {
       if (state.filterState.visibility[vs]) {
-        count += 1
+        count += 1;
       }
-    })
-    return count
-  }
+    });
+    return count;
+  };
 
-  const filterLabel = filterAppliedCount() == 0 ? "Filter" : `${filterAppliedCount()} Filter Applied`
+  const filterLabel =
+    filterAppliedCount() == 0
+      ? "Filter"
+      : `${filterAppliedCount()} Filter Applied`;
 
   const handleTagFilterChange = (
     event: React.ChangeEvent<HTMLInputElement>
