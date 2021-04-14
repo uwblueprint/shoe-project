@@ -22,6 +22,8 @@ import { Story } from "../../types/index";
 import { allStoriesReducer, INIT_STATE } from "../AllStories/reducer";
 import { VisibilitySwitch } from "./VisibilitySwitch";
 
+import AllStoriesAppBar from "../../components/AllStoriesAppBar";
+
 const StyledContainer = styled.div`
   background-color: ${colors.primaryLight6};
 `;
@@ -159,7 +161,7 @@ export const AllStories: React.FC = () => {
   };
 
   const handleSwitchChange = (e, story) => {
-    dispatch({ type: "HANDLE_SWITCH_CHANGE", e, story });
+    dispatch({ type: "HANDLE_SWITCH_CHANGE", e, story: { ...story, is_visible: !story.is_visible }});
     mutate(
       "/api/stories",
       (prevStories: Story[]) => {
@@ -232,11 +234,36 @@ export const AllStories: React.FC = () => {
     dispatch({ type: "SET_TAB_VALUE", newValue });
   };
 
+  const publishMap = () => {
+
+    console.log("WE ARE HERE RN");
+
+    if (state.changedVisibility.length > 0) {
+
+      console.log("WE ARE ALSO HERE");
+      console.log(state.tableData);
+      console.log(state.changedVisibility);
+
+      fetch("/api/stories/publish", {
+        method: "PUT",
+        body: JSON.stringify(state.changedVisibility),
+        redirect: "follow",
+      })
+        .then((response) => response.text())
+        .then((result) => {
+          // storySubmitDialog(result);
+        })
+        .catch((error) => console.log("Error: ", error));
+
+    }
+  };
+
   if (error) return <div>Error returning stories data!</div>;
   if (!allStories) return <div>Loading all stories table..</div>;
   return (
     <>
       <StyledContainer>
+        <AllStoriesAppBar handlePublishMap={publishMap} publishMapDisabled={state.changedVisibility.length == 0}/>
         <StyledAllStoriesHeader>
           The Shoe Project Impact Map Portal
         </StyledAllStoriesHeader>
