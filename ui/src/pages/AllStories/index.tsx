@@ -56,6 +56,12 @@ const StyledRemoveIcon = styled(RemoveIcon)`
   }
 `;
 
+const StyledIconButton = styled(IconButton)`
+  &.MuiIconButton-root {
+    padding: 0px;
+  }
+`;
+
 const useStyles = makeStyles({
   root: {
     background: colors.primaryLight6,
@@ -125,9 +131,9 @@ const checkboxOptions = ["All", "Hidden Stories", "Visible Stories"];
 
 export const AllStories: React.FC = () => {
   const [state, dispatch] = useReducer(allStoriesReducer, INIT_STATE);
-  const [optionState, setOptionState] = useState("");
+  const [optionState, setOptionState] = useState("All");
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+  const drawerOpen = Boolean(anchorEl);
   const [clickedStory, setClickedStory] = useState<StoryView | undefined>(
     undefined
   );
@@ -152,7 +158,6 @@ export const AllStories: React.FC = () => {
 
   const handleCheckboxMenuItemPressed = (option: string) => {
     setOptionState(option);
-    console.log(option);
   };
 
   const fetchStories = (url) =>
@@ -254,8 +259,137 @@ export const AllStories: React.FC = () => {
     dispatch({ type: "SET_TAB_VALUE", newValue });
   };
 
+  const mainCols = [
+    {
+      name: "ID",
+      width: 100,
+      onHeaderClick() {
+        // handleRequestSort("ID");
+      },
+      header: (
+        <div>
+          <Checkbox
+            classes={{
+              root: classes.checkbox,
+              checked: classes.checked,
+            }}
+            checked={state.selectedRowIds.length > 0}
+            indeterminate={indeterminate}
+            onChange={(e) => {
+              e.persist();
+              handleCheckedAll();
+            }}
+          />
+          <StyledIconButton
+            aria-label="more"
+            aria-controls="long-menu"
+            aria-haspopup="true"
+            onClick={handleClick}
+          >
+            <ExpandMoreIcon />
+          </StyledIconButton>
+          <Menu
+            id="long-menu"
+            anchorEl={anchorEl}
+            keepMounted
+            open={drawerOpen}
+            onClose={handleClose}
+          >
+            {checkboxOptions.map((option) => (
+              <MenuItem
+                key={option}
+                selected={option === optionState}
+                onClick={() => {
+                  handleCheckboxMenuItemPressed(option);
+                  handleClose();
+                }}
+              >
+                {option}
+              </MenuItem>
+            ))}
+          </Menu>
+        </div>
+      ),
+      cell: (story) => (
+        <div>
+          <Checkbox
+            classes={{
+              root: classes.checkbox,
+              checked: classes.checked,
+            }}
+            onChange={(e) => {
+              e.persist();
+              handleChecked(e, story);
+            }}
+            checked={state.selectedRowIds.includes(story.ID)}
+          />
+          {story.ID}
+        </div>
+      ),
+    },
+    {
+      name: "title",
+      header: "Story Name",
+      width: 500,
+      onHeaderClick() {
+        handleRequestSort("title");
+      },
+    },
+    {
+      name: "current_city",
+      header: "Current City",
+      width: 200,
+      onHeaderClick() {
+        handleRequestSort("current_city");
+      },
+    },
+    {
+      name: "year",
+      header: "Year",
+      width: 100,
+      onHeaderClick() {
+        handleRequestSort("year");
+      },
+    },
+    {
+      name: "author_name",
+      header: "Author name",
+      width: 250,
+      onHeaderClick() {
+        handleRequestSort("author_name");
+      },
+    },
+    {
+      name: "author_country",
+      header: "Country",
+      width: 300,
+      onHeaderClick() {
+        handleRequestSort("author_country");
+      },
+    },
+    {
+      name: "is_visible",
+      header: "Visibility",
+      width: 150,
+      onHeaderClick() {
+        handleRequestSort("is_visible");
+      },
+      cell: (story) => (
+        <VisibilitySwitch
+          checked={story.is_visible}
+          onChange={(e) => {
+            e.persist();
+            handleSwitchChange(e, story);
+          }}
+          name="checked"
+          color="primary"
+        />
+      ),
+    },
+  ];
   if (error) return <div>Error returning stories data!</div>;
   if (!allStories) return <div>Loading all stories table..</div>;
+
   return (
     <>
       <StyledContainer>
@@ -278,157 +412,67 @@ export const AllStories: React.FC = () => {
         </Tabs>
       </AppBar>
       <AllStoriesTabs value={state.tabValue} index={0}>
-        <VirtualizedTable
-          data={stableSort(
-            state.tableData,
-            getComparator(state.order, state.orderBy)
-          )}
-          order={state.order}
-          orderBy={state.orderBy}
-          setClickedRow={setClickedRow}
-          columns={[
-            {
-              name: "ID",
-              width: 100,
-              onHeaderClick() {
-                // handleRequestSort("ID");
-              },
-              header: (
-                <div>
-                  <Checkbox
-                    classes={{
-                      root: classes.checkbox,
-                      checked: classes.checked,
-                    }}
-                    checked={state.selectedRowIds.length > 0}
-                    indeterminate={indeterminate}
-                    onChange={(e) => {
-                      e.persist();
-                      handleCheckedAll();
-                    }}
-                  />
-                  <IconButton
-                    aria-label="more"
-                    aria-controls="long-menu"
-                    aria-haspopup="true"
-                    onClick={handleClick}
-                  >
-                    <ExpandMoreIcon />
-                  </IconButton>
-                  <Menu
-                    id="long-menu"
-                    anchorEl={anchorEl}
-                    keepMounted
-                    open={open}
-                    onClose={handleClose}
-                    // PaperProps={{
-                    //   style: {
-                    //     maxHeight: ITEM_HEIGHT * 4.5,
-                    //     width: "20ch",
-                    //   },
-                    // }}
-                  >
-                    {checkboxOptions.map((option) => (
-                      <MenuItem
-                        key={option}
-                        selected={option === optionState}
-                        onClick={() => {
-                          handleCheckboxMenuItemPressed(option);
-                          handleClose();
-                        }}
-                      >
-                        {option}
-                      </MenuItem>
-                    ))}
-                  </Menu>
-                  ID
-                </div>
-              ),
-              cell: (story) => (
-                <div>
-                  <Checkbox
-                    classes={{
-                      root: classes.checkbox,
-                      checked: classes.checked,
-                    }}
-                    onChange={(e) => {
-                      e.persist();
-                      handleChecked(e, story);
-                    }}
-                    checked={state.selectedRowIds.includes(story.ID)}
-                  />
-                  {story.ID}
-                </div>
-              ),
-            },
-            {
-              name: "title",
-              header: "Story Name",
-              width: 500,
-              onHeaderClick() {
-                handleRequestSort("title");
-              },
-            },
-            {
-              name: "current_city",
-              header: "Current City",
-              width: 200,
-              onHeaderClick() {
-                handleRequestSort("current_city");
-              },
-            },
-            {
-              name: "year",
-              header: "Year",
-              width: 100,
-              onHeaderClick() {
-                handleRequestSort("year");
-              },
-            },
-            {
-              name: "author_name",
-              header: "Author name",
-              width: 250,
-              onHeaderClick() {
-                handleRequestSort("author_name");
-              },
-            },
-            {
-              name: "author_country",
-              header: "Country",
-              width: 300,
-              onHeaderClick() {
-                handleRequestSort("author_country");
-              },
-            },
-            {
-              name: "is_visible",
-              header: "Visibility",
-              width: 150,
-              onHeaderClick() {
-                handleRequestSort("is_visible");
-              },
-              cell: (story) => (
-                <VisibilitySwitch
-                  checked={story.is_visible}
-                  onChange={(e) => {
-                    e.persist();
-                    handleSwitchChange(e, story);
-                  }}
-                  name="checked"
-                  color="primary"
-                />
-              ),
-            },
-          ]}
-        />
-        <StoryDrawer
-          story={clickedStory}
-          onClose={() => setClickedStory(undefined)}
-          onClickEditStory={() => {
-            console.log("TODO: Route to edit page");
-          }}
-        />
+        {optionState === "Hidden Stories" ? (
+          <div>
+            <VirtualizedTable
+              data={stableSort(
+                state.tableData.filter((stories) => !stories.is_visible),
+                getComparator(state.order, state.orderBy)
+              )}
+              order={state.order}
+              orderBy={state.orderBy}
+              setClickedRow={setClickedRow}
+              columns={mainCols}
+            />
+            <StoryDrawer
+              story={clickedStory}
+              onClose={() => setClickedStory(undefined)}
+              onClickEditStory={() => {
+                console.log("TODO: Route to edit page");
+              }}
+            />
+          </div>
+        ) : optionState === "Visible Stories" ? (
+          <div>
+            <VirtualizedTable
+              data={stableSort(
+                state.tableData.filter((stories) => stories.is_visible),
+                getComparator(state.order, state.orderBy)
+              )}
+              order={state.order}
+              orderBy={state.orderBy}
+              setClickedRow={setClickedRow}
+              columns={mainCols}
+            />
+            <StoryDrawer
+              story={clickedStory}
+              onClose={() => setClickedStory(undefined)}
+              onClickEditStory={() => {
+                console.log("TODO: Route to edit page");
+              }}
+            />
+          </div>
+        ) : (
+          <div>
+            <VirtualizedTable
+              data={stableSort(
+                state.tableData,
+                getComparator(state.order, state.orderBy)
+              )}
+              order={state.order}
+              orderBy={state.orderBy}
+              setClickedRow={setClickedRow}
+              columns={mainCols}
+            />
+            <StoryDrawer
+              story={clickedStory}
+              onClose={() => setClickedStory(undefined)}
+              onClickEditStory={() => {
+                console.log("TODO: Route to edit page");
+              }}
+            />
+          </div>
+        )}
       </AllStoriesTabs>
 
       <AllStoriesTabs value={state.tabValue} index={1}>
