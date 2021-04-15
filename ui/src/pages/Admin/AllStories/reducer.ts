@@ -55,12 +55,13 @@ export function allStoriesReducer(state: State, action: Action): State {
       const changedVisibilityContainsID = state.changedVisibility.some(
         (e) => e.ID === action.story.ID
       );
+
+      action.story.is_visible = !action.story.is_visible;
       const target = action.e.target as HTMLInputElement;
       if (target.checked) {
         return {
           ...state,
           visibleState: [...state.visibleState, action.story.ID],
-          visibleTableState: [...state.visibleTableState, action.story],
           changedVisibility: changedVisibilityContainsID
             ? state.changedVisibility.filter((e) => e.ID !== action.story.ID)
             : [...state.changedVisibility, action.story],
@@ -78,9 +79,6 @@ export function allStoriesReducer(state: State, action: Action): State {
         return {
           ...state,
           visibleState: state.visibleState.filter((e) => e !== action.story.ID),
-          visibleTableState: state.visibleTableState.filter(
-            (e) => e.ID !== action.story.ID
-          ),
           changedVisibility: changedVisibilityContainsID
             ? state.changedVisibility.filter((e) => e.ID !== action.story.ID)
             : [...state.changedVisibility, action.story],

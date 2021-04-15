@@ -3,7 +3,7 @@ import MuiTable from "mui-virtualized-table";
 import * as React from "react";
 import AutoSizer from "react-virtualized/dist/commonjs/AutoSizer";
 
-import { StoryView } from "../pages/AllStories";
+import { StoryView } from "../pages/Admin/AllStories/types";
 import { colors } from "../styles/colors";
 import { fontSize } from "../styles/typography";
 

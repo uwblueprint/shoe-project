@@ -11,7 +11,7 @@ import { useEffect, useReducer, useState } from "react";
 import * as React from "react";
 import { Link, Prompt } from "react-router-dom";
 import styled from "styled-components";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 
 import { StoryDrawer } from "../../../components";
 import { a11yProps, AllStoriesTabs } from "../../../components/AllStoriesTabs";
@@ -170,6 +170,14 @@ export const AllStories: React.FC = () => {
     fetchStories
   );
 
+  const isToggled = (story) => {
+    return (
+      state.visibleTableState
+        .filter((s) => s.is_visible)
+        .some((e) => e.ID === story.ID) || state.visibleState.includes(story.ID)
+    );
+  };
+
   useEffect(() => {
     if (allStories) {
       dispatch({ type: "INITIALIZE_AFTER_API", rows: allStories });
@@ -187,18 +195,6 @@ export const AllStories: React.FC = () => {
 
   const handleSwitchChange = (e, story) => {
     dispatch({ type: "HANDLE_SWITCH_CHANGE", e, story });
-
-    mutate(
-      "/api/stories",
-      (prevStories: Story[]) => {
-        return prevStories.map((currStory) =>
-          currStory.ID === story.ID
-            ? { ...currStory, is_visible: !currStory.is_visible }
-            : currStory
-        );
-      },
-      false
-    );
   };
 
   const handleCheckedAll = () => {
@@ -321,7 +317,7 @@ export const AllStories: React.FC = () => {
         </StyledAllStoriesHeader>
         <UploadButton
           component={Link}
-          to="/upload"
+          to="/admin/upload"
           variant="contained"
           size="large"
           color="primary"
@@ -454,7 +450,7 @@ export const AllStories: React.FC = () => {
                 },
                 cell: (story) => (
                   <VisibilitySwitch
-                    checked={story.is_visible}
+                    checked={isToggled(story)}
                     onChange={(e) => {
                       e.persist();
                       handleSwitchChange(e, story);
@@ -573,7 +569,7 @@ export const AllStories: React.FC = () => {
                 },
                 cell: (story) => (
                   <VisibilitySwitch
-                    checked={story.is_visible}
+                    checked={isToggled(story)}
                     onChange={(e) => {
                       e.persist();
                       handleSwitchChange(e, story);
@@ -676,7 +672,7 @@ export const AllStories: React.FC = () => {
                 },
                 cell: (story) => (
                   <VisibilitySwitch
-                    checked={state.visibleState.includes(story.ID)}
+                    checked={isToggled(story)}
                     onChange={(e) => {
                       e.persist();
                       handleSwitchChange(e, story);
