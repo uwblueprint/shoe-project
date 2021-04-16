@@ -48,7 +48,6 @@ const CenterText = styled.div`
   height: 100px;
 `;
 
-
 export const Login: React.FC = () => {
   const { auth, googleLoaded, failure, signIn } = useAuth();
 
@@ -59,8 +58,12 @@ export const Login: React.FC = () => {
           <CircularProgress />
         </CenterIcon>
         <CenterText>
-          <LoginTitleText>Please make sure cookies are enabled on this site</LoginTitleText>
-          <LoginMessageText>(Check the toolbar at the top of the page!)</LoginMessageText>
+          <LoginTitleText>
+            Please make sure cookies are enabled on this site
+          </LoginTitleText>
+          <LoginMessageText>
+            (Check the toolbar at the top of the page!)
+          </LoginMessageText>
         </CenterText>
       </>
     );
@@ -85,7 +88,10 @@ export const Login: React.FC = () => {
         <CardContent>
           <LoginTitleText>{title}</LoginTitleText>
           <LoginMessageText>{description}</LoginMessageText>
-          <LoginMessageText>If you are having trouble signing in, make sure third-party cookies are enabled for this site.</LoginMessageText>
+          <LoginMessageText>
+            If you are having trouble signing in, make sure third-party cookies
+            are enabled for this site.
+          </LoginMessageText>
         </CardContent>
         <GoogleButton>
           <Button
