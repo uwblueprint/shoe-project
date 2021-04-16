@@ -20,7 +20,7 @@ const CardDiv = styled.div`
 
 const StyledCard = styled(Card)`
   max-height: 35vh;
-  max-width: 25vw;
+  max-width: 30vw;
 `;
 
 const GoogleButton = styled.div`
@@ -76,7 +76,7 @@ export const Login: React.FC = () => {
       : "Sorry, that is not a valid email";
   const description =
     failure !== FailureState.InvalidEmail
-      ? "Please Sign In using your Shoe Project Email"
+      ? "Please Sign In using your Shoe Project Email."
       : "Make sure you are using a Shoe Project Organization Email";
 
   return (
@@ -85,6 +85,7 @@ export const Login: React.FC = () => {
         <CardContent>
           <LoginTitleText>{title}</LoginTitleText>
           <LoginMessageText>{description}</LoginMessageText>
+          <LoginMessageText>If you are having trouble signing in, make sure third-party cookies are enabled for this site.</LoginMessageText>
         </CardContent>
         <GoogleButton>
           <Button
