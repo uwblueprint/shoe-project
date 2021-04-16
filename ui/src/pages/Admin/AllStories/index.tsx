@@ -4,8 +4,12 @@ import { makeStyles } from "@material-ui/core/styles";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import AddIcon from "@material-ui/icons/Add";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import RemoveIcon from "@material-ui/icons/Remove";
+import IconButton from "@material-ui/core/IconButton";
 import SearchBar from "material-ui-search-bar";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
 import { useEffect, useReducer, useState } from "react";
 import * as React from "react";
 import styled from "styled-components";
@@ -72,6 +76,12 @@ const StyledRemoveIcon = styled(RemoveIcon)`
   }
 `;
 
+const StyledIconButton = styled(IconButton)`
+  &.MuiIconButton-root {
+    padding: 0px;
+  }
+`;
+
 const useStyles = makeStyles({
   root: {
     background: colors.primaryLight6,
@@ -124,12 +134,15 @@ function createData({
     content,
   };
 }
-
+const checkboxOptions = ["All", "Hidden Stories", "Visible Stories"];
 export const AllStories: React.FC = () => {
   const [state, dispatch] = useReducer(allStoriesReducer, INIT_STATE);
   const [clickedStory, setClickedStory] = useState<StoryView | undefined>(
     undefined
   );
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const drawerOpen = Boolean(anchorEl);
+  const [optionState, setOptionState] = useState("All");
   const classes = useStyles();
   const allStoriesLabel = `${"ALL STORIES"} ${"("} ${
     state.tableData.length
@@ -291,6 +304,17 @@ export const AllStories: React.FC = () => {
     dispatch({ type: "HANDLE_SEARCH", data: "" });
     requestSearch("");
   };
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleCheckboxMenuItemPressed = (option: string) => {
+    setOptionState(option);
+  };
   if (error) return <div>Error returning stories data!</div>;
   if (!allStories) return <div>Loading all stories table..</div>;
   return (
@@ -350,10 +374,37 @@ export const AllStories: React.FC = () => {
                     indeterminate={indeterminate}
                     onChange={(e) => {
                       e.persist();
-                      handleCheckedAll;
+                      handleCheckedAll();
                     }}
                   />
-                  ID
+                  <StyledIconButton
+                    aria-label="more"
+                    aria-controls="long-menu"
+                    aria-haspopup="true"
+                    onClick={handleClick}
+                  >
+                    <ExpandMoreIcon />
+                  </StyledIconButton>
+                  <Menu
+                    id="long-menu"
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={drawerOpen}
+                    onClose={handleClose}
+                  >
+                    {checkboxOptions.map((option) => (
+                      <MenuItem
+                        key={option}
+                        selected={option === optionState}
+                        onClick={() => {
+                          handleCheckboxMenuItemPressed(option);
+                          handleClose();
+                        }}
+                      >
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </Menu>
                 </div>
               ),
               cell: (story) => (
