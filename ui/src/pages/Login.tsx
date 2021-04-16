@@ -28,7 +28,7 @@ const GoogleButton = styled.div`
   margin-bottom: 5vh;
 `;
 
-const Center = styled.div`
+const CenterIcon = styled.div`
   position: absolute;
   top: 50%;
   left: 50%;
@@ -38,14 +38,31 @@ const Center = styled.div`
   height: 100px;
 `;
 
+const CenterText = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: 10px;
+  margin-left: -275px;
+  width: 500px;
+  height: 100px;
+`;
+
+
 export const Login: React.FC = () => {
   const { auth, googleLoaded, failure, signIn } = useAuth();
 
   if (!googleLoaded) {
     return (
-      <Center>
-        <CircularProgress />
-      </Center>
+      <>
+        <CenterIcon>
+          <CircularProgress />
+        </CenterIcon>
+        <CenterText>
+          <LoginTitleText>Please make sure cookies are enabled on this site</LoginTitleText>
+          <LoginMessageText>(Check the toolbar at the top of the page!)</LoginMessageText>
+        </CenterText>
+      </>
     );
   }
 
