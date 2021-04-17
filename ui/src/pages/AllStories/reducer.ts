@@ -19,7 +19,8 @@ export type Action =
   | { type: "HANDLE_CHECKED"; e: React.ChangeEvent; story: StoryView }
   | { type: "SET_ORDERING"; order: "asc" | "desc"; orderBy: string }
   | { type: "SET_TABLE_DATA"; data: StoryView[] }
-  | { type: "SET_TAB_VALUE"; newValue: number };
+  | { type: "SET_TAB_VALUE"; newValue: number }
+  | { type: "CLEAR_PENDING_CHANGES" };
 
 export const INIT_STATE: State = {
   tabValue: 0,
@@ -34,6 +35,12 @@ export const INIT_STATE: State = {
 
 export function allStoriesReducer(state: State, action: Action): State {
   switch (action.type) {
+    case "CLEAR_PENDING_CHANGES": {
+      return {
+        ...state,
+        changedVisibility: []
+      }
+    }
     case "SWITCH_TAB": {
       return {
         ...state,

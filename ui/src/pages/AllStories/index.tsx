@@ -251,11 +251,12 @@ export const AllStories: React.FC = () => {
       })
         .then((response) => response.text())
         .then((result) => {
+          dispatch({type: "CLEAR_PENDING_CHANGES"});
           // storySubmitDialog(result);
         })
         .catch((error) => console.log("Error: ", error));
 
-    }
+    };
   };
 
   if (error) return <div>Error returning stories data!</div>;
