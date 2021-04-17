@@ -51,7 +51,7 @@ const useStyles = makeStyles({
   },
 );
  
-export default function AllStoriesAppBar(props) {
+export default function AllStoriesAppBar(props: { publishMapDisabled: boolean; handlePublishMap: () => void; handleLogout: void; }) {
   const classes = useStyles();
 
   console.log(props.publishMapDisabled);

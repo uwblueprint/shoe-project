@@ -13,6 +13,8 @@ import useSWR, { mutate } from "swr";
 import { StoryDrawer } from "../../components";
 import { a11yProps, AllStoriesTabs } from "../../components/AllStoriesTabs";
 import VirtualizedTable from "../../components/VirtualizedTable";
+import ToastyBoi from "../../components/ToastyBoi";
+
 import { colors } from "../../styles/colors";
 import {
   StyledAllStoriesHeader,
@@ -234,25 +236,28 @@ export const AllStories: React.FC = () => {
     dispatch({ type: "SET_TAB_VALUE", newValue });
   };
 
+  const toast = React.useRef(null);
+
+  const showToast = (message: string) => {
+    console.log("TRYING TO OPEN TOAST");
+    toast.current.showToast(message);
+  }
+
   const publishMap = () => {
 
     console.log("WE ARE HERE RN");
 
     if (state.changedVisibility.length > 0) {
 
-      console.log("WE ARE ALSO HERE");
-      console.log(state.tableData);
-      console.log(state.changedVisibility);
-
       fetch("/api/stories/publish", {
         method: "PUT",
         body: JSON.stringify(state.changedVisibility),
         redirect: "follow",
       })
-        .then((response) => response.text())
+        .then((response) => response.json())
         .then((result) => {
           dispatch({type: "CLEAR_PENDING_CHANGES"});
-          // storySubmitDialog(result);
+          showToast(result["message"]);
         })
         .catch((error) => console.log("Error: ", error));
 
@@ -402,7 +407,6 @@ export const AllStories: React.FC = () => {
           }}
         />
       </AllStoriesTabs>
-
       <AllStoriesTabs value={state.tabValue} index={1}>
         <VirtualizedTable
           data={state.visibleTableState.filter((story) => story.is_visible)}
@@ -606,6 +610,7 @@ export const AllStories: React.FC = () => {
           <StyledEmptyMessage> No pending changes! </StyledEmptyMessage>
         )}
       </AllStoriesTabs>
+      <ToastyBoi ref={toast} />
     </>
   );
 };
