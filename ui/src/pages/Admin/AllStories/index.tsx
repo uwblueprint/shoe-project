@@ -34,15 +34,32 @@ import { VisibilitySwitch } from "./VisibilitySwitch";
 
 const StyledFilter = styled.div`
   margin-left: 70vw;
+  margin-top: 1vh;
+`;
+
+const StyledButton = styled(Button)`
+&& {
+  width: 112px;
+  height: 46px;
+  box-shadow: none;
+  margin-left: 1vh;
+  color: ${colors.primaryDark1};
+  background-color: ${colors.white};
+  background: ${colors.white};
+  float:right;
+  &:active {
+    background-color: ${colors.primaryLight6};
+  }
+  &:hover{
+    background-color: ${colors.primaryLight6};
+  }
 `;
 
 const StyledSearchBar = styled(SearchBar)`
   max-width: 320px;
   background-color: ${colors.primaryLight4};
-  border-radius: 5px;
   height: 40px;
-  margin-left: 70vw;
-  margin-top: 1vh;
+  border-radius: 5px;
   color: ${colors.primaryDark1};
   border: none;
   box-shadow: none;
@@ -52,6 +69,7 @@ const StyledSearchBar = styled(SearchBar)`
   .MuiInputBase-input {
     font-family: "Poppins";
   }
+  
 `;
 
 const StyledChip = styled(Chip)`
@@ -203,7 +221,7 @@ export const AllStories: React.FC = () => {
 
   const filterLabel =
     filterAppliedCount() == 0
-      ? "Filter"
+      ? `Filter`
       : `${filterAppliedCount()} Filter Applied`;
 
   const handleTagFilterChange = (
@@ -384,14 +402,16 @@ export const AllStories: React.FC = () => {
         </Tabs>
       </AppBar>
       <StyledFilter>
-        <Button
+      
+        <StyledButton
           aria-describedby={id}
           variant="contained"
           color="primary"
           onClick={handleClick}
         >
           {filterLabel}
-        </Button>
+        </StyledButton>
+        
         <Popover
           id={id}
           open={isFilterOpen}
@@ -452,8 +472,7 @@ export const AllStories: React.FC = () => {
             </FormGroup>
           </FormControl>
         </Popover>
-      </StyledFilter>
-      <StyledSearchBar
+        <StyledSearchBar
         placeholder="Type to search..."
         value={state.search}
         onChange={(searchVal) => {
@@ -464,6 +483,8 @@ export const AllStories: React.FC = () => {
         }}
         onCancelSearch={() => cancelSearch()}
       />
+      </StyledFilter>
+      
       <AllStoriesTabs value={state.tabValue} index={0}>
         <VirtualizedTable
           data={stableSort(
