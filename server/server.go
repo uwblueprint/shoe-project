@@ -34,7 +34,9 @@ func New() (*Server, error) {
 }
 
 func redirectToHttps(w http.ResponseWriter, r *http.Request) {
-    http.Redirect(w, r, "https://" + r.Host + r.RequestURI, http.StatusMovedPermanently)
+	if r.TLS == nil {
+		http.Redirect(w, r, "https://" + r.Host + r.RequestURI, http.StatusMovedPermanently)
+	}
 }
 
 // ListenAndServe will listen for requests
