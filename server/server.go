@@ -21,9 +21,19 @@ type Server struct {
 	Server *http.Server
 }
 
+func redirectToHttps(w http.ResponseWriter, r *http.Request) {
+	if r.Header.Get("X-Forwarded-Proto") != "https" {
+		http.Redirect(w, r, "https://" + r.Host + r.RequestURI, http.StatusMovedPermanently)
+	}
+}
+
 // New will setup Chi API listener
 func New() (*Server, error) {
 	r := CreateRouter().WithBasicMiddlewares().WithLoggingMiddleware().WithCORS()
+
+	if (config.GetMode() == config.MODE_PROD) {
+		r.Middlewares().Handler(http.HandlerFunc(redirectToHttps))
+	}
 
 	s := &Server{
 		Logger: zap.S(),
@@ -31,12 +41,6 @@ func New() (*Server, error) {
 	}
 
 	return s, nil
-}
-
-func redirectToHttps(w http.ResponseWriter, r *http.Request) {
-	if r.TLS == nil {
-		http.Redirect(w, r, "https://" + r.Host + r.RequestURI, http.StatusMovedPermanently)
-	}
 }
 
 // ListenAndServe will listen for requests
@@ -49,9 +53,6 @@ func (s *Server) ListenAndServe(errChan chan error) error {
 	s.Server = &http.Server{
 		Addr:    net.JoinHostPort(config.GetServerHost(), strconv.Itoa(portToUse)),
 		Handler: s.Router,
-	}
-	if (config.GetMode() == config.MODE_PROD) {
-		s.Server.Handler = http.HandlerFunc(redirectToHttps)
 	}
 
 	logger := s.Logger.With("Address", s.Server.Addr)
