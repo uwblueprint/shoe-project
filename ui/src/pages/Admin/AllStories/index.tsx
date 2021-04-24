@@ -9,7 +9,7 @@ import RemoveIcon from "@material-ui/icons/Remove";
 import SearchBar from "material-ui-search-bar";
 import { useEffect, useReducer, useState } from "react";
 import * as React from "react";
-import { Link } from "react-router-dom";
+import { Link, Prompt } from "react-router-dom";
 import styled from "styled-components";
 import useSWR, { mutate } from "swr";
 
@@ -168,7 +168,12 @@ export const AllStories: React.FC = () => {
 
   const { data: allStories, error } = useSWR<StoryView[] | undefined>(
     "/api/stories",
-    fetchStories
+    fetchStories,
+    {
+      isPaused: () => {
+        return allStories ? true : false;
+      },
+    }
   );
 
   useEffect(() => {
@@ -315,6 +320,12 @@ export const AllStories: React.FC = () => {
   if (!allStories) return <div>Loading all stories table..</div>;
   return (
     <>
+      <Prompt
+        when={state.changedVisibility.length !== 0}
+        message={(location) =>
+          `Are you sure you want to go to ${location.pathname}? Your changes on this page will not be saved.`
+        }
+      />
       <StyledContainer>
         <StyledAllStoriesHeader>
           The Shoe Project Impact Map Portal
@@ -674,7 +685,7 @@ export const AllStories: React.FC = () => {
                 },
                 cell: (story) => (
                   <VisibilitySwitch
-                    checked={story.is_visible}
+                    checked={state.visibleState.includes(story.ID)}
                     onChange={(e) => {
                       e.persist();
                       handleSwitchChange(e, story);
