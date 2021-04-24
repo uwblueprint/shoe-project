@@ -3,7 +3,6 @@ package restapi
 import (
 	"context"
 	"net/http"
-	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/jwtauth"
@@ -53,16 +52,10 @@ func (api api) Login(w http.ResponseWriter, r *http.Request) render.Renderer {
 }
 
 func generateJWTToken(email string, w http.ResponseWriter) error {
-	jwtExpiry, err := config.GetTokenExpiryDuration()
-	if err != nil {
-		return err
-	}
-	expiration := time.Now().Add(jwtExpiry)
-
 	claim := &models.Claims{
 		Email: email,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: expiration.Unix(),
+			ExpiresAt: 0,
 			Issuer:    config.GetTokenIssuer(),
 		},
 	}
@@ -77,7 +70,7 @@ func generateJWTToken(email string, w http.ResponseWriter) error {
 	// secure := (config.GetMode() == config.MODE_PROD)
 	secure := false
 
-	cookie := http.Cookie{Name: "jwt", Value: signedToken, Expires: expiration, HttpOnly: true, Secure: secure, Path: "/api"}
+	cookie := http.Cookie{Name: "jwt", Value: signedToken, HttpOnly: true, Secure: secure, Path: "/api"}
 	http.SetCookie(w, &cookie)
 
 	return nil
