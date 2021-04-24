@@ -1,10 +1,18 @@
+import { Grid } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
+import Chip from "@material-ui/core/Chip";
+import FormControl from "@material-ui/core/FormControl";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormGroup from "@material-ui/core/FormGroup";
+import FormLabel from "@material-ui/core/FormLabel";
+import Popover from "@material-ui/core/Popover";
 import { makeStyles } from "@material-ui/core/styles";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
 import AddIcon from "@material-ui/icons/Add";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import RemoveIcon from "@material-ui/icons/Remove";
 import SearchBar from "material-ui-search-bar";
 import { useEffect, useReducer, useState } from "react";
@@ -18,6 +26,7 @@ import { a11yProps, AllStoriesTabs } from "../../../components/AllStoriesTabs";
 import VirtualizedTable from "../../../components/VirtualizedTable";
 import { colors } from "../../../styles/colors";
 import {
+  fontSize,
   StyledAllStoriesHeader,
   StyledEmptyMessage,
   StyledSubEmptyMessage,
@@ -27,30 +36,72 @@ import { allStoriesReducer, INIT_STATE } from "./reducer";
 import { StoryView } from "./types";
 import { VisibilitySwitch } from "./VisibilitySwitch";
 
-const StyledSearchBar = styled(SearchBar)`
-  max-width: 320px;
-  background-color: ${colors.primaryLight4};
-  border-radius: 5px;
-  height: 40px;
-  margin-left: 70vw;
+const StyledFilter = styled.div`
+  width: 30vw;
   margin-top: 1vh;
+  justify-self: right;
+  margin-left: 65vw;
+`;
+
+const StyledButton = styled(Button)`
+&& {
+  width: 100%;
+  height: 100%;
+  box-shadow: none;
+  color: ${colors.primaryDark1};
+  background-color: ${colors.white};
+  background: ${colors.white};
+  padding: 5px;
+  &:active {
+    background-color: ${colors.primaryLight6};
+  }
+  &:hover{
+    background-color: ${colors.white};
+    box-shadow: none;
+  }
+`;
+
+const StyledSearchBar = styled(SearchBar)`
+  width: 100%;
+  height: 40px;
+  border-radius: 5px;
   color: ${colors.primaryDark1};
   border: none;
-  box-shadow: none;
   .ForwardRef-iconButton-10 {
     color: ${colors.primaryDark1};
   }
   .MuiInputBase-input {
     font-family: "Poppins";
   }
+  &.MuiPaper-elevation1 {
+    box-shadow: none;
+  }
+  &.MuiPaper-root {
+    background-color: ${colors.primaryLight4};
+  }
 `;
 
+const StyledChip = styled(Chip)`
+  &&.MuiChip-root {
+    color: ${colors.primaryDark2};
+    font-family: Poppins;
+    font-size: ${fontSize.body1};
+    line-height: 150%;
+    margin-right: 4px;
+    text-transform: capitalize;
+  }
+
+  &&.MuiChip-colorPrimary {
+    background: ${colors.primaryLight3};
+  }
+`;
 const UploadButton = styled(Button)` 
 && {
   box-shadow: none;
   background-color: ${colors.primaryDark1};
   margin-bottom: -5vh;
-  margin-left: 70vw;
+  margin-right: 64px;
+  float:right;
   &:active {
     background-color: ${colors.primaryDark2};
   }
@@ -110,6 +161,11 @@ const useStyles = makeStyles({
       color: colors.primaryDark1,
     },
   },
+  promptText: {
+    "&&& .MuiTypography-body1": {
+      fontFamily: "Poppins",
+    },
+  },
   checked: {},
 });
 
@@ -125,6 +181,7 @@ function createData({
   image_url,
   video_url,
   content,
+  tags,
 }: Story): StoryView {
   const author_name = `${author_first_name} ${author_last_name}`;
   return {
@@ -140,11 +197,18 @@ function createData({
     image_url,
     video_url,
     content,
+    tags,
   };
 }
 
+const POPOVER_ID = "simple-popover";
+
 export const AllStories: React.FC = () => {
+  const { data: tagOptions, error: tagError } = useSWR<string[]>("/api/tags");
+
   const [state, dispatch] = useReducer(allStoriesReducer, INIT_STATE);
+  const isFilterOpen = Boolean(state.anchorEl);
+
   const [clickedStory, setClickedStory] = useState<StoryView | undefined>(
     undefined
   );
@@ -160,6 +224,72 @@ export const AllStories: React.FC = () => {
   } ${")"}`;
   const doesVisibleStoriesExist =
     state.visibleTableState.filter((story) => story.is_visible).length !== 0;
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    dispatch({
+      type: "SET_ANCHOR",
+      click: event.currentTarget,
+    });
+  };
+
+  const handleClose = () => {
+    dispatch({
+      type: "SET_ANCHOR",
+      click: null,
+    });
+  };
+
+  const filterAppliedCount = () => {
+    let count = 0;
+    Object.keys(state.filterState.tags).forEach((tag) => {
+      if (state.filterState.tags[tag]) {
+        count += 1;
+      }
+    });
+    Object.keys(state.filterState.visibility).forEach((vs) => {
+      if (state.filterState.visibility[vs]) {
+        count += 1;
+      }
+    });
+    return count;
+  };
+
+  const filterLabel =
+    filterAppliedCount() == 0
+      ? `Filter`
+      : `${filterAppliedCount()} Filter Applied`;
+
+  const handleTagFilterChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    dispatch({
+      type: "HANDLE_SEARCH/FILTER",
+      newFilterState: {
+        ...state.filterState,
+        tags: {
+          ...state.filterState.tags,
+          [event.target.name]: event.target.checked,
+        },
+      },
+      newSearch: state.search,
+    });
+  };
+
+  const handleFilterVisibilityChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    dispatch({
+      type: "HANDLE_SEARCH/FILTER",
+      newFilterState: {
+        ...state.filterState,
+        visibility: {
+          ...state.filterState.visibility,
+          [event.target.name]: event.target.checked,
+        },
+      },
+      newSearch: state.search,
+    });
+  };
 
   const fetchStories = (url) =>
     fetch(url)
@@ -180,7 +310,10 @@ export const AllStories: React.FC = () => {
     if (allStories) {
       dispatch({ type: "INITIALIZE_AFTER_API", rows: allStories });
     }
-  }, [allStories]);
+    if (tagOptions) {
+      dispatch({ type: "INITIALIZE_AFTER_TAGS_API", rows: tagOptions });
+    }
+  }, [allStories, tagOptions]);
 
   const setClickedRow = (rowId: number | undefined) => {
     if (rowId) {
@@ -234,9 +367,6 @@ export const AllStories: React.FC = () => {
       return a[1] - b[1];
     });
     const sortedArray = stabilizedThis.map((el) => el[0]);
-    if (sortedArray.length === 0) {
-      return allStories ? allStories : [];
-    }
     return sortedArray;
   };
 
@@ -262,62 +392,19 @@ export const AllStories: React.FC = () => {
     event: React.ChangeEvent<Record<string, unknown>>,
     newValue: number
   ) => {
-    cancelSearch();
     dispatch({ type: "SET_TAB_VALUE", newValue });
   };
 
-  const requestSearchHelper = (row, searchedVal: string) => {
-    let doesExist = false;
-    Object.keys(row).forEach((prop) => {
-      //Exclude search for StoryView members not displayed on table cells
-      const excludedParameters = prop !== "ID";
-      prop !== "image_url" &&
-        prop !== "video_url" &&
-        prop !== "content" &&
-        prop !== "is_visible";
-      const numExist =
-        typeof row[prop] === "number" &&
-        row[prop].toString().includes(searchedVal) &&
-        excludedParameters;
-      const stringExist =
-        typeof row[prop] === "string" &&
-        row[prop].toLowerCase().includes(searchedVal.toLowerCase()) &&
-        excludedParameters;
-      if (stringExist || numExist) {
-        doesExist = true;
-      }
-    });
-    return doesExist;
-  };
-
-  const requestSearch = (searchedVal: string) => {
-    if (state.tabValue === 0) {
-      const filteredRows: StoryView[] = state.origTableData.filter((row) => {
-        return requestSearchHelper(row, searchedVal);
-      });
-      dispatch({ type: "SET_TABLE_DATA", data: filteredRows });
-    } else if (state.tabValue === 1) {
-      const filteredRows: StoryView[] = state.visibleTableFilterState.filter(
-        (row) => {
-          return requestSearchHelper(row, searchedVal);
-        }
-      );
-      dispatch({ type: "SET_VISIBLE_TABLE_STATE", data: filteredRows });
-    } else if (state.tabValue === 2) {
-      const filteredRows: StoryView[] = state.changedVisibilityFilter.filter(
-        (row) => {
-          return requestSearchHelper(row, searchedVal);
-        }
-      );
-      dispatch({ type: "SET_CHANGED_VISIBILITY", data: filteredRows });
-    }
-  };
   const cancelSearch = () => {
-    dispatch({ type: "HANDLE_SEARCH", data: "" });
-    requestSearch("");
+    dispatch({
+      type: "HANDLE_SEARCH/FILTER",
+      newFilterState: state.filterState,
+      newSearch: "",
+    });
   };
   if (error) return <div>Error returning stories data!</div>;
   if (!allStories) return <div>Loading all stories table..</div>;
+  if (tagError) return <div>Error returning tags data!</div>;
   return (
     <>
       <Prompt
@@ -354,15 +441,135 @@ export const AllStories: React.FC = () => {
           </Tabs>
         </AppBar>
       </StyledContainer>
-      <StyledSearchBar
-        placeholder="Type to search..."
-        value={state.search}
-        onChange={(searchVal) => {
-          dispatch({ type: "HANDLE_SEARCH", data: searchVal });
-          requestSearch(searchVal);
-        }}
-        onCancelSearch={() => cancelSearch()}
-      />
+      <StyledFilter>
+        <Grid container justify="flex-end" spacing={2}>
+          <Grid item xs={8}>
+            <StyledSearchBar
+              placeholder="Type to search..."
+              value={state.search}
+              onChange={(searchVal) => {
+                dispatch({
+                  type: "HANDLE_SEARCH/FILTER",
+                  newFilterState: state.filterState,
+                  newSearch: searchVal,
+                });
+              }}
+              onCancelSearch={() => cancelSearch()}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <StyledButton
+              aria-describedby={POPOVER_ID}
+              variant="contained"
+              color="primary"
+              onClick={handleClick}
+              style={
+                filterAppliedCount()
+                  ? { backgroundColor: colors.primaryLight4 }
+                  : {}
+              }
+            >
+              {filterLabel} <ExpandMoreIcon />
+            </StyledButton>
+            <Popover
+              id={POPOVER_ID}
+              open={isFilterOpen}
+              anchorEl={state.anchorEl}
+              onClose={handleClose}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "center",
+              }}
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "center",
+              }}
+            >
+              <div
+                style={{
+                  padding: 10,
+                }}
+              >
+                <FormControl component="fieldset">
+                  <FormLabel
+                    component="legend"
+                    style={{ minWidth: "10vw", fontFamily: "Poppins" }}
+                  >
+                    Tags:{" "}
+                  </FormLabel>
+                  <FormGroup>
+                    {state.tags.map((tag) => {
+                      return (
+                        <FormControlLabel
+                          key={tag}
+                          control={
+                            <Checkbox
+                              classes={{
+                                root: classes.checkbox,
+                                checked: classes.checked,
+                              }}
+                              checked={state.filterState.tags[tag]}
+                              onChange={handleTagFilterChange}
+                              name={tag}
+                            />
+                          }
+                          className={classes.promptText}
+                          style={{
+                            textTransform: "capitalize",
+                            fontFamily: "Poppins",
+                          }}
+                          label={tag.toLowerCase()}
+                        />
+                      );
+                    })}
+                  </FormGroup>
+                </FormControl>
+                <FormControl component="fieldset">
+                  <FormLabel
+                    component="legend"
+                    style={{ minWidth: "10vw", fontFamily: "Poppins" }}
+                  >
+                    Visibility:{" "}
+                  </FormLabel>
+                  <FormGroup>
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          classes={{
+                            root: classes.checkbox,
+                            checked: classes.checked,
+                          }}
+                          checked={state.filterState.visibility.visible}
+                          onChange={handleFilterVisibilityChange}
+                          name="visible"
+                        />
+                      }
+                      className={classes.promptText}
+                      label="Shown"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          classes={{
+                            root: classes.checkbox,
+                            checked: classes.checked,
+                          }}
+                          checked={state.filterState.visibility.nonVisible}
+                          onChange={handleFilterVisibilityChange}
+                          name="nonVisible"
+                        />
+                      }
+                      className={classes.promptText}
+                      label="Hidden"
+                    />
+                  </FormGroup>
+                </FormControl>
+              </div>
+            </Popover>
+          </Grid>
+        </Grid>
+      </StyledFilter>
+
       <AllStoriesTabs value={state.tabValue} index={0}>
         {state.tableData.length !== 0 ? (
           <VirtualizedTable
@@ -376,7 +583,7 @@ export const AllStories: React.FC = () => {
             columns={[
               {
                 name: "ID",
-                width: 100,
+                width: "5%",
                 onHeaderClick() {
                   handleRequestSort("ID");
                 },
@@ -391,10 +598,9 @@ export const AllStories: React.FC = () => {
                       indeterminate={indeterminate}
                       onChange={(e) => {
                         e.persist();
-                        handleCheckedAll;
+                        handleCheckedAll();
                       }}
                     />
-                    ID
                   </div>
                 ),
                 cell: (story) => (
@@ -408,16 +614,16 @@ export const AllStories: React.FC = () => {
                         e.persist();
                         handleChecked(e, story);
                       }}
-                      checked={state.selectedRowIds.includes(story.ID)}
+                      name="checked"
+                      color="primary"
                     />
-                    {story.ID}
                   </div>
                 ),
               },
               {
                 name: "title",
                 header: "Story Name",
-                width: 500,
+                width: "25%",
                 onHeaderClick() {
                   handleRequestSort("title");
                 },
@@ -425,7 +631,7 @@ export const AllStories: React.FC = () => {
               {
                 name: "current_city",
                 header: "Current City",
-                width: 200,
+                width: "15%",
                 onHeaderClick() {
                   handleRequestSort("current_city");
                 },
@@ -433,7 +639,7 @@ export const AllStories: React.FC = () => {
               {
                 name: "year",
                 header: "Year",
-                width: 100,
+                width: "5%",
                 onHeaderClick() {
                   handleRequestSort("year");
                 },
@@ -441,7 +647,7 @@ export const AllStories: React.FC = () => {
               {
                 name: "author_name",
                 header: "Author name",
-                width: 250,
+                width: "15%",
                 onHeaderClick() {
                   handleRequestSort("author_name");
                 },
@@ -449,15 +655,31 @@ export const AllStories: React.FC = () => {
               {
                 name: "author_country",
                 header: "Country",
-                width: 300,
+                width: "10%",
                 onHeaderClick() {
                   handleRequestSort("author_country");
                 },
               },
               {
+                name: "tags",
+                header: "Tags",
+                width: "15%",
+                onHeaderClick() {
+                  handleRequestSort("tags");
+                },
+                cell: (story) =>
+                  story.tags.map((tag) => (
+                    <StyledChip
+                      color="primary"
+                      key={tag}
+                      label={tag.toLowerCase()}
+                    />
+                  )),
+              },
+              {
                 name: "is_visible",
                 header: "Visibility",
-                width: 150,
+                width: "10%",
                 onHeaderClick() {
                   handleRequestSort("is_visible");
                 },
@@ -495,7 +717,7 @@ export const AllStories: React.FC = () => {
             columns={[
               {
                 name: "ID",
-                width: 100,
+                width: "5%",
                 onHeaderClick() {
                   handleRequestSort("ID");
                 },
@@ -513,7 +735,6 @@ export const AllStories: React.FC = () => {
                         handleCheckedAll;
                       }}
                     />
-                    ID
                   </div>
                 ),
                 cell: (story) => (
@@ -527,16 +748,16 @@ export const AllStories: React.FC = () => {
                         e.persist();
                         handleChecked(e, story);
                       }}
-                      checked={state.selectedRowIds.includes(story.ID)}
+                      name="checked"
+                      color="primary"
                     />
-                    {story.ID}
                   </div>
                 ),
               },
               {
                 name: "title",
                 header: "Story Name",
-                width: 500,
+                width: "25%",
                 onHeaderClick() {
                   handleRequestSort("title");
                 },
@@ -544,7 +765,7 @@ export const AllStories: React.FC = () => {
               {
                 name: "current_city",
                 header: "Current City",
-                width: 200,
+                width: "15%",
                 onHeaderClick() {
                   handleRequestSort("current_city");
                 },
@@ -552,7 +773,7 @@ export const AllStories: React.FC = () => {
               {
                 name: "year",
                 header: "Year",
-                width: 100,
+                width: "5%",
                 onHeaderClick() {
                   handleRequestSort("year");
                 },
@@ -560,7 +781,7 @@ export const AllStories: React.FC = () => {
               {
                 name: "author_name",
                 header: "Author name",
-                width: 250,
+                width: "15%",
                 onHeaderClick() {
                   handleRequestSort("author_name");
                 },
@@ -568,15 +789,31 @@ export const AllStories: React.FC = () => {
               {
                 name: "author_country",
                 header: "Country",
-                width: 300,
+                width: "10%",
                 onHeaderClick() {
                   handleRequestSort("author_country");
                 },
               },
               {
+                name: "tags",
+                header: "Tags",
+                width: "15%",
+                onHeaderClick() {
+                  handleRequestSort("tags");
+                },
+                cell: (story) =>
+                  story.tags.map((tag) => (
+                    <StyledChip
+                      color="primary"
+                      key={tag}
+                      label={tag.toLowerCase()}
+                    />
+                  )),
+              },
+              {
                 name: "is_visible",
                 header: "Visibility",
-                width: 150,
+                width: "10%",
                 onHeaderClick() {
                   handleRequestSort("is_visible");
                 },
@@ -621,7 +858,7 @@ export const AllStories: React.FC = () => {
             columns={[
               {
                 name: "pending-map-changes-changes",
-                width: 50,
+                width: "5%",
                 header: "",
                 cell: (d) => {
                   return (
@@ -639,7 +876,7 @@ export const AllStories: React.FC = () => {
               {
                 name: "title",
                 header: "Story Name",
-                width: 500,
+                width: "25%",
                 onHeaderClick() {
                   handleRequestSort("title");
                 },
@@ -647,7 +884,7 @@ export const AllStories: React.FC = () => {
               {
                 name: "current_city",
                 header: "Current City",
-                width: 200,
+                width: "15%",
                 onHeaderClick() {
                   handleRequestSort("current_city");
                 },
@@ -655,7 +892,7 @@ export const AllStories: React.FC = () => {
               {
                 name: "year",
                 header: "Year",
-                width: 100,
+                width: "5%",
                 onHeaderClick() {
                   handleRequestSort("year");
                 },
@@ -663,7 +900,7 @@ export const AllStories: React.FC = () => {
               {
                 name: "author_name",
                 header: "Author name",
-                width: 250,
+                width: "15%",
                 onHeaderClick() {
                   handleRequestSort("author_name");
                 },
@@ -671,15 +908,31 @@ export const AllStories: React.FC = () => {
               {
                 name: "author_country",
                 header: "Country",
-                width: 300,
+                width: "10%",
                 onHeaderClick() {
                   handleRequestSort("author_country");
                 },
               },
               {
+                name: "tags",
+                header: "Tags",
+                width: "15%",
+                onHeaderClick() {
+                  handleRequestSort("tags");
+                },
+                cell: (story) =>
+                  story.tags.map((tag) => (
+                    <StyledChip
+                      color="primary"
+                      key={tag}
+                      label={tag.toLowerCase()}
+                    />
+                  )),
+              },
+              {
                 name: "is_visible",
                 header: "Visibility",
-                width: 150,
+                width: "10%",
                 onHeaderClick() {
                   handleRequestSort("is_visible");
                 },
