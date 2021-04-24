@@ -70,7 +70,6 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(config.GetJWTKey()))
 		r.Use(Authenticator)
-		// TODO: move back to protected endpoints
 		rest.PostHandler(r, "/stories", api.CreateStories)
 		rest.PostHandler(r, "/story", api.CreateStoriesFormData)
 		rest.PostHandler(r, "/authors", api.CreateAuthors)
