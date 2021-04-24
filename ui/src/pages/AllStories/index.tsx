@@ -246,9 +246,6 @@ export const AllStories: React.FC = () => {
   const publishMap = () => {
 
     console.log("WE ARE HERE RN");
-
-    if (state.changedVisibility.length > 0) {
-
       fetch("/api/stories/publish", {
         method: "PUT",
         body: JSON.stringify(state.changedVisibility),
@@ -260,8 +257,6 @@ export const AllStories: React.FC = () => {
           showToast(result["message"]);
         })
         .catch((error) => console.log("Error: ", error));
-
-    };
   };
 
   if (error) return <div>Error returning stories data!</div>;
@@ -269,7 +264,7 @@ export const AllStories: React.FC = () => {
   return (
     <>
       <StyledContainer>
-        <AllStoriesAppBar handlePublishMap={publishMap} publishMapDisabled={state.changedVisibility.length == 0}/>
+        <AllStoriesAppBar handlePublishMap={publishMap} isPublishDisabled={state.changedVisibility.length == 0} handleLogout={null}/>
         <StyledAllStoriesHeader>
           The Shoe Project Impact Map Portal
         </StyledAllStoriesHeader>
@@ -532,10 +527,10 @@ export const AllStories: React.FC = () => {
                 name: "pending-map-changes-changes",
                 width: 50,
                 header: "",
-                cell: (d) => {
+                cell: (story) => {
                   return (
                     <div>
-                      {state.visibleState.includes(d.ID) ? (
+                      {story.is_visible ? (
                         <StyledAddIcon color="primary" />
                       ) : (
                         <StyledRemoveIcon color="primary" />
@@ -594,7 +589,7 @@ export const AllStories: React.FC = () => {
                 },
                 cell: (story) => (
                   <VisibilitySwitch
-                    checked={state.visibleState.includes(story.ID)}
+                    checked={story.is_visible}
                     onChange={(e) => {
                       e.persist();
                       handleSwitchChange(e, story);

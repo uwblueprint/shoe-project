@@ -1,60 +1,68 @@
 import * as React from "react";
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 
 const SHOE_PROJECT_URL = "https://theshoeproject.online/our-stories";
 import ShoeLogo from "../assets/images/shoeproject-logo.svg";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { colors } from "../styles/colors";
-import { FormHelperText } from "@material-ui/core";
 
 import {Link} from "react-router-dom";
+import { PrimaryButton, SecondaryButton, TertiaryButton } from "./StyledButtons";
 
 
 
 const StyledLogo = styled.div`
   background-image: url(${ShoeLogo});
-  background-size: 60px;
-  width: 60px; //height and width must equal background-size or else you'll have clones
-  height: 60px;
+  background-size: 56px;
+  width: 56px; //height and width must equal background-size or else you'll have clones
+  height: 56px;
   cursor: pointer;
   flex-grow: 1;
 `;
 
 const useStyles = makeStyles({
     root: {
-        // flexGrow: 1,
         backgroundColor: colors.white,
         background: colors.white,
-        // display: "flex",
-        // flexDirection: "row"
-        // paddingLeft: 64
+        paddingLeft: "54px",
+        height: "56px",
         "& .MuiAppBar-colorPrimary": {
             backgroundColor: colors.white
         },
         "& .MuiPaper-elevation4": {
             boxShadow: "none"
+        },
+        "& .MuiToolbar-gutters": {
+          paddingLeft: "0px"
+        },
+        "& .MuiToolbar-regular": {
+          height: "56px"
         }
 
     },
     title: {
         flexGrow: 1,
     },
-    button: {
-        // justifyContent: "flex-end",
-        float: "right",
-        color: colors.primaryDark1
+    buttons: {
+      width: "100%",
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "flex-end"
     }
   },
 );
+export interface AppBarProps {
+  isPublishDisabled: boolean;
+  handlePublishMap: () => void;
+  handleLogout: () => void;
+}
  
-export default function AllStoriesAppBar(props: { publishMapDisabled: boolean; handlePublishMap: () => void; handleLogout: void; }) {
+export default function AllStoriesAppBar({ isPublishDisabled, handlePublishMap, handleLogout }: AppBarProps): JSX.Element {
   const classes = useStyles();
 
-  console.log(props.publishMapDisabled);
+  console.log(isPublishDisabled);
 
   return (
     <div className={classes.root}>
@@ -63,19 +71,12 @@ export default function AllStoriesAppBar(props: { publishMapDisabled: boolean; h
             <a href={SHOE_PROJECT_URL} target="_blank" rel="noreferrer">
               <StyledLogo />
             </a>
-            <Button className={classes.button} component={Link} to="/">VIEW MAP</Button>
-            <Button className={classes.button} onClick={() => {
-                console.log(props); 
-                try {
-                  props.handlePublishMap();
-                } catch (e) {
-                  console.log(e);
-                }
-                console.log("BUTTON PRESSED"); 
-              }
-            } disabled={props.publishMapDisabled}>PUBLISH MAP</Button>
-            <Button className={classes.button} onClick={() => props.handleLogout}>LOGOUT</Button>
-        </Toolbar>
+            <div className={classes.buttons}>
+              <SecondaryButton text={"VIEW MAP"} isDisabled={false} component={Link} to="/"/>
+              <PrimaryButton text={"PUBLISH MAP"} onClickFunction={handlePublishMap} isDisabled={isPublishDisabled}/>
+              <TertiaryButton text={"LOGOUT"} onClickFunction={handleLogout}/>
+            </div>
+          </Toolbar>
       </AppBar>
     </div>
   );

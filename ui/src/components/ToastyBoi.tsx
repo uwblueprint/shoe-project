@@ -9,7 +9,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 const { forwardRef, useImperativeHandle } = React;
 
 const ToastyBoi = forwardRef((props, ref) => {
-  const [state, setState] = React.useState<{ open?: boolean; message?: string}>({
+  const [toastState, setToastState] = React.useState<{ open?: boolean; message?: string}>({
     open: false,
     message: ""
   });
@@ -31,7 +31,7 @@ const ToastyBoi = forwardRef((props, ref) => {
 
   const showToast = (message: string) => {
     console.log("MESSAGE RECEIVED: " + message);
-    setState({
+    setToastState({
       open: true,
       message
     });
@@ -45,25 +45,25 @@ const ToastyBoi = forwardRef((props, ref) => {
   
 
   const handleClose = () => {
-    setState({
-      ...state,
+    setToastState({
+      ...toastState,
       open: false,
     });
   };
 
   return (
-    <div>
+    <>
       <Snackbar
-        open={state.open}
+        open={toastState.open}
         onClose={handleClose}
         TransitionComponent={Slide}
-        message={state.message}
+        message={toastState.message}
         autoHideDuration={5000}
         ContentProps = {{
           className: classes.root
         }}
       />
-    </div>
+    </>
   );
 })
 
