@@ -17,15 +17,14 @@ import {
 } from "../styles/typography";
 
 const PeopleFooter = styled.img`
-  z-index: 2;
-  margin-top: 60vh;
-  margin-left: 15vw;
+  z-index: 1;
+  margin: 60vh 0 0 15vw;
 `;
+
 const StyledLogo = styled.div`
   background-image: url(${ShoeLogo});
   height: 129px;
   margin: auto;
-  width: 50%;
   width: 127px;
   background-repeat: no-repeat;
   margin-bottom: 16.62px;
@@ -45,8 +44,7 @@ export const CenterText = styled.div`
   position: absolute;
   top: 50%;
   left: 50%;
-  margin-top: 10px;
-  margin-left: -275px;
+  margin: 10px 0 0 -275px;
   width: 500px;
   height: 100px;
 `;
@@ -54,12 +52,13 @@ export const CenterText = styled.div`
 const StyledCard = styled(Card)`
   max-height: 35vh;
   max-width: 25vw;
-  z-index: 0;
+
   && .MuiCardContent-root {
-    border: 2px solid #6fbac6;
+    border: 2px solid ${colors.primary};
     border-radius: 10px;
-    z-index: 0;
+    z-index: -1;
   }
+
   &&.MuiPaper-outlined {
     border: none;
   }
@@ -71,8 +70,7 @@ const StyledCard = styled(Card)`
 
 const Container = styled.div`
   text-align: center;
-  margin-bottom: 5vh;
-  margin-top: 40px;
+  margin: 40px 0 32px 0;
 `;
 
 const GoogleButton = styled(Button)`
@@ -91,8 +89,7 @@ const CenterIcon = styled.div`
   position: absolute;
   top: 50%;
   left: 50%;
-  margin-top: -50px;
-  margin-left: -50px;
+  margin: -50px 0 0 -50px;
   width: 100px;
   height: 100px;
 `;
