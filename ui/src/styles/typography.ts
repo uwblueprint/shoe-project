@@ -329,3 +329,10 @@ export const StyledEmptyMessage = styled.div`
   font-family: Poppins;
   font-size: ${fontSize.subtitle};
 `;
+
+export const StyledSubEmptyMessage = styled.div`
+  margin-left: 42vw;
+  font-family: Poppins;
+  font-size: ${fontSize.subtitle};
+  color: ${colors.grey};
+`;
