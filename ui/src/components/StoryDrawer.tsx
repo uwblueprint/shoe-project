@@ -3,11 +3,10 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Drawer from "@material-ui/core/Drawer";
 import Grid from "@material-ui/core/Grid";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
-import CreateIcon from "@material-ui/icons/Create";
 import * as React from "react";
 import styled from "styled-components";
 
-import { StoryView } from "../pages/AllStories";
+import { StoryView } from "../pages/Admin/AllStories/types";
 import { colors } from "../styles/colors";
 import { device } from "../styles/device";
 import {
@@ -44,9 +43,17 @@ const StyledIconButton = styled(Button)`
 `;
 
 const EditStoryButton = styled(Button)`
-  text-transform: none;
-  margin: 5px;
-  width: 100%;
+&& {
+  box-shadow: none;
+  background-color: ${colors.primaryDark1};
+  font-family: "Poppins";
+
+  &:active {
+    background-color: ${colors.primaryDark1};
+  }
+  &:hover{
+    background-color: ${colors.primaryDark1};
+  }
 `;
 
 const StyledImage = styled.img`
@@ -145,12 +152,9 @@ export function StoryDrawer({
             <StoryDrawerTitleText>{title}</StoryDrawerTitleText>
           </Grid>
           {onClickEditStory && (
-            <Grid item xs={3}>
-              <EditStoryButton variant="contained" color="primary">
-                <CreateIcon />
-                {" Edit Story"}
-              </EditStoryButton>
-            </Grid>
+            <EditStoryButton variant="contained" color="primary">
+              {" Edit Story"}
+            </EditStoryButton>
           )}
           <Grid item xs={12}>
             <StoryDrawerCountryText>

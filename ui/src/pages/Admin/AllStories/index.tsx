@@ -17,6 +17,7 @@ import RemoveIcon from "@material-ui/icons/Remove";
 import SearchBar from "material-ui-search-bar";
 import { useEffect, useReducer, useState } from "react";
 import * as React from "react";
+import { Link, Prompt } from "react-router-dom";
 import styled from "styled-components";
 import useSWR, { mutate } from "swr";
 
@@ -28,6 +29,7 @@ import {
   fontSize,
   StyledAllStoriesHeader,
   StyledEmptyMessage,
+  StyledSubEmptyMessage,
 } from "../../../styles/typography";
 import { Story } from "../../../types/index";
 import { allStoriesReducer, INIT_STATE } from "./reducer";
@@ -93,6 +95,21 @@ const StyledChip = styled(Chip)`
     background: ${colors.primaryLight3};
   }
 `;
+const UploadButton = styled(Button)` 
+&& {
+  box-shadow: none;
+  background-color: ${colors.primaryDark1};
+  margin-bottom: -5vh;
+  margin-right: 64px;
+  float:right;
+  &:active {
+    background-color: ${colors.primaryDark2};
+  }
+  &:hover{
+    background-color: ${colors.primaryDark3};
+  }
+`;
+
 const StyledContainer = styled.div`
   background-color: ${colors.primaryLight6};
 `;
@@ -134,6 +151,7 @@ const useStyles = makeStyles({
     color: colors.primaryDark1,
     paddingLeft: "64px",
     boxShadow: "none",
+    width: "50vw",
   },
   indicator: {
     backgroundColor: colors.primaryDark1,
@@ -204,6 +222,8 @@ export const AllStories: React.FC = () => {
   const pendingChangesLabel = `${"PENDING MAP CHANGES"} ${"("} ${
     state.changedVisibility.length
   } ${")"}`;
+  const doesVisibleStoriesExist =
+    state.visibleTableState.filter((story) => story.is_visible).length !== 0;
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     dispatch({
@@ -278,7 +298,12 @@ export const AllStories: React.FC = () => {
 
   const { data: allStories, error } = useSWR<StoryView[] | undefined>(
     "/api/stories",
-    fetchStories
+    fetchStories,
+    {
+      isPaused: () => {
+        return allStories ? true : false;
+      },
+    }
   );
 
   useEffect(() => {
@@ -382,25 +407,40 @@ export const AllStories: React.FC = () => {
   if (tagError) return <div>Error returning tags data!</div>;
   return (
     <>
+      <Prompt
+        when={state.changedVisibility.length !== 0}
+        message={(location) =>
+          `Are you sure you want to go to ${location.pathname}? Your changes on this page will not be saved.`
+        }
+      />
       <StyledContainer>
         <StyledAllStoriesHeader>
           The Shoe Project Impact Map Portal
         </StyledAllStoriesHeader>
-      </StyledContainer>
-      <AppBar className={classes.root} position="relative">
-        <Tabs
-          classes={{
-            indicator: classes.indicator,
-          }}
-          value={state.tabValue}
-          onChange={handleTabChange}
-          aria-label="all stories tabs"
+        <UploadButton
+          component={Link}
+          to="/admin/upload"
+          variant="contained"
+          size="large"
+          color="primary"
         >
-          <Tab label={allStoriesLabel} {...a11yProps(0)} />
-          <Tab label={visibleStoriesLabel} {...a11yProps(1)} />
-          <Tab label={pendingChangesLabel} {...a11yProps(2)} />
-        </Tabs>
-      </AppBar>
+          UPLOAD STORY
+        </UploadButton>
+        <AppBar className={classes.root} position="relative">
+          <Tabs
+            classes={{
+              indicator: classes.indicator,
+            }}
+            value={state.tabValue}
+            onChange={handleTabChange}
+            aria-label="all stories tabs"
+          >
+            <Tab label={allStoriesLabel} {...a11yProps(0)} />
+            <Tab label={visibleStoriesLabel} {...a11yProps(1)} />
+            <Tab label={pendingChangesLabel} {...a11yProps(2)} />
+          </Tabs>
+        </AppBar>
+      </StyledContainer>
       <StyledFilter>
         <Grid container justify="flex-end" spacing={2}>
           <Grid item xs={8}>
@@ -531,253 +571,278 @@ export const AllStories: React.FC = () => {
       </StyledFilter>
 
       <AllStoriesTabs value={state.tabValue} index={0}>
-        <VirtualizedTable
-          data={stableSort(
-            state.tableData,
-            getComparator(state.order, state.orderBy)
-          )}
-          order={state.order}
-          orderBy={state.orderBy}
-          setClickedRow={setClickedRow}
-          columns={[
-            {
-              name: "ID",
-              width: "5%",
-              onHeaderClick() {
-                handleRequestSort("ID");
+        {state.tableData.length !== 0 ? (
+          <VirtualizedTable
+            data={stableSort(
+              state.tableData,
+              getComparator(state.order, state.orderBy)
+            )}
+            order={state.order}
+            orderBy={state.orderBy}
+            setClickedRow={setClickedRow}
+            columns={[
+              {
+                name: "ID",
+                width: "5%",
+                onHeaderClick() {
+                  handleRequestSort("ID");
+                },
+                header: (
+                  <div>
+                    <Checkbox
+                      classes={{
+                        root: classes.checkbox,
+                        checked: classes.checked,
+                      }}
+                      checked={state.selectedRowIds.length > 0}
+                      indeterminate={indeterminate}
+                      onChange={(e) => {
+                        e.persist();
+                        handleCheckedAll();
+                      }}
+                    />
+                  </div>
+                ),
+                cell: (story) => (
+                  <div>
+                    <Checkbox
+                      classes={{
+                        root: classes.checkbox,
+                        checked: classes.checked,
+                      }}
+                      onChange={(e) => {
+                        e.persist();
+                        handleChecked(e, story);
+                      }}
+                      name="checked"
+                      color="primary"
+                    />
+                  </div>
+                ),
               },
-              header: (
-                <div>
-                  <Checkbox
-                    classes={{
-                      root: classes.checkbox,
-                      checked: classes.checked,
-                    }}
-                    checked={state.selectedRowIds.length > 0}
-                    indeterminate={indeterminate}
+              {
+                name: "title",
+                header: "Story Name",
+                width: "25%",
+                onHeaderClick() {
+                  handleRequestSort("title");
+                },
+              },
+              {
+                name: "current_city",
+                header: "Current City",
+                width: "15%",
+                onHeaderClick() {
+                  handleRequestSort("current_city");
+                },
+              },
+              {
+                name: "year",
+                header: "Year",
+                width: "5%",
+                onHeaderClick() {
+                  handleRequestSort("year");
+                },
+              },
+              {
+                name: "author_name",
+                header: "Author name",
+                width: "15%",
+                onHeaderClick() {
+                  handleRequestSort("author_name");
+                },
+              },
+              {
+                name: "author_country",
+                header: "Country",
+                width: "10%",
+                onHeaderClick() {
+                  handleRequestSort("author_country");
+                },
+              },
+              {
+                name: "tags",
+                header: "Tags",
+                width: "15%",
+                onHeaderClick() {
+                  handleRequestSort("tags");
+                },
+                cell: (story) =>
+                  story.tags.map((tag) => (
+                    <StyledChip
+                      color="primary"
+                      key={tag}
+                      label={tag.toLowerCase()}
+                    />
+                  )),
+              },
+              {
+                name: "is_visible",
+                header: "Visibility",
+                width: "10%",
+                onHeaderClick() {
+                  handleRequestSort("is_visible");
+                },
+                cell: (story) => (
+                  <VisibilitySwitch
+                    checked={story.is_visible}
                     onChange={(e) => {
                       e.persist();
-                      handleCheckedAll;
+                      handleSwitchChange(e, story);
                     }}
-                  />
-                </div>
-              ),
-              cell: (story) => (
-                <div>
-                  <Checkbox
-                    classes={{
-                      root: classes.checkbox,
-                      checked: classes.checked,
-                    }}
-                    onChange={(e) => {
-                      e.persist();
-                      handleChecked(e, story);
-                    }}
-                    checked={state.selectedRowIds.includes(story.ID)}
-                  />
-                </div>
-              ),
-            },
-            {
-              name: "title",
-              header: "Story Name",
-              width: "25%",
-              onHeaderClick() {
-                handleRequestSort("title");
-              },
-            },
-            {
-              name: "current_city",
-              header: "Current City",
-              width: "15%",
-              onHeaderClick() {
-                handleRequestSort("current_city");
-              },
-            },
-            {
-              name: "year",
-              header: "Year",
-              width: "5%",
-              onHeaderClick() {
-                handleRequestSort("year");
-              },
-            },
-            {
-              name: "author_name",
-              header: "Author name",
-              width: "15%",
-              onHeaderClick() {
-                handleRequestSort("author_name");
-              },
-            },
-            {
-              name: "author_country",
-              header: "Country",
-              width: "10%",
-              onHeaderClick() {
-                handleRequestSort("author_country");
-              },
-            },
-            {
-              name: "tags",
-              header: "Tags",
-              width: "15%",
-              onHeaderClick() {
-                handleRequestSort("tags");
-              },
-              cell: (story) =>
-                story.tags.map((tag) => (
-                  <StyledChip
+                    name="checked"
                     color="primary"
-                    key={tag}
-                    label={tag.toLowerCase()}
                   />
-                )),
-            },
-            {
-              name: "is_visible",
-              header: "Visibility",
-              width: "10%",
-              onHeaderClick() {
-                handleRequestSort("is_visible");
+                ),
               },
-              cell: (story) => (
-                <VisibilitySwitch
-                  checked={story.is_visible}
-                  onChange={(e) => {
-                    e.persist();
-                    handleSwitchChange(e, story);
-                  }}
-                  name="checked"
-                  color="primary"
-                />
-              ),
-            },
-          ]}
-        />
+            ]}
+          />
+        ) : (
+          <>
+            <StyledEmptyMessage> No Stories Here!</StyledEmptyMessage>
+            <StyledSubEmptyMessage>
+              {" "}
+              To add a story, click “ Upload Story” on the top right.{" "}
+            </StyledSubEmptyMessage>
+          </>
+        )}
       </AllStoriesTabs>
       <AllStoriesTabs value={state.tabValue} index={1}>
-        <VirtualizedTable
-          data={state.visibleTableState.filter((story) => story.is_visible)}
-          order={state.order}
-          orderBy={state.orderBy}
-          setClickedRow={setClickedRow}
-          columns={[
-            {
-              name: "ID",
-              width: "5%",
-              onHeaderClick() {
-                handleRequestSort("ID");
+        {doesVisibleStoriesExist ? (
+          <VirtualizedTable
+            data={state.visibleTableState.filter((story) => story.is_visible)}
+            order={state.order}
+            orderBy={state.orderBy}
+            setClickedRow={setClickedRow}
+            columns={[
+              {
+                name: "ID",
+                width: "5%",
+                onHeaderClick() {
+                  handleRequestSort("ID");
+                },
+                header: (
+                  <div>
+                    <Checkbox
+                      classes={{
+                        root: classes.checkbox,
+                        checked: classes.checked,
+                      }}
+                      checked={state.selectedRowIds.length > 0}
+                      indeterminate={indeterminate}
+                      onChange={(e) => {
+                        e.persist();
+                        handleCheckedAll;
+                      }}
+                    />
+                  </div>
+                ),
+                cell: (story) => (
+                  <div>
+                    <Checkbox
+                      classes={{
+                        root: classes.checkbox,
+                        checked: classes.checked,
+                      }}
+                      onChange={(e) => {
+                        e.persist();
+                        handleChecked(e, story);
+                      }}
+                      name="checked"
+                      color="primary"
+                    />
+                  </div>
+                ),
               },
-              header: (
-                <div>
-                  <Checkbox
-                    classes={{
-                      root: classes.checkbox,
-                      checked: classes.checked,
-                    }}
-                    checked={state.selectedRowIds.length > 0}
-                    indeterminate={indeterminate}
+              {
+                name: "title",
+                header: "Story Name",
+                width: "25%",
+                onHeaderClick() {
+                  handleRequestSort("title");
+                },
+              },
+              {
+                name: "current_city",
+                header: "Current City",
+                width: "15%",
+                onHeaderClick() {
+                  handleRequestSort("current_city");
+                },
+              },
+              {
+                name: "year",
+                header: "Year",
+                width: "5%",
+                onHeaderClick() {
+                  handleRequestSort("year");
+                },
+              },
+              {
+                name: "author_name",
+                header: "Author name",
+                width: "15%",
+                onHeaderClick() {
+                  handleRequestSort("author_name");
+                },
+              },
+              {
+                name: "author_country",
+                header: "Country",
+                width: "10%",
+                onHeaderClick() {
+                  handleRequestSort("author_country");
+                },
+              },
+              {
+                name: "tags",
+                header: "Tags",
+                width: "15%",
+                onHeaderClick() {
+                  handleRequestSort("tags");
+                },
+                cell: (story) =>
+                  story.tags.map((tag) => (
+                    <StyledChip
+                      color="primary"
+                      key={tag}
+                      label={tag.toLowerCase()}
+                    />
+                  )),
+              },
+              {
+                name: "is_visible",
+                header: "Visibility",
+                width: "10%",
+                onHeaderClick() {
+                  handleRequestSort("is_visible");
+                },
+                cell: (story) => (
+                  <VisibilitySwitch
+                    checked={story.is_visible}
                     onChange={(e) => {
                       e.persist();
-                      handleCheckedAll;
+                      handleSwitchChange(e, story);
                     }}
-                  />
-                </div>
-              ),
-              cell: (story) => (
-                <div>
-                  <Checkbox
-                    classes={{
-                      root: classes.checkbox,
-                      checked: classes.checked,
-                    }}
-                    onChange={(e) => {
-                      e.persist();
-                      handleChecked(e, story);
-                    }}
-                    checked={state.selectedRowIds.includes(story.ID)}
-                  />
-                </div>
-              ),
-            },
-            {
-              name: "title",
-              header: "Story Name",
-              width: "25%",
-              onHeaderClick() {
-                handleRequestSort("title");
-              },
-            },
-            {
-              name: "current_city",
-              header: "Current City",
-              width: "15%",
-              onHeaderClick() {
-                handleRequestSort("current_city");
-              },
-            },
-            {
-              name: "year",
-              header: "Year",
-              width: "5%",
-              onHeaderClick() {
-                handleRequestSort("year");
-              },
-            },
-            {
-              name: "author_name",
-              header: "Author name",
-              width: "15%",
-              onHeaderClick() {
-                handleRequestSort("author_name");
-              },
-            },
-            {
-              name: "author_country",
-              header: "Country",
-              width: "10%",
-              onHeaderClick() {
-                handleRequestSort("author_country");
-              },
-            },
-            {
-              name: "tags",
-              header: "Tags",
-              width: "15%",
-              onHeaderClick() {
-                handleRequestSort("tags");
-              },
-              cell: (story) =>
-                story.tags.map((tag) => (
-                  <StyledChip
+                    name="checked"
                     color="primary"
-                    key={tag}
-                    label={tag.toLowerCase()}
                   />
-                )),
-            },
-            {
-              name: "is_visible",
-              header: "Visibility",
-              width: "10%",
-              onHeaderClick() {
-                handleRequestSort("is_visible");
+                ),
               },
-              cell: (story) => (
-                <VisibilitySwitch
-                  checked={story.is_visible}
-                  onChange={(e) => {
-                    e.persist();
-                    handleSwitchChange(e, story);
-                  }}
-                  name="checked"
-                  color="primary"
-                />
-              ),
-            },
-          ]}
-        />
+            ]}
+          />
+        ) : (
+          <>
+            <StyledEmptyMessage>
+              {" "}
+              No Visible Stories right now.{" "}
+            </StyledEmptyMessage>
+            <StyledSubEmptyMessage>
+              To turn on a story’s visibility, go to the All Stories tab and
+              toggle Visibility “ON”.{" "}
+            </StyledSubEmptyMessage>
+          </>
+        )}
       </AllStoriesTabs>
       <AllStoriesTabs value={state.tabValue} index={2}>
         {/* Pending Changes */}
