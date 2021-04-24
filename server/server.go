@@ -21,19 +21,9 @@ type Server struct {
 	Server *http.Server
 }
 
-func redirectToHttps(w http.ResponseWriter, r *http.Request) {
-	if r.Header.Get("X-Forwarded-Proto") != "https" {
-		http.Redirect(w, r, "https://" + r.Host + r.RequestURI, http.StatusMovedPermanently)
-	}
-}
-
 // New will setup Chi API listener
 func New() (*Server, error) {
 	r := CreateRouter().WithBasicMiddlewares().WithLoggingMiddleware().WithCORS()
-
-	if (config.GetMode() == config.MODE_PROD) {
-		r.Middlewares().Handler(http.HandlerFunc(redirectToHttps))
-	}
 
 	s := &Server{
 		Logger: zap.S(),
