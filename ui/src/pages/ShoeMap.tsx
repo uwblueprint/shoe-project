@@ -105,10 +105,13 @@ const StyledLogo = styled.div`
   background-image: url(${ShoeLogo});
   width: 87px;
   height: 87px;
-  padding-left: 42px;
-  padding-bottom: 30px;
-  left: 36px;
+  padding-left: 90px;
+  padding-bottom: 45px;
+  margin-left: 36px;
+  margin-bottom: 15px;
   cursor: pointer;
+  background-repeat: no-repeat;
+
   @media ${device.mobile} {
     padding-bottom: 3vh;
     margin-left: 2vw;

@@ -16,6 +16,7 @@ import {
   Snackbar,
   TextField,
 } from "@material-ui/core/";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import Alert from "@material-ui/lab/Alert";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DropzoneArea } from "material-ui-dropzone";
@@ -33,6 +34,16 @@ import {
   UploadStoriesHeading,
 } from "../../styles/typography";
 import { Author, Story } from "../../types";
+
+const StyledContainer = styled.div`
+  display: flex;
+`;
+
+const StyledLink = styled.a`
+  margin-top: 2.5vh;
+  color: ${colors.primaryDark1};
+  margin-left: 64px;
+`;
 
 const StyledGrid = styled(Grid)`
   background-color: ${colors.primaryLight6};
@@ -299,8 +310,14 @@ export const Upload: React.FC = () => {
     <>
       <AppBar color="default" position="sticky">
         <Grid container direction="row">
-          <Grid item xs={6}>
-            <UploadStoriesHeading>Upload New Story</UploadStoriesHeading>
+          <Grid xs={6} item>
+            <StyledContainer>
+              <StyledLink href="/admin/allstories">
+                <ArrowBackIcon />
+              </StyledLink>
+
+              <UploadStoriesHeading>Upload New Story</UploadStoriesHeading>
+            </StyledContainer>
           </Grid>
           <Grid
             container
