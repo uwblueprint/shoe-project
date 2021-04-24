@@ -1,3 +1,4 @@
+import { CircularProgress } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -5,7 +6,7 @@ import * as React from "react";
 import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 
-import { useAuth } from "../hooks/auth";
+import { FailureState, useAuth } from "../hooks/auth";
 import { LoginMessageText, LoginTitleText } from "../styles/typography";
 
 const CardDiv = styled.div`
@@ -19,7 +20,7 @@ const CardDiv = styled.div`
 
 const StyledCard = styled(Card)`
   max-height: 35vh;
-  max-width: 25vw;
+  max-width: 30vw;
 `;
 
 const GoogleButton = styled.div`
@@ -27,23 +28,59 @@ const GoogleButton = styled.div`
   margin-bottom: 5vh;
 `;
 
-interface LoginProps {
-  login: boolean;
-}
+const CenterIcon = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -50px;
+  margin-left: -50px;
+  width: 100px;
+  height: 100px;
+`;
 
-export const Login: React.FC<LoginProps> = (props: LoginProps) => {
-  const auth = useAuth();
+const CenterText = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: 10px;
+  margin-left: -275px;
+  width: 500px;
+  height: 100px;
+`;
 
-  const title = props.login
-    ? "Welcome to the Shoe Project Admin Portal"
-    : "Sorry, that is not a valid email";
-  const description = props.login
-    ? "Please Sign In using your Shoe Project Email"
-    : "Make sure you are using a Shoe Project Organization Email";
+export const Login: React.FC = () => {
+  const { auth, googleLoaded, failure, signIn } = useAuth();
 
-  if (auth.user) {
+  if (!googleLoaded) {
+    return (
+      <>
+        <CenterIcon>
+          <CircularProgress />
+        </CenterIcon>
+        <CenterText>
+          <LoginTitleText>
+            Please make sure cookies are enabled on this site
+          </LoginTitleText>
+          <LoginMessageText>
+            (Check the toolbar at the top of the page!)
+          </LoginMessageText>
+        </CenterText>
+      </>
+    );
+  }
+
+  if (auth !== undefined) {
     return <Redirect to="/admin" />;
   }
+
+  const title =
+    failure !== FailureState.InvalidEmail
+      ? "Welcome to the Shoe Project Admin Portal"
+      : "Sorry, that is not a valid email";
+  const description =
+    failure !== FailureState.InvalidEmail
+      ? "Please Sign In using your Shoe Project Email."
+      : "Make sure you are using a Shoe Project Organization Email";
 
   return (
     <CardDiv>
@@ -51,13 +88,17 @@ export const Login: React.FC<LoginProps> = (props: LoginProps) => {
         <CardContent>
           <LoginTitleText>{title}</LoginTitleText>
           <LoginMessageText>{description}</LoginMessageText>
+          <LoginMessageText>
+            If you are having trouble signing in, make sure third-party cookies
+            are enabled for this site.
+          </LoginMessageText>
         </CardContent>
         <GoogleButton>
           <Button
             size="small"
             color="primary"
             variant="contained"
-            onClick={auth.signin}
+            onClick={signIn}
           >
             Sign In with Google
           </Button>

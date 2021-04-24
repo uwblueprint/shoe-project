@@ -1,11 +1,15 @@
-import { StoryView } from "../AllStories";
+import { StoryView } from "./types";
 
 export interface State {
   tabValue: number;
+  search: string;
   visibleState: number[];
   visibleTableState: StoryView[];
   tableData: StoryView[];
   changedVisibility: StoryView[];
+  visibleTableFilterState: StoryView[];
+  changedVisibilityFilter: StoryView[];
+  origTableData: StoryView[];
   selectedRowIds: number[];
   order: "asc" | "desc";
   orderBy: string;
@@ -20,14 +24,21 @@ export type Action =
   | { type: "SET_ORDERING"; order: "asc" | "desc"; orderBy: string }
   | { type: "SET_TABLE_DATA"; data: StoryView[] }
   | { type: "SET_TAB_VALUE"; newValue: number }
-  | { type: "CLEAR_PENDING_CHANGES" };
+  | { type: "CLEAR_PENDING_CHANGES" }
+  | { type: "SET_CHANGED_VISIBILITY"; data: StoryView[] }
+  | { type: "SET_VISIBLE_TABLE_STATE"; data: StoryView[] }
+  | { type: "HANDLE_SEARCH"; data: string };
 
 export const INIT_STATE: State = {
   tabValue: 0,
+  search: "",
   visibleState: [],
   visibleTableState: [],
   tableData: [],
   changedVisibility: [],
+  visibleTableFilterState: [],
+  changedVisibilityFilter: [],
+  origTableData: [],
   selectedRowIds: [],
   order: "asc",
   orderBy: "ID",
@@ -60,6 +71,15 @@ export function allStoriesReducer(state: State, action: Action): State {
           changedVisibility: changedVisibilityContainsID
             ? state.changedVisibility.filter((e) => e.ID !== action.story.ID)
             : [...state.changedVisibility, action.story],
+          visibleTableFilterState: [
+            ...state.visibleTableFilterState,
+            action.story,
+          ],
+          changedVisibilityFilter: changedVisibilityContainsID
+            ? state.changedVisibilityFilter.filter(
+                (e) => e.ID !== action.story.ID
+              )
+            : [...state.changedVisibilityFilter, action.story],
         };
       } else {
         return {
@@ -71,6 +91,14 @@ export function allStoriesReducer(state: State, action: Action): State {
           changedVisibility: changedVisibilityContainsID
             ? state.changedVisibility.filter((e) => e.ID !== action.story.ID)
             : [...state.changedVisibility, action.story],
+          visibleTableFilterState: state.visibleTableState.filter(
+            (e) => e.ID !== action.story.ID
+          ),
+          changedVisibilityFilter: changedVisibilityContainsID
+            ? state.changedVisibilityFilter.filter(
+                (e) => e.ID !== action.story.ID
+              )
+            : [...state.changedVisibilityFilter, action.story],
         };
       }
     }
@@ -79,6 +107,8 @@ export function allStoriesReducer(state: State, action: Action): State {
         ...state,
         visibleTableState: action.rows ? action.rows : [],
         tableData: action.rows ? action.rows : [],
+        visibleTableFilterState: action.rows ? action.rows : [],
+        origTableData: action.rows ? action.rows : [],
       };
     }
     case "HANDLE_CHECKED_ALL": {
@@ -124,6 +154,24 @@ export function allStoriesReducer(state: State, action: Action): State {
       return {
         ...state,
         tabValue: action.newValue,
+      };
+    }
+    case "SET_CHANGED_VISIBILITY": {
+      return {
+        ...state,
+        changedVisibility: action.data,
+      };
+    }
+    case "SET_VISIBLE_TABLE_STATE": {
+      return {
+        ...state,
+        visibleTableState: action.data,
+      };
+    }
+    case "HANDLE_SEARCH": {
+      return {
+        ...state,
+        search: action.data,
       };
     }
   }

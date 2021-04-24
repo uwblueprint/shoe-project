@@ -37,6 +37,9 @@ var (
 			dir := fmt.Sprintf("%s/ui/dist", filepath.Dir(executablePath))
 			fs := http.FileServer(http.Dir(dir))
 			server.Router.Get("/*", func(w http.ResponseWriter, r *http.Request) {
+				if config.GetMode() == config.MODE_PROD && r.Header.Get("X-Forwarded-Proto") != "https" {
+					http.Redirect(w, r, "https://" + r.Host + r.RequestURI, http.StatusMovedPermanently)
+				}
 				if _, err := os.Stat(dir + r.RequestURI); os.IsNotExist(err) {
 					http.StripPrefix(r.RequestURI, fs).ServeHTTP(w, r)
 				} else {
