@@ -62,10 +62,10 @@ describe("allstories table", () => {
 
     it("should initialize table data", () => {
       const action: Action = { type: "SET_TABLE_DATA", data: mockTableData };
-      expect(INIT_STATE.tableData.length).toBe(0);
+      expect(INIT_STATE.tableData).toHaveLength(0);
 
       const newState = allStoriesReducer(INIT_STATE, action);
-      expect(newState.tableData.length).toBe(2);
+      expect(newState.tableData).toHaveLength(2);
     });
 
     it("should initialize visibletable states after API", () => {
@@ -73,14 +73,14 @@ describe("allstories table", () => {
         type: "INITIALIZE_AFTER_API",
         rows: mockTableData,
       };
-      expect(INIT_STATE.visibleTableState.length).toBe(0);
-      expect(INIT_STATE.origTableData.length).toBe(0);
-      expect(INIT_STATE.tableData.length).toBe(0);
+      expect(INIT_STATE.visibleTableState).toHaveLength(0);
+      expect(INIT_STATE.origTableData).toHaveLength(0);
+      expect(INIT_STATE.tableData).toHaveLength(0);
       expect(INIT_STATE.tabValue).toBe(0);
       const newState = allStoriesReducer(INIT_STATE, action);
-      expect(newState.visibleTableState.length).toBe(2);
-      expect(newState.tableData.length).toBe(2);
-      expect(newState.origTableData.length).toBe(2);
+      expect(newState.visibleTableState).toHaveLength(2);
+      expect(newState.tableData).toHaveLength(2);
+      expect(newState.origTableData).toHaveLength(2);
     });
 
     it("should initialize tags and filter states after Tags API", () => {
@@ -89,21 +89,13 @@ describe("allstories table", () => {
         type: "INITIALIZE_AFTER_TAGS_API",
         rows: tagRows,
       };
-      expect(INIT_STATE.tags.length).toBe(0);
+      expect(INIT_STATE.tags).toHaveLength(0);
       expect(INIT_STATE.filterState.tags).toEqual({});
-      expect(INIT_STATE.filterState.visibility).toEqual({
-        visible: false,
-        nonVisible: false,
-      });
       const newState = allStoriesReducer(INIT_STATE, action);
-      expect(newState.tags.length).toBe(2);
+      expect(newState.tags).toHaveLength(2);
       expect(newState.filterState.tags).toEqual({
         TAG1: false,
         TAG2: false,
-      });
-      expect(newState.filterState.visibility).toEqual({
-        visible: false,
-        nonVisible: false,
       });
     });
 
@@ -130,9 +122,9 @@ describe("allstories table", () => {
         e: changeEvent,
         story: mockTableData[1],
       };
-      expect(INIT_STATE.selectedRowIds.length).toBe(0);
+      expect(INIT_STATE.selectedRowIds).toHaveLength(0);
       const newState = allStoriesReducer(INIT_STATE, action);
-      expect(newState.selectedRowIds.length).toBe(1);
+      expect(newState.selectedRowIds).toHaveLength(1);
     });
 
     it("should toggle switch", () => {
@@ -147,16 +139,17 @@ describe("allstories table", () => {
         e: changeEvent,
         story: mockTableData[2],
       };
-      expect(INIT_STATE.changedVisibility.length).toBe(0);
+      expect(INIT_STATE.changedVisibility).toHaveLength(0);
       const newState = allStoriesReducer(INIT_STATE, action);
-      expect(newState.changedVisibility.length).toBe(1);
+      expect(newState.changedVisibility).toHaveLength(1);
     });
 
     it("should search a story by number", () => {
       const searchedVal = "2019";
       const action: Action = {
         type: "HANDLE_SEARCH/FILTER",
-        data: { ...INIT_STATE, search: searchedVal },
+        newFilterState: INIT_STATE.filterState,
+        newSearch: searchedVal,
       };
       expect(INIT_STATE.search).toBe("");
       const newState = allStoriesReducer(INIT_STATE, action);
@@ -167,7 +160,8 @@ describe("allstories table", () => {
       const searchedVal = "City1";
       const action: Action = {
         type: "HANDLE_SEARCH/FILTER",
-        data: { ...INIT_STATE, search: searchedVal },
+        newFilterState: INIT_STATE.filterState,
+        newSearch: searchedVal,
       };
       expect(INIT_STATE.search).toBe("");
       const newState = allStoriesReducer(INIT_STATE, action);
@@ -175,13 +169,14 @@ describe("allstories table", () => {
     });
 
     it("should filter by tag1", () => {
-      const data = {
-        ...INIT_STATE,
-        filterState: { ...INIT_STATE.filterState, tags: { TAG1: true } },
+      const newFilterState = {
+        ...INIT_STATE.filterState,
+        tags: { TAG1: true },
       };
       const action: Action = {
         type: "HANDLE_SEARCH/FILTER",
-        data: data,
+        newFilterState: newFilterState,
+        newSearch: INIT_STATE.search,
       };
       expect(INIT_STATE.filterState.tags).toEqual({});
       const newState = allStoriesReducer(INIT_STATE, action);
@@ -193,10 +188,10 @@ describe("allstories table", () => {
         type: "SET_CHANGED_VISIBILITY",
         data: mockTableData,
       };
-      expect(INIT_STATE.changedVisibility.length).toBe(0);
+      expect(INIT_STATE.changedVisibility).toHaveLength(0);
 
       const newState = allStoriesReducer(INIT_STATE, action);
-      expect(newState.changedVisibility.length).toBe(2);
+      expect(newState.changedVisibility).toHaveLength(2);
     });
 
     it("should set visible table state", () => {
@@ -204,10 +199,10 @@ describe("allstories table", () => {
         type: "SET_VISIBLE_TABLE_STATE",
         data: mockTableData,
       };
-      expect(INIT_STATE.visibleTableState.length).toBe(0);
+      expect(INIT_STATE.visibleTableState).toHaveLength(0);
 
       const newState = allStoriesReducer(INIT_STATE, action);
-      expect(newState.visibleTableState.length).toBe(2);
+      expect(newState.visibleTableState).toHaveLength(2);
     });
   });
 });

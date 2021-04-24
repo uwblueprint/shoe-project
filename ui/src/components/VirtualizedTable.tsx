@@ -10,6 +10,7 @@ import { fontSize } from "../styles/typography";
 const useVirtualizedTableStyles = makeStyles({
   root: {
     marginLeft: "55px",
+    width: "100vw",
 
     "& .MuiTableCell-root": {
       backgroundColor: colors.white,
@@ -38,7 +39,7 @@ const useVirtualizedTableStyles = makeStyles({
 
 type TableColumn = {
   name: string;
-  width: number;
+  width: number | string;
   onHeaderClick?: () => void;
   header: JSX.Element | string;
   cell?: (any) => JSX.Element;

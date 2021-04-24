@@ -37,10 +37,14 @@ export type Action =
   | { type: "HANDLE_CHECKED"; e: React.ChangeEvent; story: StoryView }
   | { type: "SET_ORDERING"; order: "asc" | "desc"; orderBy: string }
   | { type: "SET_TABLE_DATA"; data: StoryView[] }
-  | { type: "SET_TAB_VALUE"; newValue: number; newState: State }
+  | { type: "SET_TAB_VALUE"; newValue: number }
   | { type: "SET_CHANGED_VISIBILITY"; data: StoryView[] }
   | { type: "SET_VISIBLE_TABLE_STATE"; data: StoryView[] }
-  | { type: "HANDLE_SEARCH/FILTER"; data: State };
+  | {
+      type: "HANDLE_SEARCH/FILTER";
+      newFilterState: FilterState;
+      newSearch: string;
+    };
 
 export const INIT_STATE: State = {
   anchorEl: null,
@@ -190,7 +194,22 @@ export function allStoriesReducer(state: State, action: Action): State {
       };
     }
     case "SET_TAB_VALUE": {
-      const newState = requestSearchAndFilter(action.newState);
+      const tagBooleans = {};
+      state.tags.forEach((tag) => {
+        tagBooleans[tag] = false;
+      });
+      let newState = {
+        ...state,
+        search: "",
+        filterState: {
+          visibility: {
+            visible: false,
+            nonVisible: false,
+          },
+          tags: tagBooleans,
+        },
+      }; // To reset the previous tab
+      newState = requestSearchAndFilter(newState);
       return {
         ...newState,
         tabValue: action.newValue,
@@ -209,7 +228,12 @@ export function allStoriesReducer(state: State, action: Action): State {
       };
     }
     case "HANDLE_SEARCH/FILTER": {
-      return requestSearchAndFilter(action.data);
+      const newState = {
+        ...state,
+        search: action.newSearch,
+        filterState: action.newFilterState,
+      };
+      return requestSearchAndFilter(newState);
     }
   }
 }
