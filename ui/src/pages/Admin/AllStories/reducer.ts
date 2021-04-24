@@ -49,8 +49,8 @@ export function allStoriesReducer(state: State, action: Action): State {
     case "CLEAR_PENDING_CHANGES": {
       return {
         ...state,
-        changedVisibility: []
-      }
+        changedVisibility: [],
+      };
     }
     case "SWITCH_TAB": {
       return {

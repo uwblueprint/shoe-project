@@ -12,11 +12,11 @@ import styled from "styled-components";
 import useSWR, { mutate } from "swr";
 
 import { StoryDrawer } from "../../../components";
+import AllStoriesAppBar from "../../../components/AllStoriesAppBar";
 import { a11yProps, AllStoriesTabs } from "../../../components/AllStoriesTabs";
+import ToastyBoi from "../../../components/ToastyBoi";
 import VirtualizedTable from "../../../components/VirtualizedTable";
 import { colors } from "../../../styles/colors";
-import ToastyBoi from "../../../components/ToastyBoi";
-
 import {
   StyledAllStoriesHeader,
   StyledEmptyMessage,
@@ -25,8 +25,6 @@ import { Story } from "../../../types/index";
 import { allStoriesReducer, INIT_STATE } from "./reducer";
 import { StoryView } from "./types";
 import { VisibilitySwitch } from "./VisibilitySwitch";
-
-import AllStoriesAppBar from "../../../components/AllStoriesAppBar";
 const StyledSearchBar = styled(SearchBar)`
   max-width: 320px;
   background-color: ${colors.primaryLight4};
@@ -170,7 +168,11 @@ export const AllStories: React.FC = () => {
   };
 
   const handleSwitchChange = (e, story) => {
-    dispatch({ type: "HANDLE_SWITCH_CHANGE", e, story: { ...story, is_visible: !story.is_visible }});
+    dispatch({
+      type: "HANDLE_SWITCH_CHANGE",
+      e,
+      story: { ...story, is_visible: !story.is_visible },
+    });
     mutate(
       "/api/stories",
       (prevStories: Story[]) => {
@@ -247,24 +249,21 @@ export const AllStories: React.FC = () => {
   const toast = React.useRef(null);
 
   const showToast = (message: string) => {
-    console.log("TRYING TO OPEN TOAST");
     toast.current.showToast(message);
-  }
+  };
 
   const publishMap = () => {
-
-    console.log("WE ARE HERE RN");
-      fetch("/api/stories/publish", {
-        method: "PUT",
-        body: JSON.stringify(state.changedVisibility),
-        redirect: "follow",
+    fetch("/api/stories/publish", {
+      method: "PUT",
+      body: JSON.stringify(state.changedVisibility),
+      redirect: "follow",
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        dispatch({ type: "CLEAR_PENDING_CHANGES" });
+        showToast(result["message"]);
       })
-        .then((response) => response.json())
-        .then((result) => {
-          dispatch({type: "CLEAR_PENDING_CHANGES"});
-          showToast(result["message"]);
-        })
-        .catch((error) => console.log("Error: ", error));
+      .catch((error) => console.log("Error: ", error));
   };
 
   const requestSearchHelper = (row, searchedVal: string) => {
@@ -322,7 +321,11 @@ export const AllStories: React.FC = () => {
   return (
     <>
       <StyledContainer>
-        <AllStoriesAppBar handlePublishMap={publishMap} isPublishDisabled={state.changedVisibility.length == 0} handleLogout={null}/>
+        <AllStoriesAppBar
+          handlePublishMap={publishMap}
+          isPublishDisabled={state.changedVisibility.length == 0}
+          handleLogout={null}
+        />
         <StyledAllStoriesHeader>
           The Shoe Project Impact Map Portal
         </StyledAllStoriesHeader>

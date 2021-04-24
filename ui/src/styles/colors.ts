@@ -57,5 +57,5 @@ export const colors = Object.freeze({
   secondaryLight3: redLight3,
   secondaryLight4: redLight4,
   tertiary: green,
-  benjaminMoore
+  benjaminMoore,
 });

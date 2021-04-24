@@ -1,17 +1,19 @@
+import Slide from "@material-ui/core/Slide";
+import Snackbar from "@material-ui/core/Snackbar";
+import { makeStyles } from "@material-ui/core/styles";
 import * as React from "react";
-import Snackbar from '@material-ui/core/Snackbar';
-import { makeStyles } from '@material-ui/core/styles';
-import Slide from '@material-ui/core/Slide';
 
 import { colors } from "../styles/colors";
-import Autocomplete from "@material-ui/lab/Autocomplete";
 
 const { forwardRef, useImperativeHandle } = React;
 
 const ToastyBoi = forwardRef((props, ref) => {
-  const [toastState, setToastState] = React.useState<{ open?: boolean; message?: string}>({
+  const [toastState, setToastState] = React.useState<{
+    open?: boolean;
+    message?: string;
+  }>({
     open: false,
-    message: ""
+    message: "",
   });
 
   const useStyles = makeStyles({
@@ -22,27 +24,24 @@ const ToastyBoi = forwardRef((props, ref) => {
       fontWeight: 400,
 
       "& .MuiSnackbarContent-message": {
-        margin: "auto"
-      }
-
-    }
-  })
+        margin: "auto",
+      },
+    },
+  });
   const classes = useStyles();
 
   const showToast = (message: string) => {
-    console.log("MESSAGE RECEIVED: " + message);
     setToastState({
       open: true,
-      message
+      message,
     });
   };
 
   useImperativeHandle(ref, () => {
     return {
-      showToast: showToast
-    }
-  })
-  
+      showToast: showToast,
+    };
+  });
 
   const handleClose = () => {
     setToastState({
@@ -59,12 +58,12 @@ const ToastyBoi = forwardRef((props, ref) => {
         TransitionComponent={Slide}
         message={toastState.message}
         autoHideDuration={5000}
-        ContentProps = {{
-          className: classes.root
+        ContentProps={{
+          className: classes.root,
         }}
       />
     </>
   );
-})
+});
 
 export default ToastyBoi;
