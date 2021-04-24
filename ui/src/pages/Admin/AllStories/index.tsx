@@ -52,10 +52,10 @@ const UploadButton = styled(Button)`
   margin-bottom: -5vh;
   margin-left: 70vw;
   &:active {
-    background-color: ${colors.primaryDark1};
+    background-color: ${colors.primaryDark2};
   }
   &:hover{
-    background-color: ${colors.primaryDark1};
+    background-color: ${colors.primaryDark3};
   }
 `;
 
