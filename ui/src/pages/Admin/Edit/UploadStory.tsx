@@ -2,6 +2,11 @@ import {
   AppBar,
   Button,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   Grid,
   LinearProgress,
@@ -14,20 +19,21 @@ import {
 import Alert from "@material-ui/lab/Alert";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DropzoneArea } from "material-ui-dropzone";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import * as React from "react";
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 
-import { StoryDrawer } from "../../components";
-import { citiesList } from "../../data/cities";
-import { colors } from "../../styles/colors";
-import { device } from "../../styles/device";
+import { StoryDrawer } from "../../../components";
+import { citiesList } from "../../../data/cities";
+import { colors } from "../../../styles/colors";
+import { device } from "../../../styles/device";
 import {
   UploadLabelsText,
   UploadStoriesHeading,
-} from "../../styles/typography";
-import { Author, Story } from "../../types";
+} from "../../../styles/typography";
+import { Author, Story } from "../../../types";
 import { ListboxComponent, renderGroup } from "./Listbox";
 import { get_init_state, uploadStoryReducer } from "./reducer";
 import { StoryProps, TagParameters } from "./types";
@@ -47,6 +53,16 @@ const StyledSelect = styled(Select)`
     align-items: center;
     display: inline-block;
   }
+`;
+const StyledLink = styled.a`
+  margin-top: 3.5vh;
+  color: ${colors.primaryDark1};
+  margin-left: 64px;
+  margin-right: 30px;
+`;
+
+const StyledContainer = styled.div`
+  display: flex;
 `;
 
 const StyledMenuItem = styled(MenuItem)`
@@ -93,6 +109,16 @@ const StyledAutocomplete = styled(Autocomplete)`
 const StyledButton = styled(Button)`
   text-transform: none;
   margin: 5px;
+`;
+
+const StyledDelete = styled(Button)`
+  text-transform: none;
+  margin: 5px;
+  color: ${colors.red} !important;
+`;
+
+const StyledConfirmDelete = styled(Button)`
+  color: ${colors.red} !important;
 `;
 
 const AddCountryPaper = styled(Paper)`
@@ -228,6 +254,7 @@ export const UploadStory: React.FC<StoryProps> = ({
       formInput.author_country
     );
   }, [formInput]);
+  const [dialogOpenState, setDialogOpenState] = useState(false);
 
   const setImage = (files: File[]) => {
     setFormInput({
@@ -267,6 +294,27 @@ export const UploadStory: React.FC<StoryProps> = ({
     setFormInput({
       [name]: event.target.value,
     });
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpenState(false);
+  };
+
+  const handleDialogAgree = () => {
+    fetch(`/api/story/${id}`, {
+      method: "DELETE",
+      redirect: "follow",
+    })
+      .then(() => {
+        history.push("/admin");
+        history.go(0);
+      })
+      .catch((error) => console.log("Error: ", error));
+    handleDialogClose();
+  };
+
+  const handleDialogDisagree = () => {
+    handleDialogClose();
   };
 
   const storySubmitDialog = (result) => {
@@ -402,34 +450,60 @@ export const UploadStory: React.FC<StoryProps> = ({
       <AppBar color="default" position="sticky">
         <Grid container direction="row">
           <Grid item xs={6}>
-            <UploadStoriesHeading>{pageTitle}</UploadStoriesHeading>
+            <StyledContainer>
+              <StyledLink href="/admin/allstories">
+                <ArrowBackIcon />
+              </StyledLink>
+              <UploadStoriesHeading>{pageTitle}</UploadStoriesHeading>
+            </StyledContainer>
           </Grid>
           <Grid
             container
             item
+            spacing={3}
             xs={6}
             direction="row"
             alignContent="center"
             justify="flex-end"
           >
-            <StyledButton
-              disabled={!hasAllRequiredFields}
-              onClick={() =>
-                dispatch({ type: "SET_DRAWER_OPEN", drawerOpen: true })
-              }
-              color="primary"
-              variant="outlined"
-            >
-              Preview
-            </StyledButton>
-            <StyledButton
-              disabled={state.disabled || !hasAllRequiredFields}
-              variant="contained"
-              color="primary"
-              onClick={handleSubmit}
-            >
-              {submitButtonText}
-            </StyledButton>
+            {id && (
+              <Grid
+                item
+                direction="row"
+                alignContent="center"
+                justify="flex-end"
+              >
+                <StyledDelete
+                  onClick={() => setDialogOpenState(true)}
+                  color="primary"
+                  variant="outlined"
+                >
+                  Delete Story
+                </StyledDelete>
+              </Grid>
+            )}
+            <Grid item direction="row" alignContent="center" justify="flex-end">
+              <StyledButton
+                disabled={!hasAllRequiredFields}
+                onClick={() =>
+                  dispatch({ type: "SET_DRAWER_OPEN", drawerOpen: true })
+                }
+                color="primary"
+                variant="outlined"
+              >
+                Preview
+              </StyledButton>
+            </Grid>
+            <Grid item direction="row" alignContent="center" justify="flex-end">
+              <StyledButton
+                disabled={state.disabled || !hasAllRequiredFields}
+                variant="contained"
+                color="primary"
+                onClick={handleSubmit}
+              >
+                {submitButtonText}
+              </StyledButton>
+            </Grid>
           </Grid>
         </Grid>
         {state.loading ? <StyledLinearProgress /> : null}
@@ -708,6 +782,32 @@ export const UploadStory: React.FC<StoryProps> = ({
                 Error uploading story!
               </Alert>
             </Snackbar>
+            <Dialog
+              open={dialogOpenState}
+              onClose={handleDialogClose}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialogd-description"
+            >
+              <DialogTitle id="alert-dialog-title">
+                {`Are you sure you want to delete ${formInput.title}?`}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  This cannot be undone
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleDialogDisagree} color="primary">
+                  Cancel
+                </Button>
+                <StyledConfirmDelete
+                  onClick={handleDialogAgree}
+                  color="primary"
+                >
+                  Delete Story
+                </StyledConfirmDelete>
+              </DialogActions>
+            </Dialog>
           </FormControl>
         </form>
       </StyledGrid>

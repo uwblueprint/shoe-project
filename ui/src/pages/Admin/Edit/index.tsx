@@ -2,7 +2,7 @@ import * as React from "react";
 import { useParams } from "react-router-dom";
 import useSWR from "swr";
 
-import { Story } from "../../types/index";
+import { Story } from "../../../types/index";
 import { UploadStoryWrapper } from "./UploadStoryWrapper";
 
 export const Edit: React.FC = () => {

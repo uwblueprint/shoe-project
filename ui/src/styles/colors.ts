@@ -2,6 +2,7 @@
 const teal = "#6FBAC6";
 const tealDark1 = "#2D6394";
 const tealDark2 = "#153959";
+const tealDark3 = " #4481B9";
 const tealLight1 = "#8CC7D1";
 const tealLight2 = "#B7DFE5";
 const tealLight3 = "#D2EDF1";
@@ -18,6 +19,9 @@ const redLight2 = "#EA7B7B";
 const redLight3 = "#F5B8B8";
 const redLight4 = "#FCDCDC";
 
+/*Tertiary Colours */
+const green = "#4FBD6E";
+
 /* Neutrals */
 const light = "#F2F6F8";
 const dark = "#1E202D";
@@ -33,12 +37,14 @@ export const colors = Object.freeze({
   black,
   white,
   dark,
+  red,
   neutralLight: light,
   neutralDark: neutralDark,
   neutralGrey: grey,
   primary: teal,
   primaryDark1: tealDark1,
   primaryDark2: tealDark2,
+  primaryDark3: tealDark3,
   primaryLight1: tealLight1,
   primaryLight2: tealLight2,
   primaryLight3: tealLight3,
@@ -52,4 +58,5 @@ export const colors = Object.freeze({
   secondaryLight2: redLight2,
   secondaryLight3: redLight3,
   secondaryLight4: redLight4,
+  tertiary: green,
 });

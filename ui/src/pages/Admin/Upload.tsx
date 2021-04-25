@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { Story } from "../types/index";
+import { Story } from "../../types/index";
 import { UploadStoryWrapper } from "./Edit/UploadStoryWrapper";
 
 export const Upload: React.FC = () => {

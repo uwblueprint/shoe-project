@@ -1,6 +1,6 @@
 import { KeyboardEvent } from "react";
 
-import { Story } from "../../types";
+import { Story } from "../../../types";
 
 interface InputProps {
   onKeyDown: (

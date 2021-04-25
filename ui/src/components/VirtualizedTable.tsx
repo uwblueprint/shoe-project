@@ -3,13 +3,14 @@ import MuiTable from "mui-virtualized-table";
 import * as React from "react";
 import AutoSizer from "react-virtualized/dist/commonjs/AutoSizer";
 
-import { StoryView } from "../pages/AllStories";
+import { StoryView } from "../pages/Admin/AllStories/types";
 import { colors } from "../styles/colors";
 import { fontSize } from "../styles/typography";
 
 const useVirtualizedTableStyles = makeStyles({
   root: {
     marginLeft: "55px",
+    width: "100vw",
 
     "& .MuiTableCell-root": {
       backgroundColor: colors.white,
@@ -38,7 +39,7 @@ const useVirtualizedTableStyles = makeStyles({
 
 type TableColumn = {
   name: string;
-  width: number;
+  width: number | string;
   onHeaderClick?: () => void;
   header: JSX.Element | string;
   cell?: (any) => JSX.Element;
@@ -71,7 +72,9 @@ export function VirtualizedTable({
             orderDirection={order}
             includeHeaders
             onCellClick={(e, { rowData }) => {
-              if (e.target.type === "checkbox") {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const event = e as any;
+              if (event.target.type === "checkbox") {
                 return;
               }
               const id: number = rowData?.ID;
