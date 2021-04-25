@@ -4,6 +4,7 @@ import Drawer from "@material-ui/core/Drawer";
 import Grid from "@material-ui/core/Grid";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import * as React from "react";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 
 import { StoryView } from "../pages/Admin/AllStories/types";
@@ -17,7 +18,6 @@ import {
   StoryDrawerTitleText,
 } from "../styles/typography";
 import { Story } from "../types";
-import { useHistory } from "react-router-dom";
 
 const StyledDrawer = styled(Drawer)`
   .MuiDrawer-paperAnchorRight {

@@ -5,8 +5,8 @@ import styled from "styled-components";
 
 import { useAuth } from "../../hooks/auth";
 import { AllStories } from "./AllStories";
-import { Upload } from "./Upload";
 import { Edit } from "./Edit/index";
+import { Upload } from "./Upload";
 
 const Center = styled.div`
   position: absolute;

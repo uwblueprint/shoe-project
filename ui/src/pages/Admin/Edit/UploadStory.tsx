@@ -16,10 +16,10 @@ import {
   Snackbar,
   TextField,
 } from "@material-ui/core/";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import Alert from "@material-ui/lab/Alert";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DropzoneArea } from "material-ui-dropzone";
-import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import * as React from "react";
 import { useReducer, useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -119,6 +119,7 @@ const StyledDelete = styled(Button)`
 
 const StyledConfirmDelete = styled(Button)`
   color: ${colors.red} !important;
+  border-color: ${colors.red} !important;
 `;
 
 const AddCountryPaper = styled(Paper)`
@@ -475,7 +476,7 @@ export const UploadStory: React.FC<StoryProps> = ({
               >
                 <StyledDelete
                   onClick={() => setDialogOpenState(true)}
-                  color="primary"
+                  color="secondary"
                   variant="outlined"
                 >
                   Delete Story
