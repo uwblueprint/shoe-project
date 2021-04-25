@@ -158,9 +158,9 @@ export function allStoriesReducer(state: State, action: Action): State {
       return {
         ...state,
         selectedRowIds:
-          state.selectedRowIds.length === state.tableData.length
-            ? []
-            : state.tableData.map((story) => story.ID),
+          state.selectedRowIds.length === 0
+            ? state.tableData.map((story) => story.ID)
+            : [],
       };
     }
     case "HANDLE_CHECKED": {

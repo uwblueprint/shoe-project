@@ -584,9 +584,6 @@ export const AllStories: React.FC = () => {
               {
                 name: "ID",
                 width: "5%",
-                onHeaderClick() {
-                  handleRequestSort("ID");
-                },
                 header: (
                   <div>
                     <Checkbox
@@ -606,6 +603,7 @@ export const AllStories: React.FC = () => {
                 cell: (story) => (
                   <div>
                     <Checkbox
+                      checked={state.selectedRowIds.includes(story.ID)}
                       classes={{
                         root: classes.checkbox,
                         checked: classes.checked,
@@ -718,9 +716,6 @@ export const AllStories: React.FC = () => {
               {
                 name: "ID",
                 width: "5%",
-                onHeaderClick() {
-                  handleRequestSort("ID");
-                },
                 header: (
                   <div>
                     <Checkbox
@@ -732,7 +727,7 @@ export const AllStories: React.FC = () => {
                       indeterminate={indeterminate}
                       onChange={(e) => {
                         e.persist();
-                        handleCheckedAll;
+                        handleCheckedAll();
                       }}
                     />
                   </div>
@@ -740,6 +735,7 @@ export const AllStories: React.FC = () => {
                 cell: (story) => (
                   <div>
                     <Checkbox
+                      checked={state.selectedRowIds.includes(story.ID)}
                       classes={{
                         root: classes.checkbox,
                         checked: classes.checked,
