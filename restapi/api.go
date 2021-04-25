@@ -74,7 +74,6 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 		rest.PostHandler(r, "/story", api.CreateStoriesFormData)
 		rest.PostHandler(r, "/authors", api.CreateAuthors)
 		rest.PostHandler(r, "/countries", api.AddCountries)
-		rest.PostHandler(r, "/countries", api.AddCountries)
 		rest.DeleteHandler(r, "/story/{storyID}", api.DeleteStoryByID)
 		rest.PutHandler(r, "/story/{storyID}", api.EditStoryByID)
 		rest.PutHandler(r, "/stories/publish", api.PublishStories)
