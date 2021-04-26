@@ -329,7 +329,7 @@ export const UploadStory: React.FC<StoryProps> = ({
       resultMessage === "Story Added Successfully" ||
       resultMessage === "Story Updated successfully"
     ) {
-      history.push("/success-screen");
+      history.push("/admin/upload-success");
     } else {
       dispatch({ type: "SET_ERROR_STATE", errorState: true });
     }
