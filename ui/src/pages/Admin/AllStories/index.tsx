@@ -37,8 +37,10 @@ import { StoryView } from "./types";
 import { VisibilitySwitch } from "./VisibilitySwitch";
 
 const StyledFilter = styled.div`
-  width: 100vw;
-  margin-top: 1vh;
+width: 30vw;
+margin-top: 7vh;
+justify-self: right;
+margin-left: 65vw;
 `;
 
 const StyledButton = styled(Button)`
@@ -63,7 +65,6 @@ const ShowHideButton = styled(Button)`
 && {
   box-shadow: none;
   background-color: ${colors.primaryDark1};
-  margin-top: 5vh;
   margin-left: 64px;
   padding: 8px 20px 8px 20px;
 
@@ -244,6 +245,14 @@ export const AllStories: React.FC = () => {
   const doesVisibleStoriesExist =
     state.visibleTableState.filter((story) => story.is_visible).length !== 0;
 
+ const hideButtonText = `${"Hide All From Map ("}
+    ${state.checkedVisibleStoriesArray.length} ${")"}`;
+
+ const showButtonText = `${"Show All on Map ("} ${state.checkedHiddenStoriesArray.length} ${")"}`;
+
+ const isButtonOpen = () => {
+   return (state.checkedVisibleStoriesArray.length>0 || state.checkedHiddenStoriesArray.length>0);
+ }
   const handleClick = (
     event: React.MouseEvent<HTMLButtonElement>,
     popoverType: string
@@ -509,22 +518,23 @@ export const AllStories: React.FC = () => {
           </Tabs>
         </AppBar>
       </StyledContainer>
-      <StyledFilter>
-        <Grid container justify="flex-end" spacing={2}>
-          <Grid item xs={4}>
+      <div >
+      <div style={{"marginBottom": isButtonOpen()? "-12vh" : "-5vh", "marginTop": isButtonOpen()? "2vh": "0vh"}}>
             {state.checkedVisibleStoriesArray.length > 0 && (
               <ShowHideButton onClick={() => handleVisibilityButtons("hide")}>
-                {"Hide All From Map: " +
-                  state.checkedVisibleStoriesArray.length}
+               {hideButtonText}
               </ShowHideButton>
             )}
             {state.checkedHiddenStoriesArray.length > 0 && (
-              <ShowHideButton onClick={() => handleVisibilityButtons("show")}>
-                {"Show All on Map: " + state.checkedHiddenStoriesArray.length}
+              <ShowHideButton style={{"marginLeft":"16px" }}onClick={() => handleVisibilityButtons("show")}>
+              {showButtonText}
               </ShowHideButton>
             )}
-          </Grid>
-          <Grid item xs={4}>
+          </div>
+      <StyledFilter>
+     
+        <Grid container justify="flex-end" spacing={2}>
+          <Grid item xs={8}>
             <StyledSearchBar
               placeholder="Type to search..."
               value={state.search}
@@ -650,8 +660,9 @@ export const AllStories: React.FC = () => {
             </Popover>
           </Grid>
         </Grid>
+        
       </StyledFilter>
-
+      </div>
       <Popover
         id={"visibility-popover"}
         open={isPopoverOpen}
