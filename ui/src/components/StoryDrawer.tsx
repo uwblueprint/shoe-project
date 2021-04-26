@@ -4,6 +4,7 @@ import Drawer from "@material-ui/core/Drawer";
 import Grid from "@material-ui/core/Grid";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import * as React from "react";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 
 import { StoryView } from "../pages/Admin/AllStories/types";
@@ -115,6 +116,7 @@ export function StoryDrawer({
   onClickEditStory,
 }: StoryDrawerProps): JSX.Element {
   const [imageURL, setImageURL] = React.useState("");
+  const history = useHistory();
   if (story === undefined) {
     return null;
   }
@@ -152,7 +154,11 @@ export function StoryDrawer({
             <StoryDrawerTitleText>{title}</StoryDrawerTitleText>
           </Grid>
           {onClickEditStory && (
-            <EditStoryButton variant="contained" color="primary">
+            <EditStoryButton
+              variant="contained"
+              color="primary"
+              onClick={() => history.push(`/admin/edit/${story.ID}`)}
+            >
               {" Edit Story"}
             </EditStoryButton>
           )}

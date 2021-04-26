@@ -37,6 +37,7 @@ export const colors = Object.freeze({
   black,
   white,
   dark,
+  red,
   neutralLight: light,
   neutralDark: neutralDark,
   neutralGrey: grey,
