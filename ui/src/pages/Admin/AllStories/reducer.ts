@@ -99,7 +99,6 @@ export function allStoriesReducer(state: State, action: Action): State {
       }
     }
     case "HANDLE_POPOVER_CHECKED": {
-      console.log(state.checkedVisibleStoriesArray.length);
       if (action.visibilityCondition === "all") {
         return {
           ...state,

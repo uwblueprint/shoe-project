@@ -39,7 +39,6 @@ import { VisibilitySwitch } from "./VisibilitySwitch";
 const StyledFilter = styled.div`
   width: 100vw;
   margin-top: 1vh;
-  // justify-self: right;
 `;
 
 const StyledButton = styled(Button)`
@@ -385,37 +384,29 @@ export const AllStories: React.FC = () => {
 
   const handleVisibilityButtons = (visibilityType: string) => {
     if (visibilityType === "hide") {
-      mutate(
-        "/api/stories",
-        (prevStories: Story[]) => {
-          return prevStories.map((currStory) =>
-            currStory.is_visible &&
-            state.checkedVisibleStoriesArray.includes(currStory.ID)
-              ? { ...currStory, is_visible: !currStory.is_visible }
-              : currStory
-          );
-        },
-        false
-      );
-
+      state.checkedVisibleStoriesArray.forEach((s) => {
+        const changeEvent = {
+          target: {
+            checked: getStoryByID(s).is_visible ? false : true,
+          },
+        } as React.ChangeEvent<HTMLInputElement>;
+        handleSwitchChange(changeEvent, getStoryByID(s));
+      });
       dispatch({ type: "UNCHECK_STORIES", visibilityCondition: "hide" });
-      //uncheck
-      //dispatch
     } else {
-      mutate(
-        "/api/stories",
-        (prevStories: Story[]) => {
-          return prevStories.map((currStory) =>
-            !currStory.is_visible &&
-            state.checkedHiddenStoriesArray.includes(currStory.ID)
-              ? { ...currStory, is_visible: !currStory.is_visible }
-              : currStory
-          );
-        },
-        false
-      );
+      state.checkedHiddenStoriesArray.forEach((s) => {
+        const changeEvent = {
+          target: {
+            checked: getStoryByID(s).is_visible ? false : true,
+          },
+        } as React.ChangeEvent<HTMLInputElement>;
+        handleSwitchChange(changeEvent, getStoryByID(s));
+      });
       dispatch({ type: "UNCHECK_STORIES", visibilityCondition: "show" });
     }
+  };
+  const getStoryByID = (id: number) => {
+    return allStories.find((s) => s.ID === id);
   };
   const handleCheckedAll = () => {
     dispatch({ type: "HANDLE_CHECKED_ALL", rows: allStories });
@@ -461,7 +452,6 @@ export const AllStories: React.FC = () => {
     }
     return 0;
   };
-
   const indeterminate =
     state.selectedRowIds.length > 0 &&
     state.selectedRowIds.length !== allStories.length;
@@ -901,19 +891,44 @@ export const AllStories: React.FC = () => {
                         root: classes.checkbox,
                         checked: classes.checked,
                       }}
-                      checked={state.selectedRowIds.length > 0}
+                      checked={
+                        state.checkedVisibleStoriesArray.length +
+                          state.checkedHiddenStoriesArray.length >
+                        0
+                      }
                       indeterminate={indeterminate}
                       onChange={(e) => {
                         e.persist();
                         handleCheckedAll();
                       }}
                     />
+                    <Button
+                      onClick={(e) => handleClick(e, "checkbox")}
+                      variant="contained"
+                      color="primary"
+                      style={{
+                        padding: "0px",
+                        minWidth: "1vw",
+                        paddingRight: "-20px",
+                        boxShadow: "none",
+                        backgroundColor: colors.white,
+                      }}
+                    >
+                      <ExpandMoreIcon
+                        style={{
+                          color: colors.black,
+                        }}
+                      />
+                    </Button>
                   </div>
                 ),
                 cell: (story) => (
                   <div>
                     <Checkbox
-                      checked={state.selectedRowIds.includes(story.ID)}
+                      checked={
+                        state.checkedHiddenStoriesArray.includes(story.ID) ||
+                        state.checkedVisibleStoriesArray.includes(story.ID)
+                      }
                       classes={{
                         root: classes.checkbox,
                         checked: classes.checked,
