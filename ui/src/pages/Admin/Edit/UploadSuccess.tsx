@@ -1,6 +1,5 @@
 import { Button } from "@material-ui/core/";
 import * as React from "react";
-import { Link } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 
@@ -107,7 +106,10 @@ export const UploadSuccess: React.FC = () => {
             <StyledIllustration src={SuccessDrawing}></StyledIllustration>
             <StyledDiv>
               <ReturnButton
-                component={Link}
+                onClick={() => {
+                  history.push("/admin/allstories");
+                  history.go(0);
+                }}
                 to="/admin/allstories"
                 variant="outlined"
                 size="large"
