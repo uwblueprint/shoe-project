@@ -1,10 +1,11 @@
 import { Button } from "@material-ui/core/";
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 
+import WelcomeLogo from "../../../assets/images/shoeproject-logo.svg";
 import SuccessDrawing from "../../../assets/images/success-doodle.svg";
-import WelcomeLogo from "../../../assets/images/welcome-shoe-logo.svg";
 import { colors } from "../../../styles/colors";
 import { fontSize } from "../../../styles/typography";
 
@@ -94,6 +95,8 @@ const StyledContainer = styled.div`
 `;
 
 export const UploadSuccess: React.FC = () => {
+  const history = useHistory();
+
   return (
     <>
       <StyledGrid>
@@ -105,15 +108,15 @@ export const UploadSuccess: React.FC = () => {
             <StyledDiv>
               <ReturnButton
                 component={Link}
-                to="/allstories"
+                to="/admin/allstories"
                 variant="outlined"
                 size="large"
               >
                 Return to Dashboard
               </ReturnButton>
               <UploadButton
-                component={Link}
-                to="/upload"
+                onClick={() => history.push("/admin/upload")}
+                to="/admin/upload"
                 variant="contained"
                 size="large"
                 color="primary"
