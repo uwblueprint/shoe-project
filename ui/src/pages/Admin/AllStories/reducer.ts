@@ -456,7 +456,7 @@ const requestSearchAndFilter = (newState: State) => {
     );
   } else if (newState.tabValue === 2) {
     newState.changedVisibility = requestSearchAndFilterHelper(
-      newState.changedVisibilityFilter,
+      newState.changedVisibility,
       newState
     );
   }

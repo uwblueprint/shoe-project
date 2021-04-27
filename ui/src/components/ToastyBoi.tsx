@@ -25,6 +25,7 @@ const ToastyBoi = forwardRef((props, ref) => {
 
       "& .MuiSnackbarContent-message": {
         margin: "auto",
+        fontFamily: "Poppins",
       },
     },
   });

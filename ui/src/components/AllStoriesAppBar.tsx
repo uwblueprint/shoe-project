@@ -66,8 +66,6 @@ export default function AllStoriesAppBar({
 }: AppBarProps): JSX.Element {
   const classes = useStyles();
 
-  console.log(isPublishDisabled);
-
   return (
     <div className={classes.root}>
       <AppBar position="static">
