@@ -194,3 +194,7 @@ func GetZipCodeToken() string {
 func GetAuthRedirectURL() string {
 	return viper.GetString("auth.redirect.url")
 }
+
+func GetImageSizeLimit() int64 {
+	return viper.GetInt64("image.size.limit")
+}
