@@ -394,6 +394,9 @@ func (api api) PublishStories(w http.ResponseWriter, r *http.Request) render.Ren
 }
 
 func (api api) uploadImageTos3(file multipart.File, size int64, name string) (string, error) {
+	if size > 7000000 {
+		return "", fmt.Errorf("Image exceeds 7MB limit")
+	}
 	newSession, err := session.NewSession(api.s3config)
 	if err != nil {
 		return "", fmt.Errorf("Could not connect with S3")
