@@ -57,32 +57,26 @@ func Router(db *gorm.DB, locationFinder location.LocationFinder) (http.Handler, 
 	r.Group(func(r chi.Router) {
 		rest.GetHandler(r, "/health", api.health)
 		rest.GetHandler(r, "/countries", api.ReturnAllCountries)
-		rest.PostHandler(r, "/countries", api.AddCountries)
 		rest.GetHandler(r, "/stories", api.ReturnAllStories)
 		rest.GetHandler(r, "/stories/{countries}", api.ReturnStoriesByCountries)
 		rest.GetHandler(r, "/story/{storyID}", api.ReturnStoryByID)
-		rest.DeleteHandler(r, "/story/{storyID}", api.DeleteStoryByID)
-		rest.PutHandler(r, "/story/{storyID}", api.EditStoryByID)
-		rest.PutHandler(r, "/stories/publish", api.PublishStories)
 		rest.GetHandler(r, "/authors/origin_countries", api.ReturnAuthorOriginCountries)
 		rest.GetHandler(r, "/tags", api.ReturnAllUniqueTags)
 		rest.GetHandler(r, "/client_tokens", api.ReturnClientTokens)
 		rest.PostHandler(r, "/login", api.Login)
-
-		// TODO: move back to protected endpoints
-		rest.PostHandler(r, "/stories", api.CreateStories)
-		rest.PostHandler(r, "/story", api.CreateStoriesFormData)
-		rest.PostHandler(r, "/authors", api.CreateAuthors)
 	})
 
 	// Private API
 	r.Group(func(r chi.Router) {
 		r.Use(jwtauth.Verifier(config.GetJWTKey()))
 		r.Use(Authenticator)
-
-		// rest.PostHandler(r, "/stories", api.CreateStories)
-		// rest.PostHandler(r, "/story", api.CreateStoriesFormData)
-		// rest.PostHandler(r, "/authors", api.CreateAuthors)
+		rest.PostHandler(r, "/stories", api.CreateStories)
+		rest.PostHandler(r, "/story", api.CreateStoriesFormData)
+		rest.PostHandler(r, "/authors", api.CreateAuthors)
+		rest.PostHandler(r, "/countries", api.AddCountries)
+		rest.DeleteHandler(r, "/story/{storyID}", api.DeleteStoryByID)
+		rest.PutHandler(r, "/story/{storyID}", api.EditStoryByID)
+		rest.PutHandler(r, "/stories/publish", api.PublishStories)
 	})
 	return r, nil
 }

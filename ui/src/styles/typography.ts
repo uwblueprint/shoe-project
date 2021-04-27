@@ -280,13 +280,25 @@ export const HelpDrawerLaunchButtonText = styled.span`
 `;
 
 export const LoginTitleText = styled.p`
-  font-size: ${fontSize.h3Text};
+  font-size: ${fontSize.subtitle};
   line-height: 30px;
   text-align: center;
 `;
 
 export const LoginMessageText = styled.p`
   font-size: ${fontSize.body2};
+  text-align: center;
+  font-family: Poppins;
+  color: ${colors.grey};
+  line-height: 150%;
+`;
+
+export const LoginHeader = styled.div`
+  font-family: Canela;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 32px;
+  line-height: 37px;
   text-align: center;
 `;
 
@@ -328,4 +340,11 @@ export const StyledEmptyMessage = styled.div`
   margin-top: 30vh;
   font-family: Poppins;
   font-size: ${fontSize.subtitle};
+`;
+
+export const StyledSubEmptyMessage = styled.div`
+  margin-left: 42vw;
+  font-family: Poppins;
+  font-size: ${fontSize.subtitle};
+  color: ${colors.grey};
 `;

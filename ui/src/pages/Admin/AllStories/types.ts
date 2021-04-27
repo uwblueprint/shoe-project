@@ -6,7 +6,6 @@ export type StoryView = Omit<
   | "latitude"
   | "longitude"
   | "author"
-  | "tags"
   | "CreatedAt"
   | "DeletedAt"
   | "UpdatedAt"

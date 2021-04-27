@@ -5,6 +5,8 @@ import styled from "styled-components";
 
 import { useAuth } from "../../hooks/auth";
 import { AllStories } from "./AllStories";
+import { Edit } from "./Edit/index";
+import { UploadSuccess } from "./Edit/UploadSuccess";
 import { Upload } from "./Upload";
 
 const Center = styled.div`
@@ -39,6 +41,12 @@ export const Admin: React.FC = () => {
       </Route>
       <Route path="/admin/upload">
         <Upload />
+      </Route>
+      <Route path="/admin/upload-success">
+        <UploadSuccess />
+      </Route>
+      <Route path="/admin/edit/:id">
+        <Edit />
       </Route>
       <Route path="/admin/allstories">
         <AllStories />
