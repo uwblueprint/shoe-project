@@ -503,53 +503,6 @@ export const AllStories: React.FC = () => {
       .catch((error) => console.log("Error: ", error));
   };
 
-  const requestSearchHelper = (row, searchedVal: string) => {
-    let doesExist = false;
-    Object.keys(row).forEach((prop) => {
-      //Exclude search for StoryView members not displayed on table cells
-      const excludedParameters = prop !== "ID";
-      prop !== "image_url" &&
-        prop !== "video_url" &&
-        prop !== "content" &&
-        prop !== "is_visible";
-      const numExist =
-        typeof row[prop] === "number" &&
-        row[prop].toString().includes(searchedVal) &&
-        excludedParameters;
-      const stringExist =
-        typeof row[prop] === "string" &&
-        row[prop].toLowerCase().includes(searchedVal.toLowerCase()) &&
-        excludedParameters;
-      if (stringExist || numExist) {
-        doesExist = true;
-      }
-    });
-    return doesExist;
-  };
-
-  const requestSearch = (searchedVal: string) => {
-    if (state.tabValue === 0) {
-      const filteredRows: StoryView[] = state.origTableData.filter((row) => {
-        return requestSearchHelper(row, searchedVal);
-      });
-      dispatch({ type: "SET_TABLE_DATA", data: filteredRows });
-    } else if (state.tabValue === 1) {
-      const filteredRows: StoryView[] = state.visibleTableFilterState.filter(
-        (row) => {
-          return requestSearchHelper(row, searchedVal);
-        }
-      );
-      dispatch({ type: "SET_VISIBLE_TABLE_STATE", data: filteredRows });
-    } else if (state.tabValue === 2) {
-      const filteredRows: StoryView[] = state.changedVisibilityFilter.filter(
-        (row) => {
-          return requestSearchHelper(row, searchedVal);
-        }
-      );
-      dispatch({ type: "SET_CHANGED_VISIBILITY", data: filteredRows });
-    }
-  };
-
   const cancelSearch = () => {
     dispatch({
       type: "HANDLE_SEARCH/FILTER",
