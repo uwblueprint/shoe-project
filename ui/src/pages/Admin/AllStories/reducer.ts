@@ -84,6 +84,7 @@ export function allStoriesReducer(state: State, action: Action): State {
       return {
         ...state,
         changedVisibility: [],
+        changedVisibilityFilter: [],
       };
     }
     case "SWITCH_TAB": {
@@ -456,7 +457,7 @@ const requestSearchAndFilter = (newState: State) => {
     );
   } else if (newState.tabValue === 2) {
     newState.changedVisibility = requestSearchAndFilterHelper(
-      newState.changedVisibility,
+      newState.changedVisibilityFilter,
       newState
     );
   }
