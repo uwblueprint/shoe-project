@@ -22,7 +22,9 @@ import styled from "styled-components";
 import useSWR, { mutate } from "swr";
 
 import { StoryDrawer } from "../../../components";
+import AllStoriesAppBar from "../../../components/AllStoriesAppBar";
 import { a11yProps, AllStoriesTabs } from "../../../components/AllStoriesTabs";
+import ToastyBoi from "../../../components/ToastyBoi";
 import VirtualizedTable from "../../../components/VirtualizedTable";
 import { colors } from "../../../styles/colors";
 import {
@@ -382,7 +384,11 @@ export const AllStories: React.FC = () => {
   };
 
   const handleSwitchChange = (e, story) => {
-    dispatch({ type: "HANDLE_SWITCH_CHANGE", e, story });
+    dispatch({
+      type: "HANDLE_SWITCH_CHANGE",
+      e,
+      story: { ...story, is_visible: !story.is_visible },
+    });
     mutate(
       "/api/stories",
       (prevStories: Story[]) => {
@@ -477,6 +483,26 @@ export const AllStories: React.FC = () => {
     dispatch({ type: "SET_TAB_VALUE", newValue });
   };
 
+  const toast = React.useRef(null);
+
+  const showToast = (message: string) => {
+    toast.current.showToast(message);
+  };
+
+  const publishMap = () => {
+    fetch("/api/stories/publish", {
+      method: "PUT",
+      body: JSON.stringify(state.changedVisibility),
+      redirect: "follow",
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        dispatch({ type: "CLEAR_PENDING_CHANGES" });
+        showToast(result["message"]);
+      })
+      .catch((error) => console.log("Error: ", error));
+  };
+
   const cancelSearch = () => {
     dispatch({
       type: "HANDLE_SEARCH/FILTER",
@@ -496,6 +522,11 @@ export const AllStories: React.FC = () => {
         }
       />
       <StyledContainer>
+        <AllStoriesAppBar
+          handlePublishMap={publishMap}
+          isPublishDisabled={state.changedVisibility.length == 0}
+          handleLogout={null}
+        />
         <StyledAllStoriesHeader>
           The Shoe Project Impact Map Portal
         </StyledAllStoriesHeader>
@@ -1071,10 +1102,10 @@ export const AllStories: React.FC = () => {
                 name: "pending-map-changes-changes",
                 width: "5%",
                 header: "",
-                cell: (d) => {
+                cell: (story) => {
                   return (
                     <div>
-                      {state.visibleState.includes(d.ID) ? (
+                      {story.is_visible ? (
                         <StyledAddIcon color="primary" />
                       ) : (
                         <StyledRemoveIcon color="primary" />
@@ -1149,7 +1180,7 @@ export const AllStories: React.FC = () => {
                 },
                 cell: (story) => (
                   <VisibilitySwitch
-                    checked={state.visibleState.includes(story.ID)}
+                    checked={story.is_visible}
                     onChange={(e) => {
                       e.persist();
                       handleSwitchChange(e, story);
@@ -1165,6 +1196,7 @@ export const AllStories: React.FC = () => {
           <StyledEmptyMessage> No pending changes! </StyledEmptyMessage>
         )}
       </AllStoriesTabs>
+      <ToastyBoi ref={toast} />
       <StoryDrawer
         story={clickedStory}
         onClose={() => setClickedStory(undefined)}

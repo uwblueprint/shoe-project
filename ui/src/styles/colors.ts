@@ -21,6 +21,7 @@ const redLight4 = "#FCDCDC";
 
 /*Tertiary Colours */
 const green = "#4FBD6E";
+const benjaminMoore = "#4481B9";
 
 /* Neutrals */
 const light = "#F2F6F8";
@@ -59,4 +60,5 @@ export const colors = Object.freeze({
   secondaryLight3: redLight3,
   secondaryLight4: redLight4,
   tertiary: green,
+  benjaminMoore,
 });
