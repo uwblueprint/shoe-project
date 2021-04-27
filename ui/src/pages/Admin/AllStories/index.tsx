@@ -25,6 +25,7 @@ import { Story } from "../../../types/index";
 import { allStoriesReducer, INIT_STATE } from "./reducer";
 import { StoryView } from "./types";
 import { VisibilitySwitch } from "./VisibilitySwitch";
+
 const StyledSearchBar = styled(SearchBar)`
   max-width: 320px;
   background-color: ${colors.primaryLight4};
