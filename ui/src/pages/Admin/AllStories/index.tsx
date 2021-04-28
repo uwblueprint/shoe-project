@@ -235,24 +235,25 @@ export const AllStories: React.FC = () => {
     undefined
   );
   const classes = useStyles();
-  const allStoriesLabel = `${"ALL STORIES"} ${"("} ${
+  const allStoriesLabel = `${"ALL STORIES"} ${"("}${
     state.tableData.length
   } ${")"}`;
-  const visibleStoriesLabel = `${"VISIBLE STORIES"} ${"("} ${
+  const visibleStoriesLabel = `${"VISIBLE STORIES"} ${"("}${
     state.visibleTableState.filter((story) => story.is_visible).length
-  } ${")"}`;
-  const pendingChangesLabel = `${"PENDING MAP CHANGES"} ${"("} ${
+  }${")"}`;
+  const pendingChangesLabel = `${"PENDING MAP CHANGES"} ${"("}${
     state.changedVisibility.length
-  } ${")"}`;
+  }${")"}`;
   const doesVisibleStoriesExist =
     state.visibleTableState.filter((story) => story.is_visible).length !== 0;
 
-  const hideButtonText = `${"Hide All From Map ("}
-    ${state.checkedVisibleStoriesArray.length} ${")"}`;
+  const hideButtonText = `${"Hide All From Map ("}${
+    state.checkedVisibleStoriesArray.length
+  }${")"}`;
 
-  const showButtonText = `${"Show All on Map ("} ${
+  const showButtonText = `${"Show All on Map ("}${
     state.checkedHiddenStoriesArray.length
-  } ${")"}`;
+  }${")"}`;
 
   const isButtonOpen = () => {
     return (
@@ -929,7 +930,10 @@ export const AllStories: React.FC = () => {
       <AllStoriesTabs value={state.tabValue} index={1}>
         {doesVisibleStoriesExist ? (
           <VirtualizedTable
-            data={state.visibleTableState.filter((story) => story.is_visible)}
+            data={stableSort(
+              state.visibleTableState.filter((story) => story.is_visible),
+              getComparator(state.order, state.orderBy)
+            )}
             order={state.order}
             orderBy={state.orderBy}
             setClickedRow={setClickedRow}
