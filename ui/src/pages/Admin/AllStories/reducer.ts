@@ -11,6 +11,7 @@ type VisibilityType = {
 
 export interface State {
   anchorEl: HTMLButtonElement | null;
+  popoverAnchorEl: HTMLButtonElement | null;
   tabValue: number;
   search: string;
   visibleState: number[];
@@ -25,11 +26,13 @@ export interface State {
   orderBy: string;
   tags: string[];
   filterState: FilterState;
+  checkedVisibleStoriesArray: number[];
+  checkedHiddenStoriesArray: number[];
 }
 
 export type Action =
   | { type: "SWITCH_TAB"; id: number }
-  | { type: "SET_ANCHOR"; click: HTMLButtonElement }
+  | { type: "SET_ANCHOR"; click: HTMLButtonElement; popoverType: string }
   | { type: "HANDLE_SWITCH_CHANGE"; e: React.ChangeEvent; story: StoryView }
   | { type: "INITIALIZE_AFTER_API"; rows: StoryView[] }
   | { type: "INITIALIZE_AFTER_TAGS_API"; rows: string[] }
@@ -38,14 +41,16 @@ export type Action =
   | { type: "SET_ORDERING"; order: "asc" | "desc"; orderBy: string }
   | { type: "SET_TABLE_DATA"; data: StoryView[] }
   | { type: "SET_TAB_VALUE"; newValue: number }
+  | { type: "CLEAR_PENDING_CHANGES" }
   | { type: "SET_CHANGED_VISIBILITY"; data: StoryView[] }
   | { type: "SET_VISIBLE_TABLE_STATE"; data: StoryView[] }
   | {
       type: "HANDLE_SEARCH/FILTER";
       newFilterState: FilterState;
       newSearch: string;
-    };
-
+    }
+  | { type: "HANDLE_POPOVER_CHECKED"; visibilityCondition: string }
+  | { type: "UNCHECK_STORIES"; visibilityCondition: string };
 export const INIT_STATE: State = {
   anchorEl: null,
   tabValue: 0,
@@ -68,10 +73,20 @@ export const INIT_STATE: State = {
     },
     tags: {},
   },
+  popoverAnchorEl: null,
+  checkedVisibleStoriesArray: [],
+  checkedHiddenStoriesArray: [],
 };
 
 export function allStoriesReducer(state: State, action: Action): State {
   switch (action.type) {
+    case "CLEAR_PENDING_CHANGES": {
+      return {
+        ...state,
+        changedVisibility: [],
+        changedVisibilityFilter: [],
+      };
+    }
     case "SWITCH_TAB": {
       return {
         ...state,
@@ -79,11 +94,59 @@ export function allStoriesReducer(state: State, action: Action): State {
       };
     }
     case "SET_ANCHOR": {
-      return {
-        ...state,
-        anchorEl: action.click,
-      };
+      if (action.popoverType === "filter") {
+        return {
+          ...state,
+          anchorEl: action.click,
+        };
+      } else {
+        return {
+          ...state,
+          popoverAnchorEl: action.click,
+        };
+      }
     }
+    case "HANDLE_POPOVER_CHECKED": {
+      if (action.visibilityCondition === "all") {
+        return {
+          ...state,
+          selectedRowIds: state.tableData.map((story) => story.ID),
+          checkedVisibleStoriesArray: state.visibleTableState
+            .filter((story) => story.is_visible)
+            .map((story) => story.ID),
+          checkedHiddenStoriesArray: state.visibleTableState
+            .filter((story) => !story.is_visible)
+            .map((story) => story.ID),
+        };
+      } else if (action.visibilityCondition === "visible") {
+        return {
+          ...state,
+          selectedRowIds: state.tableData.map((story) => {
+            if (story.is_visible) {
+              return story.ID;
+            }
+          }),
+          checkedVisibleStoriesArray: state.visibleTableState
+            .filter((story) => story.is_visible)
+            .map((story) => story.ID),
+          checkedHiddenStoriesArray: INIT_STATE.checkedHiddenStoriesArray,
+        };
+      } else {
+        return {
+          ...state,
+          selectedRowIds: state.tableData.map((story) => {
+            if (!story.is_visible) {
+              return story.ID;
+            }
+          }),
+          checkedHiddenStoriesArray: state.visibleTableState
+            .filter((story) => !story.is_visible)
+            .map((story) => story.ID),
+          checkedVisibleStoriesArray: INIT_STATE.checkedVisibleStoriesArray,
+        };
+      }
+    }
+
     case "HANDLE_SWITCH_CHANGE": {
       const changedVisibilityContainsID = state.changedVisibility.some(
         (e) => e.ID === action.story.ID
@@ -153,31 +216,90 @@ export function allStoriesReducer(state: State, action: Action): State {
         },
       };
     }
-
-    case "HANDLE_CHECKED_ALL": {
-      return {
-        ...state,
-        selectedRowIds:
-          state.selectedRowIds.length === state.tableData.length
-            ? []
-            : state.tableData.map((story) => story.ID),
-      };
-    }
-    case "HANDLE_CHECKED": {
-      const target = action.e.target as HTMLInputElement;
-
-      if (target.checked) {
+    case "UNCHECK_STORIES": {
+      if (action.visibilityCondition === "hide") {
         return {
           ...state,
-          selectedRowIds: [...state.selectedRowIds, action.story.ID],
+          selectedRowIds: state.selectedRowIds.filter(
+            (s) => !state.visibleState.includes(s)
+          ),
+          checkedVisibleStoriesArray: INIT_STATE.checkedVisibleStoriesArray,
         };
       } else {
         return {
           ...state,
-          selectedRowIds: state.selectedRowIds.filter(
-            (e) => e !== action.story.ID
+          selectedRowIds: state.selectedRowIds.filter((s) =>
+            state.visibleState.includes(s)
           ),
+          checkedHiddenStoriesArray: INIT_STATE.checkedHiddenStoriesArray,
         };
+      }
+    }
+    case "HANDLE_CHECKED_ALL": {
+      if (state.selectedRowIds.length === 0) {
+        return {
+          ...state,
+          selectedRowIds: state.tableData.map((story) => story.ID),
+          checkedVisibleStoriesArray: state.visibleTableState
+            .filter((story) => story.is_visible)
+            .map((story) => story.ID),
+          checkedHiddenStoriesArray: state.visibleTableState
+            .filter((story) => !story.is_visible)
+            .map((story) => story.ID),
+        };
+      } else {
+        return {
+          ...state,
+          selectedRowIds: INIT_STATE.selectedRowIds,
+          checkedHiddenStoriesArray: INIT_STATE.checkedHiddenStoriesArray,
+          checkedVisibleStoriesArray: INIT_STATE.checkedVisibleStoriesArray,
+        };
+      }
+    }
+    case "HANDLE_CHECKED": {
+      const target = action.e.target as HTMLInputElement;
+      if (target.checked) {
+        if (action.story.is_visible) {
+          return {
+            ...state,
+            selectedRowIds: [...state.selectedRowIds, action.story.ID],
+            checkedVisibleStoriesArray: [
+              ...state.checkedVisibleStoriesArray,
+              action.story.ID,
+            ],
+          };
+        } else {
+          return {
+            ...state,
+            selectedRowIds: [...state.selectedRowIds, action.story.ID],
+            checkedHiddenStoriesArray: [
+              ...state.checkedHiddenStoriesArray,
+              action.story.ID,
+            ],
+          };
+        }
+      } else {
+        if (!action.story.is_visible) {
+          return {
+            ...state,
+            selectedRowIds: state.selectedRowIds.filter(
+              (e) => e !== action.story.ID
+            ),
+            checkedHiddenStoriesArray: state.checkedHiddenStoriesArray.filter(
+              (id) => id !== action.story.ID
+            ),
+          };
+        } else {
+          return {
+            ...state,
+            selectedRowIds: state.selectedRowIds.filter(
+              (e) => e !== action.story.ID
+            ),
+            checkedVisibleStoriesArray: state.checkedVisibleStoriesArray.filter(
+              (id) => id !== action.story.ID
+            ),
+          };
+        }
       }
     }
     case "SET_ORDERING": {

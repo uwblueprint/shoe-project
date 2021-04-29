@@ -327,11 +327,11 @@ export const UploadLabelsText = styled.div`
 export const StyledAllStoriesHeader = styled.div`
   font-family: Canela;
   font-style: normal;
-  font-weight: normal;
+  font-weight: 400;
   font-size: ${fontSize.h1Text};
   line-height: 37px;
-  padding-bottom: 24px;
-  padding-top: 80px;
+  padding-bottom: 15px;
+  padding-top: 24px;
   margin-left: 64px;
 `;
 

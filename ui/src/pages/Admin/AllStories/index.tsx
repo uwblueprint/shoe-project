@@ -22,7 +22,9 @@ import styled from "styled-components";
 import useSWR, { mutate } from "swr";
 
 import { StoryDrawer } from "../../../components";
+import AllStoriesAppBar from "../../../components/AllStoriesAppBar";
 import { a11yProps, AllStoriesTabs } from "../../../components/AllStoriesTabs";
+import ToastyBoi from "../../../components/ToastyBoi";
 import VirtualizedTable from "../../../components/VirtualizedTable";
 import { colors } from "../../../styles/colors";
 import {
@@ -38,7 +40,7 @@ import { VisibilitySwitch } from "./VisibilitySwitch";
 
 const StyledFilter = styled.div`
   width: 30vw;
-  margin-top: 1vh;
+  margin-top: 7vh;
   justify-self: right;
   margin-left: 65vw;
 `;
@@ -61,6 +63,25 @@ const StyledButton = styled(Button)`
   }
 `;
 
+const ShowHideButton = styled(Button)`
+&& {
+  box-shadow: none;
+  background-color: ${colors.primaryDark1};
+  margin-left: 64px;
+  padding: 8px 20px 8px 20px;
+
+  && .MuiButton-label{
+    font-family: "Poppins";
+    color: ${colors.white} ; 
+  }
+
+  &:active {
+    background-color: ${colors.primaryDark2};
+  }
+  &:hover{
+    background-color: ${colors.primaryDark3};
+  }
+`;
 const StyledSearchBar = styled(SearchBar)`
   width: 100%;
   height: 40px;
@@ -208,6 +229,7 @@ export const AllStories: React.FC = () => {
 
   const [state, dispatch] = useReducer(allStoriesReducer, INIT_STATE);
   const isFilterOpen = Boolean(state.anchorEl);
+  const isPopoverOpen = Boolean(state.popoverAnchorEl);
 
   const [clickedStory, setClickedStory] = useState<StoryView | undefined>(
     undefined
@@ -225,18 +247,55 @@ export const AllStories: React.FC = () => {
   const doesVisibleStoriesExist =
     state.visibleTableState.filter((story) => story.is_visible).length !== 0;
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const hideButtonText = `${"Hide All From Map ("}
+    ${state.checkedVisibleStoriesArray.length} ${")"}`;
+
+  const showButtonText = `${"Show All on Map ("} ${
+    state.checkedHiddenStoriesArray.length
+  } ${")"}`;
+
+  const isButtonOpen = () => {
+    return (
+      state.checkedVisibleStoriesArray.length > 0 ||
+      state.checkedHiddenStoriesArray.length > 0
+    );
+  };
+  const handleClick = (
+    event: React.MouseEvent<HTMLButtonElement>,
+    popoverType: string
+  ) => {
     dispatch({
       type: "SET_ANCHOR",
       click: event.currentTarget,
+      popoverType: popoverType,
     });
   };
 
-  const handleClose = () => {
+  const handleClose = (popoverType: string) => {
     dispatch({
       type: "SET_ANCHOR",
       click: null,
+      popoverType: popoverType,
     });
+  };
+
+  const handleStoryVisibilityPopover = (visibility: string) => {
+    if (visibility === "all") {
+      dispatch({
+        type: "HANDLE_POPOVER_CHECKED",
+        visibilityCondition: "all",
+      });
+    } else if (visibility === "visible") {
+      dispatch({
+        type: "HANDLE_POPOVER_CHECKED",
+        visibilityCondition: "visible",
+      });
+    } else {
+      dispatch({
+        type: "HANDLE_POPOVER_CHECKED",
+        visibilityCondition: "hidden",
+      });
+    }
   };
 
   const filterAppliedCount = () => {
@@ -325,7 +384,11 @@ export const AllStories: React.FC = () => {
   };
 
   const handleSwitchChange = (e, story) => {
-    dispatch({ type: "HANDLE_SWITCH_CHANGE", e, story });
+    dispatch({
+      type: "HANDLE_SWITCH_CHANGE",
+      e,
+      story: { ...story, is_visible: !story.is_visible },
+    });
     mutate(
       "/api/stories",
       (prevStories: Story[]) => {
@@ -339,6 +402,32 @@ export const AllStories: React.FC = () => {
     );
   };
 
+  const handleVisibilityButtons = (visibilityType: string) => {
+    if (visibilityType === "hide") {
+      state.checkedVisibleStoriesArray.forEach((s) => {
+        const changeEvent = {
+          target: {
+            checked: getStoryByID(s).is_visible ? false : true,
+          },
+        } as React.ChangeEvent<HTMLInputElement>;
+        handleSwitchChange(changeEvent, getStoryByID(s));
+      });
+      dispatch({ type: "UNCHECK_STORIES", visibilityCondition: "hide" });
+    } else {
+      state.checkedHiddenStoriesArray.forEach((s) => {
+        const changeEvent = {
+          target: {
+            checked: getStoryByID(s).is_visible ? false : true,
+          },
+        } as React.ChangeEvent<HTMLInputElement>;
+        handleSwitchChange(changeEvent, getStoryByID(s));
+      });
+      dispatch({ type: "UNCHECK_STORIES", visibilityCondition: "show" });
+    }
+  };
+  const getStoryByID = (id: number) => {
+    return allStories.find((s) => s.ID === id);
+  };
   const handleCheckedAll = () => {
     dispatch({ type: "HANDLE_CHECKED_ALL", rows: allStories });
   };
@@ -383,7 +472,6 @@ export const AllStories: React.FC = () => {
     }
     return 0;
   };
-
   const indeterminate =
     state.selectedRowIds.length > 0 &&
     state.selectedRowIds.length !== allStories.length;
@@ -393,6 +481,26 @@ export const AllStories: React.FC = () => {
     newValue: number
   ) => {
     dispatch({ type: "SET_TAB_VALUE", newValue });
+  };
+
+  const toast = React.useRef(null);
+
+  const showToast = (message: string) => {
+    toast.current.showToast(message);
+  };
+
+  const publishMap = () => {
+    fetch("/api/stories/publish", {
+      method: "PUT",
+      body: JSON.stringify(state.changedVisibility),
+      redirect: "follow",
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        dispatch({ type: "CLEAR_PENDING_CHANGES" });
+        showToast(result["message"]);
+      })
+      .catch((error) => console.log("Error: ", error));
   };
 
   const cancelSearch = () => {
@@ -414,6 +522,11 @@ export const AllStories: React.FC = () => {
         }
       />
       <StyledContainer>
+        <AllStoriesAppBar
+          handlePublishMap={publishMap}
+          isPublishDisabled={state.changedVisibility.length == 0}
+          handleLogout={null}
+        />
         <StyledAllStoriesHeader>
           The Shoe Project Impact Map Portal
         </StyledAllStoriesHeader>
@@ -441,134 +554,217 @@ export const AllStories: React.FC = () => {
           </Tabs>
         </AppBar>
       </StyledContainer>
-      <StyledFilter>
-        <Grid container justify="flex-end" spacing={2}>
-          <Grid item xs={8}>
-            <StyledSearchBar
-              placeholder="Type to search..."
-              value={state.search}
-              onChange={(searchVal) => {
-                dispatch({
-                  type: "HANDLE_SEARCH/FILTER",
-                  newFilterState: state.filterState,
-                  newSearch: searchVal,
-                });
-              }}
-              onCancelSearch={() => cancelSearch()}
-            />
-          </Grid>
-          <Grid item xs={4}>
-            <StyledButton
-              aria-describedby={POPOVER_ID}
-              variant="contained"
-              color="primary"
-              onClick={handleClick}
-              style={
-                filterAppliedCount()
-                  ? { backgroundColor: colors.primaryLight4 }
-                  : {}
-              }
+      <div>
+        <div
+          style={{
+            marginBottom: isButtonOpen() ? "-12vh" : "-5vh",
+            marginTop: isButtonOpen() ? "2vh" : "0vh",
+          }}
+        >
+          {state.checkedVisibleStoriesArray.length > 0 && (
+            <ShowHideButton onClick={() => handleVisibilityButtons("hide")}>
+              {hideButtonText}
+            </ShowHideButton>
+          )}
+          {state.checkedHiddenStoriesArray.length > 0 && (
+            <ShowHideButton
+              style={{ marginLeft: "16px" }}
+              onClick={() => handleVisibilityButtons("show")}
             >
-              {filterLabel} <ExpandMoreIcon />
-            </StyledButton>
-            <Popover
-              id={POPOVER_ID}
-              open={isFilterOpen}
-              anchorEl={state.anchorEl}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "center",
-              }}
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "center",
-              }}
-            >
-              <div
-                style={{
-                  padding: 10,
+              {showButtonText}
+            </ShowHideButton>
+          )}
+        </div>
+        <StyledFilter>
+          <Grid container justify="flex-end" spacing={2}>
+            <Grid item xs={8}>
+              <StyledSearchBar
+                placeholder="Type to search..."
+                value={state.search}
+                onChange={(searchVal) => {
+                  dispatch({
+                    type: "HANDLE_SEARCH/FILTER",
+                    newFilterState: state.filterState,
+                    newSearch: searchVal,
+                  });
+                }}
+                onCancelSearch={() => cancelSearch()}
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <StyledButton
+                aria-describedby={POPOVER_ID}
+                variant="contained"
+                color="primary"
+                onClick={(e) => handleClick(e, "filter")}
+                style={
+                  filterAppliedCount()
+                    ? { backgroundColor: colors.primaryLight4 }
+                    : {}
+                }
+              >
+                {filterLabel} <ExpandMoreIcon />
+              </StyledButton>
+
+              <Popover
+                id={POPOVER_ID}
+                open={isFilterOpen}
+                anchorEl={state.anchorEl}
+                onClose={() => handleClose("filter")}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "center",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
                 }}
               >
-                <FormControl component="fieldset">
-                  <FormLabel
-                    component="legend"
-                    style={{ minWidth: "10vw", fontFamily: "Poppins" }}
-                  >
-                    Tags:{" "}
-                  </FormLabel>
-                  <FormGroup>
-                    {state.tags.map((tag) => {
-                      return (
-                        <FormControlLabel
-                          key={tag}
-                          control={
-                            <Checkbox
-                              classes={{
-                                root: classes.checkbox,
-                                checked: classes.checked,
-                              }}
-                              checked={state.filterState.tags[tag]}
-                              onChange={handleTagFilterChange}
-                              name={tag}
-                            />
-                          }
-                          className={classes.promptText}
-                          style={{
-                            textTransform: "capitalize",
-                            fontFamily: "Poppins",
-                          }}
-                          label={tag.toLowerCase()}
-                        />
-                      );
-                    })}
-                  </FormGroup>
-                </FormControl>
-                <FormControl component="fieldset">
-                  <FormLabel
-                    component="legend"
-                    style={{ minWidth: "10vw", fontFamily: "Poppins" }}
-                  >
-                    Visibility:{" "}
-                  </FormLabel>
-                  <FormGroup>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          classes={{
-                            root: classes.checkbox,
-                            checked: classes.checked,
-                          }}
-                          checked={state.filterState.visibility.visible}
-                          onChange={handleFilterVisibilityChange}
-                          name="visible"
-                        />
-                      }
-                      className={classes.promptText}
-                      label="Shown"
-                    />
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          classes={{
-                            root: classes.checkbox,
-                            checked: classes.checked,
-                          }}
-                          checked={state.filterState.visibility.nonVisible}
-                          onChange={handleFilterVisibilityChange}
-                          name="nonVisible"
-                        />
-                      }
-                      className={classes.promptText}
-                      label="Hidden"
-                    />
-                  </FormGroup>
-                </FormControl>
-              </div>
-            </Popover>
+                <div
+                  style={{
+                    padding: 10,
+                  }}
+                >
+                  <FormControl component="fieldset">
+                    <FormLabel
+                      component="legend"
+                      style={{ minWidth: "10vw", fontFamily: "Poppins" }}
+                    >
+                      Tags:{" "}
+                    </FormLabel>
+                    <FormGroup>
+                      {state.tags.map((tag) => {
+                        return (
+                          <FormControlLabel
+                            key={tag}
+                            control={
+                              <Checkbox
+                                classes={{
+                                  root: classes.checkbox,
+                                  checked: classes.checked,
+                                }}
+                                checked={state.filterState.tags[tag]}
+                                onChange={handleTagFilterChange}
+                                name={tag}
+                              />
+                            }
+                            className={classes.promptText}
+                            style={{
+                              textTransform: "capitalize",
+                              fontFamily: "Poppins",
+                            }}
+                            label={tag.toLowerCase()}
+                          />
+                        );
+                      })}
+                    </FormGroup>
+                  </FormControl>
+                  <FormControl component="fieldset">
+                    <FormLabel
+                      component="legend"
+                      style={{ minWidth: "10vw", fontFamily: "Poppins" }}
+                    >
+                      Visibility:{" "}
+                    </FormLabel>
+                    <FormGroup>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            classes={{
+                              root: classes.checkbox,
+                              checked: classes.checked,
+                            }}
+                            checked={state.filterState.visibility.visible}
+                            onChange={handleFilterVisibilityChange}
+                            name="visible"
+                          />
+                        }
+                        className={classes.promptText}
+                        label="Shown"
+                      />
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            classes={{
+                              root: classes.checkbox,
+                              checked: classes.checked,
+                            }}
+                            checked={state.filterState.visibility.nonVisible}
+                            onChange={handleFilterVisibilityChange}
+                            name="nonVisible"
+                          />
+                        }
+                        className={classes.promptText}
+                        label="Hidden"
+                      />
+                    </FormGroup>
+                  </FormControl>
+                </div>
+              </Popover>
+            </Grid>
           </Grid>
-        </Grid>
-      </StyledFilter>
+        </StyledFilter>
+      </div>
+      <Popover
+        id={"visibility-popover"}
+        open={isPopoverOpen}
+        anchorEl={state.popoverAnchorEl}
+        onClose={() => handleClose("checkbox")}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+      >
+        <FormLabel component="legend" style={{ color: colors.neutralDark }}>
+          <Button
+            onClick={() => {
+              handleStoryVisibilityPopover("all");
+            }}
+            style={{
+              fontFamily: "Poppins",
+              textTransform: "capitalize",
+              width: "100%",
+              fontSize: "16px",
+            }}
+          >
+            {"All"}
+          </Button>
+        </FormLabel>
+        <FormLabel component="legend" style={{ color: colors.neutralDark }}>
+          <Button
+            onClick={() => {
+              handleStoryVisibilityPopover("visible");
+            }}
+            style={{
+              fontFamily: "Poppins",
+              textTransform: "capitalize",
+              width: "100%",
+              fontSize: "16px",
+            }}
+          >
+            {"Visible Stories"}
+          </Button>
+        </FormLabel>
+        <FormLabel component="legend" style={{ color: colors.neutralDark }}>
+          <Button
+            onClick={() => {
+              handleStoryVisibilityPopover("hidden");
+            }}
+            style={{
+              fontFamily: "Poppins",
+              textTransform: "capitalize",
+              width: "100%",
+              fontSize: "16px",
+            }}
+          >
+            {"Hidden Stories"}
+          </Button>
+        </FormLabel>
+      </Popover>
 
       <AllStoriesTabs value={state.tabValue} index={0}>
         {state.tableData.length !== 0 ? (
@@ -584,9 +780,6 @@ export const AllStories: React.FC = () => {
               {
                 name: "ID",
                 width: "5%",
-                onHeaderClick() {
-                  handleRequestSort("ID");
-                },
                 header: (
                   <div>
                     <Checkbox
@@ -594,18 +787,44 @@ export const AllStories: React.FC = () => {
                         root: classes.checkbox,
                         checked: classes.checked,
                       }}
-                      checked={state.selectedRowIds.length > 0}
+                      checked={
+                        state.checkedVisibleStoriesArray.length +
+                          state.checkedHiddenStoriesArray.length >
+                        0
+                      }
                       indeterminate={indeterminate}
                       onChange={(e) => {
                         e.persist();
                         handleCheckedAll();
                       }}
                     />
+                    <Button
+                      onClick={(e) => handleClick(e, "checkbox")}
+                      variant="contained"
+                      color="primary"
+                      style={{
+                        padding: "0px",
+                        minWidth: "1vw",
+                        paddingRight: "-20px",
+                        boxShadow: "none",
+                        backgroundColor: colors.white,
+                      }}
+                    >
+                      <ExpandMoreIcon
+                        style={{
+                          color: colors.black,
+                        }}
+                      />
+                    </Button>
                   </div>
                 ),
                 cell: (story) => (
                   <div>
                     <Checkbox
+                      checked={
+                        state.checkedHiddenStoriesArray.includes(story.ID) ||
+                        state.checkedVisibleStoriesArray.includes(story.ID)
+                      }
                       classes={{
                         root: classes.checkbox,
                         checked: classes.checked,
@@ -718,9 +937,6 @@ export const AllStories: React.FC = () => {
               {
                 name: "ID",
                 width: "5%",
-                onHeaderClick() {
-                  handleRequestSort("ID");
-                },
                 header: (
                   <div>
                     <Checkbox
@@ -728,18 +944,44 @@ export const AllStories: React.FC = () => {
                         root: classes.checkbox,
                         checked: classes.checked,
                       }}
-                      checked={state.selectedRowIds.length > 0}
+                      checked={
+                        state.checkedVisibleStoriesArray.length +
+                          state.checkedHiddenStoriesArray.length >
+                        0
+                      }
                       indeterminate={indeterminate}
                       onChange={(e) => {
                         e.persist();
-                        handleCheckedAll;
+                        handleCheckedAll();
                       }}
                     />
+                    <Button
+                      onClick={(e) => handleClick(e, "checkbox")}
+                      variant="contained"
+                      color="primary"
+                      style={{
+                        padding: "0px",
+                        minWidth: "1vw",
+                        paddingRight: "-20px",
+                        boxShadow: "none",
+                        backgroundColor: colors.white,
+                      }}
+                    >
+                      <ExpandMoreIcon
+                        style={{
+                          color: colors.black,
+                        }}
+                      />
+                    </Button>
                   </div>
                 ),
                 cell: (story) => (
                   <div>
                     <Checkbox
+                      checked={
+                        state.checkedHiddenStoriesArray.includes(story.ID) ||
+                        state.checkedVisibleStoriesArray.includes(story.ID)
+                      }
                       classes={{
                         root: classes.checkbox,
                         checked: classes.checked,
@@ -860,10 +1102,10 @@ export const AllStories: React.FC = () => {
                 name: "pending-map-changes-changes",
                 width: "5%",
                 header: "",
-                cell: (d) => {
+                cell: (story) => {
                   return (
                     <div>
-                      {state.visibleState.includes(d.ID) ? (
+                      {story.is_visible ? (
                         <StyledAddIcon color="primary" />
                       ) : (
                         <StyledRemoveIcon color="primary" />
@@ -938,7 +1180,7 @@ export const AllStories: React.FC = () => {
                 },
                 cell: (story) => (
                   <VisibilitySwitch
-                    checked={state.visibleState.includes(story.ID)}
+                    checked={story.is_visible}
                     onChange={(e) => {
                       e.persist();
                       handleSwitchChange(e, story);
@@ -954,6 +1196,7 @@ export const AllStories: React.FC = () => {
           <StyledEmptyMessage> No pending changes! </StyledEmptyMessage>
         )}
       </AllStoriesTabs>
+      <ToastyBoi ref={toast} />
       <StoryDrawer
         story={clickedStory}
         onClose={() => setClickedStory(undefined)}
