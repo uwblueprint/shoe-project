@@ -102,7 +102,7 @@ const StyledSearchBar = styled(SearchBar)`
   }
 `;
 
-const StyledChip = styled(Chip)`
+export const StyledChip = styled(Chip)`
   &&.MuiChip-root {
     color: ${colors.primaryDark2};
     font-family: Poppins;
@@ -111,7 +111,6 @@ const StyledChip = styled(Chip)`
     margin-right: 4px;
     text-transform: capitalize;
   }
-
   &&.MuiChip-colorPrimary {
     background: ${colors.primaryLight3};
   }
@@ -372,6 +371,17 @@ export const AllStories: React.FC = () => {
       dispatch({ type: "INITIALIZE_AFTER_TAGS_API", rows: tagOptions });
     }
   }, [allStories, tagOptions]);
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", alertUser);
+    return () => {
+      window.removeEventListener("beforeunload", alertUser);
+    };
+  }, []);
+  const alertUser = (e) => {
+    e.preventDefault();
+    e.returnValue = "";
+  };
 
   const setClickedRow = (rowId: number | undefined) => {
     if (rowId) {
