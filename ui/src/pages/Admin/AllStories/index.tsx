@@ -102,7 +102,7 @@ const StyledSearchBar = styled(SearchBar)`
   }
 `;
 
-const StyledChip = styled(Chip)`
+export const StyledChip = styled(Chip)`
   &&.MuiChip-root {
     color: ${colors.primaryDark2};
     font-family: Poppins;
@@ -111,7 +111,6 @@ const StyledChip = styled(Chip)`
     margin-right: 4px;
     text-transform: capitalize;
   }
-
   &&.MuiChip-colorPrimary {
     background: ${colors.primaryLight3};
   }
@@ -235,24 +234,23 @@ export const AllStories: React.FC = () => {
     undefined
   );
   const classes = useStyles();
-  const allStoriesLabel = `${"ALL STORIES"} ${"("} ${
-    state.tableData.length
-  } ${")"}`;
-  const visibleStoriesLabel = `${"VISIBLE STORIES"} ${"("} ${
+  const allStoriesLabel = `${"ALL STORIES ("}${state.tableData.length}${")"}`;
+  const visibleStoriesLabel = `${"VISIBLE STORIES ("}${
     state.visibleTableState.filter((story) => story.is_visible).length
-  } ${")"}`;
-  const pendingChangesLabel = `${"PENDING MAP CHANGES"} ${"("} ${
+  }${")"}`;
+  const pendingChangesLabel = `${"PENDING MAP CHANGES ("}${
     state.changedVisibility.length
-  } ${")"}`;
+  }${")"}`;
   const doesVisibleStoriesExist =
     state.visibleTableState.filter((story) => story.is_visible).length !== 0;
 
-  const hideButtonText = `${"Hide All From Map ("}
-    ${state.checkedVisibleStoriesArray.length} ${")"}`;
+  const hideButtonText = `${"Hide All From Map ("}${
+    state.checkedVisibleStoriesArray.length
+  }${")"}`;
 
-  const showButtonText = `${"Show All on Map ("} ${
+  const showButtonText = `${"Show All on Map ("}${
     state.checkedHiddenStoriesArray.length
-  } ${")"}`;
+  }${")"}`;
 
   const isButtonOpen = () => {
     return (
@@ -374,6 +372,17 @@ export const AllStories: React.FC = () => {
     }
   }, [allStories, tagOptions]);
 
+  useEffect(() => {
+    window.addEventListener("beforeunload", alertUser);
+    return () => {
+      window.removeEventListener("beforeunload", alertUser);
+    };
+  }, []);
+  const alertUser = (e) => {
+    e.preventDefault();
+    e.returnValue = "";
+  };
+
   const setClickedRow = (rowId: number | undefined) => {
     if (rowId) {
       const story = allStories?.find((story: StoryView) => story.ID === rowId);
@@ -402,6 +411,25 @@ export const AllStories: React.FC = () => {
     );
   };
 
+  const handleSwitchChangeCheckbox = (e, story) => {
+    dispatch({
+      type: "HANDLE_SWITCH_CHANGE_CHECKBOX",
+      e,
+      story: { ...story, is_visible: !story.is_visible },
+    });
+    mutate(
+      "/api/stories",
+      (prevStories: Story[]) => {
+        return prevStories.map((currStory) =>
+          currStory.ID === story.ID
+            ? { ...currStory, is_visible: !currStory.is_visible }
+            : currStory
+        );
+      },
+      false
+    );
+  };
+
   const handleVisibilityButtons = (visibilityType: string) => {
     if (visibilityType === "hide") {
       state.checkedVisibleStoriesArray.forEach((s) => {
@@ -410,7 +438,7 @@ export const AllStories: React.FC = () => {
             checked: getStoryByID(s).is_visible ? false : true,
           },
         } as React.ChangeEvent<HTMLInputElement>;
-        handleSwitchChange(changeEvent, getStoryByID(s));
+        handleSwitchChangeCheckbox(changeEvent, getStoryByID(s));
       });
       dispatch({ type: "UNCHECK_STORIES", visibilityCondition: "hide" });
     } else {
@@ -420,7 +448,7 @@ export const AllStories: React.FC = () => {
             checked: getStoryByID(s).is_visible ? false : true,
           },
         } as React.ChangeEvent<HTMLInputElement>;
-        handleSwitchChange(changeEvent, getStoryByID(s));
+        handleSwitchChangeCheckbox(changeEvent, getStoryByID(s));
       });
       dispatch({ type: "UNCHECK_STORIES", visibilityCondition: "show" });
     }
@@ -429,7 +457,7 @@ export const AllStories: React.FC = () => {
     return allStories.find((s) => s.ID === id);
   };
   const handleCheckedAll = () => {
-    dispatch({ type: "HANDLE_CHECKED_ALL", rows: allStories });
+    dispatch({ type: "HANDLE_CHECKED_ALL" });
   };
   const handleChecked = (e, story) => {
     dispatch({ type: "HANDLE_CHECKED", e, story });
@@ -473,8 +501,12 @@ export const AllStories: React.FC = () => {
     return 0;
   };
   const indeterminate =
-    state.selectedRowIds.length > 0 &&
-    state.selectedRowIds.length !== allStories.length;
+    state.checkedVisibleStoriesArray.length +
+      state.checkedHiddenStoriesArray.length >
+      0 &&
+    state.checkedVisibleStoriesArray.length +
+      state.checkedHiddenStoriesArray.length !==
+      allStories.length;
 
   const handleTabChange = (
     event: React.ChangeEvent<Record<string, unknown>>,
@@ -566,7 +598,7 @@ export const AllStories: React.FC = () => {
               {hideButtonText}
             </ShowHideButton>
           )}
-          {state.checkedHiddenStoriesArray.length > 0 && (
+          {state.checkedHiddenStoriesArray.length > 0 && state.tabValue === 0 && (
             <ShowHideButton
               style={{ marginLeft: "16px" }}
               onClick={() => handleVisibilityButtons("show")}
@@ -719,21 +751,23 @@ export const AllStories: React.FC = () => {
           horizontal: "left",
         }}
       >
-        <FormLabel component="legend" style={{ color: colors.neutralDark }}>
-          <Button
-            onClick={() => {
-              handleStoryVisibilityPopover("all");
-            }}
-            style={{
-              fontFamily: "Poppins",
-              textTransform: "capitalize",
-              width: "100%",
-              fontSize: "16px",
-            }}
-          >
-            {"All"}
-          </Button>
-        </FormLabel>
+        {state.tabValue === 0 && (
+          <FormLabel component="legend" style={{ color: colors.neutralDark }}>
+            <Button
+              onClick={() => {
+                handleStoryVisibilityPopover("all");
+              }}
+              style={{
+                fontFamily: "Poppins",
+                textTransform: "capitalize",
+                width: "100%",
+                fontSize: "16px",
+              }}
+            >
+              {"All"}
+            </Button>
+          </FormLabel>
+        )}
         <FormLabel component="legend" style={{ color: colors.neutralDark }}>
           <Button
             onClick={() => {
@@ -749,21 +783,23 @@ export const AllStories: React.FC = () => {
             {"Visible Stories"}
           </Button>
         </FormLabel>
-        <FormLabel component="legend" style={{ color: colors.neutralDark }}>
-          <Button
-            onClick={() => {
-              handleStoryVisibilityPopover("hidden");
-            }}
-            style={{
-              fontFamily: "Poppins",
-              textTransform: "capitalize",
-              width: "100%",
-              fontSize: "16px",
-            }}
-          >
-            {"Hidden Stories"}
-          </Button>
-        </FormLabel>
+        {state.tabValue === 0 && (
+          <FormLabel component="legend" style={{ color: colors.neutralDark }}>
+            <Button
+              onClick={() => {
+                handleStoryVisibilityPopover("hidden");
+              }}
+              style={{
+                fontFamily: "Poppins",
+                textTransform: "capitalize",
+                width: "100%",
+                fontSize: "16px",
+              }}
+            >
+              {"Hidden Stories"}
+            </Button>
+          </FormLabel>
+        )}
       </Popover>
 
       <AllStoriesTabs value={state.tabValue} index={0}>
@@ -929,7 +965,10 @@ export const AllStories: React.FC = () => {
       <AllStoriesTabs value={state.tabValue} index={1}>
         {doesVisibleStoriesExist ? (
           <VirtualizedTable
-            data={state.visibleTableState.filter((story) => story.is_visible)}
+            data={stableSort(
+              state.visibleTableState.filter((story) => story.is_visible),
+              getComparator(state.order, state.orderBy)
+            )}
             order={state.order}
             orderBy={state.orderBy}
             setClickedRow={setClickedRow}

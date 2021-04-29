@@ -79,6 +79,7 @@ export default function AllStoriesAppBar({
               isDisabled={false}
               component={Link}
               to="/"
+              target="_blank"
             />
             <PrimaryButton
               text={"PUBLISH MAP"}
