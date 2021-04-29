@@ -27,12 +27,13 @@ const StyledDrawer = styled(Drawer)`
 
 function formatYoutubeURL(video_url: string) {
   if (!video_url.includes("embed")) {
-    const youtubeEmbedURL = "https://www.youtube.com/embed/"
-    const regex = `(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})`
-    const found = video_url.match(regex)
-    return youtubeEmbedURL + found[1]
+    const youtubeEmbedURL = "https://www.youtube.com/embed/";
+    // eslint-disable-next-line
+    const regex = `(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})`;
+    const found = video_url.match(regex);
+    return youtubeEmbedURL + found[1];
   }
-  return video_url
+  return video_url;
 }
 
 const StyledIconButton = styled(Button)`
