@@ -110,23 +110,6 @@ describe("allstories table", () => {
       expect(newState.tabValue).toBe(1);
     });
 
-    it("should check one box", () => {
-      const changeEvent = {
-        target: {
-          checked: true,
-        },
-      } as React.ChangeEvent<HTMLInputElement>;
-
-      const action: Action = {
-        type: "HANDLE_CHECKED",
-        e: changeEvent,
-        story: mockTableData[1],
-      };
-      expect(INIT_STATE.selectedRowIds).toHaveLength(0);
-      const newState = allStoriesReducer(INIT_STATE, action);
-      expect(newState.selectedRowIds).toHaveLength(1);
-    });
-
     it("should toggle switch", () => {
       const changeEvent = {
         target: {
@@ -135,7 +118,7 @@ describe("allstories table", () => {
       } as React.ChangeEvent<HTMLInputElement>;
 
       const action: Action = {
-        type: "HANDLE_SWITCH_CHANGE",
+        type: "HANDLE_SWITCH_CHANGE_CHECKBOX",
         e: changeEvent,
         story: mockTableData[2],
       };

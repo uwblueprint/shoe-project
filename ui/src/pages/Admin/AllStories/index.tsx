@@ -401,6 +401,25 @@ export const AllStories: React.FC = () => {
     );
   };
 
+  const handleSwitchChangeCheckbox = (e, story) => {
+    dispatch({
+      type: "HANDLE_SWITCH_CHANGE_CHECKBOX",
+      e,
+      story: { ...story, is_visible: !story.is_visible },
+    });
+    mutate(
+      "/api/stories",
+      (prevStories: Story[]) => {
+        return prevStories.map((currStory) =>
+          currStory.ID === story.ID
+            ? { ...currStory, is_visible: !currStory.is_visible }
+            : currStory
+        );
+      },
+      false
+    );
+  };
+
   const handleVisibilityButtons = (visibilityType: string) => {
     if (visibilityType === "hide") {
       state.checkedVisibleStoriesArray.forEach((s) => {
@@ -409,7 +428,7 @@ export const AllStories: React.FC = () => {
             checked: getStoryByID(s).is_visible ? false : true,
           },
         } as React.ChangeEvent<HTMLInputElement>;
-        handleSwitchChange(changeEvent, getStoryByID(s));
+        handleSwitchChangeCheckbox(changeEvent, getStoryByID(s));
       });
       dispatch({ type: "UNCHECK_STORIES", visibilityCondition: "hide" });
     } else {
@@ -419,7 +438,7 @@ export const AllStories: React.FC = () => {
             checked: getStoryByID(s).is_visible ? false : true,
           },
         } as React.ChangeEvent<HTMLInputElement>;
-        handleSwitchChange(changeEvent, getStoryByID(s));
+        handleSwitchChangeCheckbox(changeEvent, getStoryByID(s));
       });
       dispatch({ type: "UNCHECK_STORIES", visibilityCondition: "show" });
     }
@@ -428,7 +447,7 @@ export const AllStories: React.FC = () => {
     return allStories.find((s) => s.ID === id);
   };
   const handleCheckedAll = () => {
-    dispatch({ type: "HANDLE_CHECKED_ALL", rows: allStories });
+    dispatch({ type: "HANDLE_CHECKED_ALL" });
   };
   const handleChecked = (e, story) => {
     dispatch({ type: "HANDLE_CHECKED", e, story });
@@ -472,8 +491,12 @@ export const AllStories: React.FC = () => {
     return 0;
   };
   const indeterminate =
-    state.selectedRowIds.length > 0 &&
-    state.selectedRowIds.length !== allStories.length;
+    state.checkedVisibleStoriesArray.length +
+      state.checkedHiddenStoriesArray.length >
+      0 &&
+    state.checkedVisibleStoriesArray.length +
+      state.checkedHiddenStoriesArray.length !==
+      allStories.length;
 
   const handleTabChange = (
     event: React.ChangeEvent<Record<string, unknown>>,
@@ -565,7 +588,7 @@ export const AllStories: React.FC = () => {
               {hideButtonText}
             </ShowHideButton>
           )}
-          {state.checkedHiddenStoriesArray.length > 0 && (
+          {state.checkedHiddenStoriesArray.length > 0 && state.tabValue === 0 && (
             <ShowHideButton
               style={{ marginLeft: "16px" }}
               onClick={() => handleVisibilityButtons("show")}
@@ -718,21 +741,23 @@ export const AllStories: React.FC = () => {
           horizontal: "left",
         }}
       >
-        <FormLabel component="legend" style={{ color: colors.neutralDark }}>
-          <Button
-            onClick={() => {
-              handleStoryVisibilityPopover("all");
-            }}
-            style={{
-              fontFamily: "Poppins",
-              textTransform: "capitalize",
-              width: "100%",
-              fontSize: "16px",
-            }}
-          >
-            {"All"}
-          </Button>
-        </FormLabel>
+        {state.tabValue === 0 && (
+          <FormLabel component="legend" style={{ color: colors.neutralDark }}>
+            <Button
+              onClick={() => {
+                handleStoryVisibilityPopover("all");
+              }}
+              style={{
+                fontFamily: "Poppins",
+                textTransform: "capitalize",
+                width: "100%",
+                fontSize: "16px",
+              }}
+            >
+              {"All"}
+            </Button>
+          </FormLabel>
+        )}
         <FormLabel component="legend" style={{ color: colors.neutralDark }}>
           <Button
             onClick={() => {
@@ -748,21 +773,23 @@ export const AllStories: React.FC = () => {
             {"Visible Stories"}
           </Button>
         </FormLabel>
-        <FormLabel component="legend" style={{ color: colors.neutralDark }}>
-          <Button
-            onClick={() => {
-              handleStoryVisibilityPopover("hidden");
-            }}
-            style={{
-              fontFamily: "Poppins",
-              textTransform: "capitalize",
-              width: "100%",
-              fontSize: "16px",
-            }}
-          >
-            {"Hidden Stories"}
-          </Button>
-        </FormLabel>
+        {state.tabValue === 0 && (
+          <FormLabel component="legend" style={{ color: colors.neutralDark }}>
+            <Button
+              onClick={() => {
+                handleStoryVisibilityPopover("hidden");
+              }}
+              style={{
+                fontFamily: "Poppins",
+                textTransform: "capitalize",
+                width: "100%",
+                fontSize: "16px",
+              }}
+            >
+              {"Hidden Stories"}
+            </Button>
+          </FormLabel>
+        )}
       </Popover>
 
       <AllStoriesTabs value={state.tabValue} index={0}>
