@@ -172,6 +172,7 @@ export const UploadStory: React.FC<StoryProps> = ({
   const history = useHistory();
 
   const startYear = new Date().getFullYear();
+  // const prefilledYear = id ? currentStory.year : startYear.toString();
   const yearArray = Array.from({ length: 30 }, (_, i) => startYear - i);
 
   const [formInput, setFormInput] = useReducer(
@@ -265,8 +266,7 @@ export const UploadStory: React.FC<StoryProps> = ({
 
   const handleKeyDown = (event) => {
     switch (event.key) {
-      case ",":
-      case " ": {
+      case ",": {
         event.preventDefault();
         event.stopPropagation();
         if (event.target.value.length > 0) {
@@ -729,7 +729,7 @@ export const UploadStory: React.FC<StoryProps> = ({
               <ImageContainer>
                 {state.newImage == "" ? (
                   <div>
-                    <UploadLabelsText>Add Image</UploadLabelsText>
+                    <UploadLabelsText>Add Image *</UploadLabelsText>
                     <StyledDropzoneArea
                       showFileNames
                       maxFileSize={7000000}
