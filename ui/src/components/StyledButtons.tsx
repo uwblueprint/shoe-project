@@ -131,6 +131,7 @@ export function TertiaryButton({
   isDisabled,
   component,
   to,
+  target,
 }: ButtonProps): JSX.Element {
   return (
     <StyledTertiaryButton
