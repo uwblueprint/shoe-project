@@ -264,23 +264,6 @@ export const UploadStory: React.FC<StoryProps> = ({
     });
   };
 
-  const handleKeyDown = (event) => {
-    switch (event.key) {
-      case ",": {
-        event.preventDefault();
-        event.stopPropagation();
-        if (event.target.value.length > 0) {
-          dispatch({
-            type: "SET_TAG_VALUES",
-            tags: [...state.tagArray, event.target.value],
-          });
-        }
-        break;
-      }
-      default:
-    }
-  };
-
   const setErrorUploadingState = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -370,6 +353,40 @@ export const UploadStory: React.FC<StoryProps> = ({
               </AddCountryButton>
             </AddCountryDiv>
           )}
+        {children}
+      </AddCountryPaper>
+    );
+  };
+
+  const addTagButtonPressed = (autocompleteTag: string) => {
+    if (autocompleteTag.length > 0) {
+      dispatch({
+        type: "SET_TAG_VALUES",
+        tags: [...state.tagArray, autocompleteTag],
+      });
+    }
+  };
+
+  const addNewTag = ({ children, ...other }) => {
+    const filteredTagsLength = state.tagArray.filter(
+      (str) => str.toLowerCase() === state.autocompleteTag.toLowerCase()
+    ).length;
+    return (
+      <AddCountryPaper {...other}>
+        {filteredTagsLength === 0 && state.autocompleteTag !== "" && (
+          <AddCountryDiv
+            onMouseDown={(event) => {
+              event.preventDefault();
+            }}
+          >
+            {state.autocompleteTag}
+            <AddCountryButton
+              onClick={() => addTagButtonPressed(state.autocompleteTag)}
+            >
+              ADD
+            </AddCountryButton>
+          </AddCountryDiv>
+        )}
         {children}
       </AddCountryPaper>
     );
@@ -689,13 +706,20 @@ export const UploadStory: React.FC<StoryProps> = ({
               <FormControl>
                 <UploadLabelsText>Tags</UploadLabelsText>
                 <StyledAutocomplete
-                  autoHighlight
+                  // autoHighlight
                   multiple
                   id="tags-outlined"
                   name="tags"
                   freeSolo
-                  options={tagOptions ? tagOptions : [""]}
+                  forcePopupIcon
+                  options={tagOptions || [""]}
                   filterSelectedOptions
+                  onInputChange={(_, newValue) =>
+                    dispatch({
+                      type: "SET_AUTOCOMPLETE_TAG",
+                      autocompleteTag: newValue,
+                    })
+                  }
                   onChange={(_, newValue) =>
                     dispatch({ type: "SET_TAG_VALUES", tags: newValue })
                   }
@@ -711,7 +735,6 @@ export const UploadStory: React.FC<StoryProps> = ({
                     ))
                   }
                   renderInput={(params: TagParameters) => {
-                    params.inputProps.onKeyDown = handleKeyDown;
                     return (
                       <TextField
                         {...params}
@@ -721,6 +744,7 @@ export const UploadStory: React.FC<StoryProps> = ({
                       ></TextField>
                     );
                   }}
+                  PaperComponent={addNewTag}
                 />
               </FormControl>
             </StyledBackgroundColor>
