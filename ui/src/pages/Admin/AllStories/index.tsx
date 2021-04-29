@@ -402,6 +402,25 @@ export const AllStories: React.FC = () => {
     );
   };
 
+  const handleSwitchChangeCheckbox = (e, story) => {
+    dispatch({
+      type: "HANDLE_SWITCH_CHANGE_CHECKBOX",
+      e,
+      story: { ...story, is_visible: !story.is_visible },
+    });
+    mutate(
+      "/api/stories",
+      (prevStories: Story[]) => {
+        return prevStories.map((currStory) =>
+          currStory.ID === story.ID
+            ? { ...currStory, is_visible: !currStory.is_visible }
+            : currStory
+        );
+      },
+      false
+    );
+  };
+
   const handleVisibilityButtons = (visibilityType: string) => {
     if (visibilityType === "hide") {
       state.checkedVisibleStoriesArray.forEach((s) => {
@@ -410,7 +429,7 @@ export const AllStories: React.FC = () => {
             checked: getStoryByID(s).is_visible ? false : true,
           },
         } as React.ChangeEvent<HTMLInputElement>;
-        handleSwitchChange(changeEvent, getStoryByID(s));
+        handleSwitchChangeCheckbox(changeEvent, getStoryByID(s));
       });
       dispatch({ type: "UNCHECK_STORIES", visibilityCondition: "hide" });
     } else {
@@ -420,7 +439,7 @@ export const AllStories: React.FC = () => {
             checked: getStoryByID(s).is_visible ? false : true,
           },
         } as React.ChangeEvent<HTMLInputElement>;
-        handleSwitchChange(changeEvent, getStoryByID(s));
+        handleSwitchChangeCheckbox(changeEvent, getStoryByID(s));
       });
       dispatch({ type: "UNCHECK_STORIES", visibilityCondition: "show" });
     }

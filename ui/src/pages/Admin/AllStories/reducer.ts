@@ -33,6 +33,11 @@ export type Action =
   | { type: "SWITCH_TAB"; id: number }
   | { type: "SET_ANCHOR"; click: HTMLButtonElement; popoverType: string }
   | { type: "HANDLE_SWITCH_CHANGE"; e: React.ChangeEvent; story: StoryView }
+  | {
+      type: "HANDLE_SWITCH_CHANGE_CHECKBOX";
+      e: React.ChangeEvent;
+      story: StoryView;
+    }
   | { type: "INITIALIZE_AFTER_API"; rows: StoryView[] }
   | { type: "INITIALIZE_AFTER_TAGS_API"; rows: string[] }
   | { type: "HANDLE_CHECKED_ALL" }
@@ -222,6 +227,50 @@ export function allStoriesReducer(state: State, action: Action): State {
           checkedVisibleStoriesArray: state.checkedVisibleStoriesArray.filter(
             (e) => e !== action.story.ID
           ),
+        };
+      }
+    }
+    case "HANDLE_SWITCH_CHANGE_CHECKBOX": {
+      const changedVisibilityContainsID = state.changedVisibility.some(
+        (e) => e.ID === action.story.ID
+      );
+      const target = action.e.target as HTMLInputElement;
+      if (target.checked) {
+        return {
+          ...state,
+          visibleState: [...state.visibleState, action.story.ID],
+          visibleTableState: [...state.visibleTableState, action.story],
+          changedVisibility: changedVisibilityContainsID
+            ? state.changedVisibility.filter((e) => e.ID !== action.story.ID)
+            : [...state.changedVisibility, action.story],
+          visibleTableFilterState: [
+            ...state.visibleTableFilterState,
+            action.story,
+          ],
+          changedVisibilityFilter: changedVisibilityContainsID
+            ? state.changedVisibilityFilter.filter(
+                (e) => e.ID !== action.story.ID
+              )
+            : [...state.changedVisibilityFilter, action.story],
+        };
+      } else {
+        return {
+          ...state,
+          visibleState: state.visibleState.filter((e) => e !== action.story.ID),
+          visibleTableState: state.visibleTableState.filter(
+            (e) => e.ID !== action.story.ID
+          ),
+          changedVisibility: changedVisibilityContainsID
+            ? state.changedVisibility.filter((e) => e.ID !== action.story.ID)
+            : [...state.changedVisibility, action.story],
+          visibleTableFilterState: state.visibleTableState.filter(
+            (e) => e.ID !== action.story.ID
+          ),
+          changedVisibilityFilter: changedVisibilityContainsID
+            ? state.changedVisibilityFilter.filter(
+                (e) => e.ID !== action.story.ID
+              )
+            : [...state.changedVisibilityFilter, action.story],
         };
       }
     }
