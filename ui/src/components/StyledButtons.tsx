@@ -53,6 +53,7 @@ export function PrimaryButton({
       disabled={isDisabled}
       component={component}
       to={to}
+      target={target}
     >
       {text}
     </StyledPrimaryButton>
@@ -140,6 +141,7 @@ export function TertiaryButton({
       component={component}
       to={to}
       onClick={to ? null : () => onClickFunction()}
+      target={target}
     >
       {text}
     </StyledTertiaryButton>
