@@ -102,7 +102,7 @@ const StyledSearchBar = styled(SearchBar)`
   }
 `;
 
-const StyledChip = styled(Chip)`
+export const StyledChip = styled(Chip)`
   &&.MuiChip-root {
     color: ${colors.primaryDark2};
     font-family: Poppins;
@@ -111,7 +111,6 @@ const StyledChip = styled(Chip)`
     margin-right: 4px;
     text-transform: capitalize;
   }
-
   &&.MuiChip-colorPrimary {
     background: ${colors.primaryLight3};
   }
