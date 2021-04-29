@@ -429,7 +429,7 @@ export const AllStories: React.FC = () => {
     return allStories.find((s) => s.ID === id);
   };
   const handleCheckedAll = () => {
-    dispatch({ type: "HANDLE_CHECKED_ALL", rows: allStories });
+    dispatch({ type: "HANDLE_CHECKED_ALL" });
   };
   const handleChecked = (e, story) => {
     dispatch({ type: "HANDLE_CHECKED", e, story });
@@ -566,7 +566,7 @@ export const AllStories: React.FC = () => {
               {hideButtonText}
             </ShowHideButton>
           )}
-          {state.checkedHiddenStoriesArray.length > 0 && (
+          {state.checkedHiddenStoriesArray.length > 0 && state.tabValue === 0 && (
             <ShowHideButton
               style={{ marginLeft: "16px" }}
               onClick={() => handleVisibilityButtons("show")}
@@ -719,21 +719,23 @@ export const AllStories: React.FC = () => {
           horizontal: "left",
         }}
       >
-        <FormLabel component="legend" style={{ color: colors.neutralDark }}>
-          <Button
-            onClick={() => {
-              handleStoryVisibilityPopover("all");
-            }}
-            style={{
-              fontFamily: "Poppins",
-              textTransform: "capitalize",
-              width: "100%",
-              fontSize: "16px",
-            }}
-          >
-            {"All"}
-          </Button>
-        </FormLabel>
+        {state.tabValue === 0 && (
+          <FormLabel component="legend" style={{ color: colors.neutralDark }}>
+            <Button
+              onClick={() => {
+                handleStoryVisibilityPopover("all");
+              }}
+              style={{
+                fontFamily: "Poppins",
+                textTransform: "capitalize",
+                width: "100%",
+                fontSize: "16px",
+              }}
+            >
+              {"All"}
+            </Button>
+          </FormLabel>
+        )}
         <FormLabel component="legend" style={{ color: colors.neutralDark }}>
           <Button
             onClick={() => {
@@ -749,21 +751,23 @@ export const AllStories: React.FC = () => {
             {"Visible Stories"}
           </Button>
         </FormLabel>
-        <FormLabel component="legend" style={{ color: colors.neutralDark }}>
-          <Button
-            onClick={() => {
-              handleStoryVisibilityPopover("hidden");
-            }}
-            style={{
-              fontFamily: "Poppins",
-              textTransform: "capitalize",
-              width: "100%",
-              fontSize: "16px",
-            }}
-          >
-            {"Hidden Stories"}
-          </Button>
-        </FormLabel>
+        {state.tabValue === 0 && (
+          <FormLabel component="legend" style={{ color: colors.neutralDark }}>
+            <Button
+              onClick={() => {
+                handleStoryVisibilityPopover("hidden");
+              }}
+              style={{
+                fontFamily: "Poppins",
+                textTransform: "capitalize",
+                width: "100%",
+                fontSize: "16px",
+              }}
+            >
+              {"Hidden Stories"}
+            </Button>
+          </FormLabel>
+        )}
       </Popover>
 
       <AllStoriesTabs value={state.tabValue} index={0}>

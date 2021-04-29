@@ -36,7 +36,7 @@ export type Action =
   | { type: "HANDLE_SWITCH_CHANGE"; e: React.ChangeEvent; story: StoryView }
   | { type: "INITIALIZE_AFTER_API"; rows: StoryView[] }
   | { type: "INITIALIZE_AFTER_TAGS_API"; rows: string[] }
-  | { type: "HANDLE_CHECKED_ALL"; rows: StoryView[] }
+  | { type: "HANDLE_CHECKED_ALL" }
   | { type: "HANDLE_CHECKED"; e: React.ChangeEvent; story: StoryView }
   | { type: "SET_ORDERING"; order: "asc" | "desc"; orderBy: string }
   | { type: "SET_TABLE_DATA"; data: StoryView[] }
@@ -108,45 +108,87 @@ export function allStoriesReducer(state: State, action: Action): State {
     }
     case "HANDLE_POPOVER_CHECKED": {
       if (action.visibilityCondition === "all") {
-        return {
-          ...state,
-          selectedRowIds: state.tableData.map((story) => story.ID),
-          checkedVisibleStoriesArray: state.visibleTableState
-            .filter((story) => story.is_visible)
-            .map((story) => story.ID),
-          checkedHiddenStoriesArray: state.visibleTableState
-            .filter((story) => !story.is_visible)
-            .map((story) => story.ID),
-        };
+        if (state.tabValue === 0) {
+          return {
+            ...state,
+            selectedRowIds: state.tableData.map((story) => story.ID),
+            checkedVisibleStoriesArray: state.tableData
+              .filter((story) => story.is_visible)
+              .map((story) => story.ID),
+            checkedHiddenStoriesArray: state.tableData
+              .filter((story) => !story.is_visible)
+              .map((story) => story.ID),
+          };
+        } else {
+          return {
+            ...state,
+            selectedRowIds: state.visibleTableState.map((story) => story.ID),
+            checkedVisibleStoriesArray: state.visibleTableState
+              .filter((story) => story.is_visible)
+              .map((story) => story.ID),
+            checkedHiddenStoriesArray: state.visibleTableState
+              .filter((story) => !story.is_visible)
+              .map((story) => story.ID),
+          };
+        }
       } else if (action.visibilityCondition === "visible") {
-        return {
-          ...state,
-          selectedRowIds: state.tableData.map((story) => {
-            if (story.is_visible) {
-              return story.ID;
-            }
-          }),
-          checkedVisibleStoriesArray: state.visibleTableState
-            .filter((story) => story.is_visible)
-            .map((story) => story.ID),
-          checkedHiddenStoriesArray: INIT_STATE.checkedHiddenStoriesArray,
-        };
+        if (state.tabValue === 0) {
+          return {
+            ...state,
+            selectedRowIds: state.tableData.map((story) => {
+              if (story.is_visible) {
+                return story.ID;
+              }
+            }),
+            checkedVisibleStoriesArray: state.tableData
+              .filter((story) => story.is_visible)
+              .map((story) => story.ID),
+            checkedHiddenStoriesArray: INIT_STATE.checkedHiddenStoriesArray,
+          };
+        } else {
+          return {
+            ...state,
+            selectedRowIds: state.visibleTableState.map((story) => {
+              if (story.is_visible) {
+                return story.ID;
+              }
+            }),
+            checkedVisibleStoriesArray: state.visibleTableState
+              .filter((story) => story.is_visible)
+              .map((story) => story.ID),
+            checkedHiddenStoriesArray: INIT_STATE.checkedHiddenStoriesArray,
+          };
+        }
       } else {
-        return {
-          ...state,
-          selectedRowIds: state.tableData.map((story) => {
-            if (!story.is_visible) {
-              return story.ID;
-            }
-          }),
-          checkedHiddenStoriesArray: state.visibleTableState
-            .filter((story) => !story.is_visible)
-            .map((story) => story.ID),
-          checkedVisibleStoriesArray: INIT_STATE.checkedVisibleStoriesArray,
-        };
+        if (state.tabValue === 0) {
+          return {
+            ...state,
+            selectedRowIds: state.tableData.map((story) => {
+              if (!story.is_visible) {
+                return story.ID;
+              }
+            }),
+            checkedHiddenStoriesArray: state.tableData
+              .filter((story) => !story.is_visible)
+              .map((story) => story.ID),
+            checkedVisibleStoriesArray: INIT_STATE.checkedVisibleStoriesArray,
+          };
+        } else {
+          return {
+            ...state,
+            selectedRowIds: state.visibleTableState.map((story) => {
+              if (!story.is_visible) {
+                return story.ID;
+              }
+            }),
+            checkedHiddenStoriesArray: state.visibleTableState
+              .filter((story) => !story.is_visible)
+              .map((story) => story.ID),
+            checkedVisibleStoriesArray: INIT_STATE.checkedVisibleStoriesArray,
+          };
+        }
       }
     }
-
     case "HANDLE_SWITCH_CHANGE": {
       const changedVisibilityContainsID = state.changedVisibility.some(
         (e) => e.ID === action.story.ID
@@ -237,16 +279,27 @@ export function allStoriesReducer(state: State, action: Action): State {
     }
     case "HANDLE_CHECKED_ALL": {
       if (state.selectedRowIds.length === 0) {
-        return {
-          ...state,
-          selectedRowIds: state.tableData.map((story) => story.ID),
-          checkedVisibleStoriesArray: state.visibleTableState
-            .filter((story) => story.is_visible)
-            .map((story) => story.ID),
-          checkedHiddenStoriesArray: state.visibleTableState
-            .filter((story) => !story.is_visible)
-            .map((story) => story.ID),
-        };
+        if (state.tabValue === 0) {
+          return {
+            ...state,
+            selectedRowIds: state.tableData.map((story) => story.ID),
+            checkedVisibleStoriesArray: state.tableData
+              .filter((story) => story.is_visible)
+              .map((story) => story.ID),
+            checkedHiddenStoriesArray: state.tableData
+              .filter((story) => !story.is_visible)
+              .map((story) => story.ID),
+          };
+        } else {
+          return {
+            ...state,
+            selectedRowIds: state.visibleTableState.map((story) => story.ID),
+            checkedVisibleStoriesArray: state.visibleTableState
+              .filter((story) => story.is_visible)
+              .map((story) => story.ID),
+            checkedHiddenStoriesArray: [],
+          };
+        }
       } else {
         return {
           ...state,
@@ -335,6 +388,8 @@ export function allStoriesReducer(state: State, action: Action): State {
       return {
         ...newState,
         tabValue: action.newValue,
+        checkedVisibleStoriesArray: [],
+        checkedHiddenStoriesArray: [],
       };
     }
     case "SET_CHANGED_VISIBILITY": {
@@ -450,10 +505,43 @@ const requestSearchAndFilter = (newState: State) => {
       newState.origTableData,
       newState
     );
+    newState.checkedVisibleStoriesArray = newState.checkedVisibleStoriesArray.filter(
+      (storyID) => {
+        let exists = false;
+        newState.tableData.forEach((s) => {
+          if (s.ID === storyID) {
+            exists = true;
+          }
+        });
+        return exists;
+      }
+    );
+    newState.checkedHiddenStoriesArray = newState.checkedHiddenStoriesArray.filter(
+      (storyID) => {
+        let exists = false;
+        newState.tableData.forEach((s) => {
+          if (s.ID === storyID) {
+            exists = true;
+          }
+        });
+        return exists;
+      }
+    );
   } else if (newState.tabValue === 1) {
     newState.visibleTableState = requestSearchAndFilterHelper(
       newState.visibleTableFilterState,
       newState
+    );
+    newState.checkedVisibleStoriesArray = newState.checkedVisibleStoriesArray.filter(
+      (storyID) => {
+        let exists = false;
+        newState.visibleTableState.forEach((s) => {
+          if (s.ID === storyID) {
+            exists = true;
+          }
+        });
+        return exists;
+      }
     );
   } else if (newState.tabValue === 2) {
     newState.changedVisibility = requestSearchAndFilterHelper(
