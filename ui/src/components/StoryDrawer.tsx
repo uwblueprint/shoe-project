@@ -27,13 +27,11 @@ const StyledDrawer = styled(Drawer)`
 
 function formatYoutubeURL(video_url: string) {
   if (!video_url.includes("embed")) {
-    console.log("here1")
     const youtubeEmbedURL = "https://www.youtube.com/embed/"
     const regex = `(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})`
     const found = video_url.match(regex)
     return youtubeEmbedURL + found[1]
   }
-  console.log("here2")
   return video_url
 }
 
