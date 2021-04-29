@@ -21,7 +21,6 @@ export interface State {
   visibleTableFilterState: StoryView[];
   changedVisibilityFilter: StoryView[];
   origTableData: StoryView[];
-  selectedRowIds: number[];
   order: "asc" | "desc";
   orderBy: string;
   tags: string[];
@@ -62,7 +61,6 @@ export const INIT_STATE: State = {
   visibleTableFilterState: [],
   changedVisibilityFilter: [],
   origTableData: [],
-  selectedRowIds: [],
   order: "asc",
   orderBy: "ID",
   tags: [],
@@ -111,7 +109,6 @@ export function allStoriesReducer(state: State, action: Action): State {
         if (state.tabValue === 0) {
           return {
             ...state,
-            selectedRowIds: state.tableData.map((story) => story.ID),
             checkedVisibleStoriesArray: state.tableData
               .filter((story) => story.is_visible)
               .map((story) => story.ID),
@@ -122,7 +119,6 @@ export function allStoriesReducer(state: State, action: Action): State {
         } else {
           return {
             ...state,
-            selectedRowIds: state.visibleTableState.map((story) => story.ID),
             checkedVisibleStoriesArray: state.visibleTableState
               .filter((story) => story.is_visible)
               .map((story) => story.ID),
@@ -135,11 +131,6 @@ export function allStoriesReducer(state: State, action: Action): State {
         if (state.tabValue === 0) {
           return {
             ...state,
-            selectedRowIds: state.tableData.map((story) => {
-              if (story.is_visible) {
-                return story.ID;
-              }
-            }),
             checkedVisibleStoriesArray: state.tableData
               .filter((story) => story.is_visible)
               .map((story) => story.ID),
@@ -148,11 +139,6 @@ export function allStoriesReducer(state: State, action: Action): State {
         } else {
           return {
             ...state,
-            selectedRowIds: state.visibleTableState.map((story) => {
-              if (story.is_visible) {
-                return story.ID;
-              }
-            }),
             checkedVisibleStoriesArray: state.visibleTableState
               .filter((story) => story.is_visible)
               .map((story) => story.ID),
@@ -163,11 +149,6 @@ export function allStoriesReducer(state: State, action: Action): State {
         if (state.tabValue === 0) {
           return {
             ...state,
-            selectedRowIds: state.tableData.map((story) => {
-              if (!story.is_visible) {
-                return story.ID;
-              }
-            }),
             checkedHiddenStoriesArray: state.tableData
               .filter((story) => !story.is_visible)
               .map((story) => story.ID),
@@ -176,11 +157,6 @@ export function allStoriesReducer(state: State, action: Action): State {
         } else {
           return {
             ...state,
-            selectedRowIds: state.visibleTableState.map((story) => {
-              if (!story.is_visible) {
-                return story.ID;
-              }
-            }),
             checkedHiddenStoriesArray: state.visibleTableState
               .filter((story) => !story.is_visible)
               .map((story) => story.ID),
@@ -206,6 +182,13 @@ export function allStoriesReducer(state: State, action: Action): State {
             ...state.visibleTableFilterState,
             action.story,
           ],
+          checkedVisibleStoriesArray: state.checkedHiddenStoriesArray.includes(action.story.ID) ? [
+            ...state.checkedVisibleStoriesArray,
+            action.story.ID,
+          ] : state.checkedVisibleStoriesArray,
+          checkedHiddenStoriesArray: state.checkedHiddenStoriesArray.filter(
+                (e) => e !== action.story.ID
+              ),
           changedVisibilityFilter: changedVisibilityContainsID
             ? state.changedVisibilityFilter.filter(
                 (e) => e.ID !== action.story.ID
@@ -230,6 +213,13 @@ export function allStoriesReducer(state: State, action: Action): State {
                 (e) => e.ID !== action.story.ID
               )
             : [...state.changedVisibilityFilter, action.story],
+          checkedHiddenStoriesArray: state.checkedVisibleStoriesArray.includes(action.story.ID) ? [
+            ...state.checkedHiddenStoriesArray,
+            action.story.ID,
+          ] : state.checkedHiddenStoriesArray,
+          checkedVisibleStoriesArray: state.checkedVisibleStoriesArray.filter(
+                (e) => e !== action.story.ID
+              ) ,
         };
       }
     }
@@ -262,27 +252,20 @@ export function allStoriesReducer(state: State, action: Action): State {
       if (action.visibilityCondition === "hide") {
         return {
           ...state,
-          selectedRowIds: state.selectedRowIds.filter(
-            (s) => !state.visibleState.includes(s)
-          ),
           checkedVisibleStoriesArray: INIT_STATE.checkedVisibleStoriesArray,
         };
       } else {
         return {
           ...state,
-          selectedRowIds: state.selectedRowIds.filter((s) =>
-            state.visibleState.includes(s)
-          ),
           checkedHiddenStoriesArray: INIT_STATE.checkedHiddenStoriesArray,
         };
       }
     }
     case "HANDLE_CHECKED_ALL": {
-      if (state.selectedRowIds.length === 0) {
+      if (state.checkedHiddenStoriesArray.length + state.checkedVisibleStoriesArray.length === 0) {
         if (state.tabValue === 0) {
           return {
             ...state,
-            selectedRowIds: state.tableData.map((story) => story.ID),
             checkedVisibleStoriesArray: state.tableData
               .filter((story) => story.is_visible)
               .map((story) => story.ID),
@@ -293,7 +276,6 @@ export function allStoriesReducer(state: State, action: Action): State {
         } else {
           return {
             ...state,
-            selectedRowIds: state.visibleTableState.map((story) => story.ID),
             checkedVisibleStoriesArray: state.visibleTableState
               .filter((story) => story.is_visible)
               .map((story) => story.ID),
@@ -303,7 +285,6 @@ export function allStoriesReducer(state: State, action: Action): State {
       } else {
         return {
           ...state,
-          selectedRowIds: INIT_STATE.selectedRowIds,
           checkedHiddenStoriesArray: INIT_STATE.checkedHiddenStoriesArray,
           checkedVisibleStoriesArray: INIT_STATE.checkedVisibleStoriesArray,
         };
@@ -315,7 +296,6 @@ export function allStoriesReducer(state: State, action: Action): State {
         if (action.story.is_visible) {
           return {
             ...state,
-            selectedRowIds: [...state.selectedRowIds, action.story.ID],
             checkedVisibleStoriesArray: [
               ...state.checkedVisibleStoriesArray,
               action.story.ID,
@@ -324,7 +304,6 @@ export function allStoriesReducer(state: State, action: Action): State {
         } else {
           return {
             ...state,
-            selectedRowIds: [...state.selectedRowIds, action.story.ID],
             checkedHiddenStoriesArray: [
               ...state.checkedHiddenStoriesArray,
               action.story.ID,
@@ -335,9 +314,6 @@ export function allStoriesReducer(state: State, action: Action): State {
         if (!action.story.is_visible) {
           return {
             ...state,
-            selectedRowIds: state.selectedRowIds.filter(
-              (e) => e !== action.story.ID
-            ),
             checkedHiddenStoriesArray: state.checkedHiddenStoriesArray.filter(
               (id) => id !== action.story.ID
             ),
@@ -345,9 +321,6 @@ export function allStoriesReducer(state: State, action: Action): State {
         } else {
           return {
             ...state,
-            selectedRowIds: state.selectedRowIds.filter(
-              (e) => e !== action.story.ID
-            ),
             checkedVisibleStoriesArray: state.checkedVisibleStoriesArray.filter(
               (id) => id !== action.story.ID
             ),

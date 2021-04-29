@@ -473,8 +473,7 @@ export const AllStories: React.FC = () => {
     return 0;
   };
   const indeterminate =
-    state.selectedRowIds.length > 0 &&
-    state.selectedRowIds.length !== allStories.length;
+  state.checkedVisibleStoriesArray.length + state.checkedHiddenStoriesArray.length > 0 && state.checkedVisibleStoriesArray.length + state.checkedHiddenStoriesArray.length !== allStories.length
 
   const handleTabChange = (
     event: React.ChangeEvent<Record<string, unknown>>,
