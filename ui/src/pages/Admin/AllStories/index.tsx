@@ -235,13 +235,11 @@ export const AllStories: React.FC = () => {
     undefined
   );
   const classes = useStyles();
-  const allStoriesLabel = `${"ALL STORIES"} ${"("}${
-    state.tableData.length
-  } ${")"}`;
-  const visibleStoriesLabel = `${"VISIBLE STORIES"} ${"("}${
+  const allStoriesLabel = `${"ALL STORIES ("}${state.tableData.length}${")"}`;
+  const visibleStoriesLabel = `${"VISIBLE STORIES ("}${
     state.visibleTableState.filter((story) => story.is_visible).length
   }${")"}`;
-  const pendingChangesLabel = `${"PENDING MAP CHANGES"} ${"("}${
+  const pendingChangesLabel = `${"PENDING MAP CHANGES ("}${
     state.changedVisibility.length
   }${")"}`;
   const doesVisibleStoriesExist =
