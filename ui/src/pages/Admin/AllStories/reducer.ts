@@ -182,13 +182,14 @@ export function allStoriesReducer(state: State, action: Action): State {
             ...state.visibleTableFilterState,
             action.story,
           ],
-          checkedVisibleStoriesArray: state.checkedHiddenStoriesArray.includes(action.story.ID) ? [
-            ...state.checkedVisibleStoriesArray,
-            action.story.ID,
-          ] : state.checkedVisibleStoriesArray,
+          checkedVisibleStoriesArray: state.checkedHiddenStoriesArray.includes(
+            action.story.ID
+          )
+            ? [...state.checkedVisibleStoriesArray, action.story.ID]
+            : state.checkedVisibleStoriesArray,
           checkedHiddenStoriesArray: state.checkedHiddenStoriesArray.filter(
-                (e) => e !== action.story.ID
-              ),
+            (e) => e !== action.story.ID
+          ),
           changedVisibilityFilter: changedVisibilityContainsID
             ? state.changedVisibilityFilter.filter(
                 (e) => e.ID !== action.story.ID
@@ -213,13 +214,14 @@ export function allStoriesReducer(state: State, action: Action): State {
                 (e) => e.ID !== action.story.ID
               )
             : [...state.changedVisibilityFilter, action.story],
-          checkedHiddenStoriesArray: state.checkedVisibleStoriesArray.includes(action.story.ID) ? [
-            ...state.checkedHiddenStoriesArray,
-            action.story.ID,
-          ] : state.checkedHiddenStoriesArray,
+          checkedHiddenStoriesArray: state.checkedVisibleStoriesArray.includes(
+            action.story.ID
+          )
+            ? [...state.checkedHiddenStoriesArray, action.story.ID]
+            : state.checkedHiddenStoriesArray,
           checkedVisibleStoriesArray: state.checkedVisibleStoriesArray.filter(
-                (e) => e !== action.story.ID
-              ) ,
+            (e) => e !== action.story.ID
+          ),
         };
       }
     }
@@ -262,7 +264,11 @@ export function allStoriesReducer(state: State, action: Action): State {
       }
     }
     case "HANDLE_CHECKED_ALL": {
-      if (state.checkedHiddenStoriesArray.length + state.checkedVisibleStoriesArray.length === 0) {
+      if (
+        state.checkedHiddenStoriesArray.length +
+          state.checkedVisibleStoriesArray.length ===
+        0
+      ) {
         if (state.tabValue === 0) {
           return {
             ...state,
