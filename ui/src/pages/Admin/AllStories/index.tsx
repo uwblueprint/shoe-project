@@ -373,6 +373,17 @@ export const AllStories: React.FC = () => {
     }
   }, [allStories, tagOptions]);
 
+  useEffect(() => {
+    window.addEventListener("beforeunload", alertUser);
+    return () => {
+      window.removeEventListener("beforeunload", alertUser);
+    };
+  }, []);
+  const alertUser = (e) => {
+    e.preventDefault();
+    e.returnValue = "";
+  };
+
   const setClickedRow = (rowId: number | undefined) => {
     if (rowId) {
       const story = allStories?.find((story: StoryView) => story.ID === rowId);
