@@ -12,6 +12,7 @@ interface ButtonProps {
   link_dest?: string;
   component?: Link;
   to?: string;
+  target?: string;
 }
 
 const StyledPrimaryButton = withStyles({
@@ -42,6 +43,7 @@ export function PrimaryButton({
   isDisabled,
   component,
   to,
+  target,
 }: ButtonProps): JSX.Element {
   return (
     <StyledPrimaryButton
@@ -86,6 +88,7 @@ export function SecondaryButton({
   isDisabled,
   component,
   to,
+  target,
 }: ButtonProps): JSX.Element {
   return (
     <StyledSecondaryButton
@@ -95,6 +98,7 @@ export function SecondaryButton({
       component={component}
       to={to}
       onClick={to ? null : () => onClickFunction()}
+      target={target}
     >
       {text}
     </StyledSecondaryButton>
