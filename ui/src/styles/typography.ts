@@ -302,6 +302,16 @@ export const LoginHeader = styled.div`
   text-align: center;
 `;
 
+export const UploadStoriesTitle = styled.div`
+  font-family: Poppins;
+  font-style: normal;
+  font-weight: 400;
+  font-size: ${fontSize.h2Text};
+  line-height: 150%;
+  color: ${colors.black};
+  margin: 12px 0px 12px 0px;
+`;
+
 export const UploadStoriesHeading = styled.div`
   font-family: Poppins;
   font-style: normal;
@@ -309,7 +319,7 @@ export const UploadStoriesHeading = styled.div`
   font-size: ${fontSize.h3Text};
   line-height: 150%;
   color: ${colors.black};
-  margin: 24px 0px 24px 5px;
+  margin: 24px 0px 24px 0px;
 `;
 
 export const UploadLabelsText = styled.div`

@@ -2,7 +2,7 @@ import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Drawer from "@material-ui/core/Drawer";
 import Grid from "@material-ui/core/Grid";
-import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import * as React from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
@@ -157,7 +157,7 @@ export function StoryDrawer({
     <StyledDrawer anchor="right" open onClose={onClose}>
       <HiddenImg src={image_url} onLoad={() => setImageURL(image_url)} />
       <StyledIconButton onClick={onClose}>
-        <ArrowForwardIcon />
+        <ArrowBackIcon />
       </StyledIconButton>
       <StyledRoot>
         <Grid container spacing={2} alignItems="center">
