@@ -1,33 +1,29 @@
-import { CircularProgress } from "@material-ui/core";
 import * as React from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
-import styled from "styled-components";
 
+import { CenteredCircularProgress } from "../../components/CenteredCircularProgress";
 import { useAuth } from "../../hooks/auth";
-import { AllStories } from "./AllStories";
-import { Edit } from "./Edit/index";
-import { UploadSuccess } from "./Edit/UploadSuccess";
-import { Upload } from "./Upload";
 
-const Center = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-top: -50px;
-  margin-left: -50px;
-  width: 100px;
-  height: 100px;
-`;
+const AllStories = React.lazy(() =>
+  import("./AllStories").then(({ AllStories }) => ({ default: AllStories }))
+);
+const Upload = React.lazy(() =>
+  import("./Upload").then(({ Upload }) => ({ default: Upload }))
+);
+const UploadSuccess = React.lazy(() =>
+  import("./Edit/UploadSuccess").then(({ UploadSuccess }) => ({
+    default: UploadSuccess,
+  }))
+);
+const Edit = React.lazy(() =>
+  import("./Edit").then(({ Edit }) => ({ default: Edit }))
+);
 
 export const Admin: React.FC = () => {
   const { auth, googleLoaded } = useAuth();
 
   if (!googleLoaded) {
-    return (
-      <Center>
-        <CircularProgress />
-      </Center>
-    );
+    return <CenteredCircularProgress />;
   }
 
   if (auth === undefined) {
@@ -35,22 +31,24 @@ export const Admin: React.FC = () => {
   }
 
   return (
-    <Switch>
-      <Route exact path="/admin">
-        <Redirect to="/admin/allstories" />
-      </Route>
-      <Route path="/admin/upload">
-        <Upload />
-      </Route>
-      <Route path="/admin/upload-success">
-        <UploadSuccess />
-      </Route>
-      <Route path="/admin/edit/:id">
-        <Edit />
-      </Route>
-      <Route path="/admin/allstories">
-        <AllStories />
-      </Route>
-    </Switch>
+    <React.Suspense fallback={<CenteredCircularProgress />}>
+      <Switch>
+        <Route exact path="/admin">
+          <Redirect to="/admin/allstories" />
+        </Route>
+        <Route path="/admin/upload">
+          <Upload />
+        </Route>
+        <Route path="/admin/upload-success">
+          <UploadSuccess />
+        </Route>
+        <Route path="/admin/edit/:id">
+          <Edit />
+        </Route>
+        <Route path="/admin/allstories">
+          <AllStories />
+        </Route>
+      </Switch>
+    </React.Suspense>
   );
 };

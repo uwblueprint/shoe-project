@@ -1,4 +1,3 @@
-import { CircularProgress } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
@@ -11,6 +10,7 @@ import styled from "styled-components";
 
 import ShoeLogo from "../assets/images/shoeproject-logo.svg";
 import PeopleWalking from "../assets/images/walking-people.svg";
+import { CenteredCircularProgress } from "../components";
 import { FailureState, useAuth } from "../hooks/auth";
 import { colors } from "../styles/index";
 import {
@@ -154,10 +154,7 @@ export const Login: React.FC = () => {
             </Toolbar>
           </AppBar>
         </div>
-
-        <CenterIcon>
-          <CircularProgress />
-        </CenterIcon>
+        <CenteredCircularProgress />
         <CenterText>
           <LoginTitleText>
             Please make sure cookies are enabled on this site
