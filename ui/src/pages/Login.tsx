@@ -21,7 +21,7 @@ import {
 const SHOE_PROJECT_URL = "https://theshoeproject.online/our-stories";
 
 const PeopleFooter = styled.img`
-  z-index: 1;
+  z-index: 2;
   margin: 53vh 0 5vh 0;
 `;
 
@@ -47,10 +47,7 @@ const CardDiv = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80vh;
-  width: 100vw;
   position: absolute;
-  z-index: 0;
 `;
 
 export const CenterText = styled.div`
@@ -63,13 +60,11 @@ export const CenterText = styled.div`
 `;
 
 const StyledCard = styled(Card)`
-  max-height: 35vh;
   max-width: 25vw;
 
   && .MuiCardContent-root {
     border: 2px solid ${colors.primary};
     border-radius: 10px;
-    z-index: -1;
     background: ${colors.white};
   }
 
@@ -97,6 +92,8 @@ const GoogleButton = styled(Button)`
     &:hover{
       background-color: ${colors.primaryDark3};
     }
+  position: relative;
+  z-index: 3;
 `;
 
 const CenterIcon = styled.div`
@@ -112,12 +109,15 @@ const useStyles = makeStyles({
   root: {
     backgroundColor: colors.primaryLight6,
     display: "flex",
-    height: "100vh",
     flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
   },
   appBar: {
+    width: "100%",
     backgroundColor: colors.white,
     background: colors.white,
+    boxSizing: "border-box",
     paddingLeft: "54px",
     height: "56px",
     "& .MuiAppBar-colorPrimary": {
@@ -132,6 +132,8 @@ const useStyles = makeStyles({
     "& .MuiToolbar-regular": {
       minHeight: "56px",
     },
+    zIndex: 2,
+    top: 0,
   },
 });
 
