@@ -17,9 +17,9 @@ import {
 
 const StyledLogo = styled.div`
   background-image: url(${ShoeLogo});
-  background-size: 56px;
-  width: 56px; //height and width must equal background-size or else you'll have clones
-  height: 56px;
+  background-size: 39px;
+  width: 39px;
+  height: 39.65px;
   cursor: pointer;
   flex-grow: 1;
 `;
@@ -29,7 +29,6 @@ const useStyles = makeStyles({
     backgroundColor: colors.white,
     background: colors.white,
     paddingLeft: "54px",
-    height: "56px",
     "& .MuiAppBar-colorPrimary": {
       backgroundColor: colors.white,
     },
@@ -40,7 +39,7 @@ const useStyles = makeStyles({
       paddingLeft: "0px",
     },
     "& .MuiToolbar-regular": {
-      height: "56px",
+      minHeight: "56px",
     },
   },
   title: {
