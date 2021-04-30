@@ -34,6 +34,7 @@ import {
 import { citiesList } from "../../../data/cities";
 import { colors } from "../../../styles/colors";
 import { device } from "../../../styles/device";
+import { fontSize } from "../../../styles/typography";
 import {
   UploadLabelsText,
   UploadStoriesHeading,
@@ -44,6 +45,17 @@ import { ListboxComponent, renderGroup } from "./Listbox";
 import { get_init_state, uploadStoryReducer } from "./reducer";
 import { StoryProps, TagParameters } from "./types";
 
+const ChangeImageButton = styled(Button)`
+&& {
+  box-shadow: none;
+  background-color: ${colors.primaryDark1};
+  &:active {
+    background-color: ${colors.primaryDark2};
+  }
+  &:hover{
+    background-color: ${colors.primaryDark3};
+  }
+`;
 const StyledGrid = styled(Grid)`
   background-color: ${colors.primaryLight6};
   @media ${device.laptop} {
@@ -68,6 +80,21 @@ const StyledLink = styled.a`
   width: 24px;
 `;
 
+const StyledChip = styled(Chip)`
+  &&.MuiChip-root {
+    color: ${colors.primaryDark2};
+    font-family: Poppins;
+    font-size: ${fontSize.body1};
+    line-height: 150%;
+    margin-right: 4px;
+    text-transform: capitalize;
+    background: ${colors.primaryLight3};
+    .MuiChip-deleteIcon {
+      color: ${colors.primaryDark2} !important;
+    }
+  }
+`;
+
 const StyledContainer = styled.div`
   display: flex;
   align-items: center;
@@ -87,6 +114,9 @@ const StyledTextField = styled(TextField)`
     margin-top: 12px;
     .MuiInputLabel-formControl {
       font-family: Poppins !important;
+    }
+    .MuiInputBase-root {
+      font-family: "Poppins";
     }
   }
 `;
@@ -733,9 +763,9 @@ export const UploadStory: React.FC<StoryProps> = ({
                   value={state.tagArray ? state.tagArray : [""]}
                   renderTags={(value, getTagProps) =>
                     value.map((option, index) => (
-                      <Chip
+                      <StyledChip
+                        variant="default"
                         key={option}
-                        variant="outlined"
                         label={option}
                         {...getTagProps({ index })}
                       />
@@ -779,7 +809,7 @@ export const UploadStory: React.FC<StoryProps> = ({
                     <UploadLabelsText>Current Image:</UploadLabelsText>
                     <br />
                     <StyledImage src={currentStory.image_url} />
-                    <Button
+                    <ChangeImageButton
                       color="primary"
                       variant="contained"
                       onClick={() =>
@@ -787,7 +817,7 @@ export const UploadStory: React.FC<StoryProps> = ({
                       }
                     >
                       Change Image
-                    </Button>
+                    </ChangeImageButton>
                   </div>
                 )}
               </ImageContainer>
