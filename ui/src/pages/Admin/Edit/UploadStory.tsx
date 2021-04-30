@@ -221,7 +221,6 @@ export const UploadStory: React.FC<StoryProps> = ({
   const history = useHistory();
 
   const startYear = new Date().getFullYear();
-  // const prefilledYear = id ? currentStory.year : startYear.toString();
   const yearArray = Array.from({ length: 30 }, (_, i) => startYear - i);
 
   const [formInput, setFormInput] = useReducer(
