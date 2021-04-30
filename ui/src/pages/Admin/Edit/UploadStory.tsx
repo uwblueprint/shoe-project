@@ -20,7 +20,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import Alert from "@material-ui/lab/Alert";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import { debug } from "console";
 import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
 import { useReducer, useState } from "react";
@@ -215,7 +214,6 @@ export const UploadStory: React.FC<StoryProps> = ({
   tagOptions,
   countries,
 }: StoryProps) => {
-  console.log(tagOptions);
   const [state, dispatch] = useReducer(
     uploadStoryReducer,
     get_init_state(currentStory)
@@ -313,6 +311,22 @@ export const UploadStory: React.FC<StoryProps> = ({
     setFormInput({
       image: files[0],
     });
+  };
+
+  const handleKeyDown = (event) => {
+    switch (event.key) {
+      case "Enter": {
+        if (
+          state.tagArray.includes(state.autocompleteTag.toUpperCase()) ||
+          state.tagArray.includes(state.autocompleteTag)
+        ) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        break;
+      }
+      default:
+    }
   };
 
   const setErrorUploadingState = (event, reason) => {
@@ -413,9 +427,9 @@ export const UploadStory: React.FC<StoryProps> = ({
     if (autocompleteTag.length > 0) {
       dispatch({
         type: "SET_TAG_VALUES",
-        tags: [...state.tagArray, autocompleteTag],
+        tags: [...state.tagArray, autocompleteTag.toUpperCase()],
       });
-      tagOptions.push(autocompleteTag);
+      tagOptions.push(autocompleteTag.toUpperCase());
     }
   };
 
@@ -588,30 +602,28 @@ export const UploadStory: React.FC<StoryProps> = ({
           <FormControl>
             <StyledBackgroundColor>
               <UploadStoriesHeading>Story Information</UploadStoriesHeading>
-              <UploadLabelsText>Title</UploadLabelsText>
+              <UploadLabelsText>Title*</UploadLabelsText>
               <StyledTextField
                 onChange={handleChange}
                 variant="outlined"
-                required
                 id="story-title"
                 name="title"
                 label="Enter story title"
                 placeholder="Lorem ipsum"
                 defaultValue={formInput.title}
               />
-              <UploadLabelsText>Summary</UploadLabelsText>
+              <UploadLabelsText>Summary*</UploadLabelsText>
               <StyledTextField
                 onChange={handleChange}
                 multiline
                 placeholder="Enter additional information here"
                 variant="outlined"
-                required
                 id="story-summary"
                 name="summary"
                 label="Enter story summary"
                 defaultValue={formInput.summary}
               />
-              <UploadLabelsText>Story</UploadLabelsText>
+              <UploadLabelsText>Story*</UploadLabelsText>
               <StyledTextField
                 onChange={handleChange}
                 multiline
@@ -619,7 +631,6 @@ export const UploadStory: React.FC<StoryProps> = ({
                 defaultValue={formInput.content}
                 placeholder="Lorem ipsum dolor sit amet, consectet ui i iadipiscing elit"
                 rows={8}
-                required
                 inputProps={{
                   name: "content",
                   id: "story-content",
@@ -629,22 +640,20 @@ export const UploadStory: React.FC<StoryProps> = ({
             </StyledBackgroundColor>
             <StyledBackgroundColor>
               <UploadStoriesHeading>Author Information</UploadStoriesHeading>
-              <UploadLabelsText>First Name</UploadLabelsText>
+              <UploadLabelsText>First Name*</UploadLabelsText>
               <StyledTextField
                 onChange={handleChange}
                 variant="outlined"
-                required
                 id="author-first-name"
                 name="author_first_name"
                 label="Enter author's first name"
                 placeholder="Lorem ipsum"
                 defaultValue={formInput.author_first_name}
               />
-              <UploadLabelsText>Last Name</UploadLabelsText>
+              <UploadLabelsText>Last Name*</UploadLabelsText>
               <StyledTextField
                 onChange={handleChange}
                 variant="outlined"
-                required
                 id="author-last-name"
                 name="author_last_name"
                 label="Enter author's last name"
@@ -670,7 +679,7 @@ export const UploadStory: React.FC<StoryProps> = ({
                 Additional Information
               </UploadStoriesHeading>
               <FormControl>
-                <UploadLabelsText>Country of Origin</UploadLabelsText>
+                <UploadLabelsText>Country of Origin*</UploadLabelsText>
                 <StyledAutocomplete
                   color="Primary"
                   loading={!countries}
@@ -701,14 +710,14 @@ export const UploadStory: React.FC<StoryProps> = ({
                         required
                         variant="outlined"
                         label=""
-                        placeholder="Enter story&#39;s country of origin *"
+                        placeholder="Enter story&#39;s country of origin"
                       />
                     );
                   }}
                   PaperComponent={addNewCountry}
                 />
               </FormControl>
-              <UploadLabelsText>Current City</UploadLabelsText>
+              <UploadLabelsText>Current City*</UploadLabelsText>
               <StyledAutocomplete
                 color="Primary"
                 loading={!citiesList}
@@ -737,13 +746,13 @@ export const UploadStory: React.FC<StoryProps> = ({
                       required
                       variant="outlined"
                       label=""
-                      placeholder="Enter where story was written *"
+                      placeholder="Enter where story was written"
                     />
                   );
                 }}
               />
               <FormControl>
-                <UploadLabelsText>Year Published</UploadLabelsText>
+                <UploadLabelsText>Year Published*</UploadLabelsText>
                 <StyledSelect
                   variant="outlined"
                   value={formInput.year ? formInput.year : ""}
@@ -763,7 +772,7 @@ export const UploadStory: React.FC<StoryProps> = ({
               <FormControl>
                 <UploadLabelsText>Tags</UploadLabelsText>
                 <StyledAutocomplete
-                  // autoHighlight
+                  autoHighlight
                   multiple
                   id="tags-outlined"
                   name="tags"
@@ -792,6 +801,7 @@ export const UploadStory: React.FC<StoryProps> = ({
                     ))
                   }
                   renderInput={(params: TagParameters) => {
+                    params.inputProps.onKeyDown = handleKeyDown;
                     return (
                       <TextField
                         {...params}
@@ -810,7 +820,7 @@ export const UploadStory: React.FC<StoryProps> = ({
               <ImageContainer>
                 {state.newImage == "" ? (
                   <div>
-                    <UploadLabelsText>Add Image *</UploadLabelsText>
+                    <UploadLabelsText>Add Image*</UploadLabelsText>
                     <StyledDropzoneArea
                       showFileNames
                       maxFileSize={7000000}
