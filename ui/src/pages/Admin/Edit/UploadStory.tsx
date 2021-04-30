@@ -202,7 +202,7 @@ const useStyles = makeStyles({
       height: "56px",
     },
     width: "100%",
-  }
+  },
 });
 
 export const UploadStory: React.FC<StoryProps> = ({
