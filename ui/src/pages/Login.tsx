@@ -1,4 +1,4 @@
-import { CircularProgress, FormHelperText } from "@material-ui/core";
+import { CircularProgress } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
@@ -16,7 +16,7 @@ import { colors } from "../styles/index";
 import {
   LoginHeader,
   LoginMessageText,
-  LoginTitleText, 
+  LoginTitleText,
 } from "../styles/typography";
 const SHOE_PROJECT_URL = "https://theshoeproject.online/our-stories";
 
@@ -106,14 +106,14 @@ const CenterIcon = styled.div`
   margin: -50px 0 0 -50px;
   width: 100px;
   height: 100px;
-`;  
+`;
 
 const useStyles = makeStyles({
   root: {
     backgroundColor: colors.primaryLight6,
     display: "flex",
     height: "100vh",
-    flexDirection: "column"
+    flexDirection: "column",
   },
   appBar: {
     backgroundColor: colors.white,
@@ -132,7 +132,7 @@ const useStyles = makeStyles({
     "& .MuiToolbar-regular": {
       minHeight: "56px",
     },
-  }
+  },
 });
 
 export const Login: React.FC = () => {
@@ -151,7 +151,7 @@ export const Login: React.FC = () => {
             </Toolbar>
           </AppBar>
         </div>
-        
+
         <CenterIcon>
           <CircularProgress />
         </CenterIcon>
