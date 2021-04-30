@@ -6,7 +6,7 @@ import { Story } from "../../../types/index";
 import { UploadStoryWrapper } from "./UploadStoryWrapper";
 
 export const Edit: React.FC = () => {
-  const { id } = useParams();
+  const { id } = useParams<Record<string, string>>();
   const { data: story, error } = useSWR<Story>(`/api/story/${id}`);
 
   if (error) return <div>Error fetching story!</div>;
@@ -14,7 +14,7 @@ export const Edit: React.FC = () => {
     <div>
       {story && !error && (
         <UploadStoryWrapper
-          id={id}
+          id={Number(id)}
           currentStory={story}
           bio={story.author.bio}
         ></UploadStoryWrapper>

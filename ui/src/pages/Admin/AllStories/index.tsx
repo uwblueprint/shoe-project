@@ -26,6 +26,7 @@ import AllStoriesAppBar from "../../../components/AllStoriesAppBar";
 import { a11yProps, AllStoriesTabs } from "../../../components/AllStoriesTabs";
 import ToastyBoi from "../../../components/ToastyBoi";
 import VirtualizedTable from "../../../components/VirtualizedTable";
+import { useAuth } from "../../../hooks/auth";
 import { colors } from "../../../styles/colors";
 import {
   fontSize,
@@ -46,42 +47,45 @@ const StyledFilter = styled.div`
 `;
 
 const StyledButton = styled(Button)`
-&& {
-  width: 100%;
-  height: 100%;
-  box-shadow: none;
-  color: ${colors.primaryDark1};
-  background-color: ${colors.white};
-  background: ${colors.white};
-  padding: 5px;
-  &:active {
-    background-color: ${colors.primaryLight6};
-  }
-  &:hover{
-    background-color: ${colors.white};
+  && {
+    width: 100%;
+    height: 100%;
     box-shadow: none;
+    color: ${colors.primaryDark1};
+    background-color: ${colors.white};
+    background: ${colors.white};
+    padding: 5px;
+    &:active {
+      background-color: ${colors.primaryLight6};
+    }
+    &:hover {
+      background-color: ${colors.white};
+      box-shadow: none;
+    }
   }
 `;
 
 const ShowHideButton = styled(Button)`
-&& {
-  box-shadow: none;
-  background-color: ${colors.primaryDark1};
-  margin-left: 64px;
-  padding: 8px 20px 8px 20px;
+  && {
+    box-shadow: none;
+    background-color: ${colors.primaryDark1};
+    margin-left: 64px;
+    padding: 8px 20px 8px 20px;
 
-  && .MuiButton-label{
-    font-family: "Poppins";
-    color: ${colors.white} ; 
-  }
+    && .MuiButton-label {
+      font-family: "Poppins";
+      color: ${colors.white};
+    }
 
-  &:active {
-    background-color: ${colors.primaryDark2};
-  }
-  &:hover{
-    background-color: ${colors.primaryDark3};
+    &:active {
+      background-color: ${colors.primaryDark2};
+    }
+    &:hover {
+      background-color: ${colors.primaryDark3};
+    }
   }
 `;
+
 const StyledSearchBar = styled(SearchBar)`
   width: 100%;
   height: 40px;
@@ -115,18 +119,19 @@ export const StyledChip = styled(Chip)`
     background: ${colors.primaryLight3};
   }
 `;
-const UploadButton = styled(Button)` 
-&& {
-  box-shadow: none;
-  background-color: ${colors.primaryDark1};
-  margin-bottom: -5vh;
-  margin-right: 64px;
-  float:right;
-  &:active {
-    background-color: ${colors.primaryDark2};
-  }
-  &:hover{
-    background-color: ${colors.primaryDark3};
+const UploadButton = styled(Button)`
+  && {
+    box-shadow: none;
+    background-color: ${colors.primaryDark1};
+    margin-bottom: -5vh;
+    margin-right: 64px;
+    float: right;
+    &:active {
+      background-color: ${colors.primaryDark2};
+    }
+    &:hover {
+      background-color: ${colors.primaryDark3};
+    }
   }
 `;
 
@@ -225,6 +230,7 @@ const POPOVER_ID = "simple-popover";
 
 export const AllStories: React.FC = () => {
   const { data: tagOptions, error: tagError } = useSWR<string[]>("/api/tags");
+  const { signOut } = useAuth();
 
   const [state, dispatch] = useReducer(allStoriesReducer, INIT_STATE);
   const isFilterOpen = Boolean(state.anchorEl);
@@ -557,7 +563,7 @@ export const AllStories: React.FC = () => {
         <AllStoriesAppBar
           handlePublishMap={publishMap}
           isPublishDisabled={state.changedVisibility.length == 0}
-          handleLogout={null}
+          handleLogout={signOut}
         />
         <StyledAllStoriesHeader>
           The Shoe Project Impact Map Portal

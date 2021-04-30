@@ -40,16 +40,18 @@ import { get_init_state, uploadStoryReducer } from "./reducer";
 import { StoryProps, TagParameters } from "./types";
 
 const ChangeImageButton = styled(Button)`
-&& {
-  box-shadow: none;
-  background-color: ${colors.primaryDark1};
-  &:active {
-    background-color: ${colors.primaryDark2};
-  }
-  &:hover{
-    background-color: ${colors.primaryDark3};
+  && {
+    box-shadow: none;
+    background-color: ${colors.primaryDark1};
+    &:active {
+      background-color: ${colors.primaryDark2};
+    }
+    &:hover {
+      background-color: ${colors.primaryDark3};
+    }
   }
 `;
+
 const StyledGrid = styled(Grid)`
   background-color: ${colors.primaryLight6};
   @media ${device.laptop} {
