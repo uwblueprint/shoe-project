@@ -22,12 +22,12 @@ const Edit = React.lazy(() =>
 export const Admin: React.FC = () => {
   const { auth, googleLoaded } = useAuth();
 
-  if (!googleLoaded) {
-    return <CenteredCircularProgress />;
-  }
-
   if (auth === undefined) {
     return <Redirect to="/login" />;
+  }
+
+  if (!googleLoaded) {
+    return <CenteredCircularProgress />;
   }
 
   return (
