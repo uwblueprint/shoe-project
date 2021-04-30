@@ -202,16 +202,7 @@ const useStyles = makeStyles({
       height: "56px",
     },
     width: "100%",
-  },
-  title: {
-    flexGrow: 1,
-  },
-  buttons: {
-    width: "100%",
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "flex-end",
-  },
+  }
 });
 
 export const UploadStory: React.FC<StoryProps> = ({
