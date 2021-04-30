@@ -30,7 +30,7 @@ export const Upload: React.FC = () => {
     <UploadStoryWrapper
       id={null}
       currentStory={story}
-      bio={""}
+      bio=""
     ></UploadStoryWrapper>
   );
 };

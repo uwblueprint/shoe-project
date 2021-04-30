@@ -75,7 +75,7 @@ export default function AllStoriesAppBar({
           </a>
           <div className={classes.buttons}>
             <SecondaryButton
-              text={"VIEW MAP"}
+              text="VIEW MAP"
               isDisabled={false}
               component={Link}
               to="/"

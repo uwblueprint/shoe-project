@@ -80,9 +80,10 @@ const GoogleButton = styled(Button)`
     &:active {
       background-color: ${colors.primaryDark2};
     }
-    &:hover{
+    &:hover {
       background-color: ${colors.primaryDark3};
     }
+  }
 `;
 
 const CenterIcon = styled.div`
