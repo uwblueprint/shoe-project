@@ -1,7 +1,10 @@
-import { CircularProgress } from "@material-ui/core";
+import { CircularProgress, FormHelperText } from "@material-ui/core";
+import AppBar from "@material-ui/core/AppBar";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
+import Toolbar from "@material-ui/core/Toolbar";
+import { makeStyles } from "@material-ui/styles";
 import * as React from "react";
 import { Redirect } from "react-router-dom";
 import styled from "styled-components";
@@ -13,12 +16,13 @@ import { colors } from "../styles/index";
 import {
   LoginHeader,
   LoginMessageText,
-  LoginTitleText,
+  LoginTitleText, 
 } from "../styles/typography";
+const SHOE_PROJECT_URL = "https://theshoeproject.online/our-stories";
 
 const PeopleFooter = styled.img`
   z-index: 1;
-  margin: 60vh 0 0 15vw;
+  margin: 53vh 0 5vh 0;
 `;
 
 const StyledLogo = styled.div`
@@ -28,6 +32,15 @@ const StyledLogo = styled.div`
   width: 127px;
   background-repeat: no-repeat;
   margin-bottom: 16.62px;
+`;
+
+const StyledTinyLogo = styled.div`
+  background-image: url(${ShoeLogo});
+  background-size: 39px;
+  width: 39px;
+  height: 39.65px;
+  cursor: pointer;
+  flex-grow: 1;
 `;
 
 const CardDiv = styled.div`
@@ -57,6 +70,7 @@ const StyledCard = styled(Card)`
     border: 2px solid ${colors.primary};
     border-radius: 10px;
     z-index: -1;
+    background: ${colors.white};
   }
 
   &&.MuiPaper-outlined {
@@ -92,14 +106,52 @@ const CenterIcon = styled.div`
   margin: -50px 0 0 -50px;
   width: 100px;
   height: 100px;
-`;
+`;  
+
+const useStyles = makeStyles({
+  root: {
+    backgroundColor: colors.primaryLight6,
+    display: "flex",
+    height: "100vh",
+    flexDirection: "column"
+  },
+  appBar: {
+    backgroundColor: colors.white,
+    background: colors.white,
+    paddingLeft: "54px",
+    height: "56px",
+    "& .MuiAppBar-colorPrimary": {
+      backgroundColor: colors.white,
+    },
+    "& .MuiPaper-elevation4": {
+      boxShadow: "none",
+    },
+    "& .MuiToolbar-gutters": {
+      paddingLeft: "0px",
+    },
+    "& .MuiToolbar-regular": {
+      minHeight: "56px",
+    },
+  }
+});
 
 export const Login: React.FC = () => {
   const { auth, googleLoaded, failure, signIn } = useAuth();
+  const classes = useStyles();
 
   if (!googleLoaded) {
     return (
-      <>
+      <div className={classes.root}>
+        <div className={classes.appBar}>
+          <AppBar position="static">
+            <Toolbar>
+              <a href={SHOE_PROJECT_URL} target="_blank" rel="noreferrer">
+                <StyledTinyLogo />
+              </a>
+            </Toolbar>
+          </AppBar>
+        </div>
+        
         <CenterIcon>
           <CircularProgress />
         </CenterIcon>
@@ -111,7 +163,7 @@ export const Login: React.FC = () => {
             (Check the toolbar at the top of the page!)
           </LoginMessageText>
         </CenterText>
-      </>
+      </div>
     );
   }
 
@@ -127,7 +179,16 @@ export const Login: React.FC = () => {
       : "Please make sure you are using a Shoe Project Organizational Email.";
 
   return (
-    <>
+    <div className={classes.root}>
+      <div className={classes.appBar}>
+        <AppBar position="static">
+          <Toolbar>
+            <a href={SHOE_PROJECT_URL} target="_blank" rel="noreferrer">
+              <StyledTinyLogo />
+            </a>
+          </Toolbar>
+        </AppBar>
+      </div>
       <CardDiv>
         <StyledCard variant="outlined">
           <CardContent>
@@ -150,6 +211,6 @@ export const Login: React.FC = () => {
         </StyledCard>
       </CardDiv>
       <PeopleFooter src={PeopleWalking}></PeopleFooter>
-    </>
+    </div>
   );
 };
