@@ -24,6 +24,7 @@ import * as React from "react";
 import { useReducer, useState } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
+import { makeStyles } from "@material-ui/core/styles";
 
 import { StoryDrawer } from "../../../components";
 import { citiesList } from "../../../data/cities";
@@ -32,11 +33,18 @@ import { device } from "../../../styles/device";
 import {
   UploadLabelsText,
   UploadStoriesHeading,
+  UploadStoriesTitle
 } from "../../../styles/typography";
 import { Author, Story } from "../../../types";
 import { ListboxComponent, renderGroup } from "./Listbox";
 import { get_init_state, uploadStoryReducer } from "./reducer";
 import { StoryProps, TagParameters } from "./types";
+
+import {
+  PrimaryButton,
+  SecondaryButton,
+  TertiaryButton,
+} from "../../../components/StyledButtons";
 
 const StyledGrid = styled(Grid)`
   background-color: ${colors.primaryLight6};
@@ -55,14 +63,17 @@ const StyledSelect = styled(Select)`
   }
 `;
 const StyledLink = styled.a`
-  margin-top: 3.5vh;
   color: ${colors.primaryDark1};
   margin-left: 64px;
   margin-right: 30px;
+  height: 24px;
+  width: 24px;
 `;
 
 const StyledContainer = styled.div`
   display: flex;
+  align-items: center;
+  height: 56px;
 `;
 
 const StyledMenuItem = styled(MenuItem)`
@@ -147,8 +158,12 @@ const StyledBackgroundColor = styled.div`
   background-color: ${colors.white};
   width: 40vw;
   padding: 0px 0px 24px 24px;
-  margin-bottom: 24px;
+  margin-top: 24px;
 `;
+
+const LastStyledBackgroundColor = styled(StyledBackgroundColor)`
+  margin-bottom: 24px;
+`
 
 const StyledLinearProgress = styled(LinearProgress)`
   margin-top: 24px;
@@ -157,6 +172,31 @@ const StyledLinearProgress = styled(LinearProgress)`
 const StyledImage = styled.img`
   width: 30vw;
 `;
+
+const useStyles = makeStyles({
+  root: {
+    "& .MuiAppBar-colorDefault": {
+      backgroundColor: colors.white,
+    },
+    "& .MuiPaper-elevation4": {
+      boxShadow: "none",
+    },
+    "& .MuiGrid-container": {
+      height: "56px"
+    },
+    width: "100%"
+  },
+  title: {
+    flexGrow: 1,
+  },
+  buttons: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+  },
+});
+
 
 export const UploadStory: React.FC<StoryProps> = ({
   id,
@@ -446,69 +486,64 @@ export const UploadStory: React.FC<StoryProps> = ({
   const pageTitle = id ? "Edit Story" : "Upload New Story";
   const submitButtonText = id ? "Save Edits" : "Upload";
 
+  const classes = useStyles();
+
   return (
     <>
-      <AppBar color="default" position="sticky">
-        <Grid container direction="row">
-          <Grid item xs={6}>
-            <StyledContainer>
-              <StyledLink href="/admin/allstories">
-                <ArrowBackIcon />
-              </StyledLink>
-              <UploadStoriesHeading>{pageTitle}</UploadStoriesHeading>
-            </StyledContainer>
-          </Grid>
-          <Grid
-            container
-            item
-            spacing={3}
-            xs={6}
-            direction="row"
-            alignContent="center"
-            justify="flex-end"
-          >
-            {id && (
-              <Grid
-                item
-                direction="row"
-                alignContent="center"
-                justify="flex-end"
-              >
-                <StyledDelete
-                  onClick={() => setDialogOpenState(true)}
-                  color="secondary"
-                  variant="outlined"
+      <div className={classes.root}>
+        <AppBar color="default" position="sticky">
+          <Grid container direction="row">
+            <Grid item xs={6}>
+              <StyledContainer>
+                <StyledLink href="/admin/allstories">
+                  <ArrowBackIcon />
+                </StyledLink>
+                <UploadStoriesTitle>{pageTitle}</UploadStoriesTitle>
+              </StyledContainer>
+            </Grid>
+            <Grid
+              container
+              item
+              spacing={0}
+              xs={6}
+              direction="row"
+              alignContent="center"
+              justify="flex-end"
+            >
+              {id && (
+                <Grid
+                  item
+                  direction="row"
+                  alignContent="center"
+                  justify="flex-end"
                 >
-                  Delete Story
-                </StyledDelete>
+                  <SecondaryButton
+                    text={"Delete Story"}
+                    onClickFunction={() => setDialogOpenState(true)}
+                  /> 
+                </Grid>
+              )}
+              <Grid item direction="row" alignContent="center" justify="flex-end">
+                <SecondaryButton
+                  text="Preview"
+                  onClickFunction={() =>
+                    dispatch({ type: "SET_DRAWER_OPEN", drawerOpen: true })
+                  }
+                  isDisabled={!hasAllRequiredFields}
+                />
               </Grid>
-            )}
-            <Grid item direction="row" alignContent="center" justify="flex-end">
-              <StyledButton
-                disabled={!hasAllRequiredFields}
-                onClick={() =>
-                  dispatch({ type: "SET_DRAWER_OPEN", drawerOpen: true })
-                }
-                color="primary"
-                variant="outlined"
-              >
-                Preview
-              </StyledButton>
-            </Grid>
-            <Grid item direction="row" alignContent="center" justify="flex-end">
-              <StyledButton
-                disabled={state.disabled || !hasAllRequiredFields}
-                variant="contained"
-                color="primary"
-                onClick={handleSubmit}
-              >
-                {submitButtonText}
-              </StyledButton>
+              <Grid item direction="row" alignContent="center" justify="flex-end">
+                <PrimaryButton 
+                  text={submitButtonText}
+                  onClickFunction={(e) => handleSubmit(e)}
+                  isDisabled={state.disabled || !hasAllRequiredFields}
+                />
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
-        {state.loading ? <StyledLinearProgress /> : null}
-      </AppBar>
+          {state.loading ? <StyledLinearProgress /> : null}
+        </AppBar>
+      </div>
       <StyledGrid container justify="center" alignContent="center">
         <form onSubmit={handleSubmit}>
           <FormControl>
@@ -724,7 +759,7 @@ export const UploadStory: React.FC<StoryProps> = ({
                 />
               </FormControl>
             </StyledBackgroundColor>
-            <StyledBackgroundColor>
+            <LastStyledBackgroundColor margin-bottom="24px">
               <UploadStoriesHeading>Multimedia</UploadStoriesHeading>
               <ImageContainer>
                 {state.newImage == "" ? (
@@ -773,7 +808,7 @@ export const UploadStory: React.FC<StoryProps> = ({
                 }}
                 defaultValue={formInput.video_url}
               />
-            </StyledBackgroundColor>
+            </LastStyledBackgroundColor>
             <Snackbar
               open={state.uploadErrorState}
               autoHideDuration={5000}

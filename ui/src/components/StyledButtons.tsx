@@ -7,7 +7,7 @@ import { colors } from "../styles/colors";
 
 interface ButtonProps {
   text: string;
-  onClickFunction?: () => void;
+  onClickFunction?: (any) => void;
   isDisabled?: boolean;
   link_dest?: string;
   component?: Link;
@@ -47,7 +47,7 @@ export function PrimaryButton({
     <StyledPrimaryButton
       disableRipple
       variant="contained"
-      onClick={to ? null : () => onClickFunction()}
+      onClick={to ? null : (args) => onClickFunction(args)}
       disabled={isDisabled}
       component={component}
       to={to}
@@ -94,7 +94,7 @@ export function SecondaryButton({
       disabled={isDisabled}
       component={component}
       to={to}
-      onClick={to ? null : () => onClickFunction()}
+      onClick={to ? null : (args) => onClickFunction(args)}
     >
       {text}
     </StyledSecondaryButton>
@@ -134,7 +134,7 @@ export function TertiaryButton({
       disabled={isDisabled}
       component={component}
       to={to}
-      onClick={to ? null : () => onClickFunction()}
+      onClick={to ? null : (args) => onClickFunction(args)}
     >
       {text}
     </StyledTertiaryButton>
