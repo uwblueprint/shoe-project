@@ -16,6 +16,7 @@ import {
   Snackbar,
   TextField,
 } from "@material-ui/core/";
+import { makeStyles } from "@material-ui/core/styles";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import Alert from "@material-ui/lab/Alert";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -24,27 +25,24 @@ import * as React from "react";
 import { useReducer, useState } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import { makeStyles } from "@material-ui/core/styles";
 
 import { StoryDrawer } from "../../../components";
+import {
+  PrimaryButton,
+  SecondaryButton,
+} from "../../../components/StyledButtons";
 import { citiesList } from "../../../data/cities";
 import { colors } from "../../../styles/colors";
 import { device } from "../../../styles/device";
 import {
   UploadLabelsText,
   UploadStoriesHeading,
-  UploadStoriesTitle
+  UploadStoriesTitle,
 } from "../../../styles/typography";
 import { Author, Story } from "../../../types";
 import { ListboxComponent, renderGroup } from "./Listbox";
 import { get_init_state, uploadStoryReducer } from "./reducer";
 import { StoryProps, TagParameters } from "./types";
-
-import {
-  PrimaryButton,
-  SecondaryButton,
-  TertiaryButton,
-} from "../../../components/StyledButtons";
 
 const StyledGrid = styled(Grid)`
   background-color: ${colors.primaryLight6};
@@ -117,17 +115,6 @@ const StyledAutocomplete = styled(Autocomplete)`
   }
 `;
 
-const StyledButton = styled(Button)`
-  text-transform: none;
-  margin: 5px;
-`;
-
-const StyledDelete = styled(Button)`
-  text-transform: none;
-  margin: 5px;
-  color: ${colors.red} !important;
-`;
-
 const StyledConfirmDelete = styled(Button)`
   color: ${colors.red} !important;
   border-color: ${colors.red} !important;
@@ -163,7 +150,7 @@ const StyledBackgroundColor = styled.div`
 
 const LastStyledBackgroundColor = styled(StyledBackgroundColor)`
   margin-bottom: 24px;
-`
+`;
 
 const StyledLinearProgress = styled(LinearProgress)`
   margin-top: 24px;
@@ -182,9 +169,9 @@ const useStyles = makeStyles({
       boxShadow: "none",
     },
     "& .MuiGrid-container": {
-      height: "56px"
+      height: "56px",
     },
-    width: "100%"
+    width: "100%",
   },
   title: {
     flexGrow: 1,
@@ -196,7 +183,6 @@ const useStyles = makeStyles({
     justifyContent: "flex-end",
   },
 });
-
 
 export const UploadStory: React.FC<StoryProps> = ({
   id,
@@ -520,10 +506,15 @@ export const UploadStory: React.FC<StoryProps> = ({
                   <SecondaryButton
                     text={"Delete Story"}
                     onClickFunction={() => setDialogOpenState(true)}
-                  /> 
+                  />
                 </Grid>
               )}
-              <Grid item direction="row" alignContent="center" justify="flex-end">
+              <Grid
+                item
+                direction="row"
+                alignContent="center"
+                justify="flex-end"
+              >
                 <SecondaryButton
                   text="Preview"
                   onClickFunction={() =>
@@ -532,8 +523,13 @@ export const UploadStory: React.FC<StoryProps> = ({
                   isDisabled={!hasAllRequiredFields}
                 />
               </Grid>
-              <Grid item direction="row" alignContent="center" justify="flex-end">
-                <PrimaryButton 
+              <Grid
+                item
+                direction="row"
+                alignContent="center"
+                justify="flex-end"
+              >
+                <PrimaryButton
                   text={submitButtonText}
                   onClickFunction={(e) => handleSubmit(e)}
                   isDisabled={state.disabled || !hasAllRequiredFields}

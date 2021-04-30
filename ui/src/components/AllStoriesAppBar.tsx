@@ -19,7 +19,7 @@ const StyledLogo = styled.div`
   background-image: url(${ShoeLogo});
   background-size: 39px;
   width: 39px;
-  height: 39.65px; 
+  height: 39.65px;
   cursor: pointer;
   flex-grow: 1;
 `;
@@ -39,7 +39,7 @@ const useStyles = makeStyles({
       paddingLeft: "0px",
     },
     "& .MuiToolbar-regular": {
-      minHeight: "56px"
+      minHeight: "56px",
     },
   },
   title: {

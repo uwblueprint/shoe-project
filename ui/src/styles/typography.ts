@@ -312,7 +312,6 @@ export const UploadStoriesTitle = styled.div`
   margin: 12px 0px 12px 0px;
 `;
 
-
 export const UploadStoriesHeading = styled.div`
   font-family: Poppins;
   font-style: normal;
