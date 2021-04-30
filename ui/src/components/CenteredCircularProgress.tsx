@@ -2,7 +2,6 @@ import { CircularProgress } from "@material-ui/core";
 import * as React from "react";
 import styled from "styled-components";
 
-
 const Center = styled.div`
   position: absolute;
   top: 50%;
@@ -14,7 +13,7 @@ const Center = styled.div`
 `;
 
 export const CenteredCircularProgress = (): JSX.Element => (
-<Center>
-        <CircularProgress />
-      </Center>
-)
+  <Center>
+    <CircularProgress />
+  </Center>
+);
