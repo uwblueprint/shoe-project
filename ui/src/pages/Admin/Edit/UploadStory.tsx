@@ -19,6 +19,7 @@ import {
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import Alert from "@material-ui/lab/Alert";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import { debug } from "console";
 import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
 import { useReducer, useState } from "react";
@@ -40,14 +41,15 @@ import { get_init_state, uploadStoryReducer } from "./reducer";
 import { StoryProps, TagParameters } from "./types";
 
 const ChangeImageButton = styled(Button)`
-&& {
-  box-shadow: none;
-  background-color: ${colors.primaryDark1};
-  &:active {
-    background-color: ${colors.primaryDark2};
-  }
-  &:hover{
-    background-color: ${colors.primaryDark3};
+  && {
+    box-shadow: none;
+    background-color: ${colors.primaryDark1};
+    &:active {
+      background-color: ${colors.primaryDark2};
+    }
+    &:hover {
+      background-color: ${colors.primaryDark3};
+    }
   }
 `;
 const StyledGrid = styled(Grid)`
@@ -195,6 +197,7 @@ export const UploadStory: React.FC<StoryProps> = ({
   tagOptions,
   countries,
 }: StoryProps) => {
+  console.log(tagOptions);
   const [state, dispatch] = useReducer(
     uploadStoryReducer,
     get_init_state(currentStory)
@@ -394,11 +397,12 @@ export const UploadStory: React.FC<StoryProps> = ({
         type: "SET_TAG_VALUES",
         tags: [...state.tagArray, autocompleteTag],
       });
+      tagOptions.push(autocompleteTag);
     }
   };
 
   const addNewTag = ({ children, ...other }) => {
-    const filteredTagsLength = state.tagArray.filter(
+    const filteredTagsLength = tagOptions.filter(
       (str) => str.toLowerCase() === state.autocompleteTag.toLowerCase()
     ).length;
     return (
