@@ -48,42 +48,40 @@ const StyledText = styled.div`
 `;
 
 const ReturnButton = styled(Button)`
+  .MuiButton-label {
+    color: ${colors.primaryDark1};
+    font-family: Poppins;
+    font-weight: 500;
+    font-size: ${fontSize.subtitle};
+    line-height: 150%;
+  }
+  &.MuiButton-outlined {
+    border: 2px solid ${colors.primaryDark1};
+  }
 
-.MuiButton-label{
-  color: ${colors.primaryDark1};
-  font-family: Poppins;
-  font-weight: 500;
-  font-size: ${fontSize.subtitle};
-  line-height: 150%;
-  
-}
-&.MuiButton-outlined{
-  border: 2px solid ${colors.primaryDark1};
-}
-
-&& {
-  box-shadow: none;
-  background-color: ${colors.white};
-  margin-right: 18px;
-  &:active {
+  && {
+    box-shadow: none;
     background-color: ${colors.white};
+    margin-right: 18px;
+    &:active {
+      background-color: ${colors.white};
+    }
   }
 `;
 
-const UploadButton = styled(Button)` 
-&& {
+const UploadButton = styled(Button)`
+  && {
+    box-shadow: none;
+    background-color: ${colors.primaryDark1};
 
-  box-shadow: none;
-  background-color: ${colors.primaryDark1};
- 
-  margin-left: 18px;
-  &:active {
-    background-color: ${colors.primaryDark3};
+    margin-left: 18px;
+    &:active {
+      background-color: ${colors.primaryDark3};
+    }
+    &:hover {
+      background-color: ${colors.primaryDark2};
+    }
   }
-  &:hover{
-    background-color: ${colors.primaryDark2};
-  }
-
 `;
 
 const StyledDiv = styled.div`
