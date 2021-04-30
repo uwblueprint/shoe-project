@@ -22,6 +22,8 @@ const createClusterCustomIcon = function () {
   return new L.Icon({
     iconUrl: resting,
     iconRetinaUrl: resting,
+    iconAnchor: [25, 61],
+    iconSize: new L.Point(39, 48)
   });
 };
 
