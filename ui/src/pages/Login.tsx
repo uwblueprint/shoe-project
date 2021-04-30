@@ -1,7 +1,10 @@
 import { CircularProgress } from "@material-ui/core";
+import AppBar from "@material-ui/core/AppBar";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
+import Toolbar from "@material-ui/core/Toolbar";
+import { makeStyles } from "@material-ui/styles";
 import * as React from "react";
 import { Redirect } from "react-router-dom";
 import styled from "styled-components";
@@ -15,10 +18,11 @@ import {
   LoginMessageText,
   LoginTitleText,
 } from "../styles/typography";
+const SHOE_PROJECT_URL = "https://theshoeproject.online/our-stories";
 
 const PeopleFooter = styled.img`
-  z-index: 1;
-  margin: 60vh 0 0 15vw;
+  z-index: 2;
+  margin: 53vh 0 5vh 0;
 `;
 
 const StyledLogo = styled.div`
@@ -30,14 +34,20 @@ const StyledLogo = styled.div`
   margin-bottom: 16.62px;
 `;
 
+const StyledTinyLogo = styled.div`
+  background-image: url(${ShoeLogo});
+  background-size: 39px;
+  width: 39px;
+  height: 39.65px;
+  cursor: pointer;
+  flex-grow: 1;
+`;
+
 const CardDiv = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80vh;
-  width: 100vw;
   position: absolute;
-  z-index: 0;
 `;
 
 export const CenterText = styled.div`
@@ -50,13 +60,12 @@ export const CenterText = styled.div`
 `;
 
 const StyledCard = styled(Card)`
-  max-height: 35vh;
   max-width: 25vw;
 
   && .MuiCardContent-root {
     border: 2px solid ${colors.primary};
     border-radius: 10px;
-    z-index: -1;
+    background: ${colors.white};
   }
 
   &&.MuiPaper-outlined {
@@ -83,6 +92,8 @@ const GoogleButton = styled(Button)`
     &:hover {
       background-color: ${colors.primaryDark3};
     }
+    position: relative;
+    z-index: 3;
   }
 `;
 
@@ -95,12 +106,55 @@ const CenterIcon = styled.div`
   height: 100px;
 `;
 
+const useStyles = makeStyles({
+  root: {
+    backgroundColor: colors.primaryLight6,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  appBar: {
+    width: "100%",
+    backgroundColor: colors.white,
+    background: colors.white,
+    boxSizing: "border-box",
+    paddingLeft: "54px",
+    height: "56px",
+    "& .MuiAppBar-colorPrimary": {
+      backgroundColor: colors.white,
+    },
+    "& .MuiPaper-elevation4": {
+      boxShadow: "none",
+    },
+    "& .MuiToolbar-gutters": {
+      paddingLeft: "0px",
+    },
+    "& .MuiToolbar-regular": {
+      minHeight: "56px",
+    },
+    zIndex: 2,
+    top: 0,
+  },
+});
+
 export const Login: React.FC = () => {
   const { auth, googleLoaded, failure, signIn } = useAuth();
+  const classes = useStyles();
 
   if (!googleLoaded) {
     return (
-      <>
+      <div className={classes.root}>
+        <div className={classes.appBar}>
+          <AppBar position="static">
+            <Toolbar>
+              <a href={SHOE_PROJECT_URL} target="_blank" rel="noreferrer">
+                <StyledTinyLogo />
+              </a>
+            </Toolbar>
+          </AppBar>
+        </div>
+
         <CenterIcon>
           <CircularProgress />
         </CenterIcon>
@@ -112,7 +166,7 @@ export const Login: React.FC = () => {
             (Check the toolbar at the top of the page!)
           </LoginMessageText>
         </CenterText>
-      </>
+      </div>
     );
   }
 
@@ -128,7 +182,16 @@ export const Login: React.FC = () => {
       : "Please make sure you are using a Shoe Project Organizational Email.";
 
   return (
-    <>
+    <div className={classes.root}>
+      <div className={classes.appBar}>
+        <AppBar position="static">
+          <Toolbar>
+            <a href={SHOE_PROJECT_URL} target="_blank" rel="noreferrer">
+              <StyledTinyLogo />
+            </a>
+          </Toolbar>
+        </AppBar>
+      </div>
       <CardDiv>
         <StyledCard variant="outlined">
           <CardContent>
@@ -151,6 +214,6 @@ export const Login: React.FC = () => {
         </StyledCard>
       </CardDiv>
       <PeopleFooter src={PeopleWalking}></PeopleFooter>
-    </>
+    </div>
   );
 };
