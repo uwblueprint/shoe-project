@@ -26,6 +26,7 @@ import AllStoriesAppBar from "../../../components/AllStoriesAppBar";
 import { a11yProps, AllStoriesTabs } from "../../../components/AllStoriesTabs";
 import ToastyBoi from "../../../components/ToastyBoi";
 import VirtualizedTable from "../../../components/VirtualizedTable";
+import { useAuth } from "../../../hooks/auth";
 import { colors } from "../../../styles/colors";
 import {
   fontSize,
@@ -37,7 +38,6 @@ import { Story } from "../../../types/index";
 import { allStoriesReducer, INIT_STATE } from "./reducer";
 import { StoryView } from "./types";
 import { VisibilitySwitch } from "./VisibilitySwitch";
-import { useAuth } from "../../../hooks/auth";
 
 const StyledFilter = styled.div`
   width: 30vw;
