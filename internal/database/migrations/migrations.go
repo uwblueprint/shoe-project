@@ -61,19 +61,20 @@ func ChooseRandomTag() string {
 
 func Seed(db *gorm.DB, locationFinder location.LocationFinder) error {
 	var Countries = countries.All()
-	for _, name := range Countries {
-		country := models.Country{
+	countriesModel := make([]models.Country, len(Countries))
+	for i, name := range Countries {
+		countriesModel[i] = models.Country{
 			Name: fmt.Sprint(name),
-		}
-		err := db.Create(&country).Error
-		if err != nil {
-			return err
-		}
+		}		
+	}
+	err := db.Create(&countriesModel).Error
+	if err != nil {
+		return err
 	}
 
 	// read in the authors file from authors.json
 	var authors []models.Author
-	err := parseJson("data/authors.json", &authors)
+	err = parseJson("data/authors.json", &authors)
 	if err != nil {
 		return err
 	}
