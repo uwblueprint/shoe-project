@@ -21,6 +21,12 @@ const useVirtualizedTableStyles = makeStyles({
       fontSize: fontSize.subtitle,
       lineHeight: "120%",
       marginRight: "none",
+      height: "auto",
+      "& div": {
+        whiteSpace: "normal",
+        overflow: "hidden",
+        marginTop: "2px",
+      },
     },
     "& .topLeftGrid, & .topRightGrid": {
       border: "none",
@@ -95,6 +101,7 @@ export function VirtualizedTable({
             width={width}
             height={height}
             maxHeight={800}
+            rowHeight={70}
             fixedRowCount={1}
             style={{ tableLayout: "fixed", backgroundColor: colors.white }}
           />
