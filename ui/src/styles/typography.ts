@@ -346,15 +346,15 @@ export const StyledAllStoriesHeader = styled.div`
 `;
 
 export const StyledEmptyMessage = styled.div`
-  margin-left: 50vw;
   margin-top: 30vh;
+  text-align: center;
   font-family: Poppins;
   font-size: ${fontSize.subtitle};
 `;
 
 export const StyledSubEmptyMessage = styled.div`
-  margin-left: 42vw;
   font-family: Poppins;
+  text-align: center;
   font-size: ${fontSize.subtitle};
   color: ${colors.grey};
 `;
