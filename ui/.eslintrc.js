@@ -10,7 +10,7 @@ module.exports = {
     "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:react-hooks/recommended",
-    "plugin:jsx-a11y/recommended"
+    "plugin:jsx-a11y/recommended",
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -20,7 +20,7 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: "module",
   },
-  plugins: ["react", "@typescript-eslint", "simple-import-sort"],
+  plugins: ["react", "@typescript-eslint", "simple-import-sort", "jsx-a11y"],
   rules: {
     // Make sure that all ts-ignore comments are given a description.
     "@typescript-eslint/ban-ts-comment": [
@@ -30,7 +30,7 @@ module.exports = {
       },
     ],
     // Allow for variables prepended with _ to be ignored
-    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
     // Make sure imports are organized
     "sort-imports": "off",
     "simple-import-sort/imports": "error",
@@ -39,6 +39,6 @@ module.exports = {
     "react/jsx-boolean-value": "error",
     "react/no-array-index-key": "error",
     "react/prop-types": "off",
-    "react/display-name": "off"
+    "react/display-name": "off",
   },
 };
