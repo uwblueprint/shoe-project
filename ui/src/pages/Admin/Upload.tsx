@@ -6,7 +6,6 @@ import { UploadStoryWrapper } from "./Edit/UploadStoryWrapper";
 const startYear = new Date().getFullYear();
 
 export const Upload: React.FC = () => {
-
   const story: Story = {
     title: "",
     content: "",

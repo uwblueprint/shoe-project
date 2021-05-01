@@ -777,7 +777,7 @@ export const UploadStory: React.FC<StoryProps> = ({
                   name="tags"
                   freeSolo
                   forcePopupIcon
-                  options={tagOptions || [""]}
+                  options={tagOptions || []}
                   filterSelectedOptions
                   onInputChange={(_, newValue) =>
                     dispatch({
@@ -788,7 +788,7 @@ export const UploadStory: React.FC<StoryProps> = ({
                   onChange={(_, newValue) =>
                     dispatch({ type: "SET_TAG_VALUES", tags: newValue })
                   }
-                  value={state.tagArray ? state.tagArray : [""]}
+                  value={state.tagArray ? state.tagArray : []}
                   renderTags={(value, getTagProps) =>
                     value.map((option, index) => (
                       <StyledChip
