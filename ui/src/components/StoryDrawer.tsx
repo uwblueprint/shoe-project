@@ -55,16 +55,17 @@ const StyledIconButton = styled(Button)`
 `;
 
 const EditStoryButton = styled(Button)`
-&& {
-  box-shadow: none;
-  background-color: ${colors.primaryDark1};
-  font-family: "Poppins";
+  && {
+    box-shadow: none;
+    background-color: ${colors.primaryDark1};
+    font-family: "Poppins";
 
-  &:active {
-    background-color: ${colors.primaryDark1};
-  }
-  &:hover{
-    background-color: ${colors.primaryDark1};
+    &:active {
+      background-color: ${colors.primaryDark1};
+    }
+    &:hover {
+      background-color: ${colors.primaryDark1};
+    }
   }
 `;
 
@@ -113,6 +114,11 @@ const StyledDrawerContainer = styled.div`
 const StyledVideo = styled.iframe`
   height: 40vw;
   width: 100%;
+`;
+
+const EditStoryButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
 `;
 
 interface StoryDrawerProps {
@@ -165,13 +171,17 @@ export function StoryDrawer({
             <StoryDrawerTitleText>{title}</StoryDrawerTitleText>
           </Grid>
           {onClickEditStory && (
-            <EditStoryButton
-              variant="contained"
-              color="primary"
-              onClick={() => history.push(`/admin/edit/${story.ID}`)}
-            >
-              {" Edit Story"}
-            </EditStoryButton>
+            <Grid item xs={3}>
+              <EditStoryButtonWrapper>
+                <EditStoryButton
+                  variant="contained"
+                  color="primary"
+                  onClick={() => history.push(`/admin/edit/${story.ID}`)}
+                >
+                  Edit Story
+                </EditStoryButton>
+              </EditStoryButtonWrapper>
+            </Grid>
           )}
           <Grid item xs={12}>
             <StoryDrawerCountryText>
