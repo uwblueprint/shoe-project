@@ -45,6 +45,27 @@ import { ListboxComponent, renderGroup } from "./Listbox";
 import { get_init_state, uploadStoryReducer } from "./reducer";
 import { StoryProps, TagParameters } from "./types";
 
+const CancelButton = styled(Button)`
+&& {
+  color: ${colors.primaryDark1};
+  box-shadow: "none";
+  font-family: "Poppins";
+  font-size: "16";
+  font-weight: "600";
+  padding: "6px 20px"
+    border-width: "2px";
+    border-color: ${colors.primaryDark1};
+  &:active {
+    border-color: ${colors.primaryDark3};
+  }
+  &:hover {
+    color: ${colors.benjaminMoore};
+    border-color: ${colors.benjaminMoore};
+    box-shadow: "none";
+    background: "transparent";
+  }
+}
+`;
 const ChangeImageButton = styled(Button)`
   && {
     box-shadow: none;
@@ -148,7 +169,10 @@ const StyledAutocomplete = styled(Autocomplete)`
 `;
 
 const StyledConfirmDelete = styled(Button)`
-  color: ${colors.red} !important;
+  &&.MuiButton-containedSecondary {
+    background-color: ${colors.red};
+  }
+  color: ${colors.white} !important;
   border-color: ${colors.red} !important;
 `;
 
@@ -534,7 +558,12 @@ export const UploadStory: React.FC<StoryProps> = ({
     <>
       <div className={classes.root}>
         <AppBar color="default" position="sticky">
-          <Grid container direction="row">
+          <Grid
+            justify="flex-end"
+            alignContent="center"
+            container
+            direction="row"
+          >
             <Grid item xs={6}>
               <StyledContainer>
                 <StyledLink href="/admin/allstories">
@@ -596,7 +625,12 @@ export const UploadStory: React.FC<StoryProps> = ({
           {state.loading ? <StyledLinearProgress /> : null}
         </AppBar>
       </div>
-      <StyledGrid container justify="center" alignContent="center">
+      <StyledGrid
+        direction="row"
+        container
+        justify="center"
+        alignContent="center"
+      >
         <form onSubmit={handleSubmit}>
           <FormControl>
             <StyledBackgroundColor>
@@ -880,20 +914,30 @@ export const UploadStory: React.FC<StoryProps> = ({
               aria-describedby="alert-dialogd-description"
             >
               <DialogTitle id="alert-dialog-title">
-                {`Are you sure you want to delete ${formInput.title}?`}
+                <div style={{ fontFamily: "Poppins", color: colors.black }}>
+                  Delete Story?
+                </div>
               </DialogTitle>
               <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  This cannot be undone
+                <DialogContentText
+                  style={{ fontFamily: "Poppins", color: colors.black }}
+                  id="alert-dialog-description"
+                >
+                  {`Are you sure you want to delete the story "${formInput.title}"? This cannot be undone.`}
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
-                <Button onClick={handleDialogDisagree} color="primary">
+                <CancelButton
+                  variant="outlined"
+                  onClick={handleDialogDisagree}
+                  color="primary"
+                >
                   Cancel
-                </Button>
+                </CancelButton>
                 <StyledConfirmDelete
                   onClick={handleDialogAgree}
-                  color="primary"
+                  color="secondary"
+                  variant="contained"
                 >
                   Delete Story
                 </StyledConfirmDelete>

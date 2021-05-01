@@ -40,10 +40,10 @@ import { StoryView } from "./types";
 import { VisibilitySwitch } from "./VisibilitySwitch";
 
 const StyledFilter = styled.div`
-  width: 30vw;
+  width: 35vw;
   margin-top: 7vh;
   justify-self: right;
-  margin-left: 65vw;
+  margin-left: 62vw;
 `;
 
 const StyledButton = styled(Button)`
@@ -124,7 +124,7 @@ const UploadButton = styled(Button)`
     box-shadow: none;
     background-color: ${colors.primaryDark1};
     margin-bottom: -5vh;
-    margin-right: 64px;
+    margin-right: 5vw;
     float: right;
     &:active {
       background-color: ${colors.primaryDark2};
@@ -209,10 +209,20 @@ function createData({
   tags,
 }: Story): StoryView {
   const author_name = `${author_first_name} ${author_last_name}`;
+  let current_city_name = "";
+  if (current_city.indexOf(",") < 0) {
+    current_city_name = current_city;
+  } else {
+    current_city_name =
+      current_city.slice(0, current_city.indexOf(",") + 1) +
+      current_city.substring(current_city.indexOf(",") + 1).toUpperCase();
+  }
+
   return {
     ID,
     title,
     current_city,
+    current_city_name,
     year,
     author_name,
     author_first_name,
@@ -614,7 +624,7 @@ export const AllStories: React.FC = () => {
           )}
         </div>
         <StyledFilter>
-          <Grid container justify="flex-end" spacing={2}>
+          <Grid container justify="flex-end" spacing={1}>
             <Grid item xs={8}>
               <StyledSearchBar
                 placeholder="Type to search..."
@@ -890,11 +900,11 @@ export const AllStories: React.FC = () => {
                 },
               },
               {
-                name: "current_city",
+                name: "current_city_name",
                 header: "Current City",
                 width: "15%",
                 onHeaderClick() {
-                  handleRequestSort("current_city");
+                  handleRequestSort("current_city_name");
                 },
               },
               {
@@ -1050,11 +1060,11 @@ export const AllStories: React.FC = () => {
                 },
               },
               {
-                name: "current_city",
+                name: "current_city_name",
                 header: "Current City",
                 width: "15%",
                 onHeaderClick() {
-                  handleRequestSort("current_city");
+                  handleRequestSort("current_city_name");
                 },
               },
               {
@@ -1169,11 +1179,11 @@ export const AllStories: React.FC = () => {
                 },
               },
               {
-                name: "current_city",
+                name: "current_city_name",
                 header: "Current City",
                 width: "15%",
                 onHeaderClick() {
-                  handleRequestSort("current_city");
+                  handleRequestSort("current_city_name");
                 },
               },
               {
