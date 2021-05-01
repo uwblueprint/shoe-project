@@ -65,7 +65,6 @@ const CancelButton = styled(Button)`
     background: "transparent";
   }
 }
-
 `;
 const ChangeImageButton = styled(Button)`
   && {
@@ -559,7 +558,12 @@ export const UploadStory: React.FC<StoryProps> = ({
     <>
       <div className={classes.root}>
         <AppBar color="default" position="sticky">
-          <Grid container direction="row">
+          <Grid
+            justify="flex-end"
+            alignContent="center"
+            container
+            direction="row"
+          >
             <Grid item xs={6}>
               <StyledContainer>
                 <StyledLink href="/admin/allstories">
@@ -621,7 +625,12 @@ export const UploadStory: React.FC<StoryProps> = ({
           {state.loading ? <StyledLinearProgress /> : null}
         </AppBar>
       </div>
-      <StyledGrid container justify="center" alignContent="center">
+      <StyledGrid
+        direction="row"
+        container
+        justify="center"
+        alignContent="center"
+      >
         <form onSubmit={handleSubmit}>
           <FormControl>
             <StyledBackgroundColor>

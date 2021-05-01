@@ -209,10 +209,20 @@ function createData({
   tags,
 }: Story): StoryView {
   const author_name = `${author_first_name} ${author_last_name}`;
+  let current_city_name = "";
+  if (current_city.indexOf(",") < 0) {
+    current_city_name = current_city;
+  } else {
+    current_city_name =
+      current_city.slice(0, current_city.indexOf(",") + 1) +
+      current_city.substring(current_city.indexOf(",") + 1).toUpperCase();
+  }
+
   return {
     ID,
     title,
     current_city,
+    current_city_name,
     year,
     author_name,
     author_first_name,
@@ -890,11 +900,11 @@ export const AllStories: React.FC = () => {
                 },
               },
               {
-                name: "current_city",
+                name: "current_city_name",
                 header: "Current City",
                 width: "15%",
                 onHeaderClick() {
-                  handleRequestSort("current_city");
+                  handleRequestSort("current_city_name");
                 },
               },
               {
@@ -1050,11 +1060,11 @@ export const AllStories: React.FC = () => {
                 },
               },
               {
-                name: "current_city",
+                name: "current_city_name",
                 header: "Current City",
                 width: "15%",
                 onHeaderClick() {
-                  handleRequestSort("current_city");
+                  handleRequestSort("current_city_name");
                 },
               },
               {
@@ -1169,11 +1179,11 @@ export const AllStories: React.FC = () => {
                 },
               },
               {
-                name: "current_city",
+                name: "current_city_name",
                 header: "Current City",
                 width: "15%",
                 onHeaderClick() {
-                  handleRequestSort("current_city");
+                  handleRequestSort("current_city_name");
                 },
               },
               {

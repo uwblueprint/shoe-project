@@ -9,4 +9,4 @@ export type StoryView = Omit<
   | "CreatedAt"
   | "DeletedAt"
   | "UpdatedAt"
-> & { author_name: string };
+> & { author_name: string; current_city_name: string };
