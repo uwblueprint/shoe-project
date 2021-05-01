@@ -27,11 +27,16 @@ const StyledDrawer = styled(Drawer)`
 
 function formatYoutubeURL(video_url: string) {
   if (!video_url.includes("embed")) {
-    const youtubeEmbedURL = "https://www.youtube.com/embed/";
-    // eslint-disable-next-line
-    const regex = `(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})`;
-    const found = video_url.match(regex);
-    return youtubeEmbedURL + found[1];
+    try {
+      const youtubeEmbedURL = "https://www.youtube.com/embed/";
+      // eslint-disable-next-line
+      const regex = `(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})`;
+      const found = video_url.match(regex);
+      return youtubeEmbedURL + found[1];
+    } catch (err) {
+      console.error(err);
+      return "";
+    }
   }
   return video_url;
 }
