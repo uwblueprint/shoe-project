@@ -610,13 +610,13 @@ export const AllStories: React.FC = () => {
           }}
         >
           {state.checkedVisibleStoriesArray.length > 0 && (
-            <ShowHideButton onClick={() => handleVisibilityButtons("hide")}>
+            <ShowHideButton   style={{ marginRight: "-32px" }} onClick={() => handleVisibilityButtons("hide")}>
               {hideButtonText}
             </ShowHideButton>
           )}
           {state.checkedHiddenStoriesArray.length > 0 && state.tabValue === 0 && (
             <ShowHideButton
-              style={{ marginLeft: "16px" }}
+              style={{ marginRight: "-32px" }}
               onClick={() => handleVisibilityButtons("show")}
             >
               {showButtonText}
