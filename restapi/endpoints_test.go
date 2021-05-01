@@ -345,6 +345,24 @@ func (suite *endpointTestSuite) TestGetAllStories() {
 	response.Object().Value("payload").Array().Element(1).Object().Value("current_city").Equal("Toronto")
 	response.Object().Value("payload").Array().Element(1).Object().Value("tags").Array().Empty()
 }
+
+func (suite *endpointTestSuite) TestGetVisibleCountries() {
+    jsonStories := GetStoriesToTest()
+    jsonAuthors := GetAuthorsToTest()
+
+    suite.db.Create(&jsonAuthors)
+    suite.db.Create(&jsonStories)
+
+    var response = suite.endpoint.GET("/authors/origin_countries").
+        Expect().
+        Status(http.StatusOK).JSON()
+        
+    response.Object().Value("payload").Array().Length().Equal(3)
+    response.Object().Value("payload").Array().Element(0).Equal("Canada")
+    response.Object().Value("payload").Array().Element(1).Equal("France")
+    response.Object().Value("payload").Array().Element(2).Equal("USA")
+}
+
 func (suite *endpointTestSuite) TestGetAllInvisibleStories() {
 
 	jsonStories := GetStoriesToTest()
