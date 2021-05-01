@@ -133,10 +133,6 @@ export const Login: React.FC = () => {
   const { auth, googleLoaded, failure, signIn } = useAuth();
   const classes = useStyles();
 
-  if (auth !== undefined) {
-    return <Redirect to="/admin" />;
-  }
-
   const loginAppBar = (
     <div className={classes.appBar}>
       <AppBar position="static">
@@ -164,6 +160,10 @@ export const Login: React.FC = () => {
         </CenterText>
       </div>
     );
+  }
+
+  if (auth !== undefined) {
+    return <Redirect to="/admin" />;
   }
 
   const title =
