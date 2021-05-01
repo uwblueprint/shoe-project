@@ -173,7 +173,7 @@ export const ShoeMap: React.FC = () => {
         >
           {tokens && !tokens_error && (
             <TileLayer
-              url={`https://api.mapbox.com/styles/v1/hanlinc27/ckhjy5wat2dvz1aplv4tkaghb/tiles/{z}/{x}/{y}?access_token=${tokens.mapbox}`}
+              url={`https://api.mapbox.com/styles/v1/shoeproject/cko64nqwq27bi17quwyav12q0/tiles/{z}/{x}/{y}?access_token=${tokens.mapbox}`}
             />
           )}
           {stories && !error && (
