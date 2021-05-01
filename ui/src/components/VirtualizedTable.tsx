@@ -21,6 +21,12 @@ const useVirtualizedTableStyles = makeStyles({
       fontSize: fontSize.subtitle,
       lineHeight: "120%",
       marginRight: "none",
+      whiteSpace: "normal",
+      wordBreak: "break-word",
+      " & .makeStyles-cellContents":{
+        whiteSpace: "normal",
+        height: "100%",
+      }
     },
     "& .topLeftGrid, & .topRightGrid": {
       border: "none",
@@ -35,6 +41,12 @@ const useVirtualizedTableStyles = makeStyles({
     alignItems: "center",
   },
   stickyColumnClass: {},
+  tableRoot: {
+    tableLayout: "fixed", 
+    backgroundColor: colors.white,
+    whiteSpace: "normal",
+    height: "100%"
+  }
 });
 
 type TableColumn = {
@@ -64,13 +76,15 @@ export function VirtualizedTable({
   return (
     <div className={classes.root} style={{ width: "auto" }}>
       <AutoSizer>
-        {({ height, width }) => (
+        {({ width }) => (
           <MuiTable
+        //  style={classes.tableRoot}
             data={data}
             columns={columns}
             orderBy={orderBy}
             orderDirection={order}
             includeHeaders
+     
             onCellClick={(e, { rowData }) => {
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               const event = e as any;
@@ -93,10 +107,10 @@ export function VirtualizedTable({
               }
             }}
             width={width}
-            height={height}
-            maxHeight={800}
+            // height={height}
+            // maxHeight={800}
             fixedRowCount={1}
-            style={{ tableLayout: "fixed", backgroundColor: colors.white }}
+            style={{ tableLayout: "fixed", backgroundColor: colors.white, height: "100%" }}
           />
         )}
       </AutoSizer>
