@@ -46,26 +46,27 @@ import { get_init_state, uploadStoryReducer } from "./reducer";
 import { StoryProps, TagParameters } from "./types";
 
 const CancelButton = styled(Button)`
-&& {
-  color: ${colors.primaryDark1};
-  box-shadow: "none";
-  font-family: "Poppins";
-  font-size: "16";
-  font-weight: "600";
-  padding: "6px 20px"
+  && {
+    color: ${colors.primaryDark1};
+    box-shadow: "none";
+    font-family: "Poppins";
+    font-size: "16";
+    font-weight: "600";
+    padding: "6px 20px";
     border-width: "2px";
     border-color: ${colors.primaryDark1};
-  &:active {
-    border-color: ${colors.primaryDark3};
+    &:active {
+      border-color: ${colors.primaryDark3};
+    }
+    &:hover {
+      color: ${colors.benjaminMoore};
+      border-color: ${colors.benjaminMoore};
+      box-shadow: "none";
+      background: "transparent";
+    }
   }
-  &:hover {
-    color: ${colors.benjaminMoore};
-    border-color: ${colors.benjaminMoore};
-    box-shadow: "none";
-    background: "transparent";
-  }
-}
 `;
+
 const ChangeImageButton = styled(Button)`
   && {
     box-shadow: none;
