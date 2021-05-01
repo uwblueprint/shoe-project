@@ -1,5 +1,6 @@
 import { Grid } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
+import { CircularProgress } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import Chip from "@material-ui/core/Chip";
@@ -192,6 +193,14 @@ const useStyles = makeStyles({
     },
   },
   checked: {},
+  center: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    margin: "10px 0 0 -275px",
+    width: "500px",
+    height: "100px",
+  }
 });
 
 function createData({
@@ -558,9 +567,11 @@ export const AllStories: React.FC = () => {
       newSearch: "",
     });
   };
-  if (error) return <div>Error returning stories data!</div>;
-  if (!allStories) return <div>Loading all stories table..</div>;
-  if (tagError) return <div>Error returning tags data!</div>;
+
+  if (error) return <div className={classes.center}>Error returning stories data!</div>;
+  if (!allStories) return <div className={classes.center}>Loading all stories table..</div>;
+  if (tagError) return <div className={classes.center}>Error returning tags data!</div>;
+
   return (
     <>
       <Prompt
