@@ -199,7 +199,7 @@ const useStyles = makeStyles({
     margin: "10px 0 0 -275px",
     width: "500px",
     height: "100px",
-  }
+  },
 });
 
 function createData({
@@ -567,9 +567,12 @@ export const AllStories: React.FC = () => {
     });
   };
 
-  if (error) return <div className={classes.center}>Error returning stories data!</div>;
-  if (!allStories) return <div className={classes.center}>Loading all stories table..</div>;
-  if (tagError) return <div className={classes.center}>Error returning tags data!</div>;
+  if (error)
+    return <div className={classes.center}>Error returning stories data!</div>;
+  if (!allStories)
+    return <div className={classes.center}>Loading all stories table..</div>;
+  if (tagError)
+    return <div className={classes.center}>Error returning tags data!</div>;
 
   return (
     <>
