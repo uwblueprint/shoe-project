@@ -11,9 +11,13 @@ import Popover from "@material-ui/core/Popover";
 import { makeStyles } from "@material-ui/core/styles";
 import Tab from "@material-ui/core/Tab";
 import Tabs from "@material-ui/core/Tabs";
+/*Icons*/
 import AddIcon from "@material-ui/icons/Add";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import MapOutlinedIcon from "@material-ui/icons/MapOutlined";
 import RemoveIcon from "@material-ui/icons/Remove";
+import VisibilityOffOutlinedIcon from "@material-ui/icons/VisibilityOffOutlined";
+import VisibilityOutlinedIcon from "@material-ui/icons/VisibilityOutlined";
 import SearchBar from "material-ui-search-bar";
 import { useEffect, useReducer, useState } from "react";
 import * as React from "react";
@@ -447,6 +451,9 @@ export const AllStories: React.FC = () => {
   };
 
   const handleVisibilityButtons = (visibilityType: string) => {
+    const numVisibleChecked = state.checkedVisibleStoriesArray.length;
+    const numHiddenChecked = state.checkedHiddenStoriesArray.length;
+
     if (visibilityType === "hide") {
       state.checkedVisibleStoriesArray.forEach((s) => {
         const changeEvent = {
@@ -456,6 +463,12 @@ export const AllStories: React.FC = () => {
         } as React.ChangeEvent<HTMLInputElement>;
         handleSwitchChangeCheckbox(changeEvent, getStoryByID(s));
       });
+      showToast(
+        numVisibleChecked.toString() +
+          (numVisibleChecked > 1 ? " stories" : " story") +
+          " hidden from map.",
+        VisibilityOffOutlinedIcon
+      );
       dispatch({ type: "UNCHECK_STORIES", visibilityCondition: "hide" });
     } else {
       state.checkedHiddenStoriesArray.forEach((s) => {
@@ -466,6 +479,12 @@ export const AllStories: React.FC = () => {
         } as React.ChangeEvent<HTMLInputElement>;
         handleSwitchChangeCheckbox(changeEvent, getStoryByID(s));
       });
+      showToast(
+        numHiddenChecked.toString() +
+          (numHiddenChecked > 1 ? " stories" : " story") +
+          " shown on map.",
+        VisibilityOutlinedIcon
+      );
       dispatch({ type: "UNCHECK_STORIES", visibilityCondition: "show" });
     }
   };
@@ -533,8 +552,8 @@ export const AllStories: React.FC = () => {
 
   const toast = React.useRef(null);
 
-  const showToast = (message: string) => {
-    toast.current.showToast(message);
+  const showToast = (message: string, icon: any) => {
+    toast.current.showToast(message, icon);
   };
 
   const publishMap = () => {
@@ -546,7 +565,7 @@ export const AllStories: React.FC = () => {
       .then((response) => response.json())
       .then((result) => {
         dispatch({ type: "CLEAR_PENDING_CHANGES" });
-        showToast(result["message"]);
+        showToast(result["message"], MapOutlinedIcon);
       })
       .catch((error) => console.log("Error: ", error));
   };
