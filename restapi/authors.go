@@ -37,7 +37,7 @@ func (api api) CreateAuthors(w http.ResponseWriter, r *http.Request) render.Rend
 
 func (api api) ReturnAuthorOriginCountries(w http.ResponseWriter, r *http.Request) render.Renderer {
 	var countries []string
-
+	// SELECT DISTINCT author_country from stories where is_visble=true
     err := api.database.Table("stories").Where("is_visible = true").Distinct().Pluck("author_country", &countries).Error
     if err != nil {
         return rest.ErrInternal(api.logger, err)
