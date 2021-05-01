@@ -147,7 +147,7 @@ export const Login: React.FC = () => {
         </Toolbar>
       </AppBar>
     </div>
-  )
+  );
 
   if (!googleLoaded) {
     return (
