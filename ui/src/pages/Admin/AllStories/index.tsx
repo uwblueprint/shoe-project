@@ -1,6 +1,5 @@
 import { Grid } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
-import { CircularProgress } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import Chip from "@material-ui/core/Chip";

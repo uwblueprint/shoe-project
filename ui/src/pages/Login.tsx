@@ -8,7 +8,9 @@ import * as React from "react";
 import { Redirect } from "react-router-dom";
 import styled from "styled-components";
 
+// @ts-ignore svg
 import ShoeLogo from "../assets/images/shoeproject-logo.svg";
+// @ts-ignore svg
 import PeopleWalking from "../assets/images/walking-people.svg";
 import { CenteredCircularProgress } from "../components";
 import { FailureState, useAuth } from "../hooks/auth";
