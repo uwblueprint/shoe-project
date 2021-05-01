@@ -7,7 +7,6 @@ import (
 
 	"github.com/biter777/countries"
 	"github.com/go-chi/render"
-	"github.com/thoas/go-funk"
 	"github.com/uwblueprint/shoe-project/internal/database/models"
 	"github.com/uwblueprint/shoe-project/restapi/rest"
 )
@@ -37,24 +36,14 @@ func (api api) CreateAuthors(w http.ResponseWriter, r *http.Request) render.Rend
 }
 
 func (api api) ReturnAuthorOriginCountries(w http.ResponseWriter, r *http.Request) render.Renderer {
-	var authors []models.Author
-	countries := make(map[string]bool)
+	var countries []string
 
-	err := api.database.Find(&authors).Error
-	if err != nil {
-		return rest.ErrInternal(api.logger, err)
-	}
+    err := api.database.Table("stories").Where("is_visible = true").Distinct().Pluck("author_country", &countries).Error
+    if err != nil {
+        return rest.ErrInternal(api.logger, err)
+    }
 
-	for _, entry := range authors {
-		if entry.OriginCountry != "" {
-			countries[entry.OriginCountry] = true
-		} else {
-			api.logger.Debug("Empty origin country")
-		}
-	}
+    sort.Strings(countries)
 
-	listOfCountries := funk.Keys(countries)
-	sort.Strings(listOfCountries.([]string))
-
-	return rest.JSONStatusOK(listOfCountries)
+    return rest.JSONStatusOK(countries)
 }
