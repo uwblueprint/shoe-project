@@ -884,12 +884,12 @@ export const UploadStory: React.FC<StoryProps> = ({
                   </div>
                 )}
               </ImageContainer>
-              <UploadLabelsText>Youtube Link</UploadLabelsText>
+              <UploadLabelsText>YouTube Link</UploadLabelsText>
               <StyledTextField
                 onChange={handleChange}
                 variant="outlined"
                 id="video-link"
-                label="Youtube Link"
+                label="YouTube Link"
                 placeholder="www.youtube.com/link"
                 inputProps={{
                   name: "video_url",
