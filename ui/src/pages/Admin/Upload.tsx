@@ -3,12 +3,14 @@ import * as React from "react";
 import { Story } from "../../types/index";
 import { UploadStoryWrapper } from "./Edit/UploadStoryWrapper";
 
+const startYear = new Date().getFullYear();
+
 export const Upload: React.FC = () => {
   const story: Story = {
     title: "",
     content: "",
     current_city: "",
-    year: null,
+    year: startYear,
     is_visible: null,
     summary: "",
     latitude: null,

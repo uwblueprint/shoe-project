@@ -5,6 +5,7 @@ export interface State {
   authorCountry: string;
   currentCity: string;
   autocompleteAuthorCountry: string;
+  autocompleteTag: string;
   addedCountry: string;
   newImage: string;
   disabled: boolean;
@@ -18,6 +19,7 @@ export type Action =
   | { type: "SET_AUTHOR_COUNTRY"; country: string }
   | { type: "SET_CURRENT_CITY"; city: string }
   | { type: "SET_AUTOCOMPLETE_COUNTRY"; autocompleteCountry: string }
+  | { type: "SET_AUTOCOMPLETE_TAG"; autocompleteTag: string }
   | { type: "ADD_IMAGE"; addedImage: string }
   | { type: "SET_BUTTON_DISABLE"; status: boolean }
   | { type: "SET_ERROR_STATE"; errorState: boolean }
@@ -32,6 +34,7 @@ export function get_init_state(currentStory: Story): State {
     authorCountry: currentStory.author_country,
     currentCity: currentStory.current_city.toUpperCase(),
     autocompleteAuthorCountry: currentStory.author_country,
+    autocompleteTag: "",
     addedCountry: "",
     newImage: currentStory.image_url,
     disabled: false,
@@ -65,6 +68,12 @@ export function uploadStoryReducer(state: State, action: Action): State {
       return {
         ...state,
         autocompleteAuthorCountry: action.autocompleteCountry,
+      };
+    }
+    case "SET_AUTOCOMPLETE_TAG": {
+      return {
+        ...state,
+        autocompleteTag: action.autocompleteTag,
       };
     }
     case "ADD_IMAGE": {
