@@ -69,7 +69,7 @@ const StyledWelcome = styled(Dialog)`
   }
 
   .MuiBackdrop-root {
-    opacity: 10%;
+    background-color: transparent;
   }
 `;
 
@@ -82,11 +82,13 @@ const StyledFilterWelcome = styled(Dialog)`
     border-radius: 10px;
     overflow-y: visible;
     overflow-x: visible;
-    bottom: 30%;
+    bottom: 40%;
+    left: -10%;
 
     @media ${device.laptop} {
       width: 80vw;
       height: 20vh;
+      bottom: 20%;
     }
   }
   .MuiBackdrop-root {
