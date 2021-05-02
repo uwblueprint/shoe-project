@@ -1,3 +1,4 @@
+import { CircularProgress } from "@material-ui/core";
 import AppBar from "@material-ui/core/AppBar";
 import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
@@ -10,7 +11,6 @@ import styled from "styled-components";
 
 import ShoeLogo from "../assets/images/shoeproject-logo.svg";
 import PeopleWalking from "../assets/images/walking-people.svg";
-import { CenteredCircularProgress } from "../components";
 import { FailureState, useAuth } from "../hooks/auth";
 import { colors } from "../styles/index";
 import {
@@ -97,6 +97,15 @@ const GoogleButton = styled(Button)`
   }
 `;
 
+const CenterIcon = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -50px 0 0 -50px;
+  width: 100px;
+  height: 100px;
+`;
+
 const useStyles = makeStyles({
   root: {
     backgroundColor: colors.primaryLight6,
@@ -133,27 +142,22 @@ export const Login: React.FC = () => {
   const { auth, googleLoaded, failure, signIn } = useAuth();
   const classes = useStyles();
 
-  if (auth !== undefined) {
-    return <Redirect to="/admin" />;
-  }
-
-  const loginAppBar = (
-    <div className={classes.appBar}>
-      <AppBar position="static">
-        <Toolbar>
-          <a href={SHOE_PROJECT_URL} target="_blank" rel="noreferrer">
-            <StyledTinyLogo role="img" alt="Link to the Shoe Project site" />
-          </a>
-        </Toolbar>
-      </AppBar>
-    </div>
-  );
-
   if (!googleLoaded) {
     return (
       <div className={classes.root}>
-        {loginAppBar}
-        <CenteredCircularProgress />
+        <div className={classes.appBar}>
+          <AppBar position="static">
+            <Toolbar>
+              <a href={SHOE_PROJECT_URL} target="_blank" rel="noreferrer">
+                <StyledTinyLogo />
+              </a>
+            </Toolbar>
+          </AppBar>
+        </div>
+
+        <CenterIcon>
+          <CircularProgress />
+        </CenterIcon>
         <CenterText>
           <LoginTitleText>
             Please make sure cookies are enabled on this site
@@ -166,6 +170,10 @@ export const Login: React.FC = () => {
     );
   }
 
+  if (auth !== undefined) {
+    return <Redirect to="/admin" />;
+  }
+
   const title =
     failure !== FailureState.InvalidEmail ? "Welcome back!" : "Invalid Sign In";
   const description =
@@ -175,7 +183,15 @@ export const Login: React.FC = () => {
 
   return (
     <div className={classes.root}>
-      {loginAppBar}
+      <div className={classes.appBar}>
+        <AppBar position="static">
+          <Toolbar>
+            <a href={SHOE_PROJECT_URL} target="_blank" rel="noreferrer">
+              <StyledTinyLogo />
+            </a>
+          </Toolbar>
+        </AppBar>
+      </div>
       <CardDiv>
         <StyledCard variant="outlined">
           <CardContent>

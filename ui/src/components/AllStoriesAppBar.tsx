@@ -70,7 +70,7 @@ export default function AllStoriesAppBar({
       <AppBar position="static">
         <Toolbar>
           <a href={SHOE_PROJECT_URL} target="_blank" rel="noreferrer">
-            <StyledLogo role="img" alt="Link to the Shoe Project site" />
+            <StyledLogo />
           </a>
           <div className={classes.buttons}>
             <SecondaryButton

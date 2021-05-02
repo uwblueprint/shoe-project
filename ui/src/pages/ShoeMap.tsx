@@ -190,7 +190,7 @@ export const ShoeMap: React.FC = () => {
           </Control>
           <Control position="bottomleft">
             <a href={SHOE_PROJECT_URL} target="_blank" rel="noreferrer">
-              <StyledLogo role="img" alt="Link to the Shoe Project site" />
+              <StyledLogo />
             </a>
           </Control>
         </StyledMap>

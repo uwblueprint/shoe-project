@@ -1,5 +1,4 @@
 export { AllStoriesTabs } from "./AllStoriesTabs";
-export { CenteredCircularProgress } from "./CenteredCircularProgress";
 export { Filter } from "./Filter";
 export { HelpAccordion } from "./HelpAccordion";
 export { HelpDrawer, HelpDrawerState } from "./HelpDrawer";
