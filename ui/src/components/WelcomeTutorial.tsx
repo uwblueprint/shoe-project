@@ -83,6 +83,7 @@ const StyledFilterWelcome = styled(Dialog)`
     overflow-y: visible;
     overflow-x: visible;
     bottom: 40%;
+    left: -10%;
 
     @media ${device.laptop} {
       width: 80vw;
