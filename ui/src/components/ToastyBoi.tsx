@@ -39,16 +39,18 @@ interface SnackBarMessage {
 const ToastyBoi = forwardRef((props, ref) => {
   const [snackPack, setSnackPack] = React.useState<SnackBarMessage[]>([]);
   const [open, setOpen] = React.useState(false);
-  const [messageInfo, setMessageInfo] = React.useState<SnackBarMessage | undefined>(undefined);
+  const [messageInfo, setMessageInfo] = React.useState<
+    SnackBarMessage | undefined
+  >(undefined);
 
   React.useEffect(() => {
     // Set a new snack when we don't have an active one
-    if (snackPack.length && !messageInfo) {  
+    if (snackPack.length && !messageInfo) {
       setMessageInfo({ ...snackPack[0] });
       setSnackPack((prev) => prev.slice(1));
       setOpen(true);
 
-    // Close an active snack when a new one is added
+      // Close an active snack when a new one is added
     } else if (snackPack.length && messageInfo && open) {
       setOpen(false);
     }
@@ -57,7 +59,10 @@ const ToastyBoi = forwardRef((props, ref) => {
   const classes = useStyles();
 
   const showToast = (message: string, icon: SvgIconComponent) => {
-    setSnackPack((prev) => [...prev, {message, icon, key: new Date().getTime() }]);
+    setSnackPack((prev) => [
+      ...prev,
+      { message, icon, key: new Date().getTime() },
+    ]);
   };
 
   useImperativeHandle(ref, () => {
@@ -72,7 +77,7 @@ const ToastyBoi = forwardRef((props, ref) => {
 
   const handleExited = () => {
     setMessageInfo(undefined);
-  }; 
+  };
 
   const Icon = messageInfo ? messageInfo.icon : undefined;
 
@@ -84,11 +89,13 @@ const ToastyBoi = forwardRef((props, ref) => {
         onClose={handleClose}
         onExited={handleExited}
         TransitionComponent={Slide}
-        message={!messageInfo ? undefined :
-          <span className={classes.span}>
-            <Icon className={classes.icon} />
-            {messageInfo.message}
-          </span>
+        message={
+          !messageInfo ? undefined : (
+            <span className={classes.span}>
+              <Icon className={classes.icon} />
+              {messageInfo.message}
+            </span>
+          )
         }
         autoHideDuration={5000}
         ContentProps={{
