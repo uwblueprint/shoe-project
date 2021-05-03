@@ -126,6 +126,54 @@ const StyledTertiaryButton = withStyles({
   },
 })(Button);
 
+
+export function RedSecondaryButton({
+  text,
+  onClickFunction,
+  isDisabled,
+  component,
+  to,
+  target,
+}: ButtonProps): JSX.Element {
+  return (
+    <RedStyledSecondaryButton
+      disableRipple
+      variant="outlined"
+      disabled={isDisabled}
+      component={component}
+      to={to}
+      onClick={to ? null : (args) => onClickFunction(args)}
+      target={target}
+    >
+      {text}
+    </RedStyledSecondaryButton>
+  );
+}
+
+const RedStyledSecondaryButton = withStyles({
+  root: {
+    color: colors.secondary,
+    boxShadow: "none",
+    fontFamily: "'Poppins', sans-serif",
+    fontSize: 16,
+    fontWeight: 600,
+    padding: "6px 20px",
+    margin: "0 10px",
+    borderWidth: "2px",
+    borderColor: colors.secondary,
+    "&:hover": {
+      color: colors.secondaryLight1,
+      borderColor: colors.secondaryLight1,
+      boxShadow: "none",
+      background: "transparent",
+    },
+    "&:disabled": {
+      color: colors.neutralGrey,
+    },
+  },
+})(Button);
+
+
 export function TertiaryButton({
   text,
   onClickFunction,
