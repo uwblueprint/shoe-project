@@ -41,9 +41,7 @@ import { VisibilitySwitch } from "./VisibilitySwitch";
 
 const StyledFilter = styled.div`
   width: 35vw;
-  margin-top: 7vh;
   justify-self: right;
-  margin-left: 62vw;
 `;
 
 const StyledButton = styled(Button)`
@@ -192,6 +190,13 @@ const useStyles = makeStyles({
     },
   },
   checked: {},
+  showHideMapButtonContainer: {
+    display: "flex",
+    flexDirection: "row",
+    margin: "5px 0", 
+    alignItems: "center",
+    justifyContent: "space-between"
+  }
 });
 
 function createData({
@@ -602,13 +607,8 @@ export const AllStories: React.FC = () => {
           </Tabs>
         </AppBar>
       </StyledContainer>
-      <div>
-        <div
-          style={{
-            marginBottom: isButtonOpen() ? "-12vh" : "-5vh",
-            marginTop: isButtonOpen() ? "2vh" : "0vh",
-          }}
-        >
+      <div className={classes.showHideMapButtonContainer}>
+        <div>
           {state.checkedVisibleStoriesArray.length > 0 && (
             <ShowHideButton
               style={{ marginRight: "-32px" }}
