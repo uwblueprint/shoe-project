@@ -26,7 +26,7 @@ const useVirtualizedTableStyles = makeStyles({
         whiteSpace: "normal",
         overflow: "hidden",
         marginTop: "2px",
-        marginBottom: "2px"
+        marginBottom: "2px",
       },
     },
     "& .topLeftGrid, & .topRightGrid": {

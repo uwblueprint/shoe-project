@@ -126,7 +126,6 @@ const StyledTertiaryButton = withStyles({
   },
 })(Button);
 
-
 export function RedSecondaryButton({
   text,
   onClickFunction,
@@ -172,7 +171,6 @@ const RedStyledSecondaryButton = withStyles({
     },
   },
 })(Button);
-
 
 export function TertiaryButton({
   text,

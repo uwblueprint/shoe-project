@@ -29,8 +29,8 @@ import styled from "styled-components";
 import { StoryDrawer } from "../../../components";
 import {
   PrimaryButton,
+  RedSecondaryButton,
   SecondaryButton,
-  RedSecondaryButton
 } from "../../../components/StyledButtons";
 import { citiesList } from "../../../data/cities";
 import { colors } from "../../../styles/colors";

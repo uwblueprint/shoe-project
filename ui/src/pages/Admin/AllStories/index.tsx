@@ -193,10 +193,10 @@ const useStyles = makeStyles({
   showHideMapButtonContainer: {
     display: "flex",
     flexDirection: "row",
-    margin: "5px 0", 
+    margin: "5px 0",
     alignItems: "center",
-    justifyContent: "space-between"
-  }
+    justifyContent: "space-between",
+  },
 });
 
 function createData({
@@ -273,12 +273,6 @@ export const AllStories: React.FC = () => {
     state.checkedHiddenStoriesArray.length
   }${")"}`;
 
-  const isButtonOpen = () => {
-    return (
-      state.checkedVisibleStoriesArray.length > 0 ||
-      state.checkedHiddenStoriesArray.length > 0
-    );
-  };
   const handleClick = (
     event: React.MouseEvent<HTMLButtonElement>,
     popoverType: string
