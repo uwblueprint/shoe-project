@@ -953,7 +953,7 @@ export const AllStories: React.FC = () => {
               {
                 name: "is_visible",
                 header: "Visibility",
-                width: "10%",
+                width: "8%",
                 onHeaderClick() {
                   handleRequestSort("is_visible");
                 },
