@@ -9,46 +9,55 @@ type SvgIconComponent = typeof SvgIcon;
 
 const { forwardRef, useImperativeHandle } = React;
 
+const useStyles = makeStyles({
+  root: {
+    backgroundColor: colors.primaryLight3,
+    color: colors.primaryDark2,
+    fontSize: 16,
+    fontWeight: 500,
+
+    "& .MuiSnackbarContent-message": {
+      margin: "auto",
+      fontFamily: "Poppins",
+    },
+  },
+  icon: {
+    fontSize: 20,
+    marginRight: "8px",
+    color: colors.primaryDark2,
+  },
+  span: {
+    display: "flex",
+  },
+});
+interface SnackBarMessage {
+  message: string;
+  icon: SvgIconComponent;
+  key: number;
+}
+
 const ToastyBoi = forwardRef((props, ref) => {
-  const [toastState, setToastState] = React.useState<{
-    open?: boolean;
-    message?: string;
-    icon?: SvgIconComponent;
-  }>({
-    open: false,
-    message: "",
-    icon: null,
-  });
+  const [snackPack, setSnackPack] = React.useState<SnackBarMessage[]>([]);
+  const [open, setOpen] = React.useState(false);
+  const [messageInfo, setMessageInfo] = React.useState<SnackBarMessage | undefined>(undefined);
 
-  const useStyles = makeStyles({
-    root: {
-      backgroundColor: colors.primaryLight3,
-      color: colors.primaryDark2,
-      fontSize: 16,
-      fontWeight: 500,
+  React.useEffect(() => {
+    // Set a new snack when we don't have an active one
+    if (snackPack.length && !messageInfo) {  
+      setMessageInfo({ ...snackPack[0] });
+      setSnackPack((prev) => prev.slice(1));
+      setOpen(true);
 
-      "& .MuiSnackbarContent-message": {
-        margin: "auto",
-        fontFamily: "Poppins",
-      },
-    },
-    icon: {
-      fontSize: 20,
-      marginRight: "8px",
-      color: colors.primaryDark2,
-    },
-    span: {
-      display: "flex",
-    },
-  });
+    // Close an active snack when a new one is added
+    } else if (snackPack.length && messageInfo && open) {
+      setOpen(false);
+    }
+  }, [snackPack, messageInfo, open]);
+
   const classes = useStyles();
 
   const showToast = (message: string, icon: SvgIconComponent) => {
-    setToastState({
-      open: true,
-      message,
-      icon,
-    });
+    setSnackPack((prev) => [...prev, {message, icon, key: new Date().getTime() }]);
   };
 
   useImperativeHandle(ref, () => {
@@ -58,24 +67,27 @@ const ToastyBoi = forwardRef((props, ref) => {
   });
 
   const handleClose = () => {
-    setToastState({
-      ...toastState,
-      open: false,
-    });
+    setOpen(false);
   };
 
-  const Icon = toastState.icon;
+  const handleExited = () => {
+    setMessageInfo(undefined);
+  }; 
+
+  const Icon = messageInfo ? messageInfo.icon : undefined;
 
   return (
     <>
       <Snackbar
-        open={toastState.open}
+        key={messageInfo ? messageInfo.key : undefined}
+        open={open}
         onClose={handleClose}
+        onExited={handleExited}
         TransitionComponent={Slide}
-        message={
+        message={!messageInfo ? undefined :
           <span className={classes.span}>
             <Icon className={classes.icon} />
-            {toastState.message}
+            {messageInfo.message}
           </span>
         }
         autoHideDuration={5000}
