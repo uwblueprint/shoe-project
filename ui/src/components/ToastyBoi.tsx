@@ -39,9 +39,9 @@ interface SnackBarMessage {
 const ToastyBoi = forwardRef((props, ref) => {
   const [snackPack, setSnackPack] = React.useState<SnackBarMessage[]>([]);
   const [open, setOpen] = React.useState(false);
-  const [messageInfo, setMessageInfo] = React.useState<
-    SnackBarMessage | undefined
-  >(undefined);
+  const [messageInfo, setMessageInfo] = React.useState<SnackBarMessage | "">(
+    ""
+  );
 
   React.useEffect(() => {
     // Set a new snack when we don't have an active one
@@ -76,21 +76,23 @@ const ToastyBoi = forwardRef((props, ref) => {
   };
 
   const handleExited = () => {
-    setMessageInfo(undefined);
+    setMessageInfo("");
   };
 
-  const Icon = messageInfo ? messageInfo.icon : undefined;
+  const Icon = messageInfo ? messageInfo.icon : "";
 
   return (
     <>
       <Snackbar
-        key={messageInfo ? messageInfo.key : undefined}
+        key={messageInfo ? messageInfo.key : ""}
         open={open}
         onClose={handleClose}
         onExited={handleExited}
         TransitionComponent={Slide}
         message={
-          !messageInfo ? undefined : (
+          !messageInfo ? (
+            ""
+          ) : (
             <span className={classes.span}>
               <Icon className={classes.icon} />
               {messageInfo.message}

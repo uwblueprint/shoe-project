@@ -464,9 +464,9 @@ export const AllStories: React.FC = () => {
         handleSwitchChangeCheckbox(changeEvent, getStoryByID(s));
       });
       showToast(
-        numVisibleChecked.toString() +
-          (numVisibleChecked > 1 ? " stories" : " story") +
-          " hidden from map.",
+        `${numVisibleChecked.toString()}${
+          numVisibleChecked > 1 ? " stories" : " story"
+        } hidden from map.`,
         VisibilityOffOutlinedIcon
       );
       dispatch({ type: "UNCHECK_STORIES", visibilityCondition: "hide" });
@@ -480,9 +480,9 @@ export const AllStories: React.FC = () => {
         handleSwitchChangeCheckbox(changeEvent, getStoryByID(s));
       });
       showToast(
-        numHiddenChecked.toString() +
-          (numHiddenChecked > 1 ? " stories" : " story") +
-          " shown on map.",
+        `${numHiddenChecked.toString()}${
+          numHiddenChecked > 1 ? " stories" : " story"
+        } shown on map.`,
         VisibilityOutlinedIcon
       );
       dispatch({ type: "UNCHECK_STORIES", visibilityCondition: "show" });
@@ -552,7 +552,7 @@ export const AllStories: React.FC = () => {
 
   const toast = React.useRef(null);
 
-  const showToast = (message: string, icon: any) => {
+  const showToast = (message: string, icon: React.ComponentType) => {
     toast.current.showToast(message, icon);
   };
 
