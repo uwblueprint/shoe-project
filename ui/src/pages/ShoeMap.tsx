@@ -162,6 +162,7 @@ export const ShoeMap: React.FC = () => {
       <MapContainer>
         <Filter onChange={onTagsChange} tags={filteredCountries} />
         <StyledMap
+          tap={false}
           maxBounds={mapBounds}
           center={currentLocation}
           zoom={zoom}
