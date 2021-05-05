@@ -797,7 +797,7 @@ export const UploadStory: React.FC<StoryProps> = ({
                         required
                         variant="outlined"
                         label=""
-                        placeholder="Enter story&#39;s country of origin"
+                        placeholder="Enter author&#39;s country of origin"
                       />
                     );
                   }}
@@ -893,7 +893,7 @@ export const UploadStory: React.FC<StoryProps> = ({
                       <TextField
                         {...params}
                         variant="outlined"
-                        label="Shoe Tags"
+                        label="Story Tags"
                         placeholder="Select Tags"
                       ></TextField>
                     );
