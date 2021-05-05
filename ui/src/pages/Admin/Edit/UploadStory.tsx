@@ -350,7 +350,7 @@ export const UploadStory: React.FC<StoryProps> = ({
       formInput.author_last_name &&
       formInput.year &&
       formInput.current_city &&
-      formInput.author_country
+      Boolean(formInput.author_country)
     );
   }, [formInput]);
   const [dialogOpenState, setDialogOpenState] = useState(false);
@@ -583,6 +583,16 @@ export const UploadStory: React.FC<StoryProps> = ({
     [initFormState, formInput]
   );
 
+  const hasTagsChanged = React.useMemo(
+    () => JSON.stringify(state.tagArray) !== JSON.stringify(currentStory.tags),
+    [state.tagArray, currentStory.tags]
+  );
+
+  console.log(`state ${state.disabled}`);
+  console.log(`all ${hasAllRequiredFields}`);
+  console.log(`form ${hasFormChanged}`);
+  console.log(`tags ${hasTagsChanged}`);
+
   return (
     <>
       <Prompt
@@ -657,7 +667,9 @@ export const UploadStory: React.FC<StoryProps> = ({
                   text={submitButtonText}
                   onClickFunction={(e) => handleSubmit(e)}
                   isDisabled={
-                    state.disabled || !hasAllRequiredFields || !hasFormChanged
+                    state.disabled ||
+                    !hasAllRequiredFields ||
+                    (!hasFormChanged && !hasTagsChanged)
                   }
                 />
               </Grid>
