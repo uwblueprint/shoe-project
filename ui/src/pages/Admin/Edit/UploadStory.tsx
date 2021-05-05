@@ -232,18 +232,18 @@ const useStyles = makeStyles({
 });
 
 type FormState = {
-  image: File,
-  video_url: string,
-  title: string,
-  content: string,
-  summary: string,
-  author_first_name: string,
-  author_last_name: string,
-  author_country: string,
-  year: number,
-  current_city: string,
-  bio: string,
-}
+  image: File;
+  video_url: string;
+  title: string;
+  content: string;
+  summary: string;
+  author_first_name: string;
+  author_last_name: string;
+  author_country: string;
+  year: number;
+  current_city: string;
+  bio: string;
+};
 
 export const UploadStory: React.FC<StoryProps> = ({
   id,
@@ -258,25 +258,28 @@ export const UploadStory: React.FC<StoryProps> = ({
   );
   const history = useHistory();
 
-  const initFormState: FormState = React.useMemo(() => ({
-    image: new File([""], "filename"),
-    video_url: currentStory.video_url,
-    title: currentStory.title,
-    content: currentStory.content,
-    summary: currentStory.summary,
-    author_first_name: currentStory.author_first_name,
-    author_last_name: currentStory.author_last_name,
-    author_country: currentStory.author_country,
-    year: currentStory.year,
-    current_city: currentStory.current_city.toUpperCase(),
-    bio: bio,
-  }), [bio, currentStory])
+  const initFormState: FormState = React.useMemo(
+    () => ({
+      image: new File([""], "filename"),
+      video_url: currentStory.video_url,
+      title: currentStory.title,
+      content: currentStory.content,
+      summary: currentStory.summary,
+      author_first_name: currentStory.author_first_name,
+      author_last_name: currentStory.author_last_name,
+      author_country: currentStory.author_country,
+      year: currentStory.year,
+      current_city: currentStory.current_city.toUpperCase(),
+      bio: bio,
+    }),
+    [bio, currentStory]
+  );
 
   const startYear = new Date().getFullYear();
   const yearArray = Array.from({ length: 30 }, (_, i) => startYear - i);
   const [formInput, setFormInput] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
-    initFormState,
+    initFormState
   );
 
   const story = React.useMemo(() => {
@@ -568,7 +571,10 @@ export const UploadStory: React.FC<StoryProps> = ({
   const submitButtonText = id ? "Save Edits" : "Upload";
 
   const classes = useStyles();
-  const hasFormChanged = React.useMemo(() => JSON.stringify(initFormState) !== JSON.stringify(formInput), [initFormState, formInput]);
+  const hasFormChanged = React.useMemo(
+    () => JSON.stringify(initFormState) !== JSON.stringify(formInput),
+    [initFormState, formInput]
+  );
 
   return (
     <>
