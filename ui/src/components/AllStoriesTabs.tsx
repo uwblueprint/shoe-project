@@ -27,7 +27,7 @@ export function AllStoriesTabs(props: TabPanelProps): JSX.Element {
       {...other}
     >
       {value === index && (
-        <Box p={3}>
+        <Box>
           <Typography component={"span"} variant={"body2"}>
             {children}
           </Typography>

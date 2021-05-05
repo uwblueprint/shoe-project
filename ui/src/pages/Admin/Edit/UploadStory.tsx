@@ -29,6 +29,7 @@ import styled from "styled-components";
 import { StoryDrawer } from "../../../components";
 import {
   PrimaryButton,
+  RedSecondaryButton,
   SecondaryButton,
 } from "../../../components/StyledButtons";
 import { citiesList } from "../../../data/cities";
@@ -620,7 +621,7 @@ export const UploadStory: React.FC<StoryProps> = ({
                   alignContent="center"
                   justify="flex-end"
                 >
-                  <SecondaryButton
+                  <RedSecondaryButton
                     text={"Delete Story"}
                     onClickFunction={() => setDialogOpenState(true)}
                   />
