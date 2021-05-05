@@ -48,6 +48,6 @@ export const UploadStoryWrapper: React.FC<StoryWrapperProps> = ({
       bio={bio}
       tagOptions={tagOptions}
       countries={countries}
-    ></UploadStory>
+    />
   );
 };

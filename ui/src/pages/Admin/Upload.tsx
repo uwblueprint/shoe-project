@@ -33,6 +33,6 @@ export const Upload: React.FC = () => {
       id={null}
       currentStory={story}
       bio=""
-    ></UploadStoryWrapper>
+    />
   );
 };
