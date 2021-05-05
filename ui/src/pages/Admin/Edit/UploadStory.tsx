@@ -258,7 +258,7 @@ export const UploadStory: React.FC<StoryProps> = ({
   );
   const history = useHistory();
 
-  const initFormState: FormState = {
+  const initFormState: FormState = React.useMemo(() => ({
     image: new File([""], "filename"),
     video_url: currentStory.video_url,
     title: currentStory.title,
@@ -270,7 +270,7 @@ export const UploadStory: React.FC<StoryProps> = ({
     year: currentStory.year,
     current_city: currentStory.current_city.toUpperCase(),
     bio: bio,
-  }
+  }), [bio, currentStory])
 
   const startYear = new Date().getFullYear();
   const yearArray = Array.from({ length: 30 }, (_, i) => startYear - i);
@@ -568,15 +568,19 @@ export const UploadStory: React.FC<StoryProps> = ({
   const submitButtonText = id ? "Save Edits" : "Upload";
 
   const classes = useStyles();
+  const hasFormChanged = React.useMemo(() => JSON.stringify(initFormState) !== JSON.stringify(formInput), [initFormState, formInput]);
 
   return (
     <>
       <Prompt
         // Have to set image as undefined due to how form sets image
-        when={JSON.stringify({ ...initFormState, image: undefined }) !== JSON.stringify(formInput)}
-        message={(location) =>
-          `Are you sure you want to go to ${location.pathname}? Your changes on this page will not be saved.`
-        }
+        when={hasFormChanged}
+        message={(location) => {
+          if (location.pathname === "/admin/upload-success") {
+            return true;
+          }
+          return `Are you sure you want to go to ${location.pathname}? Your changes on this page will not be saved.`;
+        }}
       />
       <div className={classes.root}>
         <AppBar color="default" position="sticky">
@@ -627,7 +631,7 @@ export const UploadStory: React.FC<StoryProps> = ({
                   onClickFunction={() =>
                     dispatch({ type: "SET_DRAWER_OPEN", drawerOpen: true })
                   }
-                  isDisabled={!hasAllRequiredFields}
+                  isDisabled={!hasAllRequiredFields || !hasFormChanged}
                 />
               </Grid>
               <Grid
