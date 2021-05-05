@@ -229,6 +229,8 @@ const useStyles = makeStyles({
       height: "56px",
     },
     width: "100%",
+    position: "sticky",
+    top: 0 
   },
 });
 
@@ -558,7 +560,7 @@ export const UploadStory: React.FC<StoryProps> = ({
   return (
     <>
       <div className={classes.root}>
-        <AppBar color="default" position="sticky">
+        <AppBar color="default">
           <Grid
             justify="flex-end"
             alignContent="center"
