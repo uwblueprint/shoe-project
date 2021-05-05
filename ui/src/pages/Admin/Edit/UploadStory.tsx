@@ -219,6 +219,9 @@ const StyledImage = styled.img`
 
 const useStyles = makeStyles({
   root: {
+    marginTop: "56px",
+  },
+  appBar: {
     "& .MuiAppBar-colorDefault": {
       backgroundColor: colors.white,
     },
@@ -231,6 +234,7 @@ const useStyles = makeStyles({
     width: "100%",
     position: "sticky",
     top: 0,
+    zIndex: 2,
   },
 });
 
@@ -559,7 +563,7 @@ export const UploadStory: React.FC<StoryProps> = ({
 
   return (
     <>
-      <div className={classes.root}>
+      <div className={classes.appBar}>
         <AppBar color="default">
           <Grid
             justify="flex-end"
@@ -633,6 +637,7 @@ export const UploadStory: React.FC<StoryProps> = ({
         container
         justify="center"
         alignContent="center"
+        className={classes.root}
       >
         <form onSubmit={handleSubmit}>
           <FormControl>
