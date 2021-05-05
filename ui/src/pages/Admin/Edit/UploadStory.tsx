@@ -644,7 +644,7 @@ export const UploadStory: React.FC<StoryProps> = ({
                   onClickFunction={() =>
                     dispatch({ type: "SET_DRAWER_OPEN", drawerOpen: true })
                   }
-                  isDisabled={!hasAllRequiredFields || !hasFormChanged}
+                  isDisabled={!hasAllRequiredFields}
                 />
               </Grid>
               <Grid
