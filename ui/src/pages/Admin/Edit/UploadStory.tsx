@@ -649,7 +649,7 @@ export const UploadStory: React.FC<StoryProps> = ({
                 <PrimaryButton
                   text={submitButtonText}
                   onClickFunction={(e) => handleSubmit(e)}
-                  isDisabled={state.disabled || !hasAllRequiredFields}
+                  isDisabled={state.disabled || !hasAllRequiredFields || !hasFormChanged}
                 />
               </Grid>
             </Grid>
