@@ -933,7 +933,7 @@ export const AllStories: React.FC = () => {
               },
               {
                 name: "author_name",
-                header: "Author name",
+                header: "Author Name",
                 width: "15%",
                 onHeaderClick() {
                   handleRequestSort("author_name");
@@ -1093,7 +1093,7 @@ export const AllStories: React.FC = () => {
               },
               {
                 name: "author_name",
-                header: "Author name",
+                header: "Author Name",
                 width: "15%",
                 onHeaderClick() {
                   handleRequestSort("author_name");
@@ -1212,7 +1212,7 @@ export const AllStories: React.FC = () => {
               },
               {
                 name: "author_name",
-                header: "Author name",
+                header: "Author Name",
                 width: "15%",
                 onHeaderClick() {
                   handleRequestSort("author_name");
