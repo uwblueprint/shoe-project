@@ -28,11 +28,5 @@ export const Upload: React.FC = () => {
     DeletedAt: null,
   };
 
-  return (
-    <UploadStoryWrapper
-      id={null}
-      currentStory={story}
-      bio=""
-    ></UploadStoryWrapper>
-  );
+  return <UploadStoryWrapper id={null} currentStory={story} bio="" />;
 };

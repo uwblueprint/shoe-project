@@ -23,7 +23,7 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import { DropzoneArea } from "material-ui-dropzone";
 import * as React from "react";
 import { useReducer, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { Link, Prompt, useHistory } from "react-router-dom";
 import styled from "styled-components";
 
 import { StoryDrawer } from "../../../components";
@@ -96,7 +96,7 @@ const StyledSelect = styled(Select)`
     display: inline-block;
   }
 `;
-const StyledLink = styled.a`
+const StyledLink = styled(Link)`
   color: ${colors.primaryDark1};
   margin-left: 64px;
   margin-right: 30px;
@@ -238,6 +238,20 @@ const useStyles = makeStyles({
   },
 });
 
+type FormState = {
+  image: File;
+  video_url: string;
+  title: string;
+  content: string;
+  summary: string;
+  author_first_name: string;
+  author_last_name: string;
+  author_country: string;
+  year: number;
+  current_city: string;
+  bio: string;
+};
+
 export const UploadStory: React.FC<StoryProps> = ({
   id,
   currentStory,
@@ -251,12 +265,8 @@ export const UploadStory: React.FC<StoryProps> = ({
   );
   const history = useHistory();
 
-  const startYear = new Date().getFullYear();
-  const yearArray = Array.from({ length: 30 }, (_, i) => startYear - i);
-
-  const [formInput, setFormInput] = useReducer(
-    (state, newState) => ({ ...state, ...newState }),
-    {
+  const initFormState: FormState = React.useMemo(
+    () => ({
       image: new File([""], "filename"),
       video_url: currentStory.video_url,
       title: currentStory.title,
@@ -268,7 +278,15 @@ export const UploadStory: React.FC<StoryProps> = ({
       year: currentStory.year,
       current_city: currentStory.current_city.toUpperCase(),
       bio: bio,
-    }
+    }),
+    [bio, currentStory]
+  );
+
+  const startYear = new Date().getFullYear();
+  const yearArray = Array.from({ length: 30 }, (_, i) => startYear - i);
+  const [formInput, setFormInput] = useReducer(
+    (state, newState) => ({ ...state, ...newState }),
+    initFormState
   );
 
   const story = React.useMemo(() => {
@@ -332,7 +350,7 @@ export const UploadStory: React.FC<StoryProps> = ({
       formInput.author_last_name &&
       formInput.year &&
       formInput.current_city &&
-      formInput.author_country
+      Boolean(formInput.author_country)
     );
   }, [formInput]);
   const [dialogOpenState, setDialogOpenState] = useState(false);
@@ -560,9 +578,33 @@ export const UploadStory: React.FC<StoryProps> = ({
   const submitButtonText = id ? "Save Edits" : "Upload";
 
   const classes = useStyles();
+  const hasFormChanged = React.useMemo(
+    () => JSON.stringify(initFormState) !== JSON.stringify(formInput),
+    [initFormState, formInput]
+  );
+
+  const hasTagsChanged = React.useMemo(
+    () => JSON.stringify(state.tagArray) !== JSON.stringify(currentStory.tags),
+    [state.tagArray, currentStory.tags]
+  );
+
+  console.log(`state ${state.disabled}`);
+  console.log(`all ${hasAllRequiredFields}`);
+  console.log(`form ${hasFormChanged}`);
+  console.log(`tags ${hasTagsChanged}`);
 
   return (
     <>
+      <Prompt
+        // Have to set image as undefined due to how form sets image
+        when={hasFormChanged}
+        message={(location) => {
+          if (location.pathname === "/admin/upload-success") {
+            return true;
+          }
+          return `Are you sure you want to go to ${location.pathname}? Your changes on this page will not be saved.`;
+        }}
+      />
       <div className={classes.appBar}>
         <AppBar color="default">
           <Grid
@@ -573,7 +615,7 @@ export const UploadStory: React.FC<StoryProps> = ({
           >
             <Grid item xs={6}>
               <StyledContainer>
-                <StyledLink href="/admin/allstories">
+                <StyledLink to="/admin/allstories">
                   <ArrowBackIcon />
                 </StyledLink>
                 <UploadStoriesTitle>{pageTitle}</UploadStoriesTitle>
@@ -624,7 +666,11 @@ export const UploadStory: React.FC<StoryProps> = ({
                 <PrimaryButton
                   text={submitButtonText}
                   onClickFunction={(e) => handleSubmit(e)}
-                  isDisabled={state.disabled || !hasAllRequiredFields}
+                  isDisabled={
+                    state.disabled ||
+                    !hasAllRequiredFields ||
+                    (!hasFormChanged && !hasTagsChanged)
+                  }
                 />
               </Grid>
             </Grid>
