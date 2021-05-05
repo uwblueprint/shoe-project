@@ -230,7 +230,7 @@ const useStyles = makeStyles({
     },
     width: "100%",
     position: "sticky",
-    top: 0 
+    top: 0,
   },
 });
 
