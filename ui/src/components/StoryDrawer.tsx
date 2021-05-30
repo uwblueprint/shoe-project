@@ -195,7 +195,8 @@ export function StoryDrawer({
             <StyledDrawerContainer>
               <StoryDrawerAuthorText>{`${author_first_name} ${author_last_name}`}</StoryDrawerAuthorText>
               <StoryDrawerRightText>
-                {current_city}, Canada • {year}
+                {current_city ? current_city.toUpperCase() : current_city},
+                CANADA • {year}
               </StoryDrawerRightText>
             </StyledDrawerContainer>
           </Grid>
